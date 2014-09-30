@@ -1,0 +1,3 @@
+@ddl/DDL_MITKC-163_08032014.sql
+/
+EXIT;

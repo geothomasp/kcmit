@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+      <groupId>edu.mit.kc</groupId>
+      <artifactId>kcmit</artifactId>
+      <version>6.0.0.1</version>
+  </parent>
+
+  <artifactId>kcmit-webapp</artifactId>
+  
+  <packaging>war</packaging>
+  <name>MIT KC Webapp</name>
+  <description>MIT KC Webapp project</description>
+  <dependencies>
+    <dependency>
+        <groupId>org.kuali.coeus</groupId>
+	    <artifactId>coeus-webapp</artifactId>
+        <version>6.0-SNAPSHOT</version>
+        <type>war</type>
+        <exclusions>
+                <exclusion>
+                	<groupId>org.kuali.coeus</groupId>
+                    <artifactId>coeus-impl</artifactId>
+                </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>edu.mit.kc</groupId>
+	    <artifactId>kcmit-impl</artifactId>
+        <version>6.0.0.1</version>
+    </dependency>
+    <dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.servlet</artifactId>
+     </dependency>
+     <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+      </dependency>
+         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-deploy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-junit4</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit-dep</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <scope>test</scope>
+        </dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,8 @@
+*/target/*
+*/.git
+*/.settings
+*/.classpath
+*/.project
+/.project
+/target
+/kcmit-db/kcmit-db-sql/target

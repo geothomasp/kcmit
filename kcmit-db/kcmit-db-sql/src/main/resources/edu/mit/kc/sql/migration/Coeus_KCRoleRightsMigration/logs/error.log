@@ -1,0 +1,11 @@
+
+Started role right migration.                                                   
+ALTER TABLE KRIM_ROLE_MBR_T ENABLE CONSTRAINT KRIM_ROLE_MBR_TR1 
+                                              *
+ERROR at line 1:
+ORA-02298: cannot validate (KCSO.KRIM_ROLE_MBR_TR1) - parent keys not found 
+
+
+Loading user roles Completed!!                                                  
+
+completed role right migration.                                                 

@@ -1,0 +1,19 @@
+<descriptor-repository version="1.0">
+	<class-descriptor class="edu.mit.kc.citi.CitiTraining" table="CITI_TRAINING">
+		<field-descriptor name="citiTrainingId" column="CITI_TRAINING_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEQ_CITI_TRAINING_ID" autoincrement="true" />
+		<field-descriptor name="firstName" column="FIRST_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="lastName" column="LAST_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="email" column="EMAIL" jdbc-type="VARCHAR" />
+		<field-descriptor name="curriculum" column="CURRICULUM" jdbc-type="VARCHAR" />
+		<field-descriptor name="trainingGroup" column="TRAINING_GROUP" jdbc-type="VARCHAR" />
+		<field-descriptor name="score" column="SCORE" jdbc-type="VARCHAR" />
+		<field-descriptor name="passingScore" column="PASSING_SCORE" jdbc-type="VARCHAR" />
+		<field-descriptor name="stageNumber" column="STAGE_NUMBER" jdbc-type="VARCHAR" />
+		<field-descriptor name="stage" column="STAGE" jdbc-type="VARCHAR" />
+		<field-descriptor name="dateCompleted" column="DATE_COMPLETED" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="userName" column="USER_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="customField1" column="CUSTOM_FIELD1" jdbc-type="VARCHAR" />
+		<field-descriptor name="customField2" column="CUSTOM_FIELD2" jdbc-type="VARCHAR" />
+		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+	</class-descriptor>
+</descriptor-repository>

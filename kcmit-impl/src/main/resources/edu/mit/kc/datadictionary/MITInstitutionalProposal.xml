@@ -1,0 +1,68 @@
+<!-- created for MITKC-133 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"> 
+          
+ <bean id="InstitutionalProposal-requestedStartDateInitial" parent="MIT-InstitutionalProposal-requestedStartDateInitial-parentBean" />
+    <bean id="MIT-InstitutionalProposal-requestedStartDateInitial-parentBean"  parent="InstitutionalProposal-requestedStartDateInitial-parentBean" >
+        <property name="label" value="Request Start Date Initial" />
+        <property name="shortLabel" value="Request Start Date Initial" />
+    </bean>
+
+    <bean id="InstitutionalProposal-requestedStartDateTotal" parent="MIT-InstitutionalProposal-requestedStartDateTotal-parentBean" />
+    <bean id="MIT-InstitutionalProposal-requestedStartDateTotal-parentBean" parent="InstitutionalProposal-requestedStartDateTotal-parentBean" >
+      	<property name="label" value="Request Start Date Total" />
+        <property name="shortLabel" value="Request Start Date Total" />
+    </bean>
+
+    <bean id="InstitutionalProposal-requestedEndDateInitial" parent="MIT-InstitutionalProposal-requestedEndDateInitial-parentBean" />
+    <bean id="MIT-InstitutionalProposal-requestedEndDateInitial-parentBean" parent="InstitutionalProposal-requestedEndDateInitial-parentBean" >
+        <property name="label" value="Request End Date Initial" />
+        <property name="shortLabel" value="Request End Date Initial" />
+    </bean>
+
+    <bean id="InstitutionalProposal-requestedEndDateTotal" parent="MIT-InstitutionalProposal-requestedEndDateTotal-parentBean" />
+    <bean id="MIT-InstitutionalProposal-requestedEndDateTotal-parentBean"  parent="InstitutionalProposal-requestedEndDateTotal-parentBean" >
+        <property name="label" value="Request End Date Total" />
+        <property name="shortLabel" value="Request End Date Total" />
+    </bean>
+    <bean id="InstitutionalProposal-totalDirectCostInitial" parent="MIT-InstitutionalProposal-totalDirectCostInitial-parentBean" />
+    <bean id="MIT-InstitutionalProposal-totalDirectCostInitial-parentBean" parent="InstitutionalProposal-totalDirectCostInitial-parentBean" >
+       	<property name="label" value="Total Direct Cost Initial" />
+        <property name="shortLabel" value="Total Direct Cost Initial" />
+    </bean>
+    <bean id="InstitutionalProposal-totalDirectCostTotal" parent="MIT-InstitutionalProposal-totalDirectCostTotal-parentBean" />
+    <bean id="MIT-InstitutionalProposal-totalDirectCostTotal-parentBean" parent="InstitutionalProposal-totalDirectCostTotal-parentBean" >
+        <property name="label" value="Total Direct Cost Total" />
+        <property name="shortLabel" value="Total Direct Cost Total" />
+    </bean>
+    <bean id="InstitutionalProposal-totalIndirectCostInitial" parent="MIT-InstitutionalProposal-totalIndirectCostInitial-parentBean" />
+    <bean id="MIT-InstitutionalProposal-totalIndirectCostInitial-parentBean" parent="InstitutionalProposal-totalIndirectCostInitial-parentBean" >
+       <property name="label" value="Total Indirect Cost Initial" />
+        <property name="shortLabel" value="Total Indirect Cost Initial" />
+    </bean>
+	<bean id="InstitutionalProposal-totalIndirectCostTotal" parent="MIT-InstitutionalProposal-totalIndirectCostTotal-parentBean" />
+    <bean id="MIT-InstitutionalProposal-totalIndirectCostTotal-parentBean" parent="InstitutionalProposal-totalIndirectCostTotal-parentBean" >
+        <property name="label" value="Total Indirect Cost Total" />
+        <property name="shortLabel" value="Total Indirect Cost Total" />
+    </bean>       
+    <bean id="InstitutionalProposal-title" parent="InstitutionalProposal-title-parentBean" />
+    <bean id="InstitutionalProposal-title-parentBean" abstract="true" parent="AttributeDefinition" >
+        <property name="name" value="title" />
+        <property name="forceUppercase" value="false" />
+        <property name="label" value="Project Title" />
+        <property name="shortLabel" value="Title" />
+        <property name="maxLength" value="200" />
+        <property name="required" value="true" />
+        <property name="control" >
+      		<bean parent="TextareaControlDefinition"
+            	p:rows="3"
+                p:cols="80" />
+    	</property>
+        <property name="summary" value="Title" />
+        <property name="description" value="Title" />
+    </bean>
+        
+</beans>    
+        

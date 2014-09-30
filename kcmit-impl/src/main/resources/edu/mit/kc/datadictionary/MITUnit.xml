@@ -1,0 +1,21 @@
+<!-- created for MITKC-140 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"> 
+        
+    <bean id="MIT2-Unit-lookupDefinition-parentBean" parent="Unit-lookupDefinition-parentBean">    
+    <property name="lookupFields" >
+      <list>
+        <bean parent="FieldDefinition"
+              p:attributeName="unitNumber" />
+        <bean parent="FieldDefinition"
+              p:attributeName="organizationId" />
+        <bean parent="FieldDefinition"
+              p:attributeName="unitName" />
+        <bean parent="FieldDefinition"
+              p:attributeName="active" />
+      </list>
+    </property>
+  </bean>      
+</beans>
