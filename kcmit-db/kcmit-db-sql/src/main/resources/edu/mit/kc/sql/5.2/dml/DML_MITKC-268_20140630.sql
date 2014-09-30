@@ -1,4 +1,3 @@
---    public String checkNonMitPi(DevelopmentProposal developmentProposal);
 insert into KRMS_FUNC_T 
 	(FUNC_ID,NM,DESC_TXT,RTRN_TYP,VER_NBR,ACTV,
 		TYP_ID,NMSPC_CD) 

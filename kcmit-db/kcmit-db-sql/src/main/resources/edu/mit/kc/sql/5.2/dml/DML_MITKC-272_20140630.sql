@@ -41,3 +41,4 @@ insert into KRMS_TERM_RSLVR_PARM_SPEC_T (TERM_RSLVR_PARM_SPEC_ID, TERM_RSLVR_ID,
 insert into KRMS_TERM_RSLVR_PARM_SPEC_T (TERM_RSLVR_PARM_SPEC_ID, TERM_RSLVR_ID, NM, VER_NBR) 
 	values (CONCAT('KCMIT', KRMS_TERM_RSLVR_PARM_SPEC_S.NEXTVAL), (select TERM_RSLVR_ID from KRMS_TERM_RSLVR_T where NM='Cost Element Total Cost Is Greater Than a Certain Amount For Any Period Check Resolver' and NMSPC_CD='KC-PD'), 
 				'amount', 2)
+/

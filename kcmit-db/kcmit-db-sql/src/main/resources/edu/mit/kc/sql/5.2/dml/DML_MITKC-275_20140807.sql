@@ -1,5 +1,3 @@
---	public String getCostElemPeriodLimitInVer(DevelopmentProposal developmentProposal,String budgetVersion,String costElement,String costAmountLimit)
----Script for deleting already existing entries with wrong sequence objects
 Delete from KRMS_TERM_RSLVR_PARM_SPEC_T where  TERM_RSLVR_ID in(select TERM_RSLVR_ID 
 from KRMS_TERM_RSLVR_T where NM='Cost Element in Version Period Crossed Limit Check Resolver' and NMSPC_CD='KC-PD')
 /

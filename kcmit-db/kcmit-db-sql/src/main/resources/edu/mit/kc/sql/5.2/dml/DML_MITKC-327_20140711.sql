@@ -1,30 +1,28 @@
---Script for deleting already existing entries with wrong sequence objects
-Delete from KRMS_TERM_RSLVR_PARM_SPEC_T where NM='Sponsor Code' and TERM_RSLVR_ID in(select TERM_RSLVR_ID 
-from KRMS_TERM_RSLVR_T where OUTPUT_TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+delete from KRMS_TERM_RSLVR_PARM_SPEC_T where NM in ('Sponsor Code','sponsorGroup') and TERM_RSLVR_ID in(select TERM_RSLVR_ID 
+	from KRMS_TERM_RSLVR_T where OUTPUT_TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+		NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')))
+/
+delete from KRMS_TERM_RSLVR_T where OUTPUT_TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
+/
+delete from KRMS_TERM_SPEC_CTGRY_T where TERM_SPEC_ID = (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
+/
+delete from KRMS_CNTXT_VLD_TERM_SPEC_T where TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
+/
+delete from KRMS_TERM_PARM_T where term_id in (select term_id  from KRMS_TERM_T where TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
 NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')))
 /
-Delete from KRMS_TERM_RSLVR_T where OUTPUT_TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+delete  from KRMS_TERM_T where TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
 NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
 /
-Delete from KRMS_TERM_SPEC_CTGRY_T where TERM_SPEC_ID = (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
-NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
+delete from KRMS_TERM_SPEC_T where NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')
 /
-Delete from KRMS_CNTXT_VLD_TERM_SPEC_T where TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
-NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
+delete from KRMS_FUNC_PARM_T where FUNC_ID = (select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD') 
 /
-Delete from KRMS_TERM_PARM_T where term_id in (select term_id  from KRMS_TERM_T where TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
-NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')))
+delete from KRMS_FUNC_T where NM='sponsorGroupRule'
 /
-Delete  from KRMS_TERM_T where TERM_SPEC_ID= (select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
-NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'))
-/
-Delete from KRMS_TERM_SPEC_T where NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')
-/
-Delete from KRMS_FUNC_PARM_T where FUNC_ID = (select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD') 
-/
-Delete from KRMS_FUNC_T where NM='sponsorGroupRule'
-/
-
 insert into KRMS_FUNC_T 
 	(FUNC_ID,NM,DESC_TXT,RTRN_TYP,VER_NBR,ACTV,
 		TYP_ID,NMSPC_CD) 

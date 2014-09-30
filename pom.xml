@@ -23,8 +23,8 @@
   </prerequisites>
   <modules>
         <module>kcmit-impl</module>
-<!--         <module>kcmit-db</module>
-        <module>kcmit-help</module>
+         <module>kcmit-db</module>
+<!--        <module>kcmit-help</module>
         <module>kcmit-it</module>
         <module>kcmit-tool</module>
  -->

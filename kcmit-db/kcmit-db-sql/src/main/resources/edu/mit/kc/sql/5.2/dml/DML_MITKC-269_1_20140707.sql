@@ -1,4 +1,3 @@
---    public String checkPiSameAsSpecifiedPerson(DevelopmentProposal developmentProposal,String mitId);
 insert into KRMS_FUNC_T
 	(FUNC_ID,NM,DESC_TXT,RTRN_TYP,VER_NBR,ACTV,TYP_ID,NMSPC_CD) 
 	values (CONCAT('KCMIT', KRMS_FUNC_S.NEXTVAL),'checkPiSameAsSpecifiedPerson','Check PI is a specified Person','java.lang.String',1,'Y',
@@ -35,4 +34,3 @@ insert into KRMS_TERM_RSLVR_PARM_SPEC_T (TERM_RSLVR_PARM_SPEC_ID, TERM_RSLVR_ID,
 	values (CONCAT('KCMIT', KRMS_TERM_RSLVR_PARM_SPEC_S.NEXTVAL), (select TERM_RSLVR_ID from KRMS_TERM_RSLVR_T where NM='PI Same As Specified Person Check Resolver' and NMSPC_CD='KC-PD'), 
 				'personId', 1)
 /
---end--

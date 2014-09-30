@@ -1,4 +1,3 @@
---    public String hasExemptHumanSubjSplReview(DevelopmentProposal developmentProposal);
 insert into KRMS_FUNC_T 
 	(FUNC_ID,NM,DESC_TXT,RTRN_TYP,VER_NBR,ACTV,
 		TYP_ID,NMSPC_CD) 
@@ -32,4 +31,3 @@ insert into KRMS_TERM_RSLVR_T (TERM_RSLVR_ID, NMSPC_CD, NM, TYP_ID, OUTPUT_TERM_
 			(select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
 					NM=(select FUNC_ID from KRMS_FUNC_T where  NM='hasExemptHumanSubjSplReview' and NMSPC_CD='KC-PD')),'Y',1)
 /
---end--
