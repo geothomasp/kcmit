@@ -198,7 +198,6 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 
 	@Override
 	public String hasCostElement(DevelopmentProposal developmentProposal) {
-		List<Budget> budgetVersioList = new ArrayList();
 		for (Budget budget : developmentProposal.getBudgets()) {
 			if (budget.isFinalVersionFlag()) {
 				if (budget.getTotalCost().isGreaterThan(ScaleTwoDecimal.ZERO)) {
