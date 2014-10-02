@@ -111,6 +111,7 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
             if(!isActive){
                 return false;
             }
+            //return super.appliesTo();
             boolean canApply = false;
             for (Map.Entry<String, String> agendaQualifier : environment.getSelectionCriteria().getAgendaQualifiers().entrySet()) {
                 if(!canApply){
@@ -121,7 +122,7 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
                         String[] unitNumbers = environmentQualifierValue.split(",");
                         for (int i = 0; i < unitNumbers.length; i++) {
                             String enviornmentUnitNumber = unitNumbers[i];
-                            if ((enviornmentUnitNumber.equals(agendaQualifierValue) || isChildUnit(environmentQualifierValue, agendaQualifierValue))) {
+                            if (enviornmentUnitNumber.equals(agendaQualifierValue)){ 
                                 canApply = true;
                                 break;
                             }
@@ -134,11 +135,7 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
             return canApply;
         }
         
-        private boolean isChildUnit(String childNumber, String parentNumber) {
-            Unit childUnit = unitService.getUnit(childNumber);
-            Unit parentUnit = unitService.getUnit(parentNumber);
-            return childUnit == null || parentUnit == null ? false : childUnit.isParentUnit(parentUnit);
-        }
+      
 
     }
 
