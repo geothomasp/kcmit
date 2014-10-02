@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Implementation-Title: KC MIT Impl
+Maven-Version: 
+Implementation-Version: 6.0.0.1
+Built-By: geo
+Specification-Vendor: MIT Office Of Sponsored Program (OSP)
+Bundle-Name: KC MIT Impl
+Created-By: Apache Maven
+Bundle-Vendor: MIT Office Of Sponsored Program (OSP)
+Implementation-Vendor: MIT Office Of Sponsored Program (OSP)
+Implementation-Vendor-Id: edu.mit.kc
+Build-Jdk: 1.7.0_51
+Bundle-Version: 6.0.0.1
+Specification-Title: KC MIT Impl
+Bundle-License: http://maven.kuali.org/external/org/opensource/ecl/2.0
+ /ecl-2.0.txt
+Bundle-DocURL: http://mit.edu/osp
+Specification-Version: 6.0.0.1
+Bundle-SymbolicName: edu.mit.kc.kcmit-impl
+Bundle-Timestamp: 2014-10-02 16:24 PM
+Archiver-Version: Plexus Archiver
+

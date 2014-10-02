@@ -6,3 +6,4 @@
 /.project
 /target
 /kcmit-db/kcmit-db-sql/target
+kcmit-impl/src/main/resources/META-INF/kcmit-config.xml
