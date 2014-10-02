@@ -65,6 +65,7 @@
 								</includes>
 							</artifactSet>
  							<createSourcesJar>true</createSourcesJar>
+ 							<shadeSourcesContent>true</shadeSourcesContent>
 							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 						</configuration>
 					</execution>

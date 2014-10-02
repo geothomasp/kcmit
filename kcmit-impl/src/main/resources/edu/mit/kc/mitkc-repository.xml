@@ -16,4 +16,41 @@
 		<field-descriptor name="customField2" column="CUSTOM_FIELD2" jdbc-type="VARCHAR" />
 		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
 	</class-descriptor>
+	<class-descriptor class="org.kuali.kra.award.contacts.AwardPersonConfirm" table="AWARD_PERSON_CONFIRM">
+    	<field-descriptor name="awardPersonConfirmId" column="AWARD_PERSON_CONFIRM_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQUENCE_AWARD_ID"/>
+			<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR" nullable="true" />  	
+    		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="true"/>
+    		<field-descriptor name="awardId" column="AWARD_ID" jdbc-type="BIGINT" nullable="true"/>
+    		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER" nullable="true"/>
+    		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR" nullable="true" />
+    	<field-descriptor name="confirmFlag" column="CONFIRM_FLAG" jdbc-type="CHAR" nullable="true" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />   	
+    	
+    	
+    	<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+		<!-- OBJ_ID isn't a database defined primary key, but it does have a unique constraint.  Primary Key set to true because OJB requires a field be set as primary -->
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" primarykey = "true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />
+
+    </class-descriptor>
+    <class-descriptor class="org.kuali.kra.award.contacts.AwardPersonRemove" table="AWARD_PERSON_REMOVE">
+    	<field-descriptor name="awardPersonRemoveId" column="AWARD_PERSON_REMOVE_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQUENCE_AWARD_ID"/>
+			<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR" nullable="true" />  	
+    		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="true"/>
+    		<field-descriptor name="awardId" column="AWARD_ID" jdbc-type="BIGINT" nullable="true"/>
+    		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER" nullable="true"/>
+    		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR" nullable="true" />
+    	<field-descriptor name="confirmFlag" column="CONFIRM_FLAG" jdbc-type="CHAR" nullable="true" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />   	
+    	
+    	<field-descriptor name="updateTimestampConfirm" column="UPDATE_TIMESTAMP_CONFIRM" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUserConfirm" column="UPDATE_USER_CONFIRM" jdbc-type="VARCHAR" />
+  	<field-descriptor name="removeFlag" column="REMOVE_FLAG" jdbc-type="CHAR" nullable="true" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />   	
+    
+    	<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+		<!-- OBJ_ID isn't a database defined primary key, but it does have a unique constraint.  Primary Key set to true because OJB requires a field be set as primary -->
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" primarykey = "true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />
+
+    </class-descriptor>
 </descriptor-repository>
