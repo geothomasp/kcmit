@@ -1072,17 +1072,23 @@ public class PropDevJavaFunctionKrmsTermServiceImpl extends KcKrmsJavaFunctionTe
      * FN_ROUTING_SEQ_RULE
      */
     public String routingSequenceRule(DevelopmentProposal developmentProposal) {
-        List<ActionRequest> actionRequests = developmentProposal.getProposalDocument().getDocumentHeader().getWorkflowDocument().getDocumentDetail().getActionRequests();
-        int submitCount = 0;
-        for(ActionRequest actionRequest : actionRequests) {
-            if(actionRequest.getNodeName().equals(Constants.PD_INITIATED_ROUTE_NODE_NAME)) {
-                submitCount++;
-            }
-            if(submitCount > 1) {
-                return FALSE;
-            }
-        }
-        return TRUE;
+    	 try {
+             ProposalDevelopmentDocument proposalDevelopmentDocument = (ProposalDevelopmentDocument)getDocumentService().getByDocumentHeaderId( developmentProposal.getProposalDocument().getDocumentHeader().getDocumentNumber());
+             List<ActionRequest> actionRequests = proposalDevelopmentDocument.getDocumentHeader().getWorkflowDocument().getDocumentDetail().getActionRequests();
+             int submitCount = 0;
+             for(ActionRequest actionRequest : actionRequests) {
+                 if(actionRequest.getNodeName().equals(Constants.PD_INITIATED_ROUTE_NODE_NAME)) {
+                     submitCount++;
+                 }
+                 if(submitCount > 1) {
+                     return FALSE;
+                 }
+             }
+         }
+         catch (Exception e) {
+             //lets just ignor and return false.
+         }
+             return TRUE;
     }
     
     public DateTimeService getDateTimeService() {
