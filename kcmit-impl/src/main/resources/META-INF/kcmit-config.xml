@@ -3,4 +3,5 @@
 	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST">kc-mit-dev@mit.edu</param>
 	<param name="mitKcBatchJobUserName">MITKC</param>
 	<param name="alt.config.location">/Users/geo/git/kcmit/kcmit-webapp/src/main/config/kc-config.xml</param>
+	<param name="kc.mit.core.mode">LOCAL</param>
 </config>
