@@ -120,10 +120,42 @@
  -->	    
     <bean id="kcMitCoreModuleConfiguration" parent="kcMitCoreModuleConfiguration-parentBean"/>
     <bean id="kcMitCoreModuleConfiguration-parentBean" class="org.kuali.rice.krad.bo.ModuleConfiguration" abstract="true">
-   		<property name="initializeDataDictionary" value="true" />
+   		 <property name="initializeDataDictionary" value="true" />
+
+        <!-- Rice hack this isn't really the right namespace but we cannot set 
+            it correctly until we address modularity (breaking up our DD files, SpringBeans, 
+            namespaces, etc. -->
+        <property name="namespaceCode" value="KC-CORE" />
+        <property name="packagePrefixes">
+            <list>
+                <value>edu.mit.kc.datadictionary</value>
+            </list>
+        </property>
 		<property name="dataDictionaryPackages">
-			<list>
-				<value>edu/mit/kc/datadictionary</value>
+			<list>  
+				<value>classpath:edu/mit/kc/datadictionary/MitNegotiation.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITUnit.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/UnitBo.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITTimeAndMoneyDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITSubAwardDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITRolodex.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitProposalLog.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposalDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposal.xml</value>
+				<!-- <value>classpath:edu/mit/kc/datadictionary/MitDevelopmentProposal.xml</value> -->
+				<value>classpath:edu/mit/kc/datadictionary/MitAwardSpecialReview.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTermRecipient.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTerm.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITAwardPaymentSchedule.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitAwardFaRateType.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITAwardDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITAward.xml</value>
+				<!-- <value>classpath:edu/mit/kc/datadictionary/KrmsFunctionsParams.xml</value> -->
+				<!-- <value>classpath:edu/mit/kc/datadictionary/KrmsFunctions.xml</value> -->
+				<value>classpath:edu/mit/kc/datadictionary/KcResultSetLimit.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/KcMandatoryValidation.xml</value>
+				<!-- <value>classpath:edu/mit/kc/datadictionary/CustomAttributeDocument.xml</value> -->
+				<value>classpath:edu/mit/kc/datadictionary/CitiTraining.xml</value>
 			</list>
 		</property>
         <property name="databaseRepositoryFilePaths">
