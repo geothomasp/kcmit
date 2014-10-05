@@ -24,7 +24,8 @@ import java.util.Iterator;
 @Component("auditHelper")
 public class AuditHelperImpl implements AuditHelper {
 
-    @Autowired
+    private static final CharSequence HOLD_PROMPT = null;
+	@Autowired
     @Qualifier("kualiRuleService")
     private KualiRuleService ruleService;
 
@@ -93,7 +94,7 @@ public class AuditHelperImpl implements AuditHelper {
     }
 
     
-    public <T extends KualiDocumentFormBase & Auditable> ValidationState isValidHoldPrompt(final T form, boolean unconditionally) {
+    public <T extends Auditable> ValidationState isValidHoldPrompt(final T form, boolean unconditionally) {
         ValidationState result = ValidationState.OK;
         boolean auditPassed;
         if (unconditionally) {
@@ -123,4 +124,5 @@ public class AuditHelperImpl implements AuditHelper {
     public void setRuleService(KualiRuleService kualiRuleService) {
         this.ruleService = kualiRuleService;
     }
+
 }
