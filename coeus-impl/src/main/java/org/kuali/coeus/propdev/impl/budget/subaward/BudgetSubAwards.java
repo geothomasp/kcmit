@@ -149,7 +149,7 @@ public class BudgetSubAwards extends KcPersistableBusinessObjectBase implements 
         this.budgetId = budgetId;
     }
 
-    @Override
+//    @Override
     public String getProposalNumber() {
         return proposalNumber;
     }
