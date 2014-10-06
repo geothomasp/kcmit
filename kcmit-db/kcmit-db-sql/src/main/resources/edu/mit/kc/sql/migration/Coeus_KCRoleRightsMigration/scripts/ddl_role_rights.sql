@@ -46,6 +46,12 @@ begin
     execute immediate('drop table KC_COEUS_ROLE_MAPPING');
   end if;
   
+  select  count(table_name) into li_count  from all_tables   where table_name = 'KC_COEUS_ROLE_PERM_MAPPING';
+  if li_count > 0 then
+    execute immediate('drop table KC_COEUS_ROLE_PERM_MAPPING');
+  end if;
+  
+  
   select  count(table_name) into li_count  from all_tables   where table_name = 'KC_ROLE_BOOTSTRAP';
   if li_count > 0 then
     execute immediate('drop table KC_ROLE_BOOTSTRAP');
@@ -62,6 +68,8 @@ begin
   end if; 
   
 end;
+/
+commit
 /
 create table BAK_KRIM_ROLE_T as select * from KRIM_ROLE_T
 /
@@ -146,17 +154,16 @@ select
 from osp$USER_ROLES@coeus.kuali
 /
 CREATE TABLE KC_COEUS_RIGHT_MAPPING (	
-KC_PERM_ID VARCHAR2(120), 
+KC_PERM_NM VARCHAR2(120), 
 KC_DESCRIPTION VARCHAR2(2000), 
 COEUS_RIGHT_ID VARCHAR2(120), 
 COEUS_DESCRIPTION VARCHAR2(2000),
-IS_INSERTED CHAR(1)
+NMSPC_CD	VARCHAR2(40)
 )
 /
 CREATE TABLE KC_COEUS_ROLE_MAPPING (
 COEUS_ROLES VARCHAR2(80), 
-KC_ROLES VARCHAR2(80),
-IS_INSERTED CHAR(1)
+KC_ROLES VARCHAR2(80)
 )
 /
 CREATE TABLE KC_ROLE_BOOTSTRAP (
@@ -189,5 +196,11 @@ OBJ_ID VARCHAR2(36) NOT NULL ENABLE,
  ROLE_ID VARCHAR2(40) NOT NULL ENABLE, 
  PERM_ID VARCHAR2(40) NOT NULL ENABLE, 
  ACTV_IND VARCHAR2(1) DEFAULT 'Y'
+)
+/
+CREATE TABLE KC_COEUS_ROLE_PERM_MAPPING(
+ROLE_NM VARCHAR2(80),
+KC_PERM_NM	VARCHAR2(120),
+NMSPC_CD	VARCHAR2(40)
 )
 /

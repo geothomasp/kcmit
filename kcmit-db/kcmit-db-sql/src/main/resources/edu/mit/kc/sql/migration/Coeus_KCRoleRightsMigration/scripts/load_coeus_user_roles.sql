@@ -27,10 +27,10 @@ ls_role_name 	VARCHAR2(50);
 li_count NUMBER;
 
 CURSOR c_role is
-select distinct nvl(t1.kc_roles,r.role_name ) kc_role_nm, r.role_name,r.DESCRIPTION,r.role_type,ur.USER_ID,ur.UNIT_NUMBER,ur.DESCEND_FLAG,ur.UPDATE_TIMESTAMP,ur.UPDATE_USER 
+select distinct r.role_name ,r.DESCRIPTION,r.role_type,ur.USER_ID,ur.UNIT_NUMBER,ur.DESCEND_FLAG,ur.UPDATE_TIMESTAMP,ur.UPDATE_USER 
 from osp$user_roles@coeus.kuali ur 
-inner join osp$role r on r.role_id= ur.role_id
-left outer join kc_coeus_role_mapping t1 on t1.coeus_roles = r.role_name ;
+inner join osp$role r on r.role_id= ur.role_id;
+--where ur.user_id = 'mff';
 
 r_role c_role%ROWTYPE;
 
@@ -62,12 +62,12 @@ EXIT WHEN c_role%NOTFOUND;
 									   
 					   BEGIN 
 						   select rl.ROLE_ID,rl.KIM_TYP_ID into ls_role_id,ls_kim_typ_id 
-						   from KRIM_ROLE_T rl 	where  UPPER(rl.role_nm) = UPPER(r_role.kc_role_nm)
+						   from KRIM_ROLE_T rl 	where  UPPER(rl.role_nm) = UPPER(r_role.role_name)
 						   and rownum = 1; 
 						  
 					   EXCEPTION
 					   WHEN OTHERS THEN
-						dbms_output.put_line('Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM '||r_role.kc_role_nm||'. The Error is: '||SQLERRM);
+						dbms_output.put_line('Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM '||r_role.role_name||'. The Error is: '||SQLERRM);
 						continue;
 					   END;
 					   
@@ -125,4 +125,22 @@ END LOOP;
 CLOSE   c_role; 
 dbms_output.put_line('Loading user roles Completed!!');
 END; 
+/
+update krim_role_t set role_nm = 'Award Modifier', nmspc_cd = 'KC-AWARD' where role_nm = 'Modify Award'
+/
+commit
+/
+declare
+li_count NUMBER;
+begin
+select count(ROLE_MBR_ID) into li_count from KRIM_ROLE_MBR_T 
+where mbr_id = 'admin' and role_id in (select role_id from krim_role_t where role_nm = 'Award Modifier');
+
+if li_count = 0 then
+
+INSERT INTO KRIM_ROLE_MBR_T(ROLE_MBR_ID,VER_NBR,OBJ_ID,ROLE_ID,MBR_ID,MBR_TYP_CD,ACTV_FRM_DT,ACTV_TO_DT,LAST_UPDT_DT)
+VALUES(KRIM_ROLE_MBR_ID_S.NEXTVAL,1,SYS_GUID(),(select role_id from krim_role_t where role_nm = 'Award Modifier'),'admin','P',NULL,NULL,SYSDATE);
+end if;
+commit;
+end;
 /
