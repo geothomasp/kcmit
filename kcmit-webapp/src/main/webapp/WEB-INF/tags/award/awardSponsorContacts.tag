@@ -57,7 +57,7 @@
            	        							  			'rolodexId');"
            	        							  			readOnly="${readOnly}"/>
   					<c:if test="${!readOnly}">
-  						<kul:lookup boClassName="org.kuali.kra.bo.Rolodex" fieldConversions="rolodexId:sponsorContactsBean.rolodexId" 
+  						<kul:lookup boClassName="org.kuali.coeus.common.framework.rolodex.Rolodex" fieldConversions="rolodexId:sponsorContactsBean.rolodexId" 
   									anchor="${tabKey}" lookupParameters="sponsorContactsBean.rolodexId:rolodexId"/>
   					</c:if>
   			   </c:if> 
@@ -134,7 +134,7 @@
 	                		    </c:otherwise>
 	                		</c:choose>
 	                		
-	                		<kul:directInquiry boClassName="org.kuali.kra.bo.NonOrganizationalRolodex" inquiryParameters="sponsor_contact.identifier_${awardContactRowStatus.index}:rolodexId" anchor="${tabKey}" />		                	
+	                		<kul:directInquiry boClassName="org.kuali.coeus.common.framework.rolodex.NonOrganizationalRolodex" inquiryParameters="sponsor_contact.identifier_${awardContactRowStatus.index}:rolodexId" anchor="${tabKey}" />		                	
 						</div>
 					</td> 
 					</c:if> 
