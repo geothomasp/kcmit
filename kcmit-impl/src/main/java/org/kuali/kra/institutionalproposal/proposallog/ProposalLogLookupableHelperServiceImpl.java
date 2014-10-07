@@ -37,6 +37,7 @@ import org.kuali.rice.krad.document.DocumentPresentationController;
 import org.kuali.rice.krad.exception.DocumentAuthorizationException;
 import org.kuali.rice.krad.service.DocumentDictionaryService;
 import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.LegacyDataAdapter;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.UrlFactory;
@@ -56,8 +57,11 @@ public class ProposalLogLookupableHelperServiceImpl extends KualiLookupableHelpe
     
     private boolean isLookupForProposalCreation;
     private DocumentService documentService;
-    
-    public void setDocumentService(DocumentService documentService) {
+    private KcPersonService kcPersonService;
+    private LegacyDataAdapter legacyDataAdapter;
+    private DocumentDictionaryService documentDictionaryService;
+
+	public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
     }
     
@@ -115,7 +119,7 @@ public class ProposalLogLookupableHelperServiceImpl extends KualiLookupableHelpe
         fieldValues.clear();
         fieldValues.put(KEWPropertyConstants.DOCUMENT_TYPE_ID, docTypeIds);
         fieldValues.put(DOC_ROUTE_STATUS, KewApiConstants.ROUTE_HEADER_FINAL_CD);
-        List<DocumentRouteHeaderValue> docHeaders = (List<DocumentRouteHeaderValue>) getBusinessObjectService().findMatching(DocumentRouteHeaderValue.class, fieldValues);
+        List<DocumentRouteHeaderValue> docHeaders = (List<DocumentRouteHeaderValue>) getLegacyDataAdapter().findMatching(DocumentRouteHeaderValue.class, fieldValues);
         for (DocumentRouteHeaderValue docHeader : docHeaders) {
             try {
                 MaintenanceDocumentBase doc = (MaintenanceDocumentBase) documentService.getByDocumentHeaderId(docHeader.getDocumentId());
@@ -132,7 +136,7 @@ public class ProposalLogLookupableHelperServiceImpl extends KualiLookupableHelpe
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+            	LOG.error(e.getMessage(), e);
             }                
         }
 
@@ -245,10 +249,8 @@ public class ProposalLogLookupableHelperServiceImpl extends KualiLookupableHelpe
             Person user = GlobalVariables.getUserSession().getPerson();
             String instPropDocName = "InstitutionalProposalDocument";
             // get the authorization
-            DocumentAuthorizer documentAuthorizer = 
-                KcServiceLocator.getService(DocumentDictionaryService.class).getDocumentAuthorizer(instPropDocName);
-            DocumentPresentationController documentPresentationController =
-                KcServiceLocator.getService(DocumentDictionaryService.class).getDocumentPresentationController(instPropDocName);
+            DocumentAuthorizer documentAuthorizer = getDocumentDictionaryService().getDocumentAuthorizer(instPropDocName);
+            DocumentPresentationController documentPresentationController = getDocumentDictionaryService().getDocumentPresentationController(instPropDocName);
             // make sure this person is authorized to initiate
             LOG.debug("calling canInitiate from getNewDocument()");
             if (!documentPresentationController.canInitiate(instPropDocName) ||
@@ -272,9 +274,29 @@ public class ProposalLogLookupableHelperServiceImpl extends KualiLookupableHelpe
             htmlDataList.remove(editLinkIndex);
         }
     }
-    
-    protected KcPersonService getKcPersonService() {
-        return KcServiceLocator.getService(KcPersonService.class);
+
+    public void setLegacyDataAdapter(LegacyDataAdapter legacyDataAdapter) {
+        this.legacyDataAdapter = legacyDataAdapter;
+    }
+
+    public LegacyDataAdapter getLegacyDataAdapter() {
+        return legacyDataAdapter;
+    }
+
+    public void setKcPersonService(KcPersonService kcPersonService) {
+        this.kcPersonService = kcPersonService;
+    }
+
+    public KcPersonService getKcPersonService() {
+        return kcPersonService;
+    }
+
+    public DocumentDictionaryService getDocumentDictionaryService() {
+        return documentDictionaryService;
+    }
+
+    public void setDocumentDictionaryService(DocumentDictionaryService documentDictionaryService) {
+        this.documentDictionaryService = documentDictionaryService;
     }
     
         }
