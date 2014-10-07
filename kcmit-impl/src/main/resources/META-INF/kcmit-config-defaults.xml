@@ -1,0 +1,6 @@
+<config>
+	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST">kc-mit-dev@mit.edu</param>
+	<param name="mitKcBatchJobUserName">MITKC</param>
+ 	<param name="kc.mit.core.mode">LOCAL</param>
+	<!-- <param name="kc.kc.core.additionalSpringFiles">classpath:edu/mit/kc/MitKcSpringBeans.xml,classpath:edu/mit/kc/MitKcSchedulerSpringBeans.xml</param> -->
+</config>
