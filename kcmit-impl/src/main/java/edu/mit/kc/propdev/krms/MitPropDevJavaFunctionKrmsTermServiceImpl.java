@@ -3,14 +3,12 @@
  */
 package edu.mit.kc.propdev.krms;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.kuali.coeus.common.budget.framework.core.Budget;
-import org.kuali.coeus.common.budget.framework.core.BudgetDocument;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
@@ -198,12 +196,9 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 
 	@Override
 	public String hasCostElement(DevelopmentProposal developmentProposal) {
-		for (Budget budget : developmentProposal.getBudgets()) {
-			if (budget.isFinalVersionFlag()) {
-				if (budget.getTotalCost().isGreaterThan(ScaleTwoDecimal.ZERO)) {
-					return TRUE;
-				}
-			}
+		Budget budget = developmentProposal.getFinalBudget();
+		if (budget.getTotalCost().isGreaterThan(ScaleTwoDecimal.ZERO)) {
+			return TRUE;
 		}
 		return FALSE;
 	}
@@ -280,14 +275,10 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 	@Override
 	public String budgetPeriodAmountRule(DevelopmentProposal developmentProposal) {
 		ScaleTwoDecimal totalCost = new ScaleTwoDecimal(2000000);
-		for (Budget budgetDocumentVersion : developmentProposal.getBudgets()) {
-			if (budgetDocumentVersion.isFinalVersionFlag()) {
-				DocumentService docService = KcServiceLocator.getService(DocumentService.class);
-				for (BudgetPeriod budgetPeriod : budgetDocumentVersion.getBudgetPeriods()) {
-					if (budgetPeriod.getTotalCost().isGreaterThan(totalCost)) {
-						return TRUE;
-					}
-				}
+		Budget finalBudget = developmentProposal.getFinalBudget();
+		for (BudgetPeriod budgetPeriod : finalBudget.getBudgetPeriods()) {
+			if (budgetPeriod.getTotalCost().isGreaterThan(totalCost)) {
+				return TRUE;
 			}
 		}
 		return FALSE;
@@ -378,16 +369,11 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 			String amount) {
 		ScaleTwoDecimal totalAmount = new ScaleTwoDecimal(amount);
 		ScaleTwoDecimal totalLineItemCost = ScaleTwoDecimal.ZERO;
-		for (Budget budgetDocumentVersion : developmentProposal.getBudgets()) {
-			if (budgetDocumentVersion.isFinalVersionFlag()) {
-				DocumentService docService = KcServiceLocator
-						.getService(DocumentService.class);
-				for (BudgetPeriod budgetPeriod : budgetDocumentVersion.getBudgetPeriods()) {
-					for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
-						if (budgetLineItem.getCostElement().equals(costElement)) {
-							totalLineItemCost = totalLineItemCost.add(budgetLineItem.getLineItemCost());
-						}
-					}
+		Budget finalBudget = developmentProposal.getFinalBudget();
+		for (BudgetPeriod budgetPeriod : finalBudget.getBudgetPeriods()) {
+			for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
+				if (budgetLineItem.getCostElement().equals(costElement)) {
+					totalLineItemCost = totalLineItemCost.add(budgetLineItem.getLineItemCost());
 				}
 				if (totalLineItemCost.isGreaterThan(totalAmount)) {
 					return TRUE;
@@ -412,19 +398,16 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 			DevelopmentProposal developmentProposal, String costElement,
 			String amount) {
 		ScaleTwoDecimal totalAmount = new ScaleTwoDecimal(amount);
-		for (Budget budget : developmentProposal.getBudgets()) {
-			if (budget.isFinalVersionFlag()) {
-				for (BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
-					ScaleTwoDecimal totalLineItemCost = ScaleTwoDecimal.ZERO;
-					for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
-						if (budgetLineItem.getCostElement().equals(costElement)) {
-							totalLineItemCost = totalLineItemCost.add(budgetLineItem.getLineItemCost());
-						}
-					}
-					if (totalLineItemCost.isGreaterThan(totalAmount)) {
-						return TRUE;
-					}
+		Budget budget = developmentProposal.getFinalBudget();
+		for (BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
+			ScaleTwoDecimal totalLineItemCost = ScaleTwoDecimal.ZERO;
+			for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
+				if (budgetLineItem.getCostElement().equals(costElement)) {
+					totalLineItemCost = totalLineItemCost.add(budgetLineItem.getLineItemCost());
 				}
+			}
+			if (totalLineItemCost.isGreaterThan(totalAmount)) {
+				return TRUE;
 			}
 		}
 		return FALSE;
@@ -991,20 +974,17 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 			DevelopmentProposal developmentProposal, Long budgetVersion,
 			String costElement, String costAmountLimit) {
 		ScaleTwoDecimal totalAmount = new ScaleTwoDecimal(costAmountLimit);
-		for (Budget budget : developmentProposal.getBudgets()) {
-			if (budget != null && budget.isFinalVersionFlag()) {
-				for (BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
-					ScaleTwoDecimal totalLineItemCost = ScaleTwoDecimal.ZERO;
-					for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
-						if (budgetLineItem.getCostElement().equals(costElement)) {
-							totalLineItemCost = totalLineItemCost
-									.add(budgetLineItem.getLineItemCost());
-						}
-					}
-					if (totalLineItemCost.isGreaterThan(totalAmount)) {
-						return TRUE;
-					}
+		Budget budget = developmentProposal.getFinalBudget();
+		for (BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
+			ScaleTwoDecimal totalLineItemCost = ScaleTwoDecimal.ZERO;
+			for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
+				if (budgetLineItem.getCostElement().equals(costElement)) {
+					totalLineItemCost = totalLineItemCost
+							.add(budgetLineItem.getLineItemCost());
 				}
+			}
+			if (totalLineItemCost.isGreaterThan(totalAmount)) {
+				return TRUE;
 			}
 		}
 		return FALSE;
