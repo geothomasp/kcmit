@@ -415,10 +415,14 @@
 			</attributes>
 			<routePaths>
 				<routePath>
-					<start name="Initiated" nextNode="isHierarchyChild"/>
+					<start name="Initiated" nextNode="OSPInitial"/>
+					<requests name="OSPInitial" nextNode="ProposalPersons" />
+					<requests name="ProposalPersons" nextNode="PeopleFlows" />
+					<requests name="PeopleFlows" />
+<!-- 					<start name="Initiated" nextNode="isHierarchyChild"/>
 						<split name = "isHierarchyChild">
 							<branch name = "False">
-								<!-- The document is a hierarchy parent, or a document that is not part of a hierarchy so it is routed normally. -->
+								The document is a hierarchy parent, or a document that is not part of a hierarchy so it is routed normally.
 								<requests name="OSPInitial" nextNode="ProposalPersons" />
 								<requests name="ProposalPersons" nextNode="PeopleFlows" />
 								<requests name="PeopleFlows" nextNode="UnitRouting" />
@@ -427,13 +431,13 @@
 								<requests name="OSPOfficeRouting" nextNode = "Join" />
 							</branch>
 							<branch name = "True">
-								<!-- The document is a child in a hierarchy. This node will have the system user as an approver.  If the parent moves to final approval, is rejected, or cancelled
-								     the system user will take the same action on the children.  -->
+								The document is a child in a hierarchy. This node will have the system user as an approver.  If the parent moves to final approval, is rejected, or cancelled
+								     the system user will take the same action on the children. 
 								<requests name = "WaitForHierarchyDisposition" nextNode="Join"/>				
 							</branch>
 						</split>
 					<join name="Join"/>
-				</routePath>
+ -->				</routePath>
 			</routePaths>
 			<routeNodes>
 				<start name="Initiated">
@@ -441,10 +445,10 @@
 					<mandatoryRoute>false</mandatoryRoute>
 					<finalApproval>false</finalApproval>
 				</start>
-				<split name="isHierarchyChild">
-       			   <type>org.kuali.coeus.sys.framework.workflow.SimpleBooleanSplitNode</type>
+				<!-- 				<split name="isHierarchyChild">
+       			   <type>>org.kuali.coeus.sys.framework.workflow.SimpleBooleanSplitNode</type>
         		</split>
-				<role name="OSPInitial">
+ -->			<role name="OSPInitial">
 					<qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
                     <activationType>S</activationType>
 					<finalApproval>false</finalApproval>
@@ -456,18 +460,19 @@
 	            </role>
 	            <requests name="PeopleFlows">
                     <activationType>R</activationType>
+                    <forceAction>true</forceAction>
                     <rulesEngine executorClass="org.kuali.coeus.propdev.impl.core.ProposalDevelopmentRulesEngineExecutorImpl"/>
                 </requests>
-				<requests name="UnitRouting">
+				<!-- <requests name="UnitRouting">
 					<qualifierResolver>DepartmentRouting-XPathQualifierResolver</qualifierResolver>
-					<!--  <qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass> -->
+					 <qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
 					<ruleTemplate>CustomApproval</ruleTemplate>
                     <activationType>P</activationType>
 					<finalApproval>false</finalApproval>
 	            </requests>
 				<requests name="DepartmentalRouting">
 					<qualifierResolver>DepartmentRouting-XPathQualifierResolver</qualifierResolver>
-					<!--  <qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass> -->
+					 <qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
 					<ruleTemplate>DepartmentalApproval</ruleTemplate>
                     <activationType>P</activationType>
 					<finalApproval>false</finalApproval>
@@ -484,7 +489,7 @@
 					  <ignorePrevious>true</ignorePrevious>
 					<finalApproval>false</finalApproval>
 				</requests>
-				<join name="Join"/>	            
+				<join name="Join"/> -->	            
 			</routeNodes>
 		</documentType>
 	</documentTypes>
