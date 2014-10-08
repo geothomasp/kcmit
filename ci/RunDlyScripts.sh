@@ -6,6 +6,8 @@ then
 	sleep 1
 	#sudo -u www chown www:www /usr/local/tomcat_kc_dev/webapps/kc-dev.war
 	#sleep 1
+	service tomcat-kc-dev restart
+	sleep 3
 fi
 if [ "$env" == "kcqawkly" -o "$env" == "all" ]
 then
@@ -13,4 +15,6 @@ then
 	sleep 1
 	sudo -u coeus cp -u /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-train-web:/home/coeus/kc/deployment/.
 	sleep 1
+	service tomcat-kc-qa-wkly restart
+	sleep 3
 fi
