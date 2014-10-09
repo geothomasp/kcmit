@@ -231,12 +231,12 @@
 	<bean id="dbPlatform" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="dbPlatform" />
     </bean>
-<!--      <bean id="mitTimeAndMoneyHistoryService" class="edu.mit.kc.timeandmoney.service.impl.MitTimeAndMoneyHistoryServiceImpl" scope="prototype">
+     <bean id="mitTimeAndMoneyHistoryService" class="edu.mit.kc.timeandmoney.service.impl.MitTimeAndMoneyHistoryServiceImpl" scope="prototype">
         <property name="awardVersionService" ref="awardVersionService" />
         <property name="documentService" ref="documentService" />
         <property name="businessObjectService" ref="businessObjectService" />
     </bean>
- -->
+
      <bean id="awardVersionService" class="org.kuali.kra.award.version.service.impl.AwardVersionServiceImpl" scope="prototype">
         <property name="versionHistoryService" ref="versionHistoryService" />
     </bean>
