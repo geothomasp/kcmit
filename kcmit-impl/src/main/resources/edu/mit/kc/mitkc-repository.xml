@@ -19,7 +19,7 @@
 	<class-descriptor class="org.kuali.kra.award.contacts.AwardPersonConfirm" table="AWARD_PERSON_CONFIRM">
     	<field-descriptor name="awardPersonConfirmId" column="AWARD_PERSON_CONFIRM_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_AWARD_PERSON_CONFIRM_ID"/>
 			<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR" nullable="false" />  	
-    		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="false"/>
+    		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="true"/>
     		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER" nullable="false"/>
     		<field-descriptor name="awardId" column="AWARD_ID" jdbc-type="BIGINT" nullable="false"/>    		
     		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR" nullable="false" />
@@ -36,7 +36,7 @@
     <class-descriptor class="org.kuali.kra.award.contacts.AwardPersonRemove" table="AWARD_PERSON_REMOVE">
     	<field-descriptor name="awardPersonRemoveId" column="AWARD_PERSON_REMOVE_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_AWARD_PERSON_REMOVE_ID"/>
 			<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR" nullable="false" />  	
-    		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="false"/>
+    		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="true"/>
     		<field-descriptor name="awardId" column="AWARD_ID" jdbc-type="BIGINT" nullable="false"/>    		
     		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER" nullable="false"/>
     		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR" nullable="false" />

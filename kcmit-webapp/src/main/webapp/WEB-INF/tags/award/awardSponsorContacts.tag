@@ -111,7 +111,7 @@
 					<th class="infoline" scope="row">
 						<c:out value="${awardContactRowStatus.index + 1}" />
 					</th>
-					<c:if test="${!readOnly}">
+					
 	                <td valign="middle">
 	                	<div align="center">
 	                		<input type="hidden" name="sponsor_contact.identifier_${awardContactRowStatus.index}" value="${awardContact.contact.identifier}" />
@@ -127,17 +127,19 @@
 	                	        				  			'org.phoneNumber',
            	        							  			'org.emailAddress',
            	        							  			'rolodexId');"
-           	        							  			/>  
-      					  <kul:lookup boClassName="org.kuali.kra.bo.Rolodex" anchor="${tabKey}" fieldConversions="rolodexId:sponsorContactsBean.sponsorContacts[${awardContactRowStatus.index}].rolodexId"
+           	        							  			/> 
+           	        		<c:if test="${!readOnly}">					  			 
+      					   <kul:lookup boClassName="org.kuali.coeus.common.framework.rolodex.Rolodex" anchor="${tabKey}" fieldConversions="rolodexId:sponsorContactsBean.sponsorContacts[${awardContactRowStatus.index}].rolodexId"
         	  	 				    lookupParameters="sponsorContactsBean.rolodexId:rolodexId" />  
-	                	          <%--  ${awardContact.fullName}&nbsp; --%> 
+	                	          <%--  ${awardContact.fullName}&nbsp; --%>
+	                	         </c:if>  
 	                		    </c:otherwise>
 	                		</c:choose>
 	                		
 	                		<kul:directInquiry boClassName="org.kuali.coeus.common.framework.rolodex.NonOrganizationalRolodex" inquiryParameters="sponsor_contact.identifier_${awardContactRowStatus.index}:rolodexId" anchor="${tabKey}" />		                	
 						</div>
 					</td> 
-					</c:if> 
+					
 					<td valign="middle">
 	                	<div align="center">
 	                		<kul:htmlControlAttribute property="sponsorContactsBean.sponsorContacts[${awardContactRowStatus.index}].contactRoleCode" 
