@@ -55,6 +55,7 @@ import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReview;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.krad.bo.AdHocRouteRecipient;
+import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.SequenceAccessorService;
@@ -80,7 +81,7 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     private static final String DECIMAL_FORMAT = "00000000";
     private static final String PROPOSAL_NUMBER = "proposalNumber";
     private static final String SEQUENCE_NUMBER = "sequenceNumber";
-    
+    private DataObjectService dataObjectService;
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;
     private VersioningService versioningService;
@@ -312,7 +313,7 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
             List<ProposalAdminDetails> details = new ArrayList<ProposalAdminDetails>(businessObjectService.findMatching(ProposalAdminDetails.class,
                     Collections.singletonMap("instProposalId", curProposal.getProposalId())));
             for (ProposalAdminDetails detail : details) {
-            	result.add(businessObjectService.findBySinglePrimaryKey(DevelopmentProposal.class, detail.getDevProposalNumber()));
+            	result.add(dataObjectService.find(DevelopmentProposal.class, detail.getDevProposalNumber()));
             }
         }
         return result;
@@ -718,5 +719,11 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
     }
-    
+    public DataObjectService getDataObjectService() {
+        return dataObjectService;
+    }
+
+    public void setDataObjectService(DataObjectService dataObjectService) {
+        this.dataObjectService = dataObjectService;
+    }
 }
