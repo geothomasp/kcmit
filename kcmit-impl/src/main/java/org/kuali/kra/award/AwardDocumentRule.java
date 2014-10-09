@@ -505,7 +505,7 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
         retval &= new AwardBudgetLimitsAuditRule().processRunAuditBusinessRules(document);
         retval &= new AwardCommonValidationAuditRule().processRunAuditBusinessRules(document);
         retval &= processDateBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
-        retval &= processDateBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        retval &=processTransactionBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
         reportAndCreateAuditCluster();
         return retval;
         
@@ -671,7 +671,20 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
         
         return success;
     }
-    
+    private boolean processTransactionBusinessRule(MessageMap errorMap, AwardDocument awardDocument) {
+    	boolean success = true;
+    	 Award award = awardDocument.getAward();
+    	 if(award!=null){    		
+    		 if (award.getAwardTransactionTypeCode() == null) {  
+    			 success = false;
+                 String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+                 String messageKey = KeyConstants.ERROR_AWARD_TRANSACTION_TYPE;
+                 String errorKey = "document.awardList[0].awardTransactionTypeCode"; 
+                 auditErrors.add(new AuditError(errorKey, messageKey, link));
+              } 
+    	 }
+    	 return success;
+    }
     private boolean processSaveAwardProjectPersonsBusinessRules(MessageMap errorMap, AwardDocument document) {
         errorMap.addToErrorPath(DOCUMENT_ERROR_PATH);
         errorMap.addToErrorPath(AWARD_ERROR_PATH);
