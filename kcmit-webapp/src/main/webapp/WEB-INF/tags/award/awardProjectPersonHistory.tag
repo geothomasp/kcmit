@@ -22,9 +22,9 @@
 	tabTitle="Key Person Removal History" tabErrorKey="">
 	<table cellpadding="0" cellspacing="0" summary="">
 		<tr>
-			<th width="15%">Key Person</th>
-			<th width="15%">Update User</th>
-			<th width="15%">Update Date</th>
+			<th width="15%">Removed Key Person</th>
+			<th width="15%">Confirmed Person</th>			
+			<th width="15%">Removed Date & Person</th>
 		</tr>
 	
 		<c:if test='${!removalHistory.isEmpty()}'>
@@ -32,13 +32,18 @@
 				varStatus="ppStatus">
 				<tr>
 					<td width="15%">${removalHistoryValues.keyPersonName}</td>
-					<td width="15%">${removalHistoryValues.updateUser}</td>
-					<td width="15%">${removalHistoryValues.updateTimestamp}</td>
+					<td width="15%">${removalHistoryValues.updateUserConfirm}</td>
+					
+					<td width="15%"><fmt:formatDate value="${removalHistoryValues.updateTimestamp}" pattern="MM/dd/yyyy HH:mm:ss a"/>${removalHistoryValues.updateUser}</td>
 				</tr>
 			</c:forEach>
 		</c:if>
+		<c:if test='${removalHistory.isEmpty()}'><tr>
+		&nbsp;
+		</tr>
+		</c:if>
 
-<br />
+
 	</table>
 
 </kul:innerTab>

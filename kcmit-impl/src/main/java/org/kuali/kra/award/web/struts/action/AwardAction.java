@@ -15,6 +15,18 @@
  */
 package org.kuali.kra.award.web.struts.action;
 
+import static org.apache.commons.lang3.StringUtils.replace;
+import static org.kuali.rice.krad.util.KRADConstants.CONFIRMATION_QUESTION;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,18 +35,27 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
+import org.kuali.coeus.common.budget.framework.core.BudgetParentActionBase;
 import org.kuali.coeus.common.framework.auth.SystemAuthorizationService;
+import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
+import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
-import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
-import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
-import org.kuali.coeus.sys.framework.validation.AuditHelper;
-import org.kuali.coeus.sys.framework.validation.AuditHelper.ValidationState;
+import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
-import org.kuali.kra.award.*;
+import org.kuali.coeus.sys.framework.validation.AuditHelper;
+import org.kuali.coeus.sys.framework.validation.AuditHelper.ValidationState;
+import org.kuali.kra.award.AwardAmountInfoService;
+import org.kuali.kra.award.AwardForm;
+import org.kuali.kra.award.AwardLockService;
+import org.kuali.kra.award.AwardNumberService;
+import org.kuali.kra.award.AwardTemplateSyncScope;
+import org.kuali.kra.award.AwardTemplateSyncService;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchy;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchyBean;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchyService;
@@ -53,6 +74,8 @@ import org.kuali.kra.award.home.AwardAmountInfo;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.home.AwardService;
 import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubaward;
+import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
+import org.kuali.kra.award.infrastructure.AwardRoleConstants;
 import org.kuali.kra.award.paymentreports.ReportClass;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTermRecipient;
@@ -62,13 +85,8 @@ import org.kuali.kra.award.service.AwardDirectFandADistributionService;
 import org.kuali.kra.award.service.AwardReportsService;
 import org.kuali.kra.award.service.AwardSponsorTermService;
 import org.kuali.kra.award.version.service.AwardVersionService;
-import org.kuali.coeus.common.budget.framework.core.BudgetParentActionBase;
-import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
-import org.kuali.kra.award.infrastructure.AwardRoleConstants;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
-import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
-import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.kra.subaward.service.SubAwardService;
 import org.kuali.kra.timeandmoney.AwardHierarchyNode;
 import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
@@ -81,7 +99,6 @@ import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -94,16 +111,15 @@ import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.web.struts.form.KualiForm;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.rules.rule.event.DocumentEvent;
-import org.kuali.rice.krad.service.*;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
+import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.service.PessimisticLockService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import static org.apache.commons.lang3.StringUtils.replace;
-import static org.kuali.rice.krad.util.KRADConstants.CONFIRMATION_QUESTION;
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 /**
  * 
@@ -170,9 +186,8 @@ public class AwardAction extends BudgetParentActionBase {
         forward = handleDocument(mapping, form, request, response, awardForm);
         
         AwardDocument awardDocument = (AwardDocument) awardForm.getDocument();
-        boolean value =    KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "View Award");//Move to Constants
-        awardForm.setKpMaintenanceRole(value);    
-        
+    
+        awardForm.setKpMaintenanceRole(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", KcMitConstants.AWARD_KEYPERSON_MAINTENANCE_ROLE));  //Move to Constants
         //check to see if this document might be a part of an active award sync(if it is lock it)
         if(awardForm.getMethodToCall().equals("docHandler")){
             AwardDocument parentSyncAward = 
@@ -187,7 +202,7 @@ public class AwardAction extends BudgetParentActionBase {
             setSubAwardDetails(awardDocument.getAward());
             handlePlaceHolderDocument(awardForm, awardDocument);
         }
-        awardForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(mapping, form, request,  response));
+        awardForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
       
        
         return forward;

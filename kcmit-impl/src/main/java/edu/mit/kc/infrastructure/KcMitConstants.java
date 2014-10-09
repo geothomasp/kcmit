@@ -26,4 +26,7 @@ public interface KcMitConstants {
     
     public static final String ERROR_AWARD_FANDA_RATES_SOURCE_LIMIT="error.awardDirectFandADistribution.source.limit";
     
+    /* Award Keyperson Maintenance */
+    public static final String AWARD_KEYPERSON_MAINTENANCE_ROLE = "Maintain Keyperson"; 
+    
 }

@@ -15,8 +15,17 @@
  */
 package org.kuali.kra.award.web.struts.action;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.substringBetween;
+import static org.kuali.rice.krad.util.KRADConstants.METHOD_TO_CALL_ATTRIBUTE;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -25,20 +34,18 @@ import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
-import org.kuali.kra.award.contacts.*;
+import org.kuali.kra.award.contacts.AwardCreditSplitBean;
+import org.kuali.kra.award.contacts.AwardPerson;
+import org.kuali.kra.award.contacts.AwardPersonRemove;
+import org.kuali.kra.award.contacts.AwardPersonUnit;
+import org.kuali.kra.award.contacts.AwardProjectPersonnelBean;
+import org.kuali.kra.award.contacts.AwardSponsorContact;
+import org.kuali.kra.award.contacts.AwardSponsorContactsBean;
+import org.kuali.kra.award.contacts.AwardUnitContactsBean;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.krad.service.BusinessObjectService;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.substringBetween;
-import static org.kuali.rice.krad.util.KRADConstants.METHOD_TO_CALL_ATTRIBUTE;
 
 /**
  * 
@@ -273,6 +280,7 @@ public class AwardContactsAction extends AwardAction {
                                                                                                                         throws Exception {
         AwardPerson awardPerson = getProjectPersonnelBean(form).getProjectPersonnel().get(getLineToDelete(request));
         getProjectPersonnelBean(form).deleteProjectPerson(getLineToDelete(request));
+        getProjectPersonRemovalHistory(form);
         return this.confirmSyncAction(mapping, form, request, response, AwardSyncType.DELETE_SYNC, awardPerson, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));
     }
 
@@ -478,16 +486,19 @@ public class AwardContactsAction extends AwardAction {
         }
 
       
-    public Collection<AwardPersonRemove> getProjectPersonRemovalHistory(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+    public Collection<AwardPersonRemove> getProjectPersonRemovalHistory(ActionForm form)
             throws Exception {   
     	Collection<AwardPersonRemove> awardPersonRemoves =  new ArrayList<AwardPersonRemove>();
     	AwardForm awardForm = (AwardForm)form;
-    	if(awardForm.getAwardDocument().getAward().getAwardId() != null && awardForm.getAwardDocument().getAward().getAwardNumber() != null){
-    	awardPersonRemoves =  getProjectPersonnelBean(form).getAwardPersonRemoval(awardForm.getAwardDocument().getAward().getAwardId().toString(),awardForm.getAwardDocument().getAward().getAwardNumber());
-    	
-    	}if(!awardPersonRemoves.isEmpty()){
-    	return awardPersonRemoves;   
+    	if (awardForm.getAwardDocument().getAward().getAwardId() != null 
+    			&& awardForm.getAwardDocument().getAward().getAwardNumber() != null) {
+    		awardPersonRemoves =  getProjectPersonnelBean(form).getAwardPersonRemoval(awardForm.getAwardDocument().getAward().getAwardId().toString(),
+    				awardForm.getAwardDocument().getAward().getAwardNumber());
     	}
+    	if (!awardPersonRemoves.isEmpty()) {
+    		awardForm.setAwardPersonRemovalHistory(awardPersonRemoves);
+    		return awardPersonRemoves;   
+    	}    	
     	return new ArrayList<AwardPersonRemove>();
         }
 }

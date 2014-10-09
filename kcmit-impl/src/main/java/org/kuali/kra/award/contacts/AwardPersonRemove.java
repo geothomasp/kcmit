@@ -59,7 +59,6 @@ public class AwardPersonRemove extends KcPersistableBusinessObjectBase implement
     private boolean confirmFlag;
     private Timestamp updateTimestampConfirm;
     protected String updateUserConfirm;
-    private boolean removeFlag;
     private Timestamp updateTimestamp;
     protected String updateUser;
     
@@ -110,7 +109,10 @@ public class AwardPersonRemove extends KcPersistableBusinessObjectBase implement
 	}
 
 	public void setUpdateTimestampConfirm(Timestamp updateTimestampConfirm) {
+		if(updateTimestampConfirm != null){
 		this.updateTimestampConfirm = convertDate(updateTimestampConfirm);
+		}
+		this.updateTimestampConfirm = updateTimestampConfirm;
 	}
 
 	public String getUpdateUserConfirm() {
@@ -121,14 +123,7 @@ public class AwardPersonRemove extends KcPersistableBusinessObjectBase implement
 		this.updateUserConfirm = updateUserConfirm;
 	}
 
-	public boolean isRemoveFlag() {
-		return removeFlag;
-	}
-
-	public void setRemoveFlag(boolean removeFlag) {
-		this.removeFlag = removeFlag;
-	}
-
+	
 	public void setAwardId(Long awardId) {
         this.awardId = awardId;
     }

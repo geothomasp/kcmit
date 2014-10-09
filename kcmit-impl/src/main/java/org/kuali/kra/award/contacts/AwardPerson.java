@@ -83,9 +83,11 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     public String getConfirmed() {    
     	List awardPersonList = new ArrayList<AwardPersonConfirm>();
     	AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
-    	Map<String,String> awardPersonId = new HashMap<String,String>();
-		 awardPersonId.put("personId", this.personId);
-		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPersonId);
+    	Map<String,String> awardPerson = new HashMap<String,String>();
+    	awardPerson.put("personId", this.personId);
+    	awardPerson.put("awardNumber", this.getAwardNumber());
+    	awardPerson.put("awardId", this.getAward().getAwardId().toString());
+		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPerson);
 			if(!awardPersonList.isEmpty()){
 			awardPersonConfirm = (AwardPersonConfirm) awardPersonList.get(0);			
 			if(awardPersonConfirm.isConfirmFlag()){
@@ -107,11 +109,14 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     	
     	 String user="";
     	 String dateString="";
-    	 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+    	 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");    	 
     	 
-    	 Map<String,String> awardPersonId = new HashMap<String,String>();
-		 awardPersonId.put("personId", this.personId);
-		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPersonId);
+    	 Map<String,String> awardPersonDetails = new HashMap<String,String>();
+    	 awardPersonDetails.put("personId", this.personId);
+    	 awardPersonDetails.put("awardNumber", this.getAwardNumber());
+    	 awardPersonDetails.put("awardId", this.getAward().getAwardId().toString());
+		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPersonDetails);
+		 
 			if(!awardPersonList.isEmpty()){
 			awardPersonConfirm = (AwardPersonConfirm) awardPersonList.get(0);
 			user=awardPersonConfirm.getUpdateUser();

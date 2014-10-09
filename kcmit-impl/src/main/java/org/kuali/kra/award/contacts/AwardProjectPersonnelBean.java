@@ -15,6 +15,13 @@
  */
 package org.kuali.kra.award.contacts;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
 import org.kuali.coeus.common.framework.unit.Unit;
@@ -23,12 +30,7 @@ import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.ContactRole;
 import org.kuali.rice.krad.service.BusinessObjectService;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 /**
  * This class provides support for the Award Contacts Project Personnel panel
@@ -105,7 +107,8 @@ public
      List<AwardPerson> projectPersons = getProjectPersonnel(); 
        try{
         if(projectPersons.size() > lineToEdit) {
-        AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
+       AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
+       if(projectPersons.get(lineToEdit).getAward().getAwardId()!=null && projectPersons.get(lineToEdit).getAwardNumber() != null && projectPersons.get(lineToEdit).getAwardContactId() != null && projectPersons.get(lineToEdit).getPersonId() !=null && projectPersons.get(lineToEdit).getSequenceNumber() != null){
         awardPersonConfirm.setAwardId(projectPersons.get(lineToEdit).getAward().getAwardId());
         awardPersonConfirm.setAwardNumber(projectPersons.get(lineToEdit).getAwardNumber());
         awardPersonConfirm.setAwardPersonId(projectPersons.get(lineToEdit).getAwardContactId());
@@ -113,7 +116,9 @@ public
         awardPersonConfirm.setUpdateTimestamp(projectPersons.get(lineToEdit).getUpdateTimestamp());
         awardPersonConfirm.setUpdateUser(projectPersons.get(lineToEdit).getUpdateUser());
         awardPersonConfirm.setConfirmFlag(true);
+        awardPersonConfirm.setSequenceNumber(projectPersons.get(lineToEdit).getSequenceNumber());
         getBusinessObjectService().save(awardPersonConfirm);
+      }
         }
        
        }catch(Exception e){
@@ -181,26 +186,40 @@ public
             deleteCollection=(List<AwardPersonConfirm>) AwardPersonConfirmPrimary(projectPersons.get(lineToDelete).getAward().getAwardId().toString(),projectPersons.get(lineToDelete).getAwardNumber().toString(),projectPersons.get(lineToDelete).getPersonId());
             
             this.getBusinessObjectService().delete(deleteCollection);
-           
-            //add to removal table
-            for(AwardPersonConfirm deleteColl : deleteCollection){
-            	deleteColl.getAwardId();
-            AwardPersonRemove awardPersonRemove = new AwardPersonRemove();
-            awardPersonRemove.setAwardId(deleteColl.getAwardId());
-            awardPersonRemove.setAwardNumber(deleteColl.getAwardNumber());
-            awardPersonRemove.setAwardPersonId(deleteColl.getAwardPersonId());
-            awardPersonRemove.setPersonId(deleteColl.getPersonId());
-            awardPersonRemove.setUpdateTimestampConfirm(deleteColl.getUpdateTimestamp());
-            awardPersonRemove.setUpdateUserConfirm(deleteColl.getUpdateUser());
-            awardPersonRemove.setConfirmFlag(true);            
-          //chng these values
-            awardPersonRemove.setRemoveFlag(true);
-            awardPersonRemove.setUpdateUser(deleteColl.getPersonId()) ;
-            awardPersonRemove.setUpdateTimestamp(deleteColl.getUpdateTimestamp());
-            this.getBusinessObjectService().save(awardPersonRemove);
-            }
+           if (deleteCollection.isEmpty()) {
+        	   AwardPersonRemove awardPersonRemove = new AwardPersonRemove();
+        	   awardPersonRemove.setAwardId(projectPersons.get(lineToDelete).getAward().getAwardId());
+               awardPersonRemove.setAwardNumber(projectPersons.get(lineToDelete).getAwardNumber().toString());
+               awardPersonRemove.setAwardPersonId(projectPersons.get(lineToDelete).getAwardContactId());
+               awardPersonRemove.setPersonId(projectPersons.get(lineToDelete).getPersonId());
+                awardPersonRemove.setConfirmFlag(false); 
+               awardPersonRemove.setUpdateUser(projectPersons.get(lineToDelete).getUpdateUser()) ;
+               awardPersonRemove.setSequenceNumber(projectPersons.get(lineToDelete).getSequenceNumber());
+               awardPersonRemove.setUpdateTimestamp(new Timestamp(new java.util.Date().getTime()));
+               this.getBusinessObjectService().save(awardPersonRemove);               
+               
+           }else{
+        	   for(AwardPersonConfirm deleteColl : deleteCollection){
+               	deleteColl.getAwardId();
+               AwardPersonRemove awardPersonRemove = new AwardPersonRemove();
+               awardPersonRemove.setAwardId(deleteColl.getAwardId());
+               awardPersonRemove.setAwardNumber(deleteColl.getAwardNumber());
+               awardPersonRemove.setAwardPersonId(deleteColl.getAwardPersonId());
+               awardPersonRemove.setPersonId(deleteColl.getPersonId());
+               awardPersonRemove.setUpdateTimestampConfirm(deleteColl.getUpdateTimestamp());
+               awardPersonRemove.setUpdateUserConfirm(deleteColl.getUpdateUser());
+               awardPersonRemove.setConfirmFlag(deleteColl.isConfirmFlag()); 
+               awardPersonRemove.setUpdateUser(GlobalVariables.getUserSession().getPrincipalId()) ;
+               awardPersonRemove.setSequenceNumber(deleteColl.getSequenceNumber());
+               awardPersonRemove.setUpdateTimestamp(new Timestamp(new java.util.Date().getTime()));
+               this.getBusinessObjectService().save(awardPersonRemove);
+               }
+               deleteCollection.clear();  
+           }
             
-            deleteCollection.clear();
+            
+           
+           
         }  
     }
     

@@ -49,7 +49,7 @@
     				<th width="15%">*Project Role</th>
     				<th width="12%">Office Phone</th>
     				<th width="15%">Email</th>
-    					<th width="10%">Confirm Timestamp</th>
+    				<th width="10%">Confirm Timestamp</th>
     				<th width="23%"><div align="center">Actions</div></th>
     			
     			</tr>
@@ -285,31 +285,36 @@
     					</td>
     	                  <td valign="middle">
     	                	<div align="center">                	
-    							${awardContact.emailAddress}&nbsp;
+    							<c:if test='${awardContact.roleCode == "KP"}'>           	
+    							<c:if test='${awardContact.confirmed == true}'> 
+   									${awardContact.updateConfirmTimestamp} &nbsp;
+   								</c:if>
+   								</c:if>
     						</div> 
     					</td>
     					<td>
     						<div align="center">
     						  <c:if test="${!readOnly}">
-    						  <c:if test='${awardPersonAttributes.keyPersonRole != null}'>
-    						  </c:if>
-    						<c:if test='${kpMaintenance == "true"}'>     				
-    					
-    			<%-- <c:if test='${roleContact == "KP" & confirmFlag == "false"}'>	 --%>
-    			<c:if test='${awardContact.roleCode == "KP"}'> 
-    		
-    			<html:image property="methodToCall.confirmProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
-    							src='${ConfigProperties.kra.externalizable.images.url}tinybutton-confirm1.gif' styleClass="tinybutton"/>
-    							</c:if>
-    			<%-- </c:if>
-    			<c:else>
-    			 <c:out value = "${awardPersonAttributes.updateTimestamp}"/>
-    			</c:else> --%>	 		
-    							<html:image property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
-    							src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif' styleClass="tinybutton"/>
-    							</c:if> 
+    						 									<c:if test='${kpMaintenance == "true"}'>
+									
+									<c:if test='${awardContact.roleCode == "KP"}'>
+										<c:if test='${awardContact.confirmed == false}'>
+											<html:image
+												property="methodToCall.confirmProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
+												src='${ConfigProperties.kra.externalizable.images.url}tinybutton-confirm1.gif'
+												styleClass="tinybutton" />
+										</c:if>
+										
+									</c:if>
 
-    							<c:if test="${KualiForm.syncMode}">
+								
+										<html:image
+											property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
+											src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif'
+											styleClass="tinybutton" />
+									</c:if>
+
+									<c:if test="${KualiForm.syncMode}">
 	    							<html:image property="methodToCall.syncProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 	    								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif' alt="sync" styleClass="tinybutton" disabled="${readOnly}"/>
     							</c:if>
@@ -342,10 +347,10 @@
 	    <c:if test="${KualiForm.awardCreditSplitBean.awardCreditsLimitApplicable && KualiForm.document.awardList[0].totalUnitCount > 0}" > 
 	    	<kra-a:creditSplit/>
 	    </c:if>	 
-	    <%--  <c:if test="${KualiForm.awardCreditSplitBean.awardCreditsLimitApplicable && KualiForm.document.awardList[0].totalUnitCount > 0}" >  if history has data--%>  
-	    <c:if test='${kpMaintenance == "true"}'>  
+	     
+	   <%--  <c:if test='${kpMaintenance == "true"}'>   --%>
 	    <kra-a:awardProjectPersonHistory/>
-	    </c:if>
-	    <%--   </c:if>	--%>    
+	
+	        
     </div>    
 </kul:tab>
