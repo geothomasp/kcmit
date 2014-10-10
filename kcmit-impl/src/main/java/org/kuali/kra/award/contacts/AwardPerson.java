@@ -86,7 +86,9 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     	Map<String,String> awardPerson = new HashMap<String,String>();
     	awardPerson.put("personId", this.personId);
     	awardPerson.put("awardNumber", this.getAwardNumber());
-    	awardPerson.put("awardId", this.getAward().getAwardId().toString());
+    	 if(this.getAward().getAwardId()!=null){
+    		 awardPerson.put("awardId", this.getAward().getAwardId().toString());
+    	 }
 		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPerson);
 			if(!awardPersonList.isEmpty()){
 			awardPersonConfirm = (AwardPersonConfirm) awardPersonList.get(0);			
@@ -114,7 +116,9 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     	 Map<String,String> awardPersonDetails = new HashMap<String,String>();
     	 awardPersonDetails.put("personId", this.personId);
     	 awardPersonDetails.put("awardNumber", this.getAwardNumber());
-    	 awardPersonDetails.put("awardId", this.getAward().getAwardId().toString());
+    	 if(this.getAward().getAwardId()!=null){
+    		 awardPersonDetails.put("awardId", this.getAward().getAwardId().toString());
+    	 }
 		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPersonDetails);
 		 
 			if(!awardPersonList.isEmpty()){
