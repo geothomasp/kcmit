@@ -113,7 +113,7 @@ public class AwardReportAuditRule implements DocumentAuditRule {
 				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
 				ENABLE_FREQUENCYBASE_VALIDATION_FORNULL_PARAM);
 		if (enableValidation.equals("Y")) {
-			if (awardReportTerm.getFrequencyBaseCode() == null)
+			if (awardReportTerm.getFrequencyBaseCode() == null || awardReportTerm.getFrequencyBaseCode().equals("-1"))
 				return true;
 		}
 		for (KeyValue KeyValue : frequencyBaseCodes) {
@@ -152,7 +152,7 @@ public class AwardReportAuditRule implements DocumentAuditRule {
 				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
 				ENABLE_FREQUENCY_VALIDATION_FORNULL_PARAM);
 		if (enableValidation!=null && enableValidation.equals("Y")) {
-			if (awardReportTerm.getFrequencyCode() == null)
+			if (awardReportTerm.getFrequencyCode() == null || awardReportTerm.getFrequencyCode().equals("-1"))
 				return true;
 		}
 		for (KeyValue KeyValue : frequencyCodes) {
