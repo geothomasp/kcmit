@@ -150,5 +150,20 @@ CLOSE c_award;
 
 END;
 /
+declare
+li_doc number(10);
+li_proposal_max number(10);
+ls_query VARCHAR2(400);
+begin
+SELECT to_number(SUBSTR(MAX(AWARD_NUMBER),1,6)) INTO li_doc  FROM AWARD;    
+execute immediate('alter sequence SEQ_AWARD_AWARD_NUMBER increment by '||li_doc);
+
+end;
+/
+select SEQ_AWARD_AWARD_NUMBER.NEXTVAL from dual
+/
+alter sequence SEQ_AWARD_AWARD_NUMBER increment by 1
+/
+
 select ' End time of AWARD is '|| localtimestamp from dual
 /
