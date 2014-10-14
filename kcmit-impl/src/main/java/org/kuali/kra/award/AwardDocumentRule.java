@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.framework.custom.KcDocumentBaseAuditRule;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
+import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.permissions.impl.bo.PermissionsUser;
 import org.kuali.coeus.common.permissions.impl.bo.PermissionsUserEditRoles;
 import org.kuali.coeus.common.permissions.impl.rule.PermissionsRule;
@@ -490,22 +491,24 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
      */
     public boolean processRunAuditBusinessRules(Document document){
         boolean retval = true;
-        
-        retval &= new KcDocumentBaseAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardReportAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardTermsAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardPaymentAndInvoicesAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardCostShareAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardFandARateAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardProjectPersonsAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardPersonCreditSplitAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardSubawardAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardSyncAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardSponsorContactAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardBudgetLimitsAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardCommonValidationAuditRule().processRunAuditBusinessRules(document);
-        retval &= processDateBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
-        retval &=processTransactionBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        AwardDocument awardDocument = (AwardDocument)document;
+        if(!awardDocument.getAward().getAwardSequenceStatus().equals(VersionStatus.ACTIVE.name())){
+        	retval &= new KcDocumentBaseAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardReportAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardTermsAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardPaymentAndInvoicesAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardCostShareAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardFandARateAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardProjectPersonsAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardPersonCreditSplitAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardSubawardAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardSyncAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardSponsorContactAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardBudgetLimitsAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardCommonValidationAuditRule().processRunAuditBusinessRules(document);
+        	retval &= processDateBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        	retval &=processTransactionBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        }
         reportAndCreateAuditCluster();
         return retval;
         
