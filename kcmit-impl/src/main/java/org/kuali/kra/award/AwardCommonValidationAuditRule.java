@@ -45,11 +45,18 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	boolean retval = true;
 	  AwardDocument awardDocument = (AwardDocument)document;
 	 Award award = awardDocument.getAward();	
+	boolean awardHoldPromptEnabled = getParameterService().getParameterValueAsBoolean(
+             "KC-AWARD", "Document", "ENABLE_AWARD_VALIDATIONS");
+	if(awardHoldPromptEnabled){
 	 retval &= getAwardCommonValidationService().validateSponsorCodeIsNIH(award);
 	 retval &= getAwardCommonValidationService().validateSpecialReviews(award);
 	 retval &= getAwardCommonValidationService().validateReports(award);
 	 retval &= getAwardCommonValidationService().validateAwardTerm(award);
-	/* retval &=getAwardCommonValidationService().validateAwardOnCOI(award);*/
+	 /* retval &=getAwardCommonValidationService().validateAwardOnCOI(award);*/
+	}else{
+		retval = true;
+	}
+	
     if (!retval) {
     	auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_COMMON, link));
     	reportAndCreateAuditCluster();            
