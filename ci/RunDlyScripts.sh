@@ -17,5 +17,5 @@ then
 fi
 if [ "$rundbflag" == "true" ]
 then
-	./RunSqlScripts.sh
+	ci/RunSqlScripts.sh
 fi 
