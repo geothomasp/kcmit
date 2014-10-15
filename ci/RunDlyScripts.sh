@@ -15,7 +15,7 @@ then
 	#sudo -u coeus cp -u /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-train-web:/home/coeus/kc/deployment/.
 	#sleep 1
 fi
-if [ "$rundbflag" == "true" ]
-then
-	ci/RunSqlScripts.sh
-fi 
+#if [ "$rundbflag" == "true" ]
+#then
+#	ci/RunSqlScripts.sh
+#fi 
