@@ -1,7 +1,7 @@
 #!/bin/bash
 env=$ENV
 scriptDir="../kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql/6.0"
-tod=$(date +%Y%m%d)
+tod=$(date +%Y%m%d%H%M)
 echo $tod
 echo "spool sqlrun-${tod}.log"
 cd $scriptDir
