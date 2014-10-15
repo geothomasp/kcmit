@@ -23,7 +23,7 @@
 	<table cellpadding="0" cellspacing="0" summary="">
 		<tr>
 			<th width="15%">Removed Key Person</th>
-			<th width="15%">Confirmed Person</th>			
+			<th width="15%">Confirmed Date & Person</th>			
 			<th width="15%">Removed Date & Person</th>
 		</tr>
 	
@@ -32,7 +32,11 @@
 				varStatus="ppStatus">
 				<tr>
 					<td width="15%">${removalHistoryValues.keyPersonName}</td>
-					<td width="15%">${removalHistoryValues.updateUserConfirm}</td>
+					<td width="15%">
+					<c:if test="${removalHistoryValues.updateTimestampConfirm != null}">
+					<fmt:formatDate value="${removalHistoryValues.updateTimestampConfirm}" pattern="MM/dd/yyyy HH:mm:ss a"/>
+					</c:if>&nbsp;
+					${removalHistoryValues.updateUserConfirm}</td>
 					
 					<td width="15%"><fmt:formatDate value="${removalHistoryValues.updateTimestamp}" pattern="MM/dd/yyyy HH:mm:ss a"/>${removalHistoryValues.updateUser}</td>
 				</tr>

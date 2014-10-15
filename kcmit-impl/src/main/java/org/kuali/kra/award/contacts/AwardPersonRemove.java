@@ -105,13 +105,13 @@ public class AwardPersonRemove extends KcPersistableBusinessObjectBase implement
 	}
 
 	public Timestamp getUpdateTimestampConfirm() {
-		return convertDate(updateTimestampConfirm);
+		if(updateTimestampConfirm != null){
+			this.updateTimestampConfirm = convertDate(updateTimestampConfirm);
+			}
+			return this.updateTimestampConfirm;
 	}
 
 	public void setUpdateTimestampConfirm(Timestamp updateTimestampConfirm) {
-		if(updateTimestampConfirm != null){
-		this.updateTimestampConfirm = convertDate(updateTimestampConfirm);
-		}
 		this.updateTimestampConfirm = updateTimestampConfirm;
 	}
 

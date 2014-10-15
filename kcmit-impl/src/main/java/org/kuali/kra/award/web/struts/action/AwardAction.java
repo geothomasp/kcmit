@@ -244,7 +244,10 @@ public class AwardAction extends BudgetParentActionBase {
         if (KNSGlobalVariables.getAuditErrorMap().isEmpty()) {
             KcServiceLocator.getService(AuditHelper.class).auditConditionally((AwardForm) form);
         }
-        
+        if (awardForm.isAlertMessage()) {
+             KNSGlobalVariables.getMessageList().add("error.award.awardhdata.save.pending");
+             awardForm.setViewOnly(true);
+        }
         return actionForward;
     }
     
@@ -444,7 +447,7 @@ public class AwardAction extends BudgetParentActionBase {
         // now we need to save the hierarchy changes
         getBusinessObjectService().save(award.getSyncChanges());
         awardForm.getAwardSyncBean().getConfirmedPendingChanges().clear();
-        
+        awardForm.setAlertMessage(false);
         /**
          * deal with the award report tracking generation business.
          */

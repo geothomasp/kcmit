@@ -197,8 +197,18 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     public  Collection<AwardPersonRemove> awardPersonRemovalHistory = new ArrayList<AwardPersonRemove>();
     private AccountCreationPresentationHelper accountCreationHelper;
     private boolean kpMaintenanceRole = false;
+    private boolean alertMessage = false;   
     
-    public boolean isKpMaintenanceRole() {
+    
+    public boolean isAlertMessage() {
+		return alertMessage;
+	}
+
+	public void setAlertMessage(boolean alertMessage) {
+	  this.alertMessage = alertMessage;
+	}
+
+	public boolean isKpMaintenanceRole() {
 		return kpMaintenanceRole;
 	}
 

@@ -105,25 +105,29 @@ public
      */
     public void confirmProjectPeersonEntry(int lineToEdit) {
      List<AwardPerson> projectPersons = getProjectPersonnel(); 
-       try{
-        if(projectPersons.size() > lineToEdit) {
-       AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
-       if(projectPersons.get(lineToEdit).getAward().getAwardId()!=null && projectPersons.get(lineToEdit).getAwardNumber() != null && projectPersons.get(lineToEdit).getAwardContactId() != null && projectPersons.get(lineToEdit).getPersonId() !=null && projectPersons.get(lineToEdit).getSequenceNumber() != null){
-        awardPersonConfirm.setAwardId(projectPersons.get(lineToEdit).getAward().getAwardId());
-        awardPersonConfirm.setAwardNumber(projectPersons.get(lineToEdit).getAwardNumber());
-        awardPersonConfirm.setAwardPersonId(projectPersons.get(lineToEdit).getAwardContactId());
-        awardPersonConfirm.setPersonId(projectPersons.get(lineToEdit).getPersonId());
-        awardPersonConfirm.setUpdateTimestamp(projectPersons.get(lineToEdit).getUpdateTimestamp());
-        awardPersonConfirm.setUpdateUser(projectPersons.get(lineToEdit).getUpdateUser());
-        awardPersonConfirm.setConfirmFlag(true);
-        awardPersonConfirm.setSequenceNumber(projectPersons.get(lineToEdit).getSequenceNumber());
-        getBusinessObjectService().save(awardPersonConfirm);
-      }
-        }
+		if (projectPersons.size() > lineToEdit) {
+			AwardPersonConfirm awardPersonConfirm = new AwardPersonConfirm();
+			if (projectPersons.get(lineToEdit).getAward().getAwardId() != null
+					&& !(projectPersons.get(lineToEdit).getAwardNumber().isEmpty())
+					&& projectPersons.get(lineToEdit).getAwardContactId() != null
+					&& !(projectPersons.get(lineToEdit).getPersonId().isEmpty())
+					&& projectPersons.get(lineToEdit).getSequenceNumber() != null) {
+				awardPersonConfirm.setAwardId(projectPersons.get(lineToEdit).getAward().getAwardId());
+				awardPersonConfirm.setAwardNumber(projectPersons.get(lineToEdit).getAwardNumber());
+				awardPersonConfirm.setAwardPersonId(projectPersons.get(lineToEdit).getAwardContactId());
+				awardPersonConfirm.setPersonId(projectPersons.get(lineToEdit).getPersonId());
+				awardPersonConfirm.setUpdateTimestamp(projectPersons.get(lineToEdit).getUpdateTimestamp());
+				awardPersonConfirm.setUpdateUser(projectPersons.get(lineToEdit).getUpdateUser());
+				awardPersonConfirm.setConfirmFlag(true);
+				awardPersonConfirm.setSequenceNumber(projectPersons.get(lineToEdit).getSequenceNumber());
+				this.awardForm.setAlertMessage(false);
+				getBusinessObjectService().save(awardPersonConfirm);
+			}else{this.awardForm.setAlertMessage(true);
+			
+			}
+		}
        
-       }catch(Exception e){
-           e.printStackTrace();
-       }
+      
     }
     public BusinessObjectService getBusinessObjectService(){
         BusinessObjectService businessObjectService =  (BusinessObjectService) KcServiceLocator.getService(BusinessObjectService.class);
