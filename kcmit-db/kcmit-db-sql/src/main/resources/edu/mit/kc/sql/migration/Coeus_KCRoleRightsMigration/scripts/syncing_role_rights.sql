@@ -3,7 +3,6 @@ begin
 dbms_output.enable(6500000000);
 end;
 /
-
 delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
       select role_mbr_id from krim_role_mbr_t where role_id in (
 		select role_id from krim_role_t where nmspc_cd not in (
@@ -25,6 +24,11 @@ delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
 														)
       )
 );
+delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
+      select role_mbr_id from krim_role_mbr_t where role_id in (
+		select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')
+      )
+);
 delete from krim_role_mbr_t where role_id in (
 		select role_id from krim_role_t where nmspc_cd not in (
 															'KR-BUS',
@@ -42,7 +46,10 @@ delete from krim_role_mbr_t where role_id in (
 															'KC-KRMS',
 															'KC-M',															
 															'KC-WKFLW'
-														)
+														)										
+);
+delete from krim_role_mbr_t where role_id in (
+				select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')						
 );
 delete from krim_role_perm_t where role_id in (
 		select role_id from krim_role_t where nmspc_cd not in (
@@ -61,7 +68,10 @@ delete from krim_role_perm_t where role_id in (
 															'KC-KRMS',
 															'KC-M',															
 															'KC-WKFLW'
-														)
+														)											
+);
+delete from krim_role_perm_t where role_id in (
+select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')										
 );
 delete from krim_role_t where nmspc_cd not in (
 											'KR-BUS',
@@ -79,7 +89,8 @@ delete from krim_role_t where nmspc_cd not in (
 											'KC-KRMS',
 											'KC-M',											
 											'KC-WKFLW'
-);
+);                          
+delete from  krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%');
 commit
 /
 declare
