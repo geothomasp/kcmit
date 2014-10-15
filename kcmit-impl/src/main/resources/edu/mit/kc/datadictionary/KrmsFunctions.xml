@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<bean id="KrmsFunctions" parent="KrmsFunctions-parentBean" />
 	<bean id="KrmsFunctions-parentBean" abstract="true" parent="DataObjectEntry"
-		p:dataObjectClass="org.kuali.kra.bo.KrmsFunctions" p:objectLabel="Krms Functions">
-		 <property name="titleAttribute" value="functionId"/>
+		p:dataObjectClass="edu.mit.kc.bo.KrmsFunctions" p:objectLabel="Krms Functions">
+		 <property name="titleAttribute" value="id"/>
  		<property name="attributes">
 			<list>
 				<ref bean="KrmsFunctions-functionId" />
@@ -23,7 +23,7 @@
 	<!-- Attribute Definitions -->
 	<bean id="KrmsFunctions-functionId" parent="KrmsFunctions-functionId-parentBean" />
 	<bean id="KrmsFunctions-functionId-parentBean" abstract="true"
-		parent="AttributeDefinition" p:name="functionId" p:forceUppercase="false"
+		parent="AttributeDefinition" p:name="id" p:forceUppercase="false"
 		p:label="Function Id" p:shortLabel="Function Id" p:summary="Function Id"
 		p:description="Function Id">
 		<property name="validationPattern">
@@ -42,7 +42,7 @@
 
 	<bean id="KrmsFunctions-namespaceCode" parent="KrmsFunctions-namespaceCode-parentBean" />
 	<bean id="KrmsFunctions-namespaceCode-parentBean" abstract="true"
-		parent="AttributeDefinition" p:name="namespaceCode" p:forceUppercase="true"
+		parent="AttributeDefinition" p:name="namespace" p:forceUppercase="true"
 		p:shortLabel="Namespace Code" p:label="Namespace Code" p:summary="Namespace Code"
 		p:description="Namespace Code">
 		<property name="validationPattern">
@@ -61,7 +61,7 @@
 
 	<bean id="KrmsFunctions-namespace" parent="KrmsFunctions-namespace-parentBean" />
 	<bean id="KrmsFunctions-namespace-parentBean" parent="AttributeDefinition"
-		abstract="true" p:name="namespace" p:forceUppercase="false" p:label="Namespace"
+		abstract="true" p:name="name" p:forceUppercase="false" p:label="Namespace"
 		p:shortLabel="Namespace" p:summary="Namespace" p:description="Namespace">
 		<property name="validationPattern">
 			<bean parent="AnyCharacterValidationPattern" />
@@ -174,7 +174,7 @@
    <bean id="KrmsFunctions-InquiryView" parent="KrmsFunctions-InquiryView-parentBean"/>
    <bean id="KrmsFunctions-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
     <property name="headerText" value="Krms Inquiry"/>
-    <property name="dataObjectClassName" value="org.kuali.kra.bo.KrmsFunctions"/>
+    <property name="dataObjectClassName" value="edu.mit.kc.bo.KrmsFunctions"/>
     <property name="singlePageView" value="true"/>
     <property name="items">
       <list>
@@ -195,9 +195,9 @@
     <property name="layoutManager.numberOfColumns" value="2"/>
     <property name="items">
       <list>
-        <bean parent="Uif-InputField" p:propertyName="functionId"/>
-        <bean parent="Uif-InputField" p:propertyName="namespaceCode"/>
+        <bean parent="Uif-InputField" p:propertyName="id"/>
         <bean parent="Uif-InputField" p:propertyName="namespace"/>
+        <bean parent="Uif-InputField" p:propertyName="name"/>
         <bean parent="Uif-InputField" p:propertyName="typeId"/>
         <bean parent="Uif-InputField" p:propertyName="description"/>
         
@@ -208,8 +208,8 @@
    <bean id="Krms-InquiryView-parameters" parent="Krms-InquiryView-parameters-parentBean"/>
    <bean id="Krms-InquiryView-parameters-parentBean" abstract="true" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3">
      <property name="headerText" value="Krms Function Parameters"/>
-     <property name="collectionObjectClass" value="org.kuali.kra.bo.KrmsFunctionsParams"/>
-     <property name="propertyName" value="krmsFunctionsParams"/>
+     <property name="collectionObjectClass" value="edu.mit.kc.bo.KrmsFunctionsParams"/>
+     <property name="propertyName" value="functionsParams"/>
      <property name="layoutManager.renderSequenceField" value="false"/>
      <property name="items">
        <list>
@@ -225,19 +225,19 @@
 	<bean id="KrmsFunctions-LookupView" parent="KrmsFunctions-LookupView-parentBean" />
 	<bean id="KrmsFunctions-LookupView-parentBean" abstract="true"
 		parent="Uif-LookupView" p:headerText="Krms Functions Lookup"
-		p:dataObjectClassName="org.kuali.kra.bo.KrmsFunctions">
+		p:dataObjectClassName="edu.mit.kc.bo.KrmsFunctions">
 		<property name="defaultSortAttributeNames">
 			<list>
-				<value>functionId</value>
+				<value>id</value>
 			</list>
 		</property>
 		<property name="criteriaFields">
 			<list>
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="functionId"
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="id"
 					p:order="10" />
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="namespaceCode"
-					p:order="20" />
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="namespace"
+					p:order="20" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="name"
 					p:order="30" />
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="typeId"
 					p:order="40" />
@@ -245,11 +245,11 @@
 		</property>
 		<property name="resultFields">
 			<list>
-				<bean parent="Uif-DataField" p:propertyName="functionId"
+				<bean parent="Uif-DataField" p:propertyName="id"
 					p:order="10" />
-				<bean parent="Uif-DataField" p:propertyName="namespaceCode"
-					p:order="20" />
 				<bean parent="Uif-DataField" p:propertyName="namespace"
+					p:order="20" />
+				<bean parent="Uif-DataField" p:propertyName="name"
 					p:order="30" />
 				<bean parent="Uif-DataField" p:propertyName="description"
 					p:order="40" />
