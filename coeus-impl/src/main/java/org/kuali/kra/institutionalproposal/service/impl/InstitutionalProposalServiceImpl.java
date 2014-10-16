@@ -60,6 +60,8 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.SequenceAccessorService;
 import org.kuali.rice.krad.util.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -81,13 +83,16 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     private static final String DECIMAL_FORMAT = "00000000";
     private static final String PROPOSAL_NUMBER = "proposalNumber";
     private static final String SEQUENCE_NUMBER = "sequenceNumber";
-    private DataObjectService dataObjectService;
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;
     private VersioningService versioningService;
     private InstitutionalProposalVersioningService institutionalProposalVersioningService;
     private SequenceAccessorService sequenceAccessorService;
     private ParameterService parameterService;
+    
+    @Autowired
+    @Qualifier("dataObjectService")
+    private DataObjectService dataObjectService;
     
     /**
      * Creates a new pending Institutional Proposal based on given development proposal and budget.
