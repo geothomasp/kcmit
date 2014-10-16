@@ -135,7 +135,7 @@ and uaa.unit_administrator_type_code=5;
 		   mail_message := replace(mail_message, '{UNIT_NUMBER}',ls_unit_num );
 		   mail_message := replace(mail_message, '{UNIT_NAME}',ls_unit_name );				   
 		   BEGIN
-			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,NULL,NULL,mail_subject,mail_message); 
+			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,ls_cc,NULL,mail_subject,mail_message); 
 	   EXCEPTION
 	   WHEN OTHERS THEN
 	   ls_message_status:='N';
@@ -150,10 +150,10 @@ and uaa.unit_administrator_type_code=5;
         else
          select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=502; 
 		  KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,502,mail_subject,mail_message);
-		   mail_message := replace(mail_subject,'{SUBCONTRACT_NAME}',as_subcontractorName );	
-		   mail_message := replace(mail_subject,'{AMOUNT}',trim(to_char(ai_amount, '$9,999,999,999.00')));
-           mail_message := replace(mail_subject,'{SPONSOR_AWARD_NUMBER}',ls_sponsor_award_num );	
-		   mail_message := replace(mail_subject,'{AWARD_TYPE}',ls_award_type);			   
+		   mail_message := replace(mail_message,'{SUBCONTRACT_NAME}',as_subcontractorName );	
+		   mail_message := replace(mail_message,'{AMOUNT}',trim(to_char(ai_amount, '$9,999,999,999.00')));
+           mail_message := replace(mail_message,'{SPONSOR_AWARD_NUMBER}',ls_sponsor_award_num );	
+		   mail_message := replace(mail_message,'{AWARD_TYPE}',ls_award_type);			   
 		   mail_message := replace(mail_message, '{ACCOUNT_NUMBER}',ls_account_num );	
 		   mail_message := replace(mail_message, '{TITLE}',ls_title );
            mail_message := replace(mail_message, '{PERSON_NAME}',ls_PI_name );	
@@ -161,7 +161,7 @@ and uaa.unit_administrator_type_code=5;
 		   mail_message := replace(mail_message, '{UNIT_NAME}',ls_unit_name );			   
 		   --KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TraineeEmail,ls_PIEmail,NULL,mail_subject,mail_message);
 		   BEGIN
-			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,NULL,NULL,mail_subject,mail_message); 
+			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,ls_cc,NULL,mail_subject,mail_message); 
 	   EXCEPTION
 	   WHEN OTHERS THEN
 	   ls_message_status:='N';
@@ -413,7 +413,7 @@ BEGIN
                 end loop;
                 close cur_fund_source;
             else 
-            
+                 
             --no funding source info
                 dbms_output.put_line('subcontract end in 30 days with no founding source.');  
                 ls_recipient := 'coeus-mit@mit.edu';
@@ -472,6 +472,7 @@ ls_account_num  AWARD.ACCOUNT_NUMBER%type;
 ls_start_date   SUBAWARD.start_date%type;
 ls_end_date   SUBAWARD.end_date%type;
 ls_REQUISITIONER_email KRIM_ENTITY_EMAIL_T.EMAIL_ADDR%type;
+ls_ao_email KRIM_ENTITY_EMAIL_T.EMAIL_ADDR%type;
 ls_rolodex_email  ROLODEX.EMAIL_ADDRESS%type;
 --ls_other_name   OSP$PERSON.FULL_NAME%type;
 --ls_admin_email  OSP$PERSON.EMAIL_ADDRESS%type;
@@ -670,7 +671,49 @@ BEGIN
                 close cur_contact;
               else
                -- no Contact Type as 'Subaward Ending Email Contact'
+			   
+			   
+			            select distinct kee.email_addr into ls_ao_email from
+                               award_person_units au inner join
+                               award_persons ap
+                               on au.award_person_id= ap.award_person_id
+                               inner join subaward_funding_source s on
+                               ap.award_id=s.award_id
+                               left outer join unit_administrator ua
+                               on au.unit_number=ua.unit_number
+                               left outer join unit_administrator uaa
+                               on au.unit_number=uaa.unit_number
+                               left outer  join  krim_prncpl_t kp
+                               on kp.prncpl_id= ua.person_id
+                               inner join krim_entity_nm_t ken
+                               on kp.entity_id= ken.entity_id
+                               inner join krim_entity_email_t kee
+                               on kp.entity_id= kee.entity_id
+                               where s.subaward_code=ls_sub_code
+                               and s.SEQUENCE_NUMBER = (SELECT MAX(SEQUENCE_NUMBER)
+                               FROM subaward_funding_source
+                               WHERE s.subaward_code = subaward_funding_source.subaward_code)
+                               and au.lead_unit_flag='Y'
+                               and ua.unit_administrator_type_code=1;
                 dbms_output.put_line('no Contact Type : Subaward Ending Email Contact');
+				ls_recipient:='coeus-mit@mit.edu'; 
+				ls_cc_email:=ls_cc_email|| ',' || ls_ao_email;
+                                KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,506,mail_subject,mail_message);
+		                      mail_message := replace(mail_message,'{PERCHASE_ORDER_NUM}',ls_po );
+                              mail_message := replace(mail_message,'{START_DATE}',to_char(ls_start_date, 'mm/dd/yyyy'));							  
+		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));
+                              mail_message := replace(mail_message,'{ANTICIPATED_AMOUNT}',ls_anticipated_amount);							  
+		                      BEGIN
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipient,ls_cc_email,NULL,mail_subject,mail_message); 
+                               EXCEPTION
+						       WHEN OTHERS THEN
+						       ls_message_status:='N';
+						        END; 
+							 
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  if li_ntfctn_id <>  -1 then 
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_rolodex_id,ls_message_status);
+						       end if;   	            
               end if;
               
            -- else 
