@@ -15,7 +15,7 @@ select 'Started role right migration.'|| localtimestamp from dual;
 commit;
 @scripts/syncing_role_rights.sql
 @scripts/load_coeus_user_roles.sql
-@scripts/add_role_perm_manually.sql
+--@scripts/add_role_perm_manually.sql
 commit;
 select 'completed role right migration.'|| localtimestamp from dual;
 Spool Off;
