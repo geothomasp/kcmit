@@ -1,3 +1,2 @@
-@DML_MITKC-161_20141016.sql
 EXIT
 /
