@@ -1,4 +1,6 @@
 #!/bin/bash
+export LD_LIBRARY_PATH=/oracle/product/11.2.0/client/lib
+export PATH=$PATH:$LD_LIBRARY_PATH
 env=$ENV
 scriptDir="kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql/6.0"
 tod=$(date +%Y%m%d%H%M)
