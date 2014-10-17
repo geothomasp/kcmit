@@ -5,15 +5,20 @@ end;
 /
 delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
       select role_mbr_id from krim_role_mbr_t where role_id in (
-		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')))
+		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
+		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%'))
+      ))
 /
 delete from krim_role_mbr_t where role_id in (
-		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW'))
+		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
+		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')))
 /
 delete from krim_role_perm_t where role_id in (
-		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW'))
+		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
+		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')))
 /
 delete from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
+and kim_typ_id not in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')
 /
 commit
 /
