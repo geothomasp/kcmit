@@ -9,7 +9,7 @@ echo $tod
 echo "spool sqlrun-${tod}.log"
 cd $scriptDir
 sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql
-sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql
+#sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql
 cat all-ddl-snapshot.sql > "all-ddl-$tod.sql"
 cat all-dml-snapshot.sql > "all-dml-$tod.sql"
 > all-ddl-snapshot.sql;

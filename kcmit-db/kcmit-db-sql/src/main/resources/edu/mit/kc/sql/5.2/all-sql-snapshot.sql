@@ -9,4 +9,3 @@ select 'running dml snapshot' from dual
 commit
 /
 EXIT;
-/
