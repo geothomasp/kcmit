@@ -16,4 +16,4 @@ cat all-dml-snapshot.sql > "all-dml-$tod.sql"
 > all-dml-snapshot.sql;
 git add .
 git commit -am 'reset all snapshots'
-git push origin 
+git push origin master
