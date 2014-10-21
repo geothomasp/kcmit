@@ -14,6 +14,6 @@ cat all-ddl-snapshot.sql > "all-ddl-$tod.sql"
 cat all-dml-snapshot.sql > "all-dml-$tod.sql"
 > all-ddl-snapshot.sql;
 > all-dml-snapshot.sql;
-git add $scriptDir/.
+git add .
 git commit -am 'reset all snapshots'
 git push origin 
