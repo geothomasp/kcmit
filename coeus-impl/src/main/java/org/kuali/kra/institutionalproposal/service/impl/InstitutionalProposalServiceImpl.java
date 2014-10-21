@@ -83,7 +83,6 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     private static final String DECIMAL_FORMAT = "00000000";
     private static final String PROPOSAL_NUMBER = "proposalNumber";
     private static final String SEQUENCE_NUMBER = "sequenceNumber";
-    
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;
     private VersioningService versioningService;

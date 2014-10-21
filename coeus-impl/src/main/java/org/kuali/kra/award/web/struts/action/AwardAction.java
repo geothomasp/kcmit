@@ -170,17 +170,21 @@ public class AwardAction extends BudgetParentActionBase {
         
         AwardDocument awardDocument = (AwardDocument) awardForm.getDocument();
         //check to see if this document might be a part of an active award sync(if it is lock it)
-        AwardDocument parentSyncAward = 
-            getAwardSyncService().getAwardLockingHierarchyForSync(awardDocument, GlobalVariables.getUserSession().getPrincipalId()); 
-        if (parentSyncAward != null) {
-            KNSGlobalVariables.getMessageList().add("error.award.awardhierarchy.sync.locked", parentSyncAward.getDocumentNumber());
-            awardForm.setViewOnly(true);
+        if(awardForm.getMethodToCall().equals("docHandler")){
+            AwardDocument parentSyncAward = 
+                    getAwardSyncService().getAwardLockingHierarchyForSync(awardDocument, GlobalVariables.getUserSession().getPrincipalId()); 
+            if (parentSyncAward != null) {
+                KNSGlobalVariables.getMessageList().add("error.award.awardhierarchy.sync.locked", parentSyncAward.getDocumentNumber());
+                awardForm.setViewOnly(true);
+            }
+            setBooleanAwardInMultipleNodeHierarchyOnForm (awardDocument.getAward());
+            awardForm.initializeFormOrDocumentBasedOnCommand();
+            setBooleanAwardHasTandMOrIsVersioned(awardDocument.getAward());
+            setSubAwardDetails(awardDocument.getAward());
+            handlePlaceHolderDocument(awardForm, awardDocument);
         }
-        handlePlaceHolderDocument(awardForm, awardDocument);
-        awardForm.initializeFormOrDocumentBasedOnCommand();
-        setBooleanAwardInMultipleNodeHierarchyOnForm (awardDocument.getAward());
-        setBooleanAwardHasTandMOrIsVersioned(awardDocument.getAward());
-        setSubAwardDetails(awardDocument.getAward());
+      
+       
         return forward;
     }
 
@@ -1744,8 +1748,11 @@ public class AwardAction extends BudgetParentActionBase {
     @SuppressWarnings("unchecked")
     @Override
     protected void populateAuthorizationFields(KualiDocumentFormBase formBase) {
-        super.populateAuthorizationFields(formBase);
+        
         AwardForm awardForm = (AwardForm) formBase;
+        if(awardForm.getMethodToCall().equals("docHandler")){
+        super.populateAuthorizationFields(formBase);
+        }
         AwardDocument awardDocument = awardForm.getAwardDocument();
         Award award = awardDocument.getAward();
         Map documentActions = formBase.getDocumentActions();

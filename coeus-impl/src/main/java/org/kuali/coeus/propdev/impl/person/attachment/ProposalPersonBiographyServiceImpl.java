@@ -42,9 +42,6 @@ import java.util.List;
 @Component("proposalPersonBiographyService")
 public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiographyService {
 
-    @Autowired
-    @Qualifier("dataObjectService")
-    private DataObjectService dataObjectService;
 
     @Autowired
     @Qualifier("attachmentDao")
@@ -54,8 +51,11 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
     @Qualifier("personService")
     private PersonService personService;
 
+    @Autowired
+    @Qualifier("dataObjectService")
+    private DataObjectService dataObjectService;
     
-    /**
+	/**
      * 
      * @see org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiographyService#addProposalPersonBiography(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument,
      *      org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography)
@@ -205,5 +205,6 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
     public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
+    
 
 }
