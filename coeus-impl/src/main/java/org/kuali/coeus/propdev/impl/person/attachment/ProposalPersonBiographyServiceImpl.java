@@ -24,8 +24,7 @@ import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.attachment.AttachmentDao;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +40,6 @@ import java.util.List;
 @Component("proposalPersonBiographyService")
 public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiographyService {
 
-    @Autowired
-    @Qualifier("businessObjectService")
-    private BusinessObjectService businessObjectService;
 
     @Autowired
     @Qualifier("attachmentDao")
@@ -53,8 +49,11 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
     @Qualifier("personService")
     private PersonService personService;
 
+    @Autowired
+    @Qualifier("dataObjectService")
+    private DataObjectService dataObjectService;
     
-    /**
+	/**
      * 
      * @see org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiographyService#addProposalPersonBiography(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument,
      *      org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography)
@@ -94,10 +93,8 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
             }
         }
         DocumentNextvalue documentNextvalue = proposaldevelopmentDocument.getDocumentNextvalueBo(Constants.PROP_PERSON_BIO_NUMBER);
-        List<PersistableBusinessObject> businessObjects = new ArrayList<PersistableBusinessObject>();
-        businessObjects.add(documentNextvalue);
-        businessObjects.add(proposalPersonBiography);
-        getBusinessObjectService().save(businessObjects);
+        getDataObjectService().save(documentNextvalue);
+        getDataObjectService().save(proposalPersonBiography);
         proposalPersonBiography.setPersonnelAttachment(null);
         proposaldevelopmentDocument.getDevelopmentProposal().getPropPersonBios().add(proposalPersonBiography);
 
@@ -143,7 +140,7 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
     public void deleteProposalPersonBiography(ProposalDevelopmentDocument proposaldevelopmentDocument, int lineToDelete) {
         ProposalPersonBiography proposalPersonBiography = proposaldevelopmentDocument.getDevelopmentProposal().getPropPersonBios().get(lineToDelete);
         proposaldevelopmentDocument.getDevelopmentProposal().getPropPersonBios().remove(proposalPersonBiography);
-        getBusinessObjectService().delete(proposalPersonBiography);
+        getDataObjectService().delete(proposalPersonBiography);
 
     }
 
@@ -163,24 +160,6 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
         return null;
     }
 
-    /**
-     * Gets the businessObjectService attribute.
-     * 
-     * @return Returns the businessObjectService.
-     */
-    public BusinessObjectService getBusinessObjectService() {
-        return businessObjectService;
-    }
-
-    /**
-     * Sets the businessObjectService attribute value.
-     * 
-     * @param businessObjectService The businessObjectService to set.
-     */
-
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
-    }
     
     @Override
     public void setPersonnelBioTimeStampUser(List<ProposalPersonBiography> proposalPersonBios) {
@@ -215,5 +194,23 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
     public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
+    
+
+    /**
+     * Gets the dataObjectService attribute.
+     * 
+     * @return Returns the dataObjectService.
+     */
+    public DataObjectService getDataObjectService() {
+		return dataObjectService;
+	}
+    /**
+     * Sets the dataObjectService attribute value.
+     * 
+     * @param dataObjectService The dataObjectService to set.
+     */
+	public void setDataObjectService(DataObjectService dataObjectService) {
+		this.dataObjectService = dataObjectService;
+	}
 
 }
