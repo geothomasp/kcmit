@@ -165,8 +165,8 @@ begin
   select count(DOC_TYP_NM) into li_count from TEMP_LOOKUP_RTE_NODE_LNK;
   if li_count = 0 then  
       Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','OSPInitial');
-      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','OSPInitial','ProposalPersons');
-      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','ProposalPersons','PeopleFlows');
+--      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','OSPInitial','ProposalPersons');
+--      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','ProposalPersons','PeopleFlows');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','isHierarchyChild');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','isHierarchyChild','OSPInitial');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','OSPInitial','ProposalPersons');
