@@ -64,9 +64,9 @@
 			</th>
 			<td>
 			
-				<kul:htmlControlAttribute property="reportTrackingBeans[${index}].preparerId" readOnly="${reportTrackingReadOnly}" 
-				onblur="loadContactPersonName('reportTrackingBeans[${index}].preparerId',
-										'reportTrackingBeans.fullName',
+				<kul:htmlControlAttribute property="reportTrackingBeans[${index}].preparerName" readOnly="${reportTrackingReadOnly}" 
+				onblur="loadContactPersonName('reportTrackingBeans[${index}].preparerName',
+										'fullName.div',
 										'na',
 										'na',
 										'na',
@@ -76,13 +76,24 @@
 				<c:if test="${!reportTrackingReadOnly}">	
 	            	<kul:lookup boClassName="org.kuali.coeus.common.framework.person.KcPerson" 
 	                                fieldConversions="fullName:reportTrackingBeans[${index}].preparerId,userName:reportTrackingBeans[${index}].preparerName" anchor="${tabKey}"/>
-	                           
-                </c:if>	
+	            </c:if>	
 				<kul:htmlControlAttribute property="reportTrackingBeans[${index}].preparerId" readOnly="${reportTrackingReadOnly }"
 						attributeEntry="${reportTrackingBeanAttributes.preparerId}"   />
                 <kul:directInquiry boClassName="org.kuali.coeus.common.framework.person.KcPerson" inquiryParameters="reportTrackingBeans[${index}].preparerId:personId" /> 
-            <br/>	
-                <span id="reportTrackingBeans.fullName"> <c:out value="${reportTrackingBeans[$index].preparerFullname}"/>&nbsp;</span>  
+                <br/>	
+             	<div id="fullName.div">
+				 <c:if	test="${!empty KualiForm.reportTrackingBeans[0].preparerName}">
+					<c:choose>
+						<c:when
+							test="${empty KualiForm.reportTrackingBeans[0].preparerId}">
+							not found
+						</c:when>
+						<c:otherwise>
+							<c:out
+								value="${KualiForm.reportTrackingBeans[0].preparerId}" />
+						</c:otherwise>
+					</c:choose>
+				</c:if></div>
                 <html:hidden styleId ="sub.reportTrackingBeans.div" property="reportTrackingBeans[${index}].preparerId" />
 			</td>
 			<td>
@@ -152,23 +163,33 @@
 				<td>
 					<kul:htmlControlAttribute property="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerName" 
 					onblur="loadContactPersonName('document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerName',
-										'preparer[${status.index}]',
+										'multiselectfullName.div',
 										'na',
 										'na',
 										'na',
 										'sub.reportTrackingBeans.div');"	attributeEntry="${reportTrackingAttributes.preparerName}" readOnly="${reportTrackingReadOnly }"  />
 					<c:if test="${!reportTrackingReadOnly}">
 	                	<kul:lookup boClassName="org.kuali.coeus.common.framework.person.KcPerson" 
-	                                fieldConversions="userName:document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerName,personId:document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerId" />
+	                                fieldConversions="userName:document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerName,fullName:document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerId" />
                    </c:if>	
                     <kul:htmlControlAttribute property="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerId" 
-						attributeEntry="${reportTrackingAttributes.preparerId}" readOnly="${reportTrackingReadOnly }"  /> 	
+						attributeEntry="${reportTrackingAttributes.preparerId}" readOnly="${reportTrackingReadOnly }"  />  
                     <kul:directInquiry boClassName="org.kuali.coeus.common.framework.person.KcPerson" inquiryParameters="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerId:personId" />
                     <html:hidden styleId ="sub.reportTrackingBeans.div" property="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerId" />
 					<br/>
-					<span id="preparer[${status.index}]">
-                    &nbsp;
-					</span>
+					<div id="multiselectfullName.div">
+				 <c:if	test="${!empty KualiForm.document.award.awardReportTermItems[0].reportTrackings[0].preparerName}">
+					<c:choose>
+						<c:when
+							test="${empty KualiForm.document.award.awardReportTermItems[0].reportTrackings[0].preparerId}">
+							not found
+						</c:when>
+						<c:otherwise>
+							<c:out
+								value="${KualiForm.document.award.awardReportTermItems[0].reportTrackings[0].preparerId}" />
+						</c:otherwise>
+					</c:choose>
+				</c:if></div>
 				</td>
 				<td>
 					<kul:htmlControlAttribute property="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].statusCode" 
