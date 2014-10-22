@@ -25,10 +25,10 @@ import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import edu.mit.kc.award.service.AwardCommonValidationService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kns.util.AuditCluster;
-import org.kuali.rice.kns.util.AuditError;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.AuditCluster;
+import org.kuali.rice.krad.util.AuditError;
 import org.kuali.rice.krad.util.ErrorMessage;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.transaction.annotation.Transactional;
@@ -257,7 +257,7 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     protected void reportAndCreateAuditCluster() {    
         if (auditWarnings.size() > 0) {  
         		
-            KNSGlobalVariables.getAuditErrorMap().put("homePageAuditWarnings", new AuditCluster(Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_NAME, auditWarnings,Constants.AUDIT_WARNINGS));            
+            GlobalVariables.getAuditErrorMap().put("homePageAuditWarnings", new AuditCluster(Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_NAME, auditWarnings,Constants.AUDIT_WARNINGS));            
         
         }     
 

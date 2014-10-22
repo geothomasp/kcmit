@@ -21,13 +21,13 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kns.util.AuditCluster;
-import org.kuali.rice.kns.util.AuditError;
-import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.kuali.rice.krad.keyvalues.PersistableBusinessObjectValuesFinder;
 import org.kuali.rice.krad.rules.rule.DocumentAuditRule;
+import org.kuali.rice.krad.util.AuditCluster;
+import org.kuali.rice.krad.util.AuditError;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.mit.kc.infrastructure.KcMitConstants;
 
@@ -240,7 +240,7 @@ public class AwardFandARateAuditRule implements DocumentAuditRule {
     @SuppressWarnings("unchecked")
     protected void reportAndCreateAuditCluster() {
         if (auditErrors.size() > 0) {
-            KNSGlobalVariables.getAuditErrorMap().put(FANDA_AUDIT_ERRORS, new AuditCluster(Constants.FANDA_RATES_PANEL_NAME, auditErrors, Constants.AUDIT_ERRORS));
+            GlobalVariables.getAuditErrorMap().put(FANDA_AUDIT_ERRORS, new AuditCluster(Constants.FANDA_RATES_PANEL_NAME, auditErrors, Constants.AUDIT_ERRORS));
         }
     }
     

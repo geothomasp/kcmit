@@ -241,7 +241,7 @@ public class AwardAction extends BudgetParentActionBase {
         if (awardForm.isAuditActivated()){
             awardForm.setUnitRulesMessages(getUnitRulesMessages(awardForm.getAwardDocument()));
         }
-        if (KNSGlobalVariables.getAuditErrorMap().isEmpty()) {
+        if (GlobalVariables.getAuditErrorMap().isEmpty()) {
             KcServiceLocator.getService(AuditHelper.class).auditConditionally((AwardForm) form);
         }
         if (awardForm.isAlertMessage()) {
