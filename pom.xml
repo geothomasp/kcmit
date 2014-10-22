@@ -1451,7 +1451,7 @@
             <dependency>
                 <groupId>org.kuali.coeus</groupId>
                 <artifactId>coeus-api-all</artifactId>
-                <version>${project.version}</version>
+                <version>${coeus-api.version}</version>
             </dependency>
 
             <dependency>
