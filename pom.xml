@@ -1,12 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<modelVersion>4.0.0</modelVersion>
   
-<!--    <parent>
-      <groupId>org.kuali.coeus</groupId>
-      <artifactId>coeus</artifactId>
-      <version>6.0-SNAPSHOT</version>
-  </parent>
- -->  
  <groupId>edu.mit.kc</groupId>
   <artifactId>kcmit</artifactId>
   <version>6.0.0.1</version>
@@ -30,7 +27,650 @@
  -->
          <module>kcmit-webapp</module>
   </modules>
-     <dependencyManagement>
+
+    <properties>
+        <!--dependency versions-->
+        <aopalliance.version>1.0</aopalliance.version>
+        <avalon-framework.version>4.3.1</avalon-framework.version>
+        <bouncycastle.version>1.51</bouncycastle.version>
+        <cglib-nodep.version>3.1</cglib-nodep.version>
+        <coeus-s2sgen.version>6.0-SNAPSHOT</coeus-s2sgen.version>
+        <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
+        <commons-codec.version>1.9</commons-codec.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-collections4.version>4.0</commons-collections4.version>
+        <commons-fileupload.version>1.3.1</commons-fileupload.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
+        <commons-io.version>2.4</commons-io.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-net.version>3.3</commons-net.version>
+        <commons-pool.version>1.6</commons-pool.version>
+        <commons-validator.version>1.4.0</commons-validator.version>
+        <cxf.version>2.7.12</cxf.version>
+        <db-ojb.version>1.0.4-patch8</db-ojb.version>
+        <displaytag.version>1.2</displaytag.version>
+        <drools.version>6.0.1.Final</drools.version>
+        <dwr.version>3.0.RC2</dwr.version>
+        <ehcache.version>2.6.9</ehcache.version>
+        <el.version>2.2.1</el.version>
+        <fop.version>1.1</fop.version>
+        <guava.version>17.0</guava.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <itext.version>2.1.7</itext.version>
+        <jackson.version>1.9.13</jackson.version>
+        <javax.mail.version>1.5.2</javax.mail.version>
+        <javax.persistence.version>2.1.0</javax.persistence.version>
+        <jaxb-impl.version>2.2.6</jaxb-impl.version>
+        <jetty9.javax.servlet.version>3.0.0.v201112011016</jetty9.javax.servlet.version>
+        <jetty.javax.servlet.version>${jetty9.javax.servlet.version}</jetty.javax.servlet.version>
+        <jetty9.javax.servlet.jsp.version>2.2.0.v201112011158</jetty9.javax.servlet.jsp.version>
+        <jetty.javax.servlet.jsp.version>${jetty9.javax.servlet.jsp.version}</jetty.javax.servlet.jsp.version>
+        <jetty8.version>8.1.14.v20131031</jetty8.version>
+        <jetty9.version>9.0.7.v20131107</jetty9.version>
+        <jetty.version>${jetty9.version}</jetty.version>
+        <jmock.version>2.6.0</jmock.version>
+        <joda-time.version>2.4</joda-time.version>
+        <jsp.version>2.2.1</jsp.version>
+        <jstl.version>1.2.1</jstl.version>
+        <junit.version>4.11</junit.version>
+        <kuali-cm.version>1.2.8</kuali-cm.version>
+        <log4j.version>1.2.17</log4j.version>
+        <logkit.version>1.2</logkit.version>
+        <mysql.groupId>mysql</mysql.groupId>
+        <mysql.artifactId>mysql-connector-java</mysql.artifactId>
+        <mysql.version>5.1.31</mysql.version>
+        <opencsv.version>2.3</opencsv.version>
+        <opensaml.version>2.6.1</opensaml.version>
+        <oracle.groupId>com.oracle</oracle.groupId>
+        <oracle.artifactId>ojdbc6</oracle.artifactId>
+        <oracle.version>10.2.0.3.0</oracle.version>
+        <org.eclipse.birt.runtime.version>4.4.0</org.eclipse.birt.runtime.version>
+        <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
+        <pdfbox.version>1.8.6</pdfbox.version>
+        <quartz.version>1.8.4</quartz.version>
+        <rice.version>2.5.1-r48779</rice.version>
+        <servlet.version>3.0.1</servlet.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <spring.version>3.2.10.RELEASE</spring.version>
+        <spring-modules-ojb.version>0.8a</spring-modules-ojb.version>
+        <struts.version>1.3.10</struts.version>
+        <validation-api.version>1.0.0.GA</validation-api.version>
+        <velocity.version>1.7</velocity.version>
+        <xalan.version>2.7.2</xalan.version>
+        <xercesImpl.version>2.11.0</xercesImpl.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
+        <xmlbeans.version>2.6.0</xmlbeans.version>
+        <xmlsec.version>1.5.6</xmlsec.version>
+        <xstream.version>1.2.2</xstream.version>
+        <extra-enforcer-rules.version>1.0-beta-2</extra-enforcer-rules.version>
+
+        <!-- plugin versions -->
+        <cxf-codegen-plugin.version>${cxf.version}</cxf-codegen-plugin.version>
+        <jetty-maven-plugin9.groupId>org.eclipse.jetty</jetty-maven-plugin9.groupId>
+        <jetty-maven-plugin.groupId>${jetty-maven-plugin9.groupId}</jetty-maven-plugin.groupId>
+        <jetty-maven-plugin.artifactId>jetty-maven-plugin</jetty-maven-plugin.artifactId>
+        <jetty-maven-plugin.version>${jetty.version}</jetty-maven-plugin.version>
+        <jspc-maven-plugin.version>2.0.0</jspc-maven-plugin.version>
+        <license-maven-plugin.version>1.6.4</license-maven-plugin.version>
+        <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
+        <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
+        <maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
+        <maven-install-plugin.version>2.5.1</maven-install-plugin.version>
+        <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+        <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+        <maven-site-plugin.version>3.4</maven-site-plugin.version>
+        <maven-source-plugin.version>2.3</maven-source-plugin.version>
+        <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+        <maven-war-plugin.version>2.4</maven-war-plugin.version>
+        <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
+        <tomcat7-maven-plugin.version>${tomcat-maven-plugin.version}</tomcat7-maven-plugin.version>
+        <xmlbeans-maven-plugin.version>2.3.3</xmlbeans-maven-plugin.version>
+
+        <db.groupId>${mysql.groupId}</db.groupId>
+        <db.artifactId>${mysql.artifactId}</db.artifactId>
+        <db.version>${mysql.version}</db.version>
+
+        <!-- Surefire config -->
+        <surefire.useFile>false</surefire.useFile>
+        <surefire.testFailureIgnore>false</surefire.testFailureIgnore>
+        <surefire.reportFormat>plain</surefire.reportFormat>
+        <surefire.failIfNoTests>false</surefire.failIfNoTests>
+        <surefire.forkCount>1</surefire.forkCount>
+        <surefire.reuseForks>true</surefire.reuseForks>
+        <surefire.argLine></surefire.argLine>
+        <surefire.aggregate>true</surefire.aggregate>
+        <surefire.skipTests>false</surefire.skipTests>
+
+        <!-- Failsafe config -->
+        <failsafe.useFile>false</failsafe.useFile>
+        <failsafe.testFailureIgnore>false</failsafe.testFailureIgnore>
+        <failsafe.reportFormat>plain</failsafe.reportFormat>
+        <failsafe.failIfNoTests>false</failsafe.failIfNoTests>
+        <failsafe.forkCount>1</failsafe.forkCount>
+        <failsafe.reuseForks>true</failsafe.reuseForks>
+        <failsafe.argLine>-Xmx1024m -XX:MaxPermSize=512m ${javaagent.arg}</failsafe.argLine>
+        <failsafe.aggregate>true</failsafe.aggregate>
+        <failsafe.skipITs>true</failsafe.skipITs>
+        <failsafe.include>**/*Test.java</failsafe.include>
+
+        <javaagent.output.dir>${project.build.directory}/javaagent</javaagent.output.dir>
+        <javaagent.arg>-javaagent:${javaagent.output.dir}/spring-instrument.jar</javaagent.arg>
+
+        <enforcer.phase>validate</enforcer.phase>
+
+        <require.maven.version>3.0</require.maven.version>
+
+        <project.encoding>UTF-8</project.encoding>
+        <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
+
+        <project.java.version>1.7</project.java.version>
+        <!-- These are used by multiple plugins (compiler, javadoc, xref, etc) -->
+        <project.compile.source>${project.java.version}</project.compile.source>
+        <project.compile.target>${project.java.version}</project.compile.target>
+        <enforcer.require.java.version>${project.java.version}</enforcer.require.java.version>
+        <enforcer.max.jdk.version>${project.java.version}</enforcer.max.jdk.version>
+
+        <!-- defaults to dev unless overriden -->
+        <build.environment>dev</build.environment>
+
+        <!-- This is used in the licenses section as well as the jar/war plugins -->
+        <kuali.ecl.license.url>http://maven.kuali.org/external/org/opensource/ecl/2.0/ecl-2.0.txt</kuali.ecl.license.url>
+
+        <maven.skip.packaging>false</maven.skip.packaging>
+
+        <error_prone_core.version>1.1.2</error_prone_core.version>
+        <plexus-compiler-javac.version>2.3</plexus-compiler-javac.version>
+        <plexus-compiler-javac-errorprone.version>2.3</plexus-compiler-javac-errorprone.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-codegen-plugin</artifactId>
+                    <version>${cxf-codegen-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
+                        <source>${project.compile.source}</source>
+                        <target>${project.compile.target}</target>
+                        <fork>true</fork>
+                        <meminitial>512m</meminitial>
+                        <maxmem>1024m</maxmem>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                    <configuration>
+                        <skip>${maven.skip.packaging}</skip>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-banned-dependencies</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>${enforcer.phase}</phase>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>${enforcer.require.java.version}</version>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>[3.0,4.0)</version>
+                                    </requireMavenVersion>
+
+                                    <requirePluginVersions>
+                                        <message>Best Practice is to always define plugin versions!</message>
+                                        <banLatest>true</banLatest>
+                                        <banRelease>true</banRelease>
+                                        <banSnapshots>true</banSnapshots>
+                                        <phases>clean,deploy,site</phases>
+                                    </requirePluginVersions>
+
+                                    <banCircularDependencies/>
+                                    <DependencyConvergence/>
+                                    <!-- when executed from eclipse it fails
+                                     <enforceBytecodeVersion>
+                                     <maxJdkVersion>${enforcer.max.jdk.version}</maxJdkVersion>
+                                     </enforceBytecodeVersion>
+                                     -->
+
+                                    <bannedDependencies>
+                                        <excludes>
+                                            <!-- using the kuali version of ojb -->
+                                            <exclude>ojb</exclude>
+                                            <!-- using the kuali version of jotm-core -->
+                                            <exclude>org.ow2.jotm:jotm-core</exclude>
+
+                                            <!-- renamed (decrecated) groupids -->
+                                            <exclude>struts</exclude>
+                                            <exclude>wss4j</exclude>
+                                            <exclude>acegisecurity</exclude>
+                                            <exclude>xstream</exclude>
+                                            <exclude>uk.ltd.getahead</exclude>
+                                            <exclude>quartz</exclude>
+                                            <exclude>jdom</exclude>
+                                            <exclude>groovy</exclude>
+                                            <exclude>bouncycastle</exclude>
+                                            <exclude>org.bouncycastle</exclude>
+                                            <exclude>org.opensymphony.quartz</exclude>
+                                            <exclude>opensymphony:quartz</exclude>
+                                            <exclude>javassist</exclude>
+                                            <exclude>org.jasig.cas</exclude>
+                                            <exclude>com.google.code.google-collections</exclude>
+                                            <exclude>com.google.collections</exclude>
+                                            <exclude>avalon-framework</exclude>
+                                            <exclude>hsqldb</exclude>
+
+                                            <!-- jcl-over-slf4j is an alternate implementation of commons-logging - excluding commons-logging -->
+                                            <exclude>commons-logging</exclude>
+                                            <!-- already including a different jcl-over-slf4j -->
+                                            <exclude>org.slf4j:jcl104-over-slf4j</exclude>
+                                            <!-- excluding all slf4j -->
+                                            <exclude>org.slf4j</exclude>
+
+                                            <!-- already including cglib-nodep -->
+                                            <exclude>cglib:cglib</exclude>
+
+                                            <!-- excluding old jstl implementations which can cause hard-to-detect errors -->
+                                            <exclude>taglibs:standard</exclude>
+                                            <exclude>javax.servlet:jstl</exclude>
+                                            <!-- allowing (including) a specific version below -->
+
+                                            <!-- already including com.sun.mail:javax.mail -->
+                                            <exclude>javax.mail:mail</exclude>
+                                            <exclude>javamail</exclude>
+                                            <exclude>geronimo:geronimo-mail</exclude>
+                                            <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.4_mail</exclude>
+                                            <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.3.1_mail</exclude>
+                                            <exclude>org.apache.geronimo.modules:geronimo-mail</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-javamail_1.3.1_spec</exclude>
+
+                                            <!-- already including javax.transation -->
+                                            <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec</exclude>
+                                            <exclude>geronimo-spec:geronimo-spec-jta</exclude>
+                                            <exclude>org.ow2.spec.ee:ow2-jta-1.1-spec</exclude>
+                                            <exclude>jta</exclude>
+
+                                            <!-- activation apis - in jdk 6 -->
+                                            <exclude>javax.activation</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-activation_1.0.2_spec</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec</exclude>
+
+                                            <!-- metadata apis - in jdk 6 -->
+                                            <exclude>javax.jws</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec</exclude>
+
+                                            <!-- These are repackaged parser apis - some of these apis are
+                                              included in jdk 6. The non-jdk parsers can be added indivually if needed. -->
+                                            <exclude>xerces:xmlParserAPIs</exclude>
+                                            <exclude>xml-apis</exclude>
+
+                                            <!-- group ids for many sun xml apis - in jdk 6 -->
+                                            <exclude>javax.xml</exclude>
+                                            <exclude>com.sun.xml</exclude>
+
+                                            <!-- jaxb apis - in jdk 6 -->
+                                            <exclude>javax.xml.bind</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-jaxb_2.1_spec</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-jaxb_2.2_spec</exclude>
+                                            <exclude>com.sun.xml.bind:jaxb-impl</exclude>
+
+                                            <!-- jaxws apis - in jdk 6 -->
+                                            <exclude>javax.xml.ws</exclude>
+                                            <exclude>com.sun.xml.ws</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-jaxws_2.1_spec</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-jaxws_2.2_spec</exclude>
+
+                                            <!-- jax-rs -->
+                                            <exclude>javax.ws.rs:jsr311-api</exclude>
+
+                                            <!-- stax apis - in jdk 6 -->
+                                            <exclude>javax.xml.stream</exclude>
+                                            <exclude>com.sun.xml.stream</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-stax-api_1.0_spec</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-stax-api_1.2_spec</exclude>
+                                            <exclude>stax</exclude>
+
+                                            <!-- jaxp apis - in jdk 6 -->
+                                            <exclude>javax.xml.parsers</exclude>
+                                            <exclude>com.sun.xml.parsers</exclude>
+                                            <exclude>org.apace.servicemix.specs:org.apache.servicemix.specs.jaxp-api-1.4</exclude>
+                                            <exclude>org.apache.servicemix.specs:org.apache.servicemix.specs.jaxp-api-1.3</exclude>
+
+                                            <!-- saaj apis - in jdk 6 -->
+                                            <exclude>javax.xml.soap</exclude>
+                                            <exclude>javax.xml.soap:saaj-api</exclude>
+                                            <exclude>javax.xml.soap:saaj-impl</exclude>
+                                            <exclude>com.sun.xml.messaging.saaj</exclude>
+                                            <exclude>org.apache.geronimo.specs:geronimo-saaj_1.3_spec</exclude>
+                                            <exclude>geronimo-spec:geronimo-spec-saaj</exclude>
+                                            <exclude>org.apache.servicemix.specs:org.apache.servicemix.specs.saaj-api-1.3</exclude>
+
+                                            <!--
+                                              excluding standard release - we are using a patches kuali version
+                                              because of
+                                              http://bugs.sun.com/view_bug.do?bug_id=6528714
+                                              https://issues.apache.org/jira/browse/BEANUTILS-340
+                                            -->
+                                            <exclude>commons-beanutils:commons-beanutils</exclude>
+                                            <exclude>org.apache.commons:commons-beanutils</exclude>
+
+                                            <!-- exclude eh cache in general - only allow at a specific scope -->
+                                            <exclude>net.sf.ehcache</exclude>
+
+                                            <!--
+                                              KULRICE-7262: Bad jstl version in maven repository
+                                              When we go back to the javax.servlet artifact, we'll need to remove this
+                                            -->
+                                            <exclude>javax.servlet:jstl</exclude>
+
+                                            <!-- included in eclipselink -->
+                                            <exclude>javax.persistence</exclude>
+
+                                            <!-- old rice deps -->
+                                            <exclude>htmlunit:htmlunit</exclude>
+                                            <exclude>org.apache.derby:derby</exclude>
+
+                                            <!--legacy app server support (tomcat 6)-->
+                                            <exclude>javax.servlet:servlet-api</exclude>
+                                            <exclude>javax.servlet.jsp.jstl:jstl-api</exclude>
+                                            <exclude>javax.servlet.jsp:jsp-api</exclude>
+                                            <exclude>org.glassfish.web:jstl-impl</exclude>
+
+                                            <exclude>commons-collections:commons-collections</exclude>
+                                            <exclude>commons-fileupload:commons-fileupload</exclude>
+                                        </excludes>
+
+                                        <includes>
+                                            <include>org.bouncycastle:bcprov-jdk15on:${bouncycastle.version}</include>
+                                            <include>org.bouncycastle:bcmail-jdk15on:${bouncycastle.version}</include>
+                                            <include>org.bouncycastle:bcpkix-jdk15on:${bouncycastle.version}</include>
+                                            <include>org.slf4j:*:${slf4j.version}</include>
+                                            <include>net.sf.ehcache:*:${ehcache.version}:jar:runtime</include>
+                                            <include>com.sun.xml.bind:jaxb-impl:${jaxb-impl.version}</include>
+                                            <include>commons-collections:commons-collections:${commons-collections.version}:jar:runtime</include>
+                                            <!-- some versions of commons-fileupload have security exploits... only allow a specific version -->
+                                            <include>commons-fileupload:commons-fileupload:${commons-fileupload.version}</include>
+                                        </includes>
+                                    </bannedDependencies>
+                                </rules>
+                                <fail>true</fail>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>extra-enforcer-rules</artifactId>
+                            <version>${extra-enforcer-rules.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Bundle-Version>${project.version}</Bundle-Version>
+                                <Bundle-Name>${project.name}</Bundle-Name>
+                                <Bundle-License>${kuali.ecl.license.url}</Bundle-License>
+                                <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                                <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
+                                <Bundle-Timestamp>${maven.build.timestamp}</Bundle-Timestamp>
+                                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                                <Maven-Version>${maven.version}</Maven-Version>
+                            </manifestEntries>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                    <configuration>
+                        <!-- disabling report generation for now until we come up with a useful set of reports to publish -->
+                        <generateReports>false</generateReports>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <useFile>${surefire.useFile}</useFile>
+                        <testFailureIgnore>${surefire.testFailureIgnore}</testFailureIgnore>
+                        <reportFormat>${surefire.reportFormat}</reportFormat>
+                        <forkCount>${surefire.forkCount}</forkCount>
+                        <reuseForks>${surefire.reuseForks}</reuseForks>
+                        <argLine>${surefire.argLine}</argLine>
+                        <failIfNoTests>${surefire.failIfNoTests}</failIfNoTests>
+                        <skipTests>${surefire.skipTests}</skipTests>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                            <configuration>
+                                <useFile>${failsafe.useFile}</useFile>
+                                <reportFormat>${failsafe.reportFormat}</reportFormat>
+                                <forkCount>${failsafe.forkCount}</forkCount>
+                                <reuseForks>${failsafe.reuseForks}</reuseForks>
+                                <argLine>${failsafe.argLine}</argLine>
+                                <includes>
+                                    <include>${failsafe.include}</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>verify</id>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <testFailureIgnore>${failsafe.testFailureIgnore}</testFailureIgnore>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <failIfNoTests>${failsafe.failIfNoTests}</failIfNoTests>
+                        <skipITs>${failsafe.skipITs}</skipITs>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Bundle-Version>${project.version}</Bundle-Version>
+                                <Bundle-Name>${project.name}</Bundle-Name>
+                                <Bundle-License>${kuali.ecl.license.url}</Bundle-License>
+                                <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                                <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
+                                <Bundle-Timestamp>${maven.build.timestamp}</Bundle-Timestamp>
+                                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                                <Maven-Version>${maven.version}</Maven-Version>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>${tomcat7-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xmlbeans-maven-plugin</artifactId>
+                    <version>${xmlbeans-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.xmlbeans</groupId>
+                            <artifactId>xmlbeans</artifactId>
+                            <version>${xmlbeans.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <memoryInitialSize>512m</memoryInitialSize>
+                        <memoryMaximumSize>1024m</memoryMaximumSize>
+                        <download>false</download>
+                        <debug>false</debug>
+                        <verbose>false</verbose>
+                        <quiet>true</quiet>
+                    </configuration>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.kuali.maven.plugins</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${license-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>licenses</id>
+                            <goals>
+                                <goal>add-third-party</goal>
+                            </goals>
+                            <phase>generate-resources</phase>
+                            <configuration>
+                                <thirdPartyFilename>META-INF/THIRD-PARTY.txt</thirdPartyFilename>
+                                <artifactLicenseMapping>classpath:org/kuali/common/cm/license/THIRD-PARTY.properties</artifactLicenseMapping>
+                                <useMissingFile>true</useMissingFile>
+                                <groupByLicense>true</groupByLicense>
+                                <deployMissingFile>false</deployMissingFile>
+                                <licenseMerges>
+                                    <licenseMerge>Apache Software License - Version 2.0|Apache License V2.0|Apache Public License 2.0|Apache License 2.0|ASF 2.0|Apache License Version 2.0|Apache 2|Apache 2.0|Apache License|Apache License Version 2.0|Apache License, Version 2.0|The Apache Software License, Version 2.0|Apache 2.0 License|Apache Software License 2.0|provided without support or warranty</licenseMerge>
+                                    <licenseMerge>BSD License|BSD|BSD style|BSD-style License|The BSD License|BSD-style license</licenseMerge>
+                                    <licenseMerge>Common Public License - Version 1.0|CPL|Common Public License Version 1.0</licenseMerge>
+                                    <licenseMerge>Eclipse Public License - Version 1.0|Eclipse Public License - v 1.0|Eclipse Public License v1.0|Eclipse Public License, Version 1.0</licenseMerge>
+                                    <licenseMerge>CDDL - Version 1.0|CDDL|CDDL 1.0|CDDL License|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|Common Development and Distribution License (CDDL) v1.0</licenseMerge>
+                                    <licenseMerge>CDDL - Version 1.1|CDDL 1.1</licenseMerge>
+                                    <licenseMerge>CDDL - Version 1.1 / GNU General Public License - Version 2|CDDL v1.1 / GPL v2 dual license|CDDL + GPLv2 with classpath exception</licenseMerge>
+                                    <licenseMerge>Educational Community License - Version 2.0|Educational Community License, Version 2.0</licenseMerge>
+                                    <licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|lgpl|license.txt|GNU General Public Library|GNU Lesser General Public Licence|LGPL</licenseMerge>
+                                    <licenseMerge>GNU Lesser General Public License - Version 2.1|GNU Lesser General Public License Version 2.1|LGPL 2.1|LGPL, version 2.1</licenseMerge>
+                                    <licenseMerge>GNU Lesser General Public License - Version 3|GNU Lesser General Public License v3.0|GNU Lesser General Public License - Version 3.0</licenseMerge>
+                                    <licenseMerge>GNU General Public License - Version 2|The GNU General Public License, Version 2</licenseMerge>
+                                    <licenseMerge>Mozilla Public License - Version 1.1|Mozilla Public License version 1.1|MPL 1.1</licenseMerge>
+                                    <licenseMerge>MIT License|The MIT License</licenseMerge>
+                                    <licenseMerge>GNU General Public License - Version 2 / CPE|GPL2 w/ CPE|GPLv2+CE</licenseMerge>
+                                    <licenseMerge>Public Domain|Public domain, Sun Microsoystems</licenseMerge>
+                                </licenseMerges>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.kuali.common</groupId>
+                            <artifactId>kuali-cm</artifactId>
+                            <version>${kuali-cm.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            <plugin>
+                    <groupId>${jetty-maven-plugin.groupId}</groupId>
+                    <artifactId>${jetty-maven-plugin.artifactId}</artifactId>
+                    <version>${jetty-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.kuali.maven.plugins</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>aopalliance</groupId>
@@ -79,12 +719,13 @@
             </dependency>
 
             <dependency>
-                <groupId>edu.mit.kc</groupId>
-                <artifactId>kcmit-db</artifactId>
-                <version>6.0.0.1</version>
+                <groupId>${db.groupId}</groupId>
+                <artifactId>${db.artifactId}</artifactId>
+                <version>${db.version}</version>
                 <scope>test</scope>
             </dependency>
 
+            <!-- Required for jdk7 -->
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
@@ -152,6 +793,7 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
 
+            <!-- For FTP client -->
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
@@ -173,7 +815,7 @@
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>
-<!--                     excluding because tiles requires a newer version than is brought in from 1.3.1 of commons-validator-->
+                    <!-- excluding because tiles requires a newer version than is brought in from 1.3.1 of commons-validator -->
                     <exclusion>
                         <groupId>commons-digester</groupId>
                         <artifactId>commons-digester</artifactId>
@@ -808,7 +1450,7 @@
             <dependency>
                 <groupId>org.kuali.coeus</groupId>
                 <artifactId>coeus-api-all</artifactId>
-                <version>6.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
@@ -1274,593 +1916,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <properties>
-	    <require.maven.version>3.0</require.maven.version>
-        <!-- dependency versions -->
-        <aopalliance.version>1.0</aopalliance.version>
-        <avalon-framework.version>4.3.1</avalon-framework.version>
-        <bouncycastle.version>1.51</bouncycastle.version>
-        <cglib-nodep.version>3.1</cglib-nodep.version>
-        <coeus-s2sgen.version>6.0-SNAPSHOT</coeus-s2sgen.version>
-        <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
-        <commons-codec.version>1.9</commons-codec.version>
-        <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-collections4.version>4.0</commons-collections4.version>
-        <commons-fileupload.version>1.3.1</commons-fileupload.version>
-        <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-io.version>2.4</commons-io.version>
-        <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.3.2</commons-lang3.version>
-        <commons-net.version>3.3</commons-net.version>
-        <commons-pool.version>1.6</commons-pool.version>
-        <commons-validator.version>1.4.0</commons-validator.version>
-        <cxf.version>2.7.12</cxf.version>
-        <db-ojb.version>1.0.4-patch8</db-ojb.version>
-        <displaytag.version>1.2</displaytag.version>
-        <drools.version>6.0.1.Final</drools.version>
-        <dwr.version>3.0.RC2</dwr.version>
-        <ehcache.version>2.6.9</ehcache.version>
-        <el.version>2.2.1</el.version>
-        <fop.version>1.1</fop.version>
-        <guava.version>17.0</guava.version>
-        <hamcrest.version>1.3</hamcrest.version>
-        <itext.version>2.1.7</itext.version>
-        <jackson.version>1.9.13</jackson.version>
-        <javax.mail.version>1.5.2</javax.mail.version>
-        <javax.persistence.version>2.1.0</javax.persistence.version>
-        <jaxb-impl.version>2.2.6</jaxb-impl.version>
-        <jetty9.javax.servlet.version>3.0.0.v201112011016</jetty9.javax.servlet.version>
-        <jetty.javax.servlet.version>${jetty9.javax.servlet.version}</jetty.javax.servlet.version>
-        <jetty9.javax.servlet.jsp.version>2.2.0.v201112011158</jetty9.javax.servlet.jsp.version>
-        <jetty.javax.servlet.jsp.version>${jetty9.javax.servlet.jsp.version}</jetty.javax.servlet.jsp.version>
-        <jetty8.version>8.1.14.v20131031</jetty8.version>
-        <jetty9.version>9.0.7.v20131107</jetty9.version>
-        <jetty.version>${jetty9.version}</jetty.version>
-        <jmock.version>2.6.0</jmock.version>
-        <joda-time.version>2.4</joda-time.version>
-        <jsp.version>2.2.1</jsp.version>
-        <jstl.version>1.2.1</jstl.version>
-        <junit.version>4.11</junit.version>
-        <kuali-cm.version>1.2.8</kuali-cm.version>
-        <log4j.version>1.2.17</log4j.version>
-        <logkit.version>1.2</logkit.version>
-        <mysql.groupId>mysql</mysql.groupId>
-        <mysql.artifactId>mysql-connector-java</mysql.artifactId>
-        <mysql.version>5.1.31</mysql.version>
-        <opencsv.version>2.3</opencsv.version>
-        <opensaml.version>2.6.1</opensaml.version>
-        <oracle.groupId>com.oracle</oracle.groupId>
-        <oracle.artifactId>ojdbc6</oracle.artifactId>
-        <oracle.version>10.2.0.3.0</oracle.version>
-        <org.eclipse.birt.runtime.version>4.4.0</org.eclipse.birt.runtime.version>
-        <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
-        <pdfbox.version>1.8.6</pdfbox.version>
-        <quartz.version>1.8.4</quartz.version>
-        <rice.version>2.5.0-r48486</rice.version>
-        <servlet.version>3.0.1</servlet.version>
-        <slf4j.version>1.7.7</slf4j.version>
-        <spring.version>3.2.10.RELEASE</spring.version>
-        <spring-modules-ojb.version>0.8a</spring-modules-ojb.version>
-        <struts.version>1.3.10</struts.version>
-        <validation-api.version>1.0.0.GA</validation-api.version>
-        <velocity.version>1.7</velocity.version>
-        <xalan.version>2.7.2</xalan.version>
-        <xercesImpl.version>2.11.0</xercesImpl.version>
-        <xml-apis.version>1.4.01</xml-apis.version>
-        <xmlbeans.version>2.6.0</xmlbeans.version>
-        <xmlsec.version>1.5.6</xmlsec.version>
-        <xstream.version>1.2.2</xstream.version>
-        <extra-enforcer-rules.version>1.0-beta-2</extra-enforcer-rules.version>
 
-        <!-- plugin versions -->
-        <cxf-codegen-plugin.version>${cxf.version}</cxf-codegen-plugin.version>
-        <jetty-maven-plugin9.groupId>org.eclipse.jetty</jetty-maven-plugin9.groupId>
-        <jetty-maven-plugin.groupId>${jetty-maven-plugin9.groupId}</jetty-maven-plugin.groupId>
-        <jetty-maven-plugin.artifactId>jetty-maven-plugin</jetty-maven-plugin.artifactId>
-        <jetty-maven-plugin.version>${jetty.version}</jetty-maven-plugin.version>
-        <jspc-maven-plugin.version>2.0.0</jspc-maven-plugin.version>
-        <license-maven-plugin.version>1.6</license-maven-plugin.version>
-        <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
-        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-        <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
-        <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
-        <maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
-        <maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
-        <maven-install-plugin.version>2.5.1</maven-install-plugin.version>
-        <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
-        <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
-        <maven-site-plugin.version>3.4</maven-site-plugin.version>
-        <maven-source-plugin.version>2.3</maven-source-plugin.version>
-        <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
-        <maven-war-plugin.version>2.4</maven-war-plugin.version>
-        <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
-        <tomcat7-maven-plugin.version>${tomcat-maven-plugin.version}</tomcat7-maven-plugin.version>
-        <xmlbeans-maven-plugin.version>2.3.3</xmlbeans-maven-plugin.version>
 
-        <db.groupId>${mysql.groupId}</db.groupId>
-        <db.artifactId>${mysql.artifactId}</db.artifactId>
-        <db.version>${mysql.version}</db.version>
-
-        <!-- Surefire config -->
-        <surefire.useFile>false</surefire.useFile>
-        <surefire.testFailureIgnore>false</surefire.testFailureIgnore>
-        <surefire.reportFormat>plain</surefire.reportFormat>
-        <surefire.failIfNoTests>false</surefire.failIfNoTests>
-        <surefire.forkCount>1</surefire.forkCount>
-        <surefire.reuseForks>true</surefire.reuseForks>
-        <surefire.argLine></surefire.argLine>
-        <surefire.aggregate>true</surefire.aggregate>
-        <surefire.skipTests>false</surefire.skipTests>
-
-        <!-- Failsafe config -->
-        <failsafe.useFile>false</failsafe.useFile>
-        <failsafe.testFailureIgnore>false</failsafe.testFailureIgnore>
-        <failsafe.reportFormat>plain</failsafe.reportFormat>
-        <failsafe.failIfNoTests>false</failsafe.failIfNoTests>
-        <failsafe.forkCount>1</failsafe.forkCount>
-        <failsafe.reuseForks>true</failsafe.reuseForks>
-        <failsafe.argLine>-Xmx1024m -XX:MaxPermSize=512m ${javaagent.arg}</failsafe.argLine>
-        <failsafe.aggregate>true</failsafe.aggregate>
-        <failsafe.skipITs>true</failsafe.skipITs>
-        <failsafe.include>**/*Test.java</failsafe.include>
-
-        <javaagent.output.dir>${project.build.directory}/javaagent</javaagent.output.dir>
-        <javaagent.arg>-javaagent:${javaagent.output.dir}/spring-instrument.jar</javaagent.arg>
-
-        <enforcer.phase>validate</enforcer.phase>
-
-        <require.maven.version>3.0</require.maven.version>
-
-        <project.encoding>UTF-8</project.encoding>
-        <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
-
-        <project.java.version>1.7</project.java.version>
-        <!-- These are used by multiple plugins (compiler, javadoc, xref, etc) -->
-        <project.compile.source>${project.java.version}</project.compile.source>
-        <project.compile.target>${project.java.version}</project.compile.target>
-        <enforcer.require.java.version>${project.java.version}</enforcer.require.java.version>
-        <enforcer.max.jdk.version>${project.java.version}</enforcer.max.jdk.version>
-
-        <!-- defaults to dev unless overriden -->
-        <build.environment>dev</build.environment>
-
-        <!-- This is used in the licenses section as well as the jar/war plugins -->
-        <kuali.ecl.license.url>http://maven.kuali.org/external/org/opensource/ecl/2.0/ecl-2.0.txt</kuali.ecl.license.url>
-
-        <maven.skip.packaging>false</maven.skip.packaging>
-
-        <error_prone_core.version>1.1.2</error_prone_core.version>
-        <plexus-compiler-javac.version>2.3</plexus-compiler-javac.version>
-        <plexus-compiler-javac-errorprone.version>2.3</plexus-compiler-javac-errorprone.version>
-        
-	  	<kc.version>6.0.0.1</kc.version>
-	  	<timestamp>${maven.build.timestamp}</timestamp>
-	  	<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
-    </properties>
-    
-    <build>
-        <pluginManagement>
-            <plugins>
-
-                <plugin>
-                    <groupId>org.apache.cxf</groupId>
-                    <artifactId>cxf-codegen-plugin</artifactId>
-                    <version>${cxf-codegen-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>${maven-clean-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
-                    <configuration>
-                        <useIncrementalCompilation>false</useIncrementalCompilation>
-                        <source>${project.compile.source}</source>
-                        <target>${project.compile.target}</target>
-                        <fork>true</fork>
-                        <meminitial>512m</meminitial>
-                        <maxmem>1024m</maxmem>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${maven-dependency-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven-deploy-plugin.version}</version>
-                    <configuration>
-                        <skip>${maven.skip.packaging}</skip>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${maven-enforcer-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>enforce-banned-dependencies</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <phase>${enforcer.phase}</phase>
-                            <configuration>
-                                <rules>
-                                    <requireJavaVersion>
-                                        <version>${enforcer.require.java.version}</version>
-                                    </requireJavaVersion>
-                                    <requireMavenVersion>
-                                        <version>[3.0,4.0)</version>
-                                    </requireMavenVersion>
-
-                                    <requirePluginVersions>
-                                        <message>Best Practice is to always define plugin versions!</message>
-                                        <banLatest>true</banLatest>
-                                        <banRelease>true</banRelease>
-                                        <banSnapshots>true</banSnapshots>
-                                        <phases>clean,deploy,site</phases>
-                                    </requirePluginVersions>
-
-                                    <banCircularDependencies/>
-                                    <DependencyConvergence/>
-                                    when executed from eclipse it fails
-                                     <enforceBytecodeVersion>
-                                     <maxJdkVersion>${enforcer.max.jdk.version}</maxJdkVersion>
-                                     </enforceBytecodeVersion>
-                                    
-
-                                    <bannedDependencies>
-                                        <excludes>
-                                            using the kuali version of ojb
-                                            <exclude>ojb</exclude>
-                                            using the kuali version of jotm-core
-                                            <exclude>org.ow2.jotm:jotm-core</exclude>
-
-                                            renamed (decrecated) groupids
-                                            <exclude>struts</exclude>
-                                            <exclude>wss4j</exclude>
-                                            <exclude>acegisecurity</exclude>
-                                            <exclude>xstream</exclude>
-                                            <exclude>uk.ltd.getahead</exclude>
-                                            <exclude>quartz</exclude>
-                                            <exclude>jdom</exclude>
-                                            <exclude>groovy</exclude>
-                                            <exclude>bouncycastle</exclude>
-                                            <exclude>org.bouncycastle</exclude>
-                                            <exclude>org.opensymphony.quartz</exclude>
-                                            <exclude>opensymphony:quartz</exclude>
-                                            <exclude>javassist</exclude>
-                                            <exclude>org.jasig.cas</exclude>
-                                            <exclude>com.google.code.google-collections</exclude>
-                                            <exclude>com.google.collections</exclude>
-                                            <exclude>avalon-framework</exclude>
-                                            <exclude>hsqldb</exclude>
-
-                                            jcl-over-slf4j is an alternate implementation of commons-logging - excluding commons-logging
-                                            <exclude>commons-logging</exclude>
-                                            already including a different jcl-over-slf4j
-                                            <exclude>org.slf4j:jcl104-over-slf4j</exclude>
-                                            excluding all slf4j
-                                            <exclude>org.slf4j</exclude>
-
-                                            already including cglib-nodep
-                                            <exclude>cglib:cglib</exclude>
-
-                                            excluding old jstl implementations which can cause hard-to-detect errors
-                                            <exclude>taglibs:standard</exclude>
-                                            <exclude>javax.servlet:jstl</exclude>
-                                            allowing (including) a specific version below
-
-                                            already including com.sun.mail:javax.mail
-                                            <exclude>javax.mail:mail</exclude>
-                                            <exclude>javamail</exclude>
-                                            <exclude>geronimo:geronimo-mail</exclude>
-                                            <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.4_mail</exclude>
-                                            <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.3.1_mail</exclude>
-                                            <exclude>org.apache.geronimo.modules:geronimo-mail</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-javamail_1.3.1_spec</exclude>
-
-                                            already including javax.transation
-                                            <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec</exclude>
-                                            <exclude>geronimo-spec:geronimo-spec-jta</exclude>
-                                            <exclude>org.ow2.spec.ee:ow2-jta-1.1-spec</exclude>
-                                            <exclude>jta</exclude>
-
-                                            activation apis - in jdk 6
-                                            <exclude>javax.activation</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-activation_1.0.2_spec</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec</exclude>
-
-                                            metadata apis - in jdk 6
-                                            <exclude>javax.jws</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec</exclude>
-
-                                            These are repackaged parser apis - some of these apis are
-                                              included in jdk 6. The non-jdk parsers can be added indivually if needed.
-                                            <exclude>xerces:xmlParserAPIs</exclude>
-                                            <exclude>xml-apis</exclude>
-
-                                            group ids for many sun xml apis - in jdk 6
-                                            <exclude>javax.xml</exclude>
-                                            <exclude>com.sun.xml</exclude>
-
-                                            jaxb apis - in jdk 6
-                                            <exclude>javax.xml.bind</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-jaxb_2.1_spec</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-jaxb_2.2_spec</exclude>
-                                            <exclude>com.sun.xml.bind:jaxb-impl</exclude>
-
-                                            jaxws apis - in jdk 6
-                                            <exclude>javax.xml.ws</exclude>
-                                            <exclude>com.sun.xml.ws</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-jaxws_2.1_spec</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-jaxws_2.2_spec</exclude>
-
-                                            jax-rs
-                                            <exclude>javax.ws.rs:jsr311-api</exclude>
-
-                                            stax apis - in jdk 6
-                                            <exclude>javax.xml.stream</exclude>
-                                            <exclude>com.sun.xml.stream</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-stax-api_1.0_spec</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-stax-api_1.2_spec</exclude>
-                                            <exclude>stax</exclude>
-
-                                            jaxp apis - in jdk 6
-                                            <exclude>javax.xml.parsers</exclude>
-                                            <exclude>com.sun.xml.parsers</exclude>
-                                            <exclude>org.apace.servicemix.specs:org.apache.servicemix.specs.jaxp-api-1.4</exclude>
-                                            <exclude>org.apache.servicemix.specs:org.apache.servicemix.specs.jaxp-api-1.3</exclude>
-
-                                            saaj apis - in jdk 6
-                                            <exclude>javax.xml.soap</exclude>
-                                            <exclude>javax.xml.soap:saaj-api</exclude>
-                                            <exclude>javax.xml.soap:saaj-impl</exclude>
-                                            <exclude>com.sun.xml.messaging.saaj</exclude>
-                                            <exclude>org.apache.geronimo.specs:geronimo-saaj_1.3_spec</exclude>
-                                            <exclude>geronimo-spec:geronimo-spec-saaj</exclude>
-                                            <exclude>org.apache.servicemix.specs:org.apache.servicemix.specs.saaj-api-1.3</exclude>
-
-                                            
-                                              excluding standard release - we are using a patches kuali version
-                                              because of
-                                              http://bugs.sun.com/view_bug.do?bug_id=6528714
-                                              https://issues.apache.org/jira/browse/BEANUTILS-340
-                                           
-                                            <exclude>commons-beanutils:commons-beanutils</exclude>
-                                            <exclude>org.apache.commons:commons-beanutils</exclude>
-
-                                            exclude eh cache in general - only allow at a specific scope
-                                            <exclude>net.sf.ehcache</exclude>
-
-                                            
-                                              KULRICE-7262: Bad jstl version in maven repository
-                                              When we go back to the javax.servlet artifact, we'll need to remove this
-                                           
-                                            <exclude>javax.servlet:jstl</exclude>
-
-                                            included in eclipselink
-                                            <exclude>javax.persistence</exclude>
-
-                                            old rice deps
-                                            <exclude>htmlunit:htmlunit</exclude>
-                                            <exclude>org.apache.derby:derby</exclude>
-
-                                            legacy app server support (tomcat 6)
-                                            <exclude>javax.servlet:servlet-api</exclude>
-                                            <exclude>javax.servlet.jsp.jstl:jstl-api</exclude>
-                                            <exclude>javax.servlet.jsp:jsp-api</exclude>
-                                            <exclude>org.glassfish.web:jstl-impl</exclude>
-
-                                            <exclude>commons-collections:commons-collections</exclude>
-                                            <exclude>commons-fileupload:commons-fileupload</exclude>
-                                        </excludes>
-
-                                        <includes>
-                                            <include>org.bouncycastle:bcprov-jdk15on:${bouncycastle.version}</include>
-                                            <include>org.bouncycastle:bcmail-jdk15on:${bouncycastle.version}</include>
-                                            <include>org.bouncycastle:bcpkix-jdk15on:${bouncycastle.version}</include>
-                                            <include>org.slf4j:*:${slf4j.version}</include>
-                                            <include>net.sf.ehcache:*:${ehcache.version}:jar:runtime</include>
-                                            <include>com.sun.xml.bind:jaxb-impl:${jaxb-impl.version}</include>
-                                            <include>commons-collections:commons-collections:${commons-collections.version}:jar:runtime</include>
-                                            some versions of commons-fileupload have security exploits... only allow a specific version
-                                            <include>commons-fileupload:commons-fileupload:${commons-fileupload.version}</include>
-                                        </includes>
-                                    </bannedDependencies>
-                                </rules>
-                                <fail>true</fail>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>extra-enforcer-rules</artifactId>
-                            <version>${extra-enforcer-rules.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven-install-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${maven-jar-plugin.version}</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Bundle-Version>${project.version}</Bundle-Version>
-                                <Bundle-Name>${project.name}</Bundle-Name>
-                                <Bundle-License>${kuali.ecl.license.url}</Bundle-License>
-                                <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                                <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
-                                <Bundle-Timestamp>${maven.build.timestamp}</Bundle-Timestamp>
-                                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                                <Maven-Version>${maven.version}</Maven-Version>
-                            </manifestEntries>
-                            <manifest>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            </manifest>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${maven-resources-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>${maven-site-plugin.version}</version>
-                    <configuration>
-                        <!-- disabling report generation for now until we come up with a useful set of reports to publish -->
-                        <generateReports>false</generateReports>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                    <configuration>
-                        <useFile>${surefire.useFile}</useFile>
-                        <testFailureIgnore>${surefire.testFailureIgnore}</testFailureIgnore>
-                        <reportFormat>${surefire.reportFormat}</reportFormat>
-                        <forkCount>${surefire.forkCount}</forkCount>
-                        <reuseForks>${surefire.reuseForks}</reuseForks>
-                        <argLine>${surefire.argLine}</argLine>
-                        <failIfNoTests>${surefire.failIfNoTests}</failIfNoTests>
-                        <skipTests>${surefire.skipTests}</skipTests>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${maven-failsafe-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>integration-test</id>
-                            <goals>
-                                <goal>integration-test</goal>
-                            </goals>
-                            <configuration>
-                                <useFile>${failsafe.useFile}</useFile>
-                                <reportFormat>${failsafe.reportFormat}</reportFormat>
-                                <forkCount>${failsafe.forkCount}</forkCount>
-                                <reuseForks>${failsafe.reuseForks}</reuseForks>
-                                <argLine>${failsafe.argLine}</argLine>
-                                <includes>
-                                    <include>${failsafe.include}</include>
-                                </includes>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>verify</id>
-                            <goals>
-                                <goal>verify</goal>
-                            </goals>
-                            <configuration>
-                                <testFailureIgnore>${failsafe.testFailureIgnore}</testFailureIgnore>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <failIfNoTests>${failsafe.failIfNoTests}</failIfNoTests>
-                        <skipITs>${failsafe.skipITs}</skipITs>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>${maven-war-plugin.version}</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Bundle-Version>${project.version}</Bundle-Version>
-                                <Bundle-Name>${project.name}</Bundle-Name>
-                                <Bundle-License>${kuali.ecl.license.url}</Bundle-License>
-                                <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                                <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
-                                <Bundle-Timestamp>${maven.build.timestamp}</Bundle-Timestamp>
-                                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                                <Maven-Version>${maven.version}</Maven-Version>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>${tomcat7-maven-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>xmlbeans-maven-plugin</artifactId>
-                    <version>${xmlbeans-maven-plugin.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.xmlbeans</groupId>
-                            <artifactId>xmlbeans</artifactId>
-                            <version>${xmlbeans.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <memoryInitialSize>512m</memoryInitialSize>
-                        <memoryMaximumSize>1024m</memoryMaximumSize>
-                        <download>false</download>
-                        <debug>false</debug>
-                        <verbose>false</verbose>
-                        <quiet>true</quiet>
-                    </configuration>
-                </plugin>
-                
-            <plugin>
-                    <groupId>${jetty-maven-plugin.groupId}</groupId>
-                    <artifactId>${jetty-maven-plugin.artifactId}</artifactId>
-                    <version>${jetty-maven-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
     <profiles>
         <profile>
             <id>oracle</id>
@@ -1870,6 +1927,8 @@
                 <db.version>${oracle.version}</db.version>
             </properties>
         </profile>
+
+        <!-- enables the error prone compiler for strict compilation-->
         <profile>
             <id>error-prone</id>
             <build>
@@ -1908,8 +1967,9 @@
                 </pluginManagement>
             </build>
         </profile>
-        
-    	<profile>
+
+        <!-- copies the javaagent jar to the target directory such that the jar can be referred in the surefire config -->
+        <profile>
             <id>copy-javaagent</id>
             <activation>
                 <property>
@@ -1947,6 +2007,7 @@
             </build>
         </profile>
     </profiles>
+
     <repositories>
         <repository>
             <id>kuali.nexus</id>
@@ -1974,5 +2035,32 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-    
+
+    <scm>
+        <connection>scm:git:git@github.com:kuali/kc.git</connection>
+        <developerConnection>scm:git:git@github.com:kuali/kc.git</developerConnection>
+        <url>https://github.com/kuali/kc</url>
+    </scm>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://jira.kuali.org</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://db.kc.kuali.org</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <sendOnError>true</sendOnError>
+                <sendOnFailure>true</sendOnFailure>
+                <sendOnSuccess>true</sendOnSuccess>
+                <sendOnWarning>true</sendOnWarning>
+                <configuration>
+                    <address>jenkins@127.0.0.1</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
 </project>
