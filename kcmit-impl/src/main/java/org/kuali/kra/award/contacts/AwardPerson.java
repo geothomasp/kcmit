@@ -504,4 +504,15 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
 			PropAwardPersonRoleService propAwardPersonRoleService) {
 		this.propAwardPersonRoleService = propAwardPersonRoleService;
 	}
+	
+	@Override
+	public Integer getOrdinalPosition() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isInvestigator() {
+		return isPrincipalInvestigator() || isMultiplePi() || isCoInvestigator() || (isKeyPerson() && isOptInUnitStatus());
+	}
+
 }
