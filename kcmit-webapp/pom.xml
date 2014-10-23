@@ -165,4 +165,9 @@
             <scope>test</scope>
         </dependency>
   </dependencies>
+  <properties>
+	<timestamp>${maven.build.timestamp}</timestamp>
+  	<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
+  </properties>  
+    
 </project>
