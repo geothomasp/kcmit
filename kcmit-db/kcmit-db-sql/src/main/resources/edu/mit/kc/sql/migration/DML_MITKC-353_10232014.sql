@@ -4,7 +4,7 @@ begin
 select count(rolodex_id) into li_count from rolodex where rolodex_id = 100046;
 if li_count = 0 then
   Insert into ROLODEX (ROLODEX_ID,LAST_NAME,FIRST_NAME,MIDDLE_NAME,SUFFIX,PREFIX,TITLE,ORGANIZATION,ADDRESS_LINE_1,ADDRESS_LINE_2,ADDRESS_LINE_3,FAX_NUMBER,EMAIL_ADDRESS,CITY,COUNTY,STATE,POSTAL_CODE,COMMENTS,PHONE_NUMBER,COUNTRY_CODE,SPONSOR_CODE,OWNED_BY_UNIT,SPONSOR_ADDRESS_FLAG,DELETE_FLAG,CREATE_USER,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID,ACTV_IND) 
-  values (100046,'TBD','Test Address Book',null,null,null,null,'University',null,null,null,null,null,null,null,null,null,null,null,null,null,'000001','N',null,user,sysdate,user,1,sys_guid(),'Y');
+  values (100046,'Place Holder','Payment Invoice Contact',null,null,null,null,'University',null,null,null,null,null,null,null,null,null,null,null,null,null,'000001','N',null,user,sysdate,user,1,sys_guid(),'Y');
 
 end if;
 end;
