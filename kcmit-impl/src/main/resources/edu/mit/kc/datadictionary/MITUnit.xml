@@ -4,17 +4,23 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"> 
         
-    <bean id="MIT2-Unit-lookupDefinition-parentBean" parent="Unit-lookupDefinition-parentBean">    
-    <property name="lookupFields" >
+    <bean id="MIT2-Unit-lookupDefinition-parentBean" parent="Unit-lookupDefinition-parentBean">  
+    
+     <property name="lookupFields" >
       <list>
-        <bean parent="FieldDefinition"
-              p:attributeName="unitNumber" />
-        <bean parent="FieldDefinition"
-              p:attributeName="organizationId" />
-        <bean parent="FieldDefinition"
-              p:attributeName="unitName" />
-        <bean parent="FieldDefinition"
-              p:attributeName="active" />
+        <bean parent="FieldDefinition" p:attributeName="unitNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="organizationId"/>
+        <bean parent="FieldDefinition" p:attributeName="unitName"/>
+        <bean parent="FieldDefinition" p:attributeName="code"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
+    <property name="resultFields" >
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="unitNumber" p:forceInquiry="true"/>
+        <bean parent="FieldDefinition" p:attributeName="unitName"/>
+        <bean parent="FieldDefinition" p:attributeName="organization.organizationName"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
   </bean>      
