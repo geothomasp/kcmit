@@ -39,6 +39,7 @@ ls_rte_node_instn_id VARCHAR2(40);
 ls_doc_typ_id VARCHAR2(40);
 ls_prncpl_id krim_prncpl_t.PRNCPL_ID%type;
 
+ls_budget_status eps_proposal.proposal_number%type;
 
 CURSOR c_budget IS 
 SELECT t1.PROPOSAL_NUMBER,t1.VERSION_NUMBER,t1.ON_OFF_CAMPUS_FLAG,t1.START_DATE,END_DATE,t1.TOTAL_COST,t1.TOTAL_DIRECT_COST,
@@ -70,10 +71,17 @@ END IF;
 		exception when others then
 			ll_bgt_justi_clob:=null;
 		end;
-  
+  /* Commented this now obsolete
   select count(DOCUMENT_NUMBER) into li_count_bud_doc from BUDGET_DOCUMENT 
   where PARENT_DOCUMENT_KEY in (select document_number from eps_proposal where proposal_number = ls_proposal_number )
   and   VER_NBR = li_version_number;
+  */
+	select count(t1.budget_id) into li_count_bud_doc  from budget t1 
+	inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+	where t2.proposal_number = ls_proposal_number
+	and t1.version_number = li_version_number; 
+  
+  
   
  ------------ I N S E R T 
     if li_count_bud_doc = 0 then 
@@ -98,8 +106,16 @@ END IF;
 			INSERT INTO BUDGET(BUDGET_ID,BUDGET_JUSTIFICATION,ON_OFF_CAMPUS_FLAG,VERSION_NUMBER,DOCUMENT_NUMBER,START_DATE,END_DATE,TOTAL_COST,TOTAL_DIRECT_COST,TOTAL_INDIRECT_COST,COST_SHARING_AMOUNT,UNDERRECOVERY_AMOUNT,RESIDUAL_FUNDS,TOTAL_COST_LIMIT,OH_RATE_CLASS_CODE,OH_RATE_TYPE_CODE,COMMENTS,FINAL_VERSION_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,UR_RATE_CLASS_CODE,MODULAR_BUDGET_FLAG,VER_NBR,OBJ_ID,TOTAL_DIRECT_COST_LIMIT,SUBMIT_COST_SHARING)
 			VALUES(li_seq_budget_id,ll_bgt_justi_clob,r_budget.ON_OFF_CAMPUS_FLAG,li_version_number,ls_doc_nbr,r_budget.START_DATE,r_budget.END_DATE,r_budget.TOTAL_COST,r_budget.TOTAL_DIRECT_COST,r_budget.TOTAL_INDIRECT_COST,r_budget.COST_SHARING_AMOUNT,r_budget.UNDERRECOVERY_AMOUNT,r_budget.RESIDUAL_FUNDS,r_budget.TOTAL_COST_LIMIT,r_budget.OH_RATE_CLASS_CODE,r_budget.OH_RATE_TYPE_CODE,r_budget.COMMENTS,r_budget.FINAL_VERSION_FLAG,r_budget.UPDATE_TIMESTAMP,r_budget.UPDATE_USER,r_budget.UR_RATE_CLASS_CODE,r_budget.MODULAR_BUDGET_FLAG,li_ver_nbr,SYS_GUID(),r_budget.TOTAL_DIRECT_COST_LIMIT,r_budget.SUBMIT_COST_SHARING_FLAG);
 
+			begin
+				select BUDGET_STATUS into ls_budget_status FROM EPS_PROPOSAL 
+				WHERE PROPOSAL_NUMBER = to_number(r_budget.PROPOSAL_NUMBER);				
+			exception
+			when others then
+				ls_budget_status := 'C';
+			end;	
+			
 			INSERT INTO EPS_PROPOSAL_BUDGET_EXT(BUDGET_ID,FINAL_VERSION_FLAG,HIERARCHY_HASH_CODE,PROPOSAL_NUMBER,STATUS_CODE)
-			VALUES(li_seq_budget_id,r_budget.FINAL_VERSION_FLAG,NULL,r_budget.PROPOSAL_NUMBER,'C');
+			VALUES(li_seq_budget_id,r_budget.FINAL_VERSION_FLAG,NULL,to_number(r_budget.PROPOSAL_NUMBER),ls_budget_status);
 
 			INSERT INTO TEMP_BUDGET_MAIN(BUDGET_ID,BUDGET_DOC_NUM,BUDGET_VER_NUM,PROPOSAL_DOC_NUM,PROPOSAL_NUM)
 			VALUES(li_seq_budget_id,ls_doc_nbr,li_version_number,ls_document_number,r_budget.PROPOSAL_NUMBER);
@@ -186,7 +202,7 @@ else
 								where PARENT_DOCUMENT_KEY in (select document_number from eps_proposal where proposal_number = ls_proposal_number )
 								and   VER_NBR = li_version_number
 							   );
-	
+	/*
 	UPDATE EPS_PROPOSAL_BUDGET_EXT
 	SET FINAL_VERSION_FLAG = r_budget.FINAL_VERSION_FLAG
 	WHERE   BUDGET_ID in (SELECT BUDGET_ID FROM BUDGET WHERE DOCUMENT_NUMBER IN(
@@ -194,6 +210,25 @@ else
 							where PARENT_DOCUMENT_KEY in (select document_number from eps_proposal where proposal_number = ls_proposal_number )
 							and   VER_NBR = li_version_number)
 						   );
+	*/
+	
+	begin
+		select BUDGET_STATUS into ls_budget_status FROM EPS_PROPOSAL 
+		WHERE PROPOSAL_NUMBER = ls_proposal_number;		
+	exception
+	when others then
+		ls_budget_status := 'C';
+	end;	
+	
+	UPDATE EPS_PROPOSAL_BUDGET_EXT
+	SET FINAL_VERSION_FLAG = r_budget.FINAL_VERSION_FLAG,
+	STATUS_CODE = ls_budget_status
+	WHERE BUDGET_ID IN (
+		select t1.budget_id  from budget t1 
+		inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+		where t2.proposal_number = ls_proposal_number
+		and t1.version_number = li_version_number);
+			
 	
 	
 end if;
