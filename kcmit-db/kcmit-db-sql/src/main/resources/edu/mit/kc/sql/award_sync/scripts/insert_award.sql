@@ -164,6 +164,5 @@ select SEQ_AWARD_AWARD_NUMBER.NEXTVAL from dual
 /
 alter sequence SEQ_AWARD_AWARD_NUMBER increment by 1
 /
-
 select ' End time of AWARD is '|| localtimestamp from dual
 /

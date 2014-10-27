@@ -34,34 +34,11 @@ begin
      
   end if; 
  
-end;
-/
-declare
-li_count NUMBER;
-ll_migration_exe_date date := sysdate;
-begin
-select count(feed_id) into li_count from SYNC_AWARD_LOG;
-
-if li_count = 0 then
-        INSERT INTO SYNC_AWARD_LOG(
-         feed_id,
-         execution_date
-         )
-         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
-         inner join award t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number
-         and t1.sequence_number = t2.sequence_number;     
-         
-         commit;
-         
-         INSERT INTO SYNC_AWARD_LOG(
-         feed_id,
-         execution_date
-         )
-         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
-         inner join KC_MIG_AWARD_CONV t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number;
-         
-         commit;
-end if;
+ select  count(table_name) into li_count  from user_tables   where table_name = 'SYNC_EPS_ALREADY_PRESENT';
+  if li_count > 0 then
+   execute immediate('DROP TABLE SYNC_EPS_ALREADY_PRESENT');
+     
+  end if; 
 
 end;
 /
@@ -163,6 +140,39 @@ delete from temp_tab_to_sync_award t1 where rowid not in (
 select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
 and t2.sequence_number = t1.sequence_number
 )
+/
+CREATE TABLE SYNC_EPS_ALREADY_PRESENT(
+PROPOSAL_NUMBER VARCHAR2(10)
+)
+/
+declare
+li_count NUMBER;
+ll_migration_exe_date date := sysdate;
+begin
+select count(feed_id) into li_count from SYNC_AWARD_LOG;
+
+if li_count = 0 then
+        INSERT INTO SYNC_AWARD_LOG(
+         feed_id,
+         execution_date
+         )
+         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
+         inner join award t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number
+         and t1.sequence_number = t2.sequence_number;     
+         
+         commit;
+         
+         INSERT INTO SYNC_AWARD_LOG(
+         feed_id,
+         execution_date
+         )
+         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
+         inner join KC_MIG_AWARD_CONV t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number;
+         
+         commit;
+end if;
+
+end;
 /
 commit
 /

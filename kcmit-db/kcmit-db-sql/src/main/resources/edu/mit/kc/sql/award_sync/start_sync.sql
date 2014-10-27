@@ -6,8 +6,8 @@ set serveroutput on;
 select 'Started syncing, start time: '|| localtimestamp from dual;
 @initial_setup.sql
 @sync_award.sql
-@sync_ip.sql
 @sync_dev_budget.sql
+@sync_ip.sql
 commit;
 @send_notification.sql
 select 'Completed syncing, end time: '|| localtimestamp from dual;

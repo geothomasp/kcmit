@@ -188,13 +188,11 @@ else
 							   );
 	
 	UPDATE EPS_PROPOSAL_BUDGET_EXT
-	SET FINAL_VERSION_FLAG = r_budget.FINAL_VERSION_FLAG,
-	UPDATE_TIMESTAMP = r_budget.UPDATE_TIMESTAMP,
-	UPDATE_USER = r_budget.UPDATE_USER
-	WHERE   DOCUMENT_NUMBER in (
-							select DOCUMENT_NUMBER from BUDGET_DOCUMENT 
+	SET FINAL_VERSION_FLAG = r_budget.FINAL_VERSION_FLAG
+	WHERE   BUDGET_ID in (SELECT BUDGET_ID FROM BUDGET WHERE DOCUMENT_NUMBER IN(
+							select DOCUMENT_NUMBER from BUDGET_DOCUMENT
 							where PARENT_DOCUMENT_KEY in (select document_number from eps_proposal where proposal_number = ls_proposal_number )
-							and   VER_NBR = li_version_number
+							and   VER_NBR = li_version_number)
 						   );
 	
 	

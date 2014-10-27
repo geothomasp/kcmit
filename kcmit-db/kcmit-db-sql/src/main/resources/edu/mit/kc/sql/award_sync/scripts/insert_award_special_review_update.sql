@@ -63,10 +63,5 @@ commit
 ALTER INDEX	AWARD_SPECIAL_REVIEWP1	REBUILD;
 commit;
 /
-ALTER INDEX	AWARD_SPECIAL_REVIEW_I1 REBUILD;
-commit;
-DROP INDEX AWARD_SPECIAL_REVIEW_I1;
-commit;
-/
 select ' End time of AWARD_SPECIAL_REVIEW Update script is '|| localtimestamp from dual
 /

@@ -4,7 +4,8 @@ DECLARE
 li_cust_id NUMBER(12,0);
 ls_award_number varchar2(40);
 li_award_reports_id NUMBER(12,0);
-
+li_count number;
+ls_distribution_code VARCHAR2(3);
 CURSOR c_award_comment IS
 SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER  Kuali_sequence_number,a.AWARD_ID,ac.MIT_AWARD_NUMBER,ac.SEQUENCE_NUMBER,ac.REPORT_CLASS_CODE,ac.REPORT_CODE,ac.FREQUENCY_CODE,ac.FREQUENCY_BASE_CODE,ac.OSP_DISTRIBUTION_CODE,ac.CONTACT_TYPE_CODE,ac.ROLODEX_ID,ac.DUE_DATE,ac.NUMBER_OF_COPIES,ac.UPDATE_TIMESTAMP,ac.UPDATE_USER FROM AWARD a INNER JOIN TEMP_TAB_TO_SYNC_AWARD t ON a.AWARD_NUMBER=replace(t.MIT_AWARD_NUMBER,'-','-00') AND a.SEQUENCE_NUMBER=t.SEQUENCE_NUMBER
 INNER JOIN OSP$AWARD_REPORT_TERMS@coeus.kuali ac ON t.MIT_AWARD_NUMBER=ac.MIT_AWARD_NUMBER and t.SEQUENCE_NUMBER=ac.SEQUENCE_NUMBER
@@ -20,6 +21,13 @@ OPEN c_award_comment;
 LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
+
+select count(OSP_DISTRIBUTION_CODE) into li_count FROM DISTRIBUTION WHERE OSP_DISTRIBUTION_CODE=r_award_comment.OSP_DISTRIBUTION_CODE;
+  IF li_count=0 THEN
+    ls_distribution_code:=-1;
+	ELSE
+	  ls_distribution_code:=r_award_comment.OSP_DISTRIBUTION_CODE;
+  END IF;
  
  select SEQUENCE_AWARD_ID.NEXTVAL into li_award_reports_id from dual;
 	
