@@ -1,5 +1,5 @@
 select ' Start time of AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
-
+/
 -- Migrate award amount transaction + doc handler end 
 -- Starts AWARD_AMOUNT_INFO
 DECLARE
@@ -24,14 +24,14 @@ ls_mit_awd_number varchar2(12);
 li_mit_seq NUMBER(4);
 li_transaction_type NUMBER(3,0);
 ll_date DATE;
-ls_comment VARCHAR2(2000,0);
+ls_comment VARCHAR2(2000);
 ls_doc_typ_id VARCHAR2(40);
-li_RTE_BRCH_ID  VARCHAR2(12,0);
-li_rte_node VARCHAR2(12,0);
-li_rte_node_instn_t VARCHAR2(12,0);
-li_action_taken VARCHAR2(12,0);
-li_action_rqst VARCHAR2(12,0);
-li_prncpl_id VARCHAR2(12,0);
+li_RTE_BRCH_ID  VARCHAR2(12);
+li_rte_node VARCHAR2(12);
+li_rte_node_instn_t VARCHAR2(12);
+li_action_taken VARCHAR2(12);
+li_action_rqst VARCHAR2(12);
+li_prncpl_id VARCHAR2(12);
 CURSOR c_award IS
 SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER FROM AWARD a INNER JOIN TEMP_TAB_TO_SYNC_AWARD ts on a.AWARD_NUMBER=replace(ts.MIT_AWARD_NUMBER,'-','-00') and a.SEQUENCE_NUMBER=ts.SEQUENCE_NUMBER 
 ORDER BY a.AWARD_NUMBER,a.SEQUENCE_NUMBER;

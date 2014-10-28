@@ -58,11 +58,9 @@ ALTER TABLE AWARD_COMMENT MODIFY ( COMMENTS CLOB )
 /
 commit
 /
-ALTER INDEX	AWARD_COMMENTP1	REBUILD;
-commit;
+ALTER INDEX	AWARD_COMMENTP1	REBUILD
 /
-ALTER INDEX	AWARD_COMMENT_I1 REBUILD;
-commit;
+commit
 /
 select ' End time of AWARD_COMMENT update script is '|| localtimestamp from dual
 /
