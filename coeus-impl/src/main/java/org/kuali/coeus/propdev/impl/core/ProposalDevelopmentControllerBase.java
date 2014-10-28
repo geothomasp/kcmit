@@ -20,6 +20,7 @@ import org.kuali.coeus.common.framework.compliance.exemption.ExemptionType;
 import org.kuali.coeus.common.framework.keyword.ScienceKeyword;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.framework.compliance.core.SaveDocumentSpecialReviewEvent;
+import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants;
 import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationItem;
 import org.kuali.coeus.propdev.impl.docperm.ProposalDevelopmentPermissionsHelper;
 import org.kuali.coeus.propdev.impl.docperm.ProposalRoleTemplateService;
@@ -33,6 +34,7 @@ import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
+import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.infrastructure.RoleConstants;
@@ -148,6 +150,10 @@ public abstract class ProposalDevelopmentControllerBase {
     @Qualifier("documentAdHocService")
     private DocumentAdHocService documentAdHocService;
 
+    @Autowired
+    @Qualifier("auditHelper")
+    private AuditHelper auditHelper;
+
     protected DocumentFormBase createInitialForm(HttpServletRequest request) {
         return new ProposalDevelopmentDocumentForm();
     }
@@ -197,6 +203,10 @@ public abstract class ProposalDevelopmentControllerBase {
 
          if (StringUtils.equalsIgnoreCase(form.getPageId(), Constants.PROP_DEV_PERMISSIONS_PAGE)) {
              saveDocumentPermissions(form);
+         }
+
+         if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID)) {
+             ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateAttachmentReferences(form.getDevelopmentProposal());
          }
 
          preSave(proposalDevelopmentDocument);
@@ -281,6 +291,9 @@ public abstract class ProposalDevelopmentControllerBase {
      }
      
      protected ModelAndView navigate(ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
+         if (form.isAuditActivated()){
+            getAuditHelper().auditConditionally(form);
+         }
          populateAdHocRecipients(form.getProposalDevelopmentDocument());
          return save(form);
      }
@@ -483,8 +496,7 @@ public abstract class ProposalDevelopmentControllerBase {
                 .populateDataValidation(form,form.getView().getViewIndex());
         if(dataValidationItems != null && dataValidationItems.size() > 0 ) {
             for(ProposalDevelopmentDataValidationItem validationItem : dataValidationItems) {
-                if (StringUtils.equalsIgnoreCase(validationItem.getSeverity(), Constants.AUDIT_ERRORS)|| 
-                		StringUtils.equalsIgnoreCase(validationItem.getSeverity(), Constants.GRANTSGOV_ERROR_SEVIRITY_KEY)) {
+                if (StringUtils.endsWith(validationItem.getSeverity(),Constants.AUDIT_ERRORS)) {
                     isValid = false;
                     form.setDataValidationItems(dataValidationItems);
                     break;
@@ -601,5 +613,13 @@ public abstract class ProposalDevelopmentControllerBase {
 
     public void setDocumentAdHocService(DocumentAdHocService documentAdHocService) {
         this.documentAdHocService = documentAdHocService;
+    }
+
+    public AuditHelper getAuditHelper() {
+        return auditHelper;
+    }
+
+    public void setAuditHelper(AuditHelper auditHelper) {
+        this.auditHelper = auditHelper;
     }
 }

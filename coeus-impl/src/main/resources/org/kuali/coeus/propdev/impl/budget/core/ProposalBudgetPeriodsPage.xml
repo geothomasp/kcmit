@@ -70,14 +70,14 @@
         </property>
         <property name="lineActions">
             <list>
-                <bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="saveLine"
+                <bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="saveBudgetPeriod"
                       p:render="@{#ViewHelper.isBudgetLineItemEditable(#collectionGroup.bindingInfo.bindingPath,#index,editableBudgetLineItems)}" 
                       p:actionLabel="Save" p:order="10"/>
                 <bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="cancelEditLineItem"
                       p:render="@{#ViewHelper.isBudgetLineItemEditable(#collectionGroup.bindingInfo.bindingPath,#index,editableBudgetLineItems)}" 
                       p:actionLabel="Cancel" p:order="20"/>
                 <bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="editLineItem"
-                      p:render="@{!#ViewHelper.isBudgetLineItemEditable(#collectionGroup.bindingInfo.bindingPath,#index,editableBudgetLineItems)}" 
+                      p:render="@{!#line.readOnly and !#ViewHelper.isBudgetLineItemEditable(#collectionGroup.bindingInfo.bindingPath,#index,editableBudgetLineItems)}" 
                       p:actionLabel="Edit" p:order="30"/>
                 <bean parent="Uif-DeleteLineAction-IconOnly" p:order="40"
                       p:render="@{!#ViewHelper.isBudgetLineItemEditable(#collectionGroup.bindingInfo.bindingPath,#index,editableBudgetLineItems)}" 
@@ -118,6 +118,6 @@
         </property>
     </bean>
 	<!-- this dialog will be triggered from the controller -->
-	<bean id="PropBudget-ConfirmPeriodChangesDialog" parent="Uif-DialogGroup-YesNo" p:promptText="@{defaultBudgetPeriodWarningMessage}"/>
+	<bean id="PropBudget-PeriodsPage-ConfirmPeriodChangesDialog" parent="Uif-DialogGroup-YesNo" p:promptText="@{defaultBudgetPeriodWarningMessage}"/>
       
 </beans>

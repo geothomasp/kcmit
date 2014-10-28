@@ -72,7 +72,7 @@ public class ProposalBudgetCommonController extends ProposalBudgetControllerBase
 	}
 	
 	@RequestMapping(params="methodToCall=save")
-	public ModelAndView save(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+	public ModelAndView save(@ModelAttribute("KualiForm") ProposalBudgetForm form) {
 		return super.save(form);
 	}
 
@@ -123,14 +123,7 @@ public class ProposalBudgetCommonController extends ProposalBudgetControllerBase
 
 	@RequestMapping(params="methodToCall=saveLine")
 	public ModelAndView saveLine(@ModelAttribute("KualiForm") ProposalBudgetForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
-        final String selectedCollectionPath = form.getActionParamaterValue(UifParameters.SELECTED_COLLECTION_PATH);
-        String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
-
-        if(form.getEditableBudgetLineItems() != null && selectedCollectionPath !=null && form.getEditableBudgetLineItems().containsKey(selectedCollectionPath)){
-            form.getEditableBudgetLineItems().get(selectedCollectionPath).remove(selectedLine);
-        }
-
-        return getCollectionControllerService().saveLine(form);
+		return super.saveLine(form);
 	}
 
 	@RequestMapping(params="methodToCall=deleteLine")
@@ -258,6 +251,11 @@ public class ProposalBudgetCommonController extends ProposalBudgetControllerBase
     @RequestMapping(params="methodToCall=closeEditLineDialog")
 	public ModelAndView closeEditLineDialog(UifFormBase form) {
 		return getCollectionControllerService().closeEditLineDialog(form);
+	}
+    
+    @RequestMapping(params="methodToCall=editLine")
+	public ModelAndView editLine(UifFormBase form) {
+		return getCollectionControllerService().editLine(form);
 	}    
 
 	public ProposalBudgetSharedController getProposalBudgetSharedController() {
@@ -269,4 +267,10 @@ public class ProposalBudgetCommonController extends ProposalBudgetControllerBase
 		this.proposalBudgetSharedController = proposalBudgetSharedController;
 	}
 
+    @RequestMapping(params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropBudget-SummaryPage"})
+    public ModelAndView navigateToBudgetSummary(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+    	getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());
+        return super.navigate(form);
+    }
+    
 }

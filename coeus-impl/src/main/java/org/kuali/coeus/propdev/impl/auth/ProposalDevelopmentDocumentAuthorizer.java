@@ -38,6 +38,7 @@ import org.kuali.coeus.sys.framework.workflow.KcWorkflowService;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.infrastructure.PermissionConstants;
+import org.kuali.kra.infrastructure.RoleConstants;
 import org.kuali.kra.institutionalproposal.InstitutionalProposalConstants;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetConstants.AuthConstants;
@@ -162,7 +163,6 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
      * @param editModes the edit mode map
      */
     private void setPermissions(Person user, ProposalDevelopmentDocument doc, Set<String> editModes) {
-        final String userId = user.getPrincipalId();
 
         if (editModes.contains(AuthorizationConstants.EditMode.FULL_ENTRY)) {
             editModes.add("modifyProposal");
@@ -171,7 +171,7 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
         if (isAuthorizedToAddBudget(doc, user)) {
             editModes.add(AuthConstants.ADD_BUDGET_EDIT_MODE);
         }
-                
+
         if (isAuthorizedToOpenBudget(doc, user)) {
             editModes.add(AuthConstants.VIEW_BUDGET_EDIT_MODE);
         }
@@ -190,6 +190,10 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
                    
         if (isAuthorizedToCertify(doc, user)) {
             editModes.add("certify");
+        }
+
+        if (isAuthorizedToCopyProposal(doc, user)) {
+            editModes.add("canCopyProposal");
         }
                 
         if (isAuthorizedToPrint(doc, user)) {
@@ -225,53 +229,55 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
     private void setNarrativePermissions(Person user, ProposalDevelopmentDocument doc, Set<String> editModes) {
 
         List<Narrative> narratives = doc.getDevelopmentProposal().getNarratives();
-        for (Narrative narrative : narratives) {
-            String prefix = "proposalAttachment." + narrative.getModuleNumber() + ".";
-            if (isAuthorizedToViewNarrative(narrative, user)) {
-                editModes.add(prefix + "download");
+        synchronized (narratives) {
+            for (Narrative narrative : narratives) {
+                String prefix = "proposalAttachment." + narrative.getModuleNumber() + ".";
+                if (isAuthorizedToViewNarrative(narrative, user)) {
+                    editModes.add(prefix + "download");
+                }
+                if (isAuthorizedToReplaceNarrative(narrative, user)) {
+                    editModes.add(prefix + "replace");
+                }
+                if (isAuthorizedToDeleteNarrative(narrative, user)) {
+                    editModes.add(prefix + "delete");
+                }
+                if (isAuthorizedToModifyNarrative(narrative, user)) {
+                    editModes.add(prefix + "modifyStatus");
+                }
+                if (isAuthorizedToModifyNarrative(narrative, user)) {
+                    editModes.add(prefix + "modifyRights");
+                }
             }
-            if (isAuthorizedToReplaceNarrative(narrative, user)) {
-                editModes.add(prefix + "replace");
-            }
-            if (isAuthorizedToDeleteNarrative(narrative, user)) {
-                editModes.add(prefix + "delete");
-            }
-            if (isAuthorizedToModifyNarrative(narrative, user)) {
-                editModes.add(prefix + "modifyStatus");
-            }
-            if (isAuthorizedToModifyNarrative(narrative, user)) {
-                editModes.add(prefix + "modifyRights");
-            }
-        }
-        
-        narratives = doc.getDevelopmentProposal().getInstituteAttachments();
-        for (Narrative narrative : narratives) {
-            String prefix = "instituteAttachment." + narrative.getModuleNumber() + ".";
-            if (isAuthorizedToViewNarrative(narrative, user)) {
-                editModes.add(prefix + "download");
-            }
-            if (isAuthorizedToReplaceNarrative(narrative, user) ) {
-                editModes.add(prefix + "replace");
-            }
-            if (isAuthorizedToDeleteNarrative(narrative, user)) {
-                editModes.add(prefix + "delete");
-            }
-            if (isAuthorizedToModifyNarrative(narrative, user)) {
-                editModes.add(prefix + "modifyRights");
-            }
-        }
-        
 
-        int i = 0;
-        boolean canReplace = isAuthorizedToReplacePersonnelAttachement(doc, user);
-        for (ProposalPersonBiography ppb : doc.getDevelopmentProposal().getPropPersonBios()) {
-            ppb.setPositionNumber(i);
-            String prefix = "biographyAttachments." + ppb.getPositionNumber() + ".";
-            if (canReplace) {
-                editModes.add(prefix + "replace");
+            narratives = doc.getDevelopmentProposal().getInstituteAttachments();
+            for (Narrative narrative : narratives) {
+                String prefix = "instituteAttachment." + narrative.getModuleNumber() + ".";
+                if (isAuthorizedToViewNarrative(narrative, user)) {
+                    editModes.add(prefix + "download");
+                }
+                if (isAuthorizedToReplaceNarrative(narrative, user) ) {
+                    editModes.add(prefix + "replace");
+                }
+                if (isAuthorizedToDeleteNarrative(narrative, user)) {
+                    editModes.add(prefix + "delete");
+                }
+                if (isAuthorizedToModifyNarrative(narrative, user)) {
+                    editModes.add(prefix + "modifyRights");
+                }
             }
-            
-            i++;
+
+
+            int i = 0;
+            boolean canReplace = isAuthorizedToReplacePersonnelAttachement(doc, user);
+            for (ProposalPersonBiography ppb : doc.getDevelopmentProposal().getPropPersonBios()) {
+                ppb.setPositionNumber(i);
+                String prefix = "biographyAttachments." + ppb.getPositionNumber() + ".";
+                if (canReplace) {
+                    editModes.add(prefix + "replace");
+                }
+
+                i++;
+            }
         }
     }
     
@@ -379,7 +385,9 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
     }
 
     public boolean hasCertificationPermissions(ProposalDevelopmentDocument document, Person user, ProposalPerson proposalPerson){
-        if (getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY)) {
+        final Boolean param = getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
+
+        if (param != null && param) {
 
             // null person indicates non employee and only people with proxy perms can certify for them so return false below
             boolean isKeyPersonnel = proposalPerson.getPerson() != null && proposalPerson.getPerson().getPersonId().equals(user.getPrincipalId());
@@ -521,6 +529,10 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
     protected boolean isAuthorizedToCertify(Document document, Person user) {
         final ProposalDevelopmentDocument pdDocument = ((ProposalDevelopmentDocument) document);
         return getKcAuthorizationService().hasPermission(user.getPrincipalId(), pdDocument, PermissionConstants.CERTIFY);
+    }
+
+    protected boolean isAuthorizedToCopyProposal(Document document, Person user) {
+        return getUnitAuthorizationService().hasPermission(user.getPrincipalId(), Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT, PermissionConstants.CREATE_PROPOSAL);
     }
 
     protected boolean isAuthorizedToReplacePersonnelAttachement(Document document, Person user) {
@@ -690,7 +702,7 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
                 !pdDocument.getDevelopmentProposal().isChild();
     }
 
-    protected boolean isAuthorizedToPrint(Document document, Person user) {
+    public boolean isAuthorizedToPrint(Document document, Person user) {
         final ProposalDevelopmentDocument pdDocument = ((ProposalDevelopmentDocument) document);
         return getKcAuthorizationService().hasPermission(user.getPrincipalId(), pdDocument, PermissionConstants.PRINT_PROPOSAL);
     }

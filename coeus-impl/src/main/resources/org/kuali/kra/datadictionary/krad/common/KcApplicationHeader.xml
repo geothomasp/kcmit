@@ -29,6 +29,7 @@
             <list merge="true">
                 <value>rice-contrib/plugins/bootstrap-select/bootstrap-select.js</value>
                 <value>rice-contrib/multiselect.js</value>
+                <value>scripts/common/lineItemTable.js</value>
             </list>
         </property>
     </bean>
@@ -144,11 +145,11 @@
 
     <bean id="Kc-Header-ActionListView" parent="Kc-Header-ActionListView-parentBean"/>
     <bean id="Kc-Header-ActionListView-parentBean" abstract="true"
-          parent="Kc-Header-IframeView" p:location.controllerMapping="/kew/ActionList.do"/>
+          parent="Kc-Header-IframeView" p:location.baseUrl="@{#ConfigProperties['rice.server.url']}" p:location.controllerMapping="/kew/ActionList.do"/>
 
     <bean id="Kc-Header-DocSearchView" parent="Kc-Header-DocSearchView-parentBean"/>
     <bean id="Kc-Header-DocSearchView-parentBean" abstract="true"
-          parent="Kc-Header-IframeView" p:location.controllerMapping="/kew/DocumentSearch.do"/>
+          parent="Kc-Header-IframeView" p:location.baseUrl="@{#ConfigProperties['rice.server.url']}" p:location.controllerMapping="/kew/DocumentSearch.do"/>
 
     <bean id="Kc-Header-ApplicationLogo" parent="Kc-Header-ApplicationLogo-parentBean"/>
     <bean id="Kc-Header-ApplicationLogo-parentBean" parent="Uif-Image"
@@ -236,7 +237,7 @@
                 <bean parent="Uif-MenuAction" p:actionLabel="  All My Proposals"
                       p:actionUrl.viewId="AllDevelopmentProposals-LookupViewId"
                       p:actionParameters="viewName:AllLookupableDevelopmentProposals-LookupViewName"
-                      p:actionUrl.controllerMapping="/lookup" p:order="30"  p:iconClass="icon-chevron-sign-right"/>
+                      p:actionUrl.controllerMapping="/lookup" p:order="30"  p:iconClass="icon-chevron-sign-right" />
                 <bean parent="Uif-MenuAction" p:actionLabel="  Create Proposal For S2S Opportunity"
                       p:order="40" p:iconClass="icon-chevron-sign-right"/>
                 <bean parent="Uif-SimpleHeaderFour" p:headerText="Lists"
@@ -1233,9 +1234,9 @@ value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&
                       p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="  People Flow"
                       p:order="10" p:cssClasses="icon-chevron-sign-right">
                     <property name="actionUrl.requestParameters">
-                        <map>
+                       		<map>
                             <entry key="href"
-                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.award.home.Award&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}/portal.do&amp;hideReturnLink=true"/>
+                                   value="@{#ConfigProperties['application.url']}/kr-krad/lookup?methodToCall=start&amp;dataObjectClassName=org.kuali.rice.kew.impl.peopleflow.PeopleFlowBo&amp;showMaintenanceLinks=true&amp;returnLocation=@{#ConfigProperties['application.url']}/portal.do&amp;hideReturnLink=true"/>
                         </map>
                     </property>
                 </bean>
@@ -1314,10 +1315,9 @@ value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&
                       p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="  Attribute Definition"
                       p:order="30" p:cssClasses="icon-chevron-sign-right">
                     <property name="actionUrl.requestParameters">
-                        <map>
-                            <entry key="href"
-                                   value="@{#ConfigProperties['application.url']}/kr-krad/lookup?methodToCall=start&amp;dataObjectClassName=org.kuali.rice.krms.impl.repository.AgendaBo&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}/portal.do&amp;hideReturnLink=true"/>
-                        </map>
+                      <map>
+						<entry key="href"  value="@{#ConfigProperties['application.url']}/kr-krad/lookup?methodToCall=start&amp;dataObjectClassName=org.kuali.rice.krms.impl.repository.KrmsAttributeDefinitionBo&amp;showMaintenanceLinks=true&amp;returnLocation=@{#ConfigProperties['application.url']}/portal.do&amp;hideReturnLink=true"/>
+						</map>
                     </property>
                 </bean>
 

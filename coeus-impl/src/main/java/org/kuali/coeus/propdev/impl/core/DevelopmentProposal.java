@@ -334,10 +334,10 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     @OneToMany(mappedBy="developmentProposal",orphanRemoval = true, cascade = { CascadeType.ALL })
     private List<ProposalPersonBiography> propPersonBios;
 
-    @OneToMany(mappedBy="developmentProposal", orphanRemoval = true, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy="developmentProposal", orphanRemoval = true, cascade = { CascadeType.REFRESH, CascadeType.REMOVE })
     private List<ProposalDevelopmentBudgetExt> budgets;
     
-    @OneToOne(cascade = { CascadeType.ALL })
+    @OneToOne(cascade = { CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "FINAL_BUDGET_ID", referencedColumnName = "BUDGET_ID")
     private ProposalDevelopmentBudgetExt finalBudget;    
 
@@ -1980,25 +1980,6 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
             statusString = ATTACHMENTS_NONE;
         }
         return statusString;
-    }
-
-    public void cleanupSpecialReviews(DevelopmentProposal srcProposal) {
-        List<ProposalSpecialReview> srcSpecialReviews = srcProposal.getPropSpecialReviews();
-        List<ProposalSpecialReview> dstSpecialReviews = getPropSpecialReviews();
-        for (int i = 0; i < srcSpecialReviews.size(); i++) {
-            ProposalSpecialReview srcSpecialReview = srcSpecialReviews.get(i);
-            ProposalSpecialReview dstSpecialReview = dstSpecialReviews.get(i);
-            // copy exemption codes, since they are transient and ignored by deepCopy()   
-            if (srcSpecialReview.getExemptionTypeCodes() != null) {
-                List<String> exemptionCodeCopy = new ArrayList<String>();
-                for (String s : srcSpecialReview.getExemptionTypeCodes()) {
-                    exemptionCodeCopy.add(new String(s));
-                }
-                dstSpecialReview.setExemptionTypeCodes(exemptionCodeCopy);
-            }
-            // force new SQL table inserts   
-            dstSpecialReview.resetPersistenceState();
-        }
     }
 
     // Note: following the pattern of Sponsor, this getter indirectly calls a service.   

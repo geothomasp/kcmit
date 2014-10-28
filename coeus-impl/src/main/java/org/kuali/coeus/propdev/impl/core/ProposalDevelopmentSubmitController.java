@@ -32,6 +32,7 @@ import org.kuali.coeus.s2sgen.api.generate.FormGeneratorService;
 import org.kuali.coeus.common.framework.compliance.core.SaveSpecialReviewLinkEvent;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewService;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewType;
+import org.kuali.coeus.sys.framework.workflow.KcWorkflowService;
 import org.kuali.kra.bo.FundingSourceType;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
@@ -144,7 +145,11 @@ public class ProposalDevelopmentSubmitController extends
     @Autowired
     @Qualifier("legacyDataAdapter")
     private LegacyDataAdapter legacyDataAdapter;
-    
+
+    @Autowired
+    @Qualifier("kcWorkflowService")
+    private KcWorkflowService kcWorkflowService;
+
     private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
 
     @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=populateAdHocs")
@@ -204,7 +209,7 @@ public class ProposalDevelopmentSubmitController extends
         return super.navigate(form,result,request,response);
     }
 
-   
+
     @RequestMapping(value = "/proposalDevelopment", params="methodToCall=blanketApprove")
     public  ModelAndView blanketApprove(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form)throws Exception {
        return proposalValidToRoute(form) ? getTransactionalDocumentControllerService().blanketApprove(form) : getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
@@ -236,7 +241,7 @@ public class ProposalDevelopmentSubmitController extends
     @RequestMapping(value = "/proposalDevelopment", params="methodToCall=prepareNotificationWizard")
     public ModelAndView prepareNotificationWizard(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) {
         final String step = form.getNotificationHelper().getNotificationRecipients().isEmpty() ? "0" : "2";
-        form.getActionParameters().put("Kc-SendNotification-Wizard.step",step);
+        form.getActionParameters().put("Kc-SendNotification-Wizard.step", step);
         return getRefreshControllerService().refresh(form);
     }
 
@@ -279,7 +284,10 @@ public class ProposalDevelopmentSubmitController extends
 
         if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
-                submitApplication(form);
+    			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
+    			if(autogenerateInstitutionalProposal() && ! hasInstitutionalProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalNumber())) {
+    				submitApplication(form);
+    			}
                 handleSubmissionToS2S(form);
                 return getModelAndViewService().getModelAndView(form,"PropDev-OpportunityPage");
             } else {
@@ -292,13 +300,11 @@ public class ProposalDevelopmentSubmitController extends
 
     protected void handleSubmissionToS2S(ProposalDevelopmentDocumentForm form) throws Exception {
         ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
-        if (hasInstitutionalProposal(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber())) {
-            try {
-                submitS2sApplication(proposalDevelopmentDocument);
-            } catch(S2SException ex) {
-                LOGGER.error(ex.getStackTrace(), ex);
-                getGlobalVariableService().getMessageMap().putError(Constants.NO_FIELD, KeyConstants.ERROR_ON_GRANTS_GOV_SUBMISSION,ex.getErrorMessage());
-            }
+        try {
+            submitS2sApplication(proposalDevelopmentDocument);
+        } catch(S2SException ex) {
+            LOGGER.error(ex.getStackTrace(), ex);
+            getGlobalVariableService().getMessageMap().putError(Constants.NO_FIELD, KeyConstants.ERROR_ON_GRANTS_GOV_SUBMISSION,ex.getErrorMessage());
         }
     }
 
@@ -489,8 +495,7 @@ public class ProposalDevelopmentSubmitController extends
     }
     
     protected boolean autogenerateInstitutionalProposal() {
-    	return getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT, 
-                ParameterConstants.DOCUMENT_COMPONENT, KeyConstants.AUTOGENERATE_INSTITUTIONAL_PROPOSAL_PARAM);
+    	return getProposalDevelopmentService().autogenerateInstitutionalProposal();
     }
     
     
@@ -542,6 +547,12 @@ public class ProposalDevelopmentSubmitController extends
         }
 
         getTransactionalDocumentControllerService().performWorkflowAction(form, UifConstants.WorkflowAction.APPROVE);
+        if (form.getView().getAuthorizer().getActionFlags(form.getView(), form, getGlobalVariableService().getUserSession().getPerson(),
+                form.getView().getPresentationController().getActionFlags(form.getView(), form)).contains("submitToSponsor")
+                && getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, "autoSubmitToSponsorOnFinalApproval")
+                && getKcWorkflowService().isFinalApproval(workflowDoc)) {
+            return submitToSponsor(form);
+        }
         return getModelAndViewService().getModelAndView(form);
     }
 
@@ -771,5 +782,11 @@ public class ProposalDevelopmentSubmitController extends
 		return legacyDataAdapter;
 	}
 
+    public KcWorkflowService getKcWorkflowService() {
+        return kcWorkflowService;
+    }
 
+    public void setKcWorkflowService(KcWorkflowService kcWorkflowService) {
+        this.kcWorkflowService = kcWorkflowService;
+    }
 }

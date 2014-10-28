@@ -12,6 +12,7 @@ import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationS
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetService;
 import org.kuali.coeus.propdev.impl.budget.ProposalDevelopmentBudgetExt;
 import org.kuali.coeus.propdev.impl.budget.auth.ProposalBudgetAuthorizer;
+import org.kuali.coeus.propdev.impl.budget.modular.BudgetModularService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
@@ -102,6 +103,9 @@ public abstract class ProposalBudgetControllerBase {
     @Qualifier("proposalBudgetAuthorizer")
     private ProposalBudgetAuthorizer proposalBudgetAuthorizer;
 
+    @Autowired
+    @Qualifier("budgetModularService")
+    private BudgetModularService budgetModularService;
     protected UifFormBase createInitialForm(HttpServletRequest request) {
         return new ProposalBudgetForm();
     }
@@ -120,11 +124,22 @@ public abstract class ProposalBudgetControllerBase {
     	return budget;
     }
 
-    public ModelAndView save(ProposalBudgetForm form) throws Exception {
-        getBudgetCalculationService().calculateBudget(form.getBudget());
-    	getDataObjectService().save(form.getBudget());
+    public ModelAndView save(ProposalBudgetForm form) {
+    	budgetService.calculateBudgetOnSave(form.getBudget());
+    	form.setBudget(getDataObjectService().save(form.getBudget()));
         getBudgetJustificationService().preSave(form.getBudget(),form.getBudgetJustificationWrapper());
+        form.setBudgetModularSummary(budgetModularService.generateModularSummary(form.getBudget()));
         return getModelAndViewService().getModelAndView(form);
+    }
+    
+    public ModelAndView saveLine(ProposalBudgetForm form) {
+        final String selectedCollectionPath = form.getActionParamaterValue(UifParameters.SELECTED_COLLECTION_PATH);
+        String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
+
+        if(form.getEditableBudgetLineItems() != null && selectedCollectionPath !=null && form.getEditableBudgetLineItems().containsKey(selectedCollectionPath)){
+            form.getEditableBudgetLineItems().get(selectedCollectionPath).remove(selectedLine);
+        }
+        return getCollectionControllerService().saveLine(form);
     }
     
     protected ModelAndView navigate(ProposalBudgetForm form) throws Exception {
@@ -278,5 +293,13 @@ public abstract class ProposalBudgetControllerBase {
 			ProposalBudgetAuthorizer proposalBudgetAuthorizer) {
 		this.proposalBudgetAuthorizer = proposalBudgetAuthorizer;
 	}
+
+    public BudgetModularService getBudgetModularService() {
+        return budgetModularService;
+    }
+
+    public void setBudgetModularService(BudgetModularService budgetModularService) {
+        this.budgetModularService = budgetModularService;
+    }
 
 }

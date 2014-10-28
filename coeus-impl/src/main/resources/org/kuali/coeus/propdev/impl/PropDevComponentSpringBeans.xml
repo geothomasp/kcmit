@@ -58,6 +58,7 @@
                 <value>classpath:org/kuali/coeus/propdev/impl/core/ProposalDeletedPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/core/ProposalMedusaSection.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/core/ProposalSubmitPage.xml</value>
+                <value>classpath:org/kuali/coeus/propdev/impl/core/ProposalUtilityViews.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/s2s/ProposalOpportunitySearchPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/deliver/ProposalDeliveryInfoPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/location/ProposalOrganizationLocationsPage.xml</value>
@@ -93,6 +94,8 @@
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/nonpersonnel/ProposalBudgetNonPersonnelCostsPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/nonpersonnel/ProposalBudgetLineItemShared.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/subaward/ProposalBudgetSubawardsPage.xml</value>
+                <value>classpath:org/kuali/coeus/propdev/impl/budget/modular/ProposalBudgetModularPage.xml</value>
+                <value>classpath:org/kuali/coeus/propdev/impl/budget/core/ProposalBudgetSummaryPage.xml</value>
 
                 <!-- Budget Mock View -->
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/mock/ProposalBudgetView.xml</value>

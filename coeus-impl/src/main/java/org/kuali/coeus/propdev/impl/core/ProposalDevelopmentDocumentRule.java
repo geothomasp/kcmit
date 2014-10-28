@@ -30,6 +30,8 @@ import org.kuali.coeus.propdev.impl.abstrct.AbstractsRule;
 import org.kuali.coeus.propdev.impl.abstrct.ProposalAbstract;
 import org.kuali.coeus.propdev.impl.basic.ProposalDevelopmentProposalRequiredFieldsAuditRule;
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetService;
+import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants;
+import org.kuali.coeus.propdev.impl.krms.ProposalDevelopmentKRMSAuditRule;
 import org.kuali.coeus.propdev.impl.sponsor.ProposalDevelopmentSponsorProgramInformationAuditRule;
 import org.kuali.coeus.propdev.impl.budget.editable.BudgetDataOverrideEvent;
 import org.kuali.coeus.propdev.impl.budget.editable.BudgetDataOverrideRule;
@@ -37,6 +39,7 @@ import org.kuali.coeus.propdev.impl.budget.editable.ProposalBudgetDataOverrideRu
 import org.kuali.coeus.propdev.impl.copy.CopyProposalRule;
 import org.kuali.coeus.propdev.impl.copy.ProposalCopyCriteria;
 import org.kuali.coeus.propdev.impl.copy.ProposalDevelopmentCopyRule;
+import org.kuali.coeus.propdev.impl.custom.AuditProposalCustomDataEvent;
 import org.kuali.coeus.propdev.impl.docperm.*;
 import org.kuali.coeus.propdev.impl.editable.ProposalDataOverrideEvent;
 import org.kuali.coeus.propdev.impl.editable.ProposalDataOverrideRule;
@@ -60,6 +63,7 @@ import org.kuali.coeus.propdev.impl.s2s.ProposalDevelopmentGrantsGovAuditRule;
 import org.kuali.coeus.propdev.impl.s2s.question.ProposalDevelopmentS2sQuestionnaireAuditRule;
 import org.kuali.coeus.propdev.impl.ynq.ProposalDevelopmentYnqAuditRule;
 import org.kuali.coeus.propdev.impl.ynq.ProposalYnq;
+import org.kuali.coeus.sys.framework.model.KcTransactionalDocumentBase;
 import org.kuali.coeus.sys.framework.rule.KcBusinessRule;
 import org.kuali.coeus.sys.framework.rule.KcDocumentEventBaseExtension;
 import org.kuali.coeus.sys.framework.rule.KcTransactionalDocumentRuleBase;
@@ -170,6 +174,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
             valid &= processKeywordBusinessRule(proposalDevelopmentDocument);
             valid &= proccessValidateSponsor(proposalDevelopmentDocument);
             valid &= processCustomDataRule(proposalDevelopmentDocument);
+            valid &= processAttachmentRules(proposalDevelopmentDocument);
             GlobalVariables.getMessageMap().removeFromErrorPath("document.developmentProposal");
         }
 
@@ -448,7 +453,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         }
         boolean retval = true;
         
-        retval &= new KcDocumentBaseAuditRule().processRunAuditBusinessRules(document);
+        retval &= new CustomDataRule().processRules(new AuditProposalCustomDataEvent((KcTransactionalDocumentBase)document));
         
         retval &= new ProposalDevelopmentProposalRequiredFieldsAuditRule().processRunAuditBusinessRules(document);
         
@@ -475,6 +480,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         
         // audit check for budgetversion with final status
         retval &= processRunAuditBudgetVersionRule(proposalDevelopmentDocument.getDevelopmentProposal());
+        retval &= new ProposalDevelopmentKRMSAuditRule().processRunAuditBusinessRules(proposalDevelopmentDocument);
        
         return retval;
     }
@@ -494,14 +500,27 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
             finalAndCompleteBudgetVersionFound = true;
         }
         if (budgetVersionsExists && !finalAndCompleteBudgetVersionFound) {
-            auditErrors.add(new AuditError("document.parentBudget.budgetVersionOverview", KeyConstants.AUDIT_ERROR_NO_BUDGETVERSION_COMPLETE_AND_FINAL, Constants.PD_BUDGET_VERSIONS_PAGE + "." + Constants.BUDGET_VERSIONS_PANEL_ANCHOR));
+            auditErrors.add(new AuditError("document.developmentProposal.budgets", KeyConstants.AUDIT_ERROR_NO_BUDGETVERSION_COMPLETE_AND_FINAL, ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID));
             retval = false;
         }
         if (auditErrors.size() > 0) {
-            GlobalVariables.getAuditErrorMap().put("budgetVersionErrors", new AuditCluster(Constants.BUDGET_VERSION_PANEL_NAME, auditErrors, Constants.AUDIT_ERRORS));
+            GlobalVariables.getAuditErrorMap().put("budgetVersionErrors", new AuditCluster(ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_NAME, auditErrors, ProposalDevelopmentDataValidationConstants.AUDIT_ERRORS));
         }
 
         return retval;
+    }
+
+    public boolean processAttachmentRules(ProposalDevelopmentDocument document) {
+        boolean retVal = true;
+        for (ProposalPersonBiography biography : document.getDevelopmentProposal().getPropPersonBios()) {
+            retVal &= processSavePersonnelAttachmentBusinessRules(new SavePersonnelAttachmentEvent("",document,biography));
+        }
+        int index= 0;
+        for (Narrative narrative : document.getDevelopmentProposal().getNarratives()) {
+            retVal &= processSaveNarrativesBusinessRules(new SaveNarrativesEvent("document.developmentProposal.narratives["+index+"]",document,narrative,document.getDevelopmentProposal().getNarratives()));
+            index++;
+        }
+        return retVal;
     }
 
     @Override
@@ -532,7 +551,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
     }
 
     public boolean processAddPersonnelAttachmentBusinessRules(AddPersonnelAttachmentEvent addPersonnelAttachmentEvent) {
-        return new ProposalDevelopmentPersonnelAttachmentRule().processAddPersonnelAttachmentBusinessRules(addPersonnelAttachmentEvent);    
+        return new ProposalDevelopmentPersonnelAttachmentRule().processAddPersonnelAttachmentBusinessRules(addPersonnelAttachmentEvent);
     }
 
     public boolean processSavePersonnelAttachmentBusinessRules(SavePersonnelAttachmentEvent savePersonnelAttachmentEvent) {

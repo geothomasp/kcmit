@@ -382,4 +382,9 @@ VALUES (CONCAT('KC', (SELECT (MAX(ID)) FROM KRIM_ROLE_PERM_ID_S)), UUID(), 1, (S
 /
 DELETE FROM KRIM_ROLE_T WHERE ROLE_NM = 'unassigned' AND NMSPC_CD = 'KC-PD'
 /
+<<<<<<< HEAD:coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/coeus-sql/current_mysql/6.0.0/dml/KR_DML_02_KRACOEUS-6294_B000.sql
 DELIMITER ;
+=======
+
+DELIMITER ;
+>>>>>>> 706779e7b725de55a894a793af2253db23dd4364:coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/coeus-sql/current_mysql/6.0.0/dml/KR_DML_02_KRACOEUS-6294_BTSD.sql

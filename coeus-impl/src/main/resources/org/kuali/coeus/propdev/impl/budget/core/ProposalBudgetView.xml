@@ -41,6 +41,7 @@
 				<value>css/common/inlineEdit.css</value>
                 <value>css/propdev/person.css</value>
 				<value>css/propdev/budget.css</value>
+				<value>css/common/lineItemTable.css</value>
 			</list>
 		</property>
 		<property name="header" ref="PropBudget-DocumentHeader" />
@@ -58,9 +59,9 @@
 				<ref bean="PropBudget-CostSharingPage" />
                 <ref bean="PropBudget-UnrecoveredFandAPage" />
                 <ref bean="PropBudget-ProjectIncomePage" />
-				<bean id="PropBudget-ModularPage" parent="PropBudget-UnderDevelopmentPage" />
+				<ref bean="PropBudget-ModularPage" />
 				<ref bean="PropBudget-NotesPage" />
-				<bean id="PropBudget-SummaryPage" parent="PropBudget-UnderDevelopmentPage" />				
+				<ref bean="PropBudget-SummaryPage" />
 			</list>
 		</property>
 	</bean>

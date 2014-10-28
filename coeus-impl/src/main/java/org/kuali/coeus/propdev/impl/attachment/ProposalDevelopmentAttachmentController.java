@@ -75,7 +75,10 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
         final String selectedCollectionPath = request.getParameter("bindingPath");
 
         addEditableCollectionLine(form, selectedCollectionPath);
-        return getFileControllerService().addFileUploadLine(form);
+
+        synchronized (ObjectPropertyUtils.getPropertyValue(form, selectedCollectionPath)) {
+            return getFileControllerService().addFileUploadLine(form);
+        }
     }
 
     @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteFileUploadLine")
@@ -184,19 +187,15 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
     public ModelAndView addNarrative(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
         Narrative narrative = form.getProposalDevelopmentAttachmentHelper().getNarrative();
         initializeNarrative(narrative, form.getProposalDevelopmentDocument());
-        form.getDevelopmentProposal().getNarratives().add(0,narrative);
-        form.getProposalDevelopmentAttachmentHelper().reset();
-
-        String collectionPath = ProposalDevelopmentConstants.PropertyConstants.NARRATIVES;
-        if (!((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).validateNarrativeRequiredFields(narrative, collectionPath + "[0]",false)){
-            addEditableCollectionLine(form, collectionPath);
+        if ( getKualiRuleService().applyRules(new AddNarrativeEvent("proposalDevelopmentAttachmentHelper.narrative",form.getProposalDevelopmentDocument(),form.getProposalDevelopmentAttachmentHelper().getNarrative()))) {
+            form.getDevelopmentProposal().getNarratives().add(0,narrative);
+            form.getProposalDevelopmentAttachmentHelper().reset();
+        } else {
+            form.setUpdateComponentId("PropDev-AttachmentsPage-ProposalDetails");
+            form.setAjaxReturnType("update-component");
         }
-        else if(form.getEditableCollectionLines().containsKey(collectionPath)
-                && form.getEditableCollectionLines().get(collectionPath).size() > 0) {
-            updateEditableCollectionLines(form, collectionPath);
-        }
-
         return getRefreshControllerService().refresh(form);
+
     }
 
     @RequestMapping(value = "/proposalDevelopment", params="methodToCall=addInstituteAttachment")
@@ -251,9 +250,14 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
         } catch (Exception e) {
             LOG.info("No File Attached");
         }
-        form.getDevelopmentProposal().getNarratives().set(selectedLineIndex,narrative);
-        form.getProposalDevelopmentAttachmentHelper().reset();
 
+        if ( getKualiRuleService().applyRules(new AddNarrativeEvent("proposalDevelopmentAttachmentHelper.narrative",form.getProposalDevelopmentDocument(),form.getProposalDevelopmentAttachmentHelper().getNarrative()))) {
+            form.getDevelopmentProposal().getNarratives().set(selectedLineIndex,narrative);
+            form.getProposalDevelopmentAttachmentHelper().reset();
+        } else {
+            form.setUpdateComponentId("PropDev-AttachmentsPage-ProposalDetails");
+            form.setAjaxReturnType("update-component");
+        }
         return getRefreshControllerService().refresh(form);
     }
 
