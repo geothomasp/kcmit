@@ -25,7 +25,9 @@ import org.kuali.coeus.propdev.impl.person.ProposalPersonUnit;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.krms.KcKrmsConstants;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kew.engine.RouteContext;
+import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krms.api.engine.Engine;
 import org.kuali.rice.krms.api.engine.EngineResults;
@@ -79,10 +81,12 @@ public class ProposalDevelopmentRulesEngineExecutorImpl  extends KcRulesEngineEx
         return results;
     }
     private List<String> getProposalPersonUnits(String proposalNumber) {
-        BusinessObjectService bos = KcServiceLocator.getService(BusinessObjectService.class);
+    	DataObjectService dataObjectService = KcServiceLocator.getService(DataObjectService.class);
+    	
         Map<String,String> params = new HashMap<String, String>();
-        params.put("proposalNumber", proposalNumber);
-        List<ProposalPerson> proposalPersons = (List<ProposalPerson>) bos.findMatching(ProposalPerson.class, params);
+        params.put("developmentProposal.proposalNumber", proposalNumber);
+        List<ProposalPerson> proposalPersons = (List<ProposalPerson>) dataObjectService.findMatching(ProposalPerson.class,
+        		QueryByCriteria.Builder.andAttributes(params).build()).getResults();
         List<String> units = new ArrayList<String>();
         for (ProposalPerson proposalPerson : proposalPersons) {
             List<ProposalPersonUnit> proposalPersonUnits = proposalPerson.getUnits();
