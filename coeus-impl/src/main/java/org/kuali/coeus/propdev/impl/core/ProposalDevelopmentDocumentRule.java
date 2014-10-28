@@ -490,7 +490,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
                 Budget.class, Constants.BUDGET_STATUS_COMPLETE_CODE);
         budgetVersionsExists = !proposal.getBudgets().isEmpty();
         if (proposal.getFinalBudget() != null &&
-        		!StringUtils.equals(budgetStatusCompleteCode, proposal.getFinalBudget().getBudgetStatus())) {
+        		StringUtils.equals(budgetStatusCompleteCode, proposal.getFinalBudget().getBudgetStatus())) {
             finalAndCompleteBudgetVersionFound = true;
         }
         if (budgetVersionsExists && !finalAndCompleteBudgetVersionFound) {
