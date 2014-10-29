@@ -8,3 +8,12 @@ where t2.proposal_number = t1.proposal_number
 /
 commit
 /
+UPDATE eps_proposal t
+SET t.final_budget_id = (    select t1.budget_id
+      from eps_proposal_budget_ext t1 
+      where t1.final_version_flag = 'Y'
+      and t1.proposal_number = t.proposal_number
+)
+/
+commit
+/
