@@ -83,6 +83,8 @@ select SEQ_AWARD_COMMENT_ID.NEXTVAL,t2.AWARD_ID,t1.AWARD_NUMBER,t1.SEQUENCE_NUMB
 FROM OSP$AWARD_COMMENTS t1 
 inner join AWARD t2 on t1.award_number = t2.award_number and t1.sequence_number = t2.sequence_number
 /
+CREATE INDEX AWARD_COMMENT_I1 ON AWARD_COMMENT(AWARD_NUMBER,SEQUENCE_NUMBER,COMMENT_TYPE_CODE)
+/
 ------------------------------------------------------------------------------------------------------
 DECLARE
 li_count number(4,0);
