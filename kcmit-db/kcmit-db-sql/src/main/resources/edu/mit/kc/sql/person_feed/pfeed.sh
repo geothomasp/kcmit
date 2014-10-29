@@ -12,4 +12,4 @@ $ORACLE_HOME/bin/sqlplus  $ORACLE_CONNECT_STRING @/home/coeus/pfeed/pfeed.sql
 
 echo `date` 'End pfeed.sh'
 
-mail -s 'Person Feed - Production Database - OSPA' coeus-dev-team@mit.edu < /home/coeus/pfeed/pfeed.log
+mail -s 'Person Feed - Production Database - OSPA' mit-kc-dev@mit.edu < /home/coeus/pfeed/pfeed.log
