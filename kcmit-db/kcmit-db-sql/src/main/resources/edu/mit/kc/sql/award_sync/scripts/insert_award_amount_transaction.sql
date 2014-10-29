@@ -1,5 +1,7 @@
 select ' Start time of AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
 /
+CREATE INDEX I1_AMOUNT_TRANSACTION ON AWARD_AMOUNT_TRANSACTION(AWARD_NUMBER,MIT_TRANSACTION_ID)
+/
 -- Migrate award amount transaction + doc handler end 
 -- Starts AWARD_AMOUNT_INFO
 DECLARE
