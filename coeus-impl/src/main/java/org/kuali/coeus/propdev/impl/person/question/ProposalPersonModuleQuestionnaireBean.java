@@ -16,11 +16,14 @@
 package org.kuali.coeus.propdev.impl.person.question;
 
 import org.kuali.coeus.common.framework.module.CoeusModule;
-import org.kuali.coeus.common.framework.module.CoeusSubModule;
 import org.kuali.coeus.common.framework.krms.KrmsRulesContext;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.questionnaire.ProposalDevelopmentModuleQuestionnaireBean;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+
 
 
 public class ProposalPersonModuleQuestionnaireBean extends ProposalDevelopmentModuleQuestionnaireBean {
@@ -33,7 +36,7 @@ public class ProposalPersonModuleQuestionnaireBean extends ProposalDevelopmentMo
      */
     public ProposalPersonModuleQuestionnaireBean(DevelopmentProposal developmentProposal, ProposalPerson person) {
         super(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE, person.getUniqueId(), 
-                CoeusSubModule.PROPOSAL_PERSON_CERTIFICATION, "0", 
+        		getSubModuleItemCode(person.getProposalPersonRoleId()), "0", 
                 developmentProposal.getProposalDocument().getDocumentHeader().getWorkflowDocument().isApproved());
         setDevelopmentProposal(developmentProposal);
     }
@@ -51,5 +54,19 @@ public class ProposalPersonModuleQuestionnaireBean extends ProposalDevelopmentMo
         } else {
             return super.getKrmsRulesContextFromBean();
         }
+    }
+    
+    private static String getSubModuleItemCode(String roleId){
+
+    	if(roleId.equals(Constants.PRINCIPAL_INVESTIGATOR_ROLE)){
+    		return  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
+    	}else if(roleId.equals(Constants.CO_INVESTIGATOR_ROLE)){
+    		return  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_COI_CERTIFICATION"); 
+    	}else {
+    		return  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_KP_CERTIFICATION"); 
+    	}
     }
 }
