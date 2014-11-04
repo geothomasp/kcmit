@@ -134,7 +134,12 @@ public class AwardReportTermRuleImpl extends KcTransactionalDocumentRuleBase
              * If there are no frequency bases active, then we don't validate the frequency base field.
              * Note, there is always a 'select' value pair in the keyValues.
              */
-            if (finder.getKeyValues().size() > 1) {
+            boolean disableValidation = false;
+            AwardReportTerm awardReportTerm = (AwardReportTerm)awardReportTermItem;
+            if(awardReportTerm.getFrequencyBase() == null || awardReportTerm.getFrequencyBase().getFrequencyBaseCode().equals("-1")){
+            	disableValidation = true;
+             }
+            if (finder.getKeyValues().size() > 1 && !disableValidation) {
                 retVal = false;
                 reportError(fieldPrePend + AWARD_REPORT_TERM_FREQUENCY_BASE_CODE_PROPERTY, KeyConstants.ERROR_REQUIRED, FREQUENCY_BASE_CODE_ERROR_PARM);
             }

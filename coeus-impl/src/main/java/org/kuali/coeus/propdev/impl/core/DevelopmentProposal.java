@@ -2146,7 +2146,9 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
         for (ProposalPerson proposalPerson : proposalPersons) {
             List<ProposalPersonUnit> proposalPersonUnits = proposalPerson.getUnits();
             for (ProposalPersonUnit proposalPersonUnit : proposalPersonUnits) {
-                unitNumbers.add(proposalPersonUnit.getUnitNumber());
+            	 if(!unitNumbers.contains(proposalPersonUnit.getUnitNumber())){
+                     unitNumbers.add(proposalPersonUnit.getUnitNumber());
+                 }
             }
         }
         return StringUtils.join(unitNumbers,',');
