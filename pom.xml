@@ -34,8 +34,8 @@
         <avalon-framework.version>4.3.1</avalon-framework.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <cglib-nodep.version>3.1</cglib-nodep.version>
-		<coeus-api.version>6.0-SNAPSHOT</coeus-api.version>
-        <coeus-s2sgen.version>6.0-SNAPSHOT</coeus-s2sgen.version>
+        <coeus-api.version>6.0-s8</coeus-api.version>
+        <coeus-s2sgen.version>6.0-s8</coeus-s2sgen.version>
         <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -90,7 +90,7 @@
         <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
         <pdfbox.version>1.8.6</pdfbox.version>
         <quartz.version>1.8.4</quartz.version>
-        <rice.version>2.5.1-r48779</rice.version>
+        <rice.version>2.5.1-r49008</rice.version>
         <servlet.version>3.0.1</servlet.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring.version>3.2.10.RELEASE</spring.version>
