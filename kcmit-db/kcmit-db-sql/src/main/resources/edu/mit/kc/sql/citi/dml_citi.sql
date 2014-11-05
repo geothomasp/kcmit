@@ -44,11 +44,17 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 	sys_guid()
 )
 /
+delete from kc_qrtz_cron_triggers where trigger_name='citiTrainingDataFeedTrigger'
+/
+delete from kc_qrtz_triggers where trigger_name='citiTrainingDataFeedTrigger'
+/
+delete from kc_qrtz_job_details where job_name='citiTrainingDataFeedJobDetail'
+/
 Insert into KRCR_PARM_T (NMSPC_CD,CMPNT_CD,PARM_NM,OBJ_ID,VER_NBR,PARM_TYP_CD,VAL,PARM_DESC_TXT,EVAL_OPRTR_CD,APPL_ID) 
 	values ('KC-ADM','All','CITI_TRAINING_DATA_FEED_CRON_TRIGGER',SYS_GUID(),1,'CONFG','0 0 7,19 * * ?','Cron expression for Citi feed','A','KC')
 /
 Insert into KRCR_PARM_T (NMSPC_CD,CMPNT_CD,PARM_NM,OBJ_ID,VER_NBR,PARM_TYP_CD,VAL,PARM_DESC_TXT,EVAL_OPRTR_CD,APPL_ID) 
-	values ('KC-ADM','All','ENABLE_CITI_TRAINING_DATA_FEED',SYS_GUID(),1,'CONFG','N','Citi training feed enable flag','A','KC')
+	values ('KC-ADM','All','ENABLE_CITI_TRAINING_DATA_FEED',SYS_GUID(),1,'CONFG','Y','Citi training feed enable flag','A','KC')
 /
 commit
 /
