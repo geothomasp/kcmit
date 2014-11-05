@@ -46,7 +46,7 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
 
     private transient KcAttachmentService kcAttachmentService;
     private transient ParameterService parameterService;
-    private transient GlobalVariableService globalVariableService;
+    private transient ProposalPersonBiographyService proposalPersonBiographyService;
 
     @Override
     public boolean processAddPersonnelAttachmentBusinessRules(AddPersonnelAttachmentEvent addPersonnelAttachmentEvent) {
@@ -59,7 +59,7 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
             reportError(DOCUMENT_TYPE_CODE, ERROR_ATTACHMENT_TYPE_NOT_SELECTED);
         }
 
-        if(findPropPerDocTypeForOther().getCode().equalsIgnoreCase(proposalPersonBiography.getDocumentTypeCode())) {
+        if(getProposalPersonBiographyService().findPropPerDocTypeForOther().getCode().equalsIgnoreCase(proposalPersonBiography.getDocumentTypeCode())) {
             if(StringUtils.isBlank(proposalPersonBiography.getDescription())) {
                 reportError(DOC_TYPE_DESCRIPTION, KeyConstants.ERROR_PERSONNEL_ATTACHMENT_DESCRIPTION_REQUIRED);
                 rulePassed = false;
@@ -83,31 +83,7 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
 
     @Override
     public boolean processSavePersonnelAttachmentBusinessRules(SavePersonnelAttachmentEvent savePersonnelAttachmentEvent) {
-        ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) savePersonnelAttachmentEvent.getDocument();
-        ProposalPersonBiography proposalPersonBiography = savePersonnelAttachmentEvent.getProposalPersonBiography();
-        boolean rulePassed = true;
-        
-        List<ProposalPersonBiography> existingPersonBiographyList = document.getDevelopmentProposal().getPropPersonBios();
-        if(CollectionUtils.isNotEmpty(existingPersonBiographyList)){
-            //Loop thru to filter attachment uploaded by the current user
-            int index=0;
-            for(ProposalPersonBiography personBiography: existingPersonBiographyList) {
-                if(findPropPerDocTypeForOther().getCode().equalsIgnoreCase(personBiography.getDocumentTypeCode())) {
-                    if(StringUtils.isBlank(personBiography.getDescription())) {
-                        reportError("document.developmentProposal.propPersonBios", KeyConstants.ERROR_PERSONNEL_ATTACHMENT_DESCRIPTION_REQUIRED);
-                        rulePassed = false;
-                    }
-                }
-                getGlobalVariableService().getMessageMap().clearErrorPath();
-                getGlobalVariableService().getMessageMap().getErrorPath().add("document.developmentProposal.propPersonBios[" + index +"]");
-                rulePassed &= checkForInvalidCharacters(personBiography);
-                rulePassed &= checkForDuplicates(personBiography,existingPersonBiographyList);
-                rulePassed &= checkForProposalPerson(proposalPersonBiography);
-                index++;
-            }
-        }
-
-        return rulePassed;
+        return true;
     }
 
     private boolean checkForDuplicates(ProposalPersonBiography biography, List<ProposalPersonBiography> existingBiographies) {
@@ -115,6 +91,7 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
         if(CollectionUtils.isNotEmpty(existingBiographies) && biography.getProposalPersonNumber() != null){
             for(ProposalPersonBiography personBiography: existingBiographies) {
                 if(personBiography.getProposalPersonNumber() != null && personBiography.getDocumentTypeCode() != null &&
+                        !StringUtils.equalsIgnoreCase(getProposalPersonBiographyService().findPropPerDocTypeForOther().getCode(),personBiography.getDocumentTypeCode()) &&
                         personBiography.getProposalPersonNumber().equals(biography.getProposalPersonNumber())
                         && personBiography.getDocumentTypeCode().equals(biography.getDocumentTypeCode())){
 
@@ -127,7 +104,7 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
         }
         return rulePassed;
     }
-    
+
     private boolean checkForInvalidCharacters(ProposalPersonBiography proposalPersonBiography) {
         KcAttachmentService attachmentService = getKcAttachmentService();
         boolean rulePassed = true;
@@ -148,18 +125,6 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
             }
         }
         return rulePassed;
-    }
-    
-    /**
-     * This method looks up the "Other" PropPerDocType. Method is protected to allow stubbing/mocking out the class
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    protected PropPerDocType findPropPerDocTypeForOther() {
-        Map<String,String> narrativeTypeMap = new HashMap<String,String>();
-        narrativeTypeMap.put(DOC_TYPE_DESCRIPTION, OTHER_DOCUMENT_TYPE_DESCRIPTION);
-        BusinessObjectService service = getBusinessObjectService();
-        return ((List<PropPerDocType>)service.findMatching(PropPerDocType.class, narrativeTypeMap)).get(0);        
     }
 
     private boolean checkForProposalPerson(ProposalPersonBiography proposalPersonBiography) {
@@ -191,10 +156,10 @@ public class ProposalDevelopmentPersonnelAttachmentRule extends KcTransactionalD
         return this.parameterService;
     }
 
-    public GlobalVariableService getGlobalVariableService() {
-        if (this.globalVariableService == null ) {
-            this.globalVariableService = KcServiceLocator.getService(GlobalVariableService.class);
+    public ProposalPersonBiographyService getProposalPersonBiographyService() {
+        if (this.proposalPersonBiographyService == null ) {
+            this.proposalPersonBiographyService = KcServiceLocator.getService(ProposalPersonBiographyService.class);
         }
-        return globalVariableService;
+        return proposalPersonBiographyService;
     }
 }

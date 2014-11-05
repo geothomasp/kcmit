@@ -188,8 +188,14 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
              }
 
         }
-    }   
-    
+    }
+
+    @Override
+    public PropPerDocType findPropPerDocTypeForOther() {
+        Map<String,String> narrativeTypeMap = new HashMap<String,String>();
+        narrativeTypeMap.put(DOC_TYPE_DESCRIPTION, OTHER_DOCUMENT_TYPE_DESCRIPTION);
+        return getDataObjectService().findMatching(PropPerDocType.class, QueryByCriteria.Builder.andAttributes(narrativeTypeMap).build()).getResults().get(0);
+    }
 
     public AttachmentDao getAttachmentDao() {
         return attachmentDao;

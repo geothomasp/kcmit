@@ -18,5 +18,6 @@ alter table EPS_PROPOSAL drop column HIERARCHY_LAST_BUDGET_DOC_NBR
 commit
 /
 @dml/KR_DML_01_KRACOEUS-8181_B000.sql
+@dml/KR_DML_01_KRACOEUS-8300_B000.sql
 commit
 /
