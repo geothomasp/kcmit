@@ -22,6 +22,7 @@ import org.kuali.kra.bo.DocumentNextvalue;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.attachment.AttachmentDao;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
@@ -36,12 +37,17 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Component("proposalPersonBiographyService")
 public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiographyService {
 
+    public static final String OTHER_DOCUMENT_TYPE_DESCRIPTION = "Other";
+
+    private static final String DOC_TYPE_DESCRIPTION = "description";
 
     @Autowired
     @Qualifier("attachmentDao")
@@ -54,7 +60,6 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
     @Autowired
     @Qualifier("dataObjectService")
     private DataObjectService dataObjectService;
-    
 	/**
      * 
      * @see org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiographyService#addProposalPersonBiography(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument,
