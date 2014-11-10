@@ -257,4 +257,10 @@
     </bean>
     <bean id="dbFunctionExecuteService" class = "edu.mit.kc.common.DbFunctionExecuteServiceImpl">       
     </bean>
+    
+     <bean id="kcCoiLinkService" class = "edu.mit.kc.coi.KcCoiLinkServiceImpl"> 
+       <property name="dbFunctionExecuteService" ref="dbFunctionExecuteService" />
+       <property name="parameterService" ref="parameterService" />
+           
+    </bean>
 </beans>
