@@ -4,7 +4,7 @@ begin
 select count(rolodex_id) into li_count from rolodex where rolodex_id = 100046;
 if li_count = 0 then
   Insert into ROLODEX (ROLODEX_ID,LAST_NAME,FIRST_NAME,MIDDLE_NAME,SUFFIX,PREFIX,TITLE,ORGANIZATION,ADDRESS_LINE_1,ADDRESS_LINE_2,ADDRESS_LINE_3,FAX_NUMBER,EMAIL_ADDRESS,CITY,COUNTY,STATE,POSTAL_CODE,COMMENTS,PHONE_NUMBER,COUNTRY_CODE,SPONSOR_CODE,OWNED_BY_UNIT,SPONSOR_ADDRESS_FLAG,DELETE_FLAG,CREATE_USER,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID,ACTV_IND) 
-  values (100046,'Place Holder','Payment Invoice Contact',null,null,null,null,'University',null,null,null,null,null,null,null,null,null,null,null,null,null,'000001','N',null,user,sysdate,user,1,sys_guid(),'Y');
+  values (100046,'Place Holder','Payment Invoice Cnct',null,null,null,null,'University',null,null,null,null,null,null,null,null,null,null,null,null,null,'000001','N',null,user,sysdate,user,1,sys_guid(),'Y');
 
 end if;
 end;
@@ -165,6 +165,7 @@ ls_award_number VARCHAR2(16);
 li_award_report_terms_id NUMBER(12,0);
 li_rolodex_id NUMBER(12,0):=100046;
 ls_contact VARCHAR2(3);
+ls_FREQUENCY_BASE_CODE FREQUENCY_BASE.FREQUENCY_BASE_CODE%type;
 
 CURSOR c_invoice IS
 SELECT MIT_AWARD_NUMBER,SEQUENCE_NUMBER,PAYMENT_INVOICE_FREQ_CODE,INVOICE_NUMBER_OF_COPIES,FINAL_INVOICE_DUE FROM OSP$AWARD_HEADER
@@ -173,6 +174,8 @@ r_invoice c_invoice%ROWTYPE;
 
 BEGIN
 SELECT REPORT_CODE INTO ls_report_code FROM REPORT WHERE DESCRIPTION='Payment/Invoice Frequency';
+
+--select FREQUENCY_BASE_CODE into ls_FREQUENCY_BASE_CODE from FREQUENCY_BASE where DESCRIPTION='As Required'
 
 IF c_invoice%ISOPEN THEN
 CLOSE c_invoice;
@@ -190,13 +193,20 @@ EXIT WHEN c_invoice%NOTFOUND;
   SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
   EXCEPTION
   WHEN OTHERS THEN
-  SELECT CHANGE_AWARD_NUMBER into ls_award_number FROM KC_MIG_AWARD_CONV WHERE AWARD_NUMBER=ls_award_number;
-  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+    BEGIN
+	  SELECT CHANGE_AWARD_NUMBER into ls_award_number FROM KC_MIG_AWARD_CONV WHERE AWARD_NUMBER=ls_award_number;
+	  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+	EXCEPTION
+	WHEN OTHERS THEN
+	  dbms_output.put_line(ls_award_number||' '||r_invoice.SEQUENCE_NUMBER);
+	  CONTINUE;
+	END;  
+  
   END;
 
 
  INSERT INTO AWARD_REPORT_TERMS(AWARD_REPORT_TERMS_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,REPORT_CLASS_CODE,REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,DUE_DATE,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
- VALUES(li_award_report_terms_id,li_award_id,ls_award_number,r_invoice.SEQUENCE_NUMBER,'6',ls_report_code,r_invoice.PAYMENT_INVOICE_FREQ_CODE,NULL,NULL,NULL,1,SYSDATE,'admin',SYS_GUID());
+ VALUES(li_award_report_terms_id,li_award_id,ls_award_number,r_invoice.SEQUENCE_NUMBER,'6',ls_report_code,r_invoice.PAYMENT_INVOICE_FREQ_CODE,-1,NULL,NULL,1,SYSDATE,'admin',SYS_GUID());
  
  SELECT CONTACT_TYPE_CODE INTO  ls_contact FROM CONTACT_TYPE WHERE DESCRIPTION='Payment Invoice Contact';
  
@@ -256,15 +266,15 @@ EXIT WHEN c_invoice%NOTFOUND;
   BEGIN
   SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
   EXCEPTION
-  WHEN OTHERS THEN
-  
-  BEGIN
-  SELECT CHANGE_AWARD_NUMBER into ls_award_number FROM KC_MIG_AWARD_CONV WHERE AWARD_NUMBER=ls_award_number;
-  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
-  EXCEPTION
-  WHEN OTHERS THEN
-  dbms_output.put_line(ls_award_number||' '||r_invoice.SEQUENCE_NUMBER);
-  END;
+  WHEN OTHERS THEN  
+	  BEGIN
+	  SELECT CHANGE_AWARD_NUMBER into ls_award_number FROM KC_MIG_AWARD_CONV WHERE AWARD_NUMBER=ls_award_number;
+	  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+	  EXCEPTION
+	  WHEN OTHERS THEN
+	  dbms_output.put_line(ls_award_number||' '||r_invoice.SEQUENCE_NUMBER);
+	  CONTINUE;
+	  END;
   END;
 SELECT CONTACT_TYPE_CODE INTO  ls_contact FROM CONTACT_TYPE WHERE DESCRIPTION='Payment Invoice Contact';
 BEGIN

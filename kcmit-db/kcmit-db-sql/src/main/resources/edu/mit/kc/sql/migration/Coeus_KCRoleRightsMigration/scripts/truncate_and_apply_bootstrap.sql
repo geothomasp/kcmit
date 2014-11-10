@@ -4,6 +4,7 @@ delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
       (select distinct trim(upper(user_id)) from osp$user_roles)
       )
 );
+
 delete from krim_role_mbr_t where mbr_id in (
 select prncpl_id from krim_prncpl_t where trim(upper(prncpl_nm)) in 
 (select distinct trim(upper(user_id)) from osp$user_roles)
