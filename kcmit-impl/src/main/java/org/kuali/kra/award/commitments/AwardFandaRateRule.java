@@ -32,6 +32,7 @@ import edu.mit.kc.infrastructure.KcMitConstants;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -360,7 +361,7 @@ protected boolean isFandaRateInputInPairs(List<AwardFandaRate> awardFandaRateLis
     
     HashMap<String,String> a1 = new HashMap<String,String>();
     HashMap<String,String> b1 = new HashMap<String,String>();
-    
+    List<AwardFandaRate> awardFandaRates = new ArrayList<AwardFandaRate>();
     DateFormat dateFormat = new SimpleDateFormat(Constants.DEFAULT_DATE_FORMAT_PATTERN);
     createHashMapsForRuleEvaluation(awardFandaRateList,a1,b1);
     boolean valid = evaluateRule(awardFandaRateList,a1,b1);
@@ -370,13 +371,13 @@ protected boolean isFandaRateInputInPairs(List<AwardFandaRate> awardFandaRateLis
     }
     isPairChecked = true;
     if(valid){
-        int i = 0;
+       int i = 0;
         for(AwardFandaRate awardFandaRate1 :awardFandaRateList){
             if(StringUtils.equalsIgnoreCase(awardFandaRate1.getOnCampusFlag(),"N")){
                 int j= 0;
                 if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRate1.getApplicableFandaRate()).size() > 0){
                     for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
-                    	if(i<j){
+                    	if(!awardFandaRates.contains(awardFandaRate2)){
                     		if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
                     				awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
                     			if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 
@@ -394,12 +395,13 @@ protected boolean isFandaRateInputInPairs(List<AwardFandaRate> awardFandaRateLis
 
                     				}
                     			}else{
+                    				awardFandaRates.add(awardFandaRate2);
                     				break;
                     			}
                     		}
                     		
-                    	}
-                    	j++;
+                   	}
+                   	j++;
                     }
                 }else{
                     valid = false;
