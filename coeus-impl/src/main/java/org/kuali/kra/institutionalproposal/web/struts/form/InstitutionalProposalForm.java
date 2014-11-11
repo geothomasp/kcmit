@@ -60,7 +60,7 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
     private static final String CUSTOM_DATA_NAV_TO = "customData";
     private static final int NUMBER_30 = 30;
     public static final String COLUMN = ":";
-    public static final String UPDATE_TIMESTAMP_DD_NAME = "DataDictionary.Award.attributes.updateTimestamp";
+    public static final String UPDATE_TIMESTAMP_DD_NAME = "DataDictionary.InstitutionalProposal.attributes.updateTimestamp";
 
     private boolean auditActivated;
     
