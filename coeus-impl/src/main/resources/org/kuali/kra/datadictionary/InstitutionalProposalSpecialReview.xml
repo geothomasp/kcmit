@@ -87,7 +87,20 @@
     </bean>
 
 	<bean id="InstitutionalProposalSpecialReview-approvalTypeCode" parent="InstitutionalProposalSpecialReview-approvalTypeCode-parentBean" />
-	<bean id="InstitutionalProposalSpecialReview-approvalTypeCode-parentBean" abstract="true" parent="SpecialReview-approvalTypeCode" />
+	<bean id="InstitutionalProposalSpecialReview-approvalTypeCode-parentBean" abstract="true" parent="SpecialReview-approvalTypeCode" >
+	 <property name="control" >
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.coeus.common.framework.compliance.core.SpecialReviewApprovalType" p:valuesFinderClass="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder" p:includeKeyInLabel="false" p:includeBlankRow="false" p:keyAttribute="approvalTypeCode" p:labelAttribute="description"/>
+     </property>
+     <property name="optionsFinder">
+      <bean class="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder">
+        <property name="businessObjectClass" value="org.kuali.coeus.common.framework.compliance.core.SpecialReviewApprovalType"/>
+        <property name="includeKeyInDescription" value="false"/>
+        <property name="includeBlankRow" value="false"/>
+        <property name="keyAttributeName" value="approvalTypeCode"/>
+        <property name="labelAttributeName" value="description"/>
+      </bean>
+     </property>
+    </bean>
 	<bean id="InstitutionalProposalSpecialReview-protocolNumber" parent="InstitutionalProposalSpecialReview-protocolNumber-parentBean" />
 	<bean id="InstitutionalProposalSpecialReview-protocolNumber-parentBean" abstract="true" parent="SpecialReview-protocolNumber" />
 	<bean id="InstitutionalProposalSpecialReview-applicationDate" parent="InstitutionalProposalSpecialReview-applicationDate-parentBean" />
