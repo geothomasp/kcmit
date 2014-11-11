@@ -40,7 +40,7 @@ EXIT WHEN c_custom%NOTFOUND;
 		SELECT ID into li_custom_id  FROM CUSTOM_ATTRIBUTE WHERE NAME='COEUS_AAA_AWARD_NUMBER';
 		
 		select count(award_custom_data_id) into li_count from AWARD_CUSTOM_DATA 
-		where AWARD_NUMBER = r_custom.CHANGE_AWARD_NUMBER
+		where AWARD_ID = r_custom.AWARD_ID		
 		and CUSTOM_ATTRIBUTE_ID = li_custom_id;
 		
 		if li_count = 0 then

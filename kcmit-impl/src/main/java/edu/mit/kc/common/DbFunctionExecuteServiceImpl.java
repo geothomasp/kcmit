@@ -22,4 +22,9 @@ public class DbFunctionExecuteServiceImpl implements DbFunctionExecuteService {
     private StoredFunctionDao getStoredFucntionDao() {
         return KcServiceLocator.getService(StoredFunctionDao.class);
     }
+    
+    @Override
+	public String executeFunction(String functionName,List<Object> params) {
+        return callFunction(functionName,params);
+    }
 }
