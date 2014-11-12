@@ -508,13 +508,9 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
     @Override
     public void populateHeaderFields(WorkflowDocument workflowDocument) {
     	
+    	 super.populateHeaderFields(workflowDocument);
     	 InstitutionalProposalDocument institutionalProposalDocument=getInstitutionalProposalDocument();
-    	 getDocInfo().clear();
-    	 getDocInfo().add(new HeaderField("DataDictionary.DocumentHeader.attributes.documentNumber",  getInstitutionalProposalDocument().getDocumentNumber()));
-    	 getDocInfo().add(new HeaderField("DataDictionary.InstitutionalProposal.attributes.proposalNumber", institutionalProposalDocument.getInstitutionalProposal().getProposalNumber()));
-    	 getDocInfo().add(new HeaderField("DataDictionary.AttributeReference.attributes.initiatorNetworkId",   workflowDocument.getInitiatorPrincipalId()));
-    	 getDocInfo().add(new HeaderField("DataDictionary.AttributeReference.attributes.workflowDocumentStatus", workflowDocument.getStatus().getLabel()));
-     	 getDocInfo().add(new HeaderField("DataDictionary.AttributeReference.attributes.createDate", CoreApiServiceLocator.getDateTimeService().toString(workflowDocument.getDateCreated().toDate(), "MM/dd/yy hh:mm a")));  
-     	 setupLastUpdate(institutionalProposalDocument);
+         getDocInfo().add(new HeaderField("DataDictionary.InstitutionalProposal.attributes.proposalNumber", institutionalProposalDocument.getInstitutionalProposal().getProposalNumber()));
+    	 setupLastUpdate(institutionalProposalDocument);
      }
 }
