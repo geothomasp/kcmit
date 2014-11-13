@@ -60,23 +60,20 @@ BEGIN
     
 
 
-select a.account_number,a.title,at.description,kee.email_addr,keet.email_addr,a.sponsor_award_number,au.unit_number,u.unit_name,ap.full_name,(ken.last_nm||','||ken.first_nm) as AO_full_name,(kent.LAST_NM||','||kent.first_nm) as other_full_name
+BEGIN
+select kee.email_addr,keet.email_addr,au.unit_number,u.unit_name,ap.full_name,(ken.last_nm||','||ken.first_nm) as AO_full_name,(kent.LAST_NM||','||kent.first_nm) as other_full_name
 into
-ls_account_num ,
-ls_title    ,
-ls_award_type,
 ls_admin_email ,
 ls_other_email  ,
-ls_sponsor_award_num ,
 ls_unit_num   ,
 ls_unit_name ,
 ls_PI_name,
 ls_admin_name ,
-ls_other_name  
+ls_other_name
 from award_person_units au inner join
 award_persons ap
 on au.award_person_id= ap.award_person_id
-left outer join unit u 
+left outer join unit u
 on au.unit_number=u.unit_number
 inner join unit_administrator ua
 on u.unit_number=ua.unit_number
@@ -96,7 +93,7 @@ inner join krim_entity_email_t keet
 on kpt.entity_id= keet.entity_id
 inner join award a on
 a.award_id=ap.award_id
-inner join award_type at on 
+inner join award_type at on
 a.award_type_code=at.award_type_code
 where ap.award_number=as_AwardNUmber
 and ap.sequence_number=(select max(sequence_number)
@@ -108,11 +105,25 @@ and ap.CONTACT_ROLE_CODE='PI'
 and au.lead_unit_flag='Y'
 and ua.unit_administrator_type_code=1
 and uaa.unit_administrator_type_code=5;
+EXCEPTION
+WHEN OTHERS THEN
+ls_recipients := 'coeus-mit@mit.edu';
+END;
+
+BEGIN
+select  a.account_number,a.title,at.description,a.sponsor_award_number into ls_account_num,ls_title,ls_award_type,ls_sponsor_award_num  from award a 
+left outer join award_type at on a.award_type_code=at.award_type_code
+where award_number=as_AwardNUmber and sequence_number=(select max(sequence_number)
+from award where award_number=as_AwardNUmber);
+EXCEPTION
+WHEN OTHERS THEN
+null;
+END;
 
    -- set recipients
    if (ls_other_email is NULL) or (length(trim(ls_other_email)) = 0 ) then
         if (ls_admin_email is NULL) or (length(trim(ls_admin_email)) = 0 ) then
-           ls_recipients := 'coues-mit@mit.edu';
+           ls_recipients := 'coeus-mit@mit.edu';
         else
             ls_recipients :=  ls_admin_email;
         end if;
@@ -237,7 +248,7 @@ cursor cur_end_prior is
          and s.ORGANIZATION_ID = O.ORGANIZATION_ID(+);
          
 cursor cur_fund_source is 
-select a.account_number,a.sponsor_award_number,keet.email_addr,kee.email_addr,kpt.PRNCPL_ID,kp.PRNCPL_ID from
+select a.account_number,a.sponsor_award_number,DECODE(ua.unit_administrator_type_code,1,kee.email_addr,null) admin_mail,DECODE(ua.unit_administrator_type_code,5,kee.email_addr,null) other_mail,DECODE(ua.unit_administrator_type_code,1,kp.PRNCPL_ID,null) admin_person,DECODE(ua.unit_administrator_type_code,5,kp.PRNCPL_ID,null) other_person from
 award_person_units au inner join
 award_persons ap
 on au.award_person_id= ap.award_person_id
@@ -247,27 +258,18 @@ inner join subaward_funding_source s on
 a.award_id=s.award_id
 left outer join unit_administrator ua
 on au.unit_number=ua.unit_number
-left outer join unit_administrator uaa
-on au.unit_number=uaa.unit_number
 left outer  join  krim_prncpl_t kp
 on kp.prncpl_id= ua.person_id
 inner join krim_entity_nm_t ken
 on kp.entity_id= ken.entity_id
 inner join krim_entity_email_t kee
 on kp.entity_id= kee.entity_id
-left outer  join  krim_prncpl_t kpt
-on kpt.prncpl_id= uaa.person_id
-inner join krim_entity_nm_t kent
-on kpt.entity_id= kent.entity_id
-inner join krim_entity_email_t keet
-on kpt.entity_id= keet.entity_id
 where s.subaward_code=ls_sub_code
 and s.SEQUENCE_NUMBER = (SELECT MAX(SEQUENCE_NUMBER)
 FROM subaward_funding_source
 WHERE s.subaward_code = subaward_funding_source.subaward_code)
 and au.lead_unit_flag='Y'
-and ua.unit_administrator_type_code=1
-and uaa.unit_administrator_type_code=5;
+and ua.unit_administrator_type_code in(1,5);
               
 BEGIN
     
