@@ -38,7 +38,7 @@ public class NegotiationActivityXmlStream implements XmlStream {
     private BusinessObjectService businessObjectService;
     
     private static final String PROP_LOG = "PL";
-    private static final String PROP_TYPE_CODE = "proposalTypeCode";
+    private static final String PROP_TYPE_CODE = "PROPOSAL_TYPE_CODE";
      
     /**
      * This method get's the negotiation
