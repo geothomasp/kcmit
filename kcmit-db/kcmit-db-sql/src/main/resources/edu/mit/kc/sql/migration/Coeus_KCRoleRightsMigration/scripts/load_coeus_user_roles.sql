@@ -132,15 +132,50 @@ commit
 /
 declare
 li_count NUMBER;
+ls_role_mbr_id VARCHAR2(40);
 begin
-select count(ROLE_MBR_ID) into li_count from KRIM_ROLE_MBR_T 
-where mbr_id = 'admin' and role_id in (select role_id from krim_role_t where role_nm = 'Award Modifier');
+	select count(ROLE_MBR_ID) into li_count from KRIM_ROLE_MBR_T 
+	where mbr_id = 'admin' and role_id in (select role_id from krim_role_t where role_nm = 'Award Modifier');
+	if li_count = 0 then
+		INSERT INTO KRIM_ROLE_MBR_T(ROLE_MBR_ID,VER_NBR,OBJ_ID,ROLE_ID,MBR_ID,MBR_TYP_CD,ACTV_FRM_DT,ACTV_TO_DT,LAST_UPDT_DT)
+		VALUES(KRIM_ROLE_MBR_ID_S.NEXTVAL,1,SYS_GUID(),(select role_id from krim_role_t where role_nm = 'Award Modifier'),'admin','P',NULL,NULL,SYSDATE);
+	end if;
 
-if li_count = 0 then
+	select count(ROLE_MBR_ID) into li_count from KRIM_ROLE_MBR_T 
+	where mbr_id = 'admin' and role_id in (select role_id from krim_role_t where role_nm = 'Funding Source Monitor');
+	if li_count = 0 then
+	
+		ls_role_mbr_id := KRIM_ROLE_MBR_ID_S.NEXTVAL;
+		INSERT INTO KRIM_ROLE_MBR_T(ROLE_MBR_ID,VER_NBR,OBJ_ID,ROLE_ID,MBR_ID,MBR_TYP_CD,ACTV_FRM_DT,ACTV_TO_DT,LAST_UPDT_DT)
+		VALUES(ls_role_mbr_id,1,SYS_GUID(),(select role_id from krim_role_t where role_nm = 'Funding Source Monitor'),'admin','P',NULL,NULL,SYSDATE);	
+		
+		INSERT INTO KRIM_ROLE_MBR_ATTR_DATA_T(ATTR_DATA_ID,OBJ_ID,VER_NBR,ROLE_MBR_ID,KIM_TYP_ID,KIM_ATTR_DEFN_ID,ATTR_VAL)
+		VALUES(KRIM_ATTR_DATA_ID_S.NEXTVAL,sys_guid(),1,ls_role_mbr_id,'69','47','000001'); 
+		
+		INSERT INTO KRIM_ROLE_MBR_ATTR_DATA_T(ATTR_DATA_ID,OBJ_ID,VER_NBR,ROLE_MBR_ID,KIM_TYP_ID,KIM_ATTR_DEFN_ID,ATTR_VAL)
+		VALUES(KRIM_ATTR_DATA_ID_S.NEXTVAL,sys_guid(),1,ls_role_mbr_id,'69','48','Y');
+		
+	end if;
+	
+	select count(ROLE_MBR_ID) into li_count from KRIM_ROLE_MBR_T 
+	where mbr_id = 'admin' and role_id in (select role_id from krim_role_t where role_nm = 'IRB Administrator');
+	if li_count = 0 then
+	
+		ls_role_mbr_id := KRIM_ROLE_MBR_ID_S.NEXTVAL;
+		INSERT INTO KRIM_ROLE_MBR_T(ROLE_MBR_ID,VER_NBR,OBJ_ID,ROLE_ID,MBR_ID,MBR_TYP_CD,ACTV_FRM_DT,ACTV_TO_DT,LAST_UPDT_DT)
+		VALUES(ls_role_mbr_id,1,SYS_GUID(),(select role_id from krim_role_t where role_nm = 'IRB Administrator'),'admin','P',NULL,NULL,SYSDATE);	
+		
+		INSERT INTO KRIM_ROLE_MBR_ATTR_DATA_T(ATTR_DATA_ID,OBJ_ID,VER_NBR,ROLE_MBR_ID,KIM_TYP_ID,KIM_ATTR_DEFN_ID,ATTR_VAL)
+		VALUES(KRIM_ATTR_DATA_ID_S.NEXTVAL,sys_guid(),1,ls_role_mbr_id,'69','47','000001'); 
+		
+		INSERT INTO KRIM_ROLE_MBR_ATTR_DATA_T(ATTR_DATA_ID,OBJ_ID,VER_NBR,ROLE_MBR_ID,KIM_TYP_ID,KIM_ATTR_DEFN_ID,ATTR_VAL)
+		VALUES(KRIM_ATTR_DATA_ID_S.NEXTVAL,sys_guid(),1,ls_role_mbr_id,'69','48','Y');
+		
+	end if;	
+	
+	
+	
 
-INSERT INTO KRIM_ROLE_MBR_T(ROLE_MBR_ID,VER_NBR,OBJ_ID,ROLE_ID,MBR_ID,MBR_TYP_CD,ACTV_FRM_DT,ACTV_TO_DT,LAST_UPDT_DT)
-VALUES(KRIM_ROLE_MBR_ID_S.NEXTVAL,1,SYS_GUID(),(select role_id from krim_role_t where role_nm = 'Award Modifier'),'admin','P',NULL,NULL,SYSDATE);
-end if;
 commit;
 end;
 /
