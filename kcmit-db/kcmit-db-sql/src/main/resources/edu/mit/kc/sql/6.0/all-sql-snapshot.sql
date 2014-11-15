@@ -5,6 +5,7 @@ select 'running ddl snapshot' from dual
 select 'running dml snapshot' from dual
 /
 @all-dml-snapshot.sql
+commit;
 /
 EXIT;
 /
