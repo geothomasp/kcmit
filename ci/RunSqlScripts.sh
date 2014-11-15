@@ -8,21 +8,19 @@ cd $scriptDir
 git pull --rebase origin master
 tod=$(date +%Y%m%d%H%M)
 cd 6.0
-spool sqlrun-${tod}.log
-sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql
-sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql
-sqlplus kcso/train50kc@KCTRAIN @all-sql-snapshot.sql
-spool off
+echo "spool sqlrun-${tod}.log"
+sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql > sqlrun-dev-${tod}.log
+sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql > sqlrun-qawkly-${tod}.log
+sqlplus kcso/train50kc@KCTRAIN @all-sql-snapshot.sql > sqlrun-train-${tod}.log
 cat all-ddl-snapshot.sql > "all-ddl-$tod.sql"
 cat all-dml-snapshot.sql > "all-dml-$tod.sql"
 > all-ddl-snapshot.sql;
 > all-dml-snapshot.sql;
 cd ../migration
-spool migrun-${tod}.log
-#sqlplus kcso/dev50kc@KCDEV @all-migration-snapshot.sql
-#sqlplus kcso/qawkly50kc@KCQAWKLY @all-migration-snapshot.sql
-sqlplus kcso/train50kc@KCTRAIN @all-migration-snapshot.sql
-spool off
+echo "spool migrun-${tod}.log"
+sqlplus kcso/dev50kc@KCDEV @all-migration-run.sql > migrun-${tod}-dev.log
+sqlplus kcso/qawkly50kc@KCQAWKLY @all-migration-run.sql > migrun-${tod}-qawkly.log
+sqlplus kcso/train50kc@KCTRAIN @all-migration-run.sql > migrun-${tod}-train.log
 cat all-migration-snapshot.sql > "all-migration-$tod.sql"
 > all-migration-snapshot.sql;
 #git checkout master
