@@ -3,7 +3,7 @@ export ORACLE_HOME=/oracle/product/11.2.0/client
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib
 export PATH=$PATH:$LD_LIBRARY_PATH:$ORACLE_HOME/bin:/usr/local/bin
 env=$ENV
-scriptDir="~/git/kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql/6.0"
+scriptDir="kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql/6.0"
 cd $scriptDir
 git pull --rebase origin master
 tod=$(date +%Y%m%d%H%M)
