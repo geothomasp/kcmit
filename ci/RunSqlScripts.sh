@@ -7,20 +7,21 @@ scriptDir="../kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql/6.0"
 cd $scriptDir
 #git pull --rebase origin master
 tod=$(date +%Y%m%d%H%M)
-echo $tod
-echo "spool sqlrun-${tod}.log"
-#sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql
-#sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql
-#sqlplus kcso/train50kc@KCTRAIN @all-sql-snapshot.sql
-#cat all-ddl-snapshot.sql > "all-ddl-$tod.sql"
-#cat all-dml-snapshot.sql > "all-dml-$tod.sql"
-#> all-ddl-snapshot.sql;
-#> all-dml-snapshot.sql;
+spool sqlrun-${tod}.log
+sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql
+sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql
+sqlplus kcso/train50kc@KCTRAIN @all-sql-snapshot.sql
+spool off
+cat all-ddl-snapshot.sql > "all-ddl-$tod.sql"
+cat all-dml-snapshot.sql > "all-dml-$tod.sql"
+> all-ddl-snapshot.sql;
+> all-dml-snapshot.sql;
 cd ../migration
 echo "spool migrun-${tod}.log"
 #sqlplus kcso/dev50kc@KCDEV @all-migration-snapshot.sql
 #sqlplus kcso/qawkly50kc@KCQAWKLY @all-migration-snapshot.sql
 sqlplus kcso/train50kc@KCTRAIN @all-migration-snapshot.sql
+spool off
 cat all-migration-snapshot.sql > "all-migration-$tod.sql"
 > all-migration-snapshot.sql;
 #git checkout master
