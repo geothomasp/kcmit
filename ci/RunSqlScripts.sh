@@ -9,7 +9,7 @@ git pull --rebase origin master
 tod=$(date +%Y%m%d%H%M)
 cd 6.0
 echo "spool sqlrun-${tod}.log"
-sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql > log/sqlrun-dev-${tod}.log
+sqlplus kcso/dev50kc@KCDEV @all-sql-snapshot.sql > logs/sqlrun-dev-${tod}.log
 sqlplus kcso/qawkly50kc@KCQAWKLY @all-sql-snapshot.sql > logs/sqlrun-qawkly-${tod}.log
 sqlplus kcso/train50kc@KCTRAIN @all-sql-snapshot.sql > logs/sqlrun-train-${tod}.log
 cat all-ddl-snapshot.sql > "all-ddl-$tod.sql"
