@@ -5,7 +5,7 @@ export PATH=$PATH:$LD_LIBRARY_PATH:$ORACLE_HOME/bin:/usr/local/bin
 env=$ENV
 scriptDir="kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql/6.0"
 cd $scriptDir
-git pull --rebase origin master
+#git pull --rebase origin master
 tod=$(date +%Y%m%d%H%M)
 echo $tod
 echo "spool sqlrun-${tod}.log"
@@ -16,6 +16,6 @@ cat all-dml-snapshot.sql > "all-dml-$tod.sql"
 > all-ddl-snapshot.sql;
 > all-dml-snapshot.sql;
 #git checkout master
-git add .
-git commit -am 'reset all snapshots'
+#git add .
+#git commit -am 'reset all snapshots'
 #git push origin master
