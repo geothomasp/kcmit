@@ -72,6 +72,8 @@ public class AwardHomeAction extends AwardAction {
                                             HttpServletRequest request,
                                             HttpServletResponse response) throws Exception {
         ((AwardForm) form).getFundingProposalBean().addFundingProposal();
+      //IP is Linked with award COI integration point MITKC-611 case 2
+        System.out.println("IP is Linked with award COI integration point MITKC-611 case 2");
         return mapping.findForward(Constants.MAPPING_BASIC);
     }
     
