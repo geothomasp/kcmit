@@ -372,44 +372,62 @@ protected boolean isFandaRateInputInPairs(List<AwardFandaRate> awardFandaRateLis
     isPairChecked = true;
     if(valid){
        int i = 0;
-        for(AwardFandaRate awardFandaRate1 :awardFandaRateList){
-            if(StringUtils.equalsIgnoreCase(awardFandaRate1.getOnCampusFlag(),"N")){
-                int j= 0;
-                if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRate1.getApplicableFandaRate()).size() > 0){
-                    for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
-                    	if(!awardFandaRates.contains(awardFandaRate2)){
-                    		if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
-                    				awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
-                    			if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 
-                    					|| !awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear()) || awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
+       for(AwardFandaRate awardFandaRate1 :awardFandaRateList){
+    	   if(StringUtils.equalsIgnoreCase(awardFandaRate1.getOnCampusFlag(),"N")){
+    		   int j= 0;
+    		   if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRate1.getApplicableFandaRate()).size() > 0){
+    			   for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
+    				   if(!awardFandaRates.contains(awardFandaRate2)){
+    					   if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
+    							   awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
+    						   if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 
+    								   || !awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear()) || awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
 
-                    				valid=false;
-                    				if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 ){
-                    					reportError(AWARD_FANDA_RATES_ARRAY+"[" + j + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    							   valid=false;
 
-                    				}else if(!awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear())){
-                    					reportError(AWARD_FANDA_RATES_ARRAY+"[" + j + "].fiscalYear", KcMitConstants.ERROR_AWARD_FANDA_INVALID_RATE_PAIR,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    						   }else{
+    							   valid=true;
+    							   awardFandaRates.add(awardFandaRate2);
+        						   break;
+    						   }
+    					   }
+    				   }
 
-                    				}else if(awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
-                    					reportError(AWARD_FANDA_RATES_ARRAY+"[" + j + "].startDate", KcMitConstants.ERROR_AWARD_FANDA_INVALID_RATE_PAIR,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    			   }
+    			   if(!valid){
+    				   for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
+    					   if(!awardFandaRates.contains(awardFandaRate2)){
+    						   if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
+    								   awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
+    							   if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 
+    									   || !awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear()) || awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
 
-                    				}
-                    			}else{
-                    				awardFandaRates.add(awardFandaRate2);
-                    				break;
-                    			}
-                    		}
-                    		
-                   	}
-                   	j++;
-                    }
-                }else{
-                    valid = false;
-                    reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate1.getFandaRateTypeCode()),awardFandaRate1.getFiscalYear(),dateFormat.format(awardFandaRate1.getStartDate()));
-                }
-            }
-            i++;
-        }
+    								   if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 ){
+    									   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    									   break;
+
+    								   }else if(!awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear())){
+    									   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].fiscalYear", KcMitConstants.ERROR_AWARD_FANDA_INVALID_RATE_PAIR,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    									   break;
+
+    								   }else if(awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
+    									   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].startDate", KcMitConstants.ERROR_AWARD_FANDA_INVALID_RATE_PAIR,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    									   break;
+
+    								   }
+    							   }
+    						   }
+    					   }
+    					   j++;
+    				   }
+    			   }
+    		   }else{
+    			   valid = false;
+    			   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate1.getFandaRateTypeCode()),awardFandaRate1.getFiscalYear(),dateFormat.format(awardFandaRate1.getStartDate()));
+    		   }
+    	   }
+    	   i++;
+       }
     }
     return valid;
 }
