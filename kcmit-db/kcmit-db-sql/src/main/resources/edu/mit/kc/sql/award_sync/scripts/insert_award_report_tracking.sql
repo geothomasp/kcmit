@@ -30,13 +30,19 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
  
-
+begin
+ 
  select AWARD_REPORT_TERMS_ID into li_award_reports_id from AWARD_REPORT_TERMS 
  where AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.SEQUENCE_NUMBER
  AND REPORT_CLASS_CODE=r_award_comment.REPORT_CLASS_CODE AND REPORT_CODE=r_award_comment.REPORT_CODE 
  AND FREQUENCY_CODE=r_award_comment.FREQUENCY_CODE AND FREQUENCY_BASE_CODE=r_award_comment.FREQUENCY_BASE_CODE 
  AND OSP_DISTRIBUTION_CODE=r_award_comment.OSP_DISTRIBUTION_CODE; 
-
+ 
+exception
+when others then
+dbms_output.put_line('Error in "insert_award_report_tracking.sql" '||r_award_comment.award_number||','||r_award_comment.SEQUENCE_NUMBER||','||r_award_comment.OSP_DISTRIBUTION_CODE||' - '||sqlerrm);
+continue;
+end;
     
 INSERT INTO AWARD_REPORT_TRACKING(AWARD_REPORT_TERM_ID,AWARD_NUMBER,PI_PERSON_ID,PI_ROLODEX_ID,PI_NAME,LEAD_UNIT_NUMBER,REPORT_CLASS_CODE,
 REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,STATUS_CODE,BASE_DATE,DUE_DATE,ACTIVITY_DATE,OVERDUE,COMMENTS,

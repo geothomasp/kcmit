@@ -1,7 +1,5 @@
 select ' Start time of AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
 /
-CREATE INDEX I1_AMOUNT_TRANSACTION ON AWARD_AMOUNT_TRANSACTION(AWARD_NUMBER,MIT_TRANSACTION_ID)
-/
 -- Migrate award amount transaction + doc handler end 
 -- Starts AWARD_AMOUNT_INFO
 DECLARE
@@ -35,6 +33,7 @@ li_action_taken VARCHAR2(12);
 li_action_rqst VARCHAR2(12);
 li_prncpl_id VARCHAR2(12);
 ls_transaction NUMBER(10,0);
+li_cnt number;
 CURSOR c_award IS
 SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER FROM AWARD a INNER JOIN TEMP_TAB_TO_SYNC_AWARD ts on a.AWARD_NUMBER=replace(ts.MIT_AWARD_NUMBER,'-','-00') and a.SEQUENCE_NUMBER=ts.SEQUENCE_NUMBER 
 ORDER BY a.AWARD_NUMBER,a.SEQUENCE_NUMBER;
@@ -130,7 +129,7 @@ ls_source_award:='000000-00000';
 
 IF li_transaction is not null then
 	begin
-	elect count(TRANSACTION_ID) into li_cnt from OSP$AWARD_AMOUNT_INFO
+	select count(TRANSACTION_ID) into li_cnt from OSP$AWARD_AMOUNT_INFO
 		where MIT_AWARD_NUMBER=r_amt_info.MIT_AWARD_NUMBER and SEQUENCE_NUMBER=r_amt_info.SEQUENCE_NUMBER and AMOUNT_SEQUENCE_NUMBER =r_amt_info.AMOUNT_SEQUENCE_NUMBER;
     if li_cnt=1 then
 		select TRANSACTION_ID into ls_transaction  from OSP$AWARD_AMOUNT_INFO

@@ -35,6 +35,8 @@ EXIT WHEN c_award_comment%NOTFOUND;
   END IF;
  select SEQUENCE_AWARD_ID.NEXTVAL into li_award_reports_id from dual;
 
+ begin
+ 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
 	     IF ls_award_number is null THEN
@@ -72,6 +74,12 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	   INSERT INTO AWARD_REP_TERMS_RECNT(AWARD_REP_TERMS_RECNT_ID,CONTACT_ID,AWARD_REPORT_TERMS_ID,CONTACT_TYPE_CODE,ROLODEX_ID,NUMBER_OF_COPIES,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID) 
        VALUES(SEQ_AWARD_REP_TERMS_RECNT_ID.NEXTVAL,null,li_award_reports_id,r_award_comment.CONTACT_TYPE_CODE,r_award_comment.ROLODEX_ID,r_award_comment.NUMBER_OF_COPIES,1,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,SYS_GUID());
 	END IF;	
+
+exception
+when others then
+dbms_output.put_line('Error in "insert_award_report_terms.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||ls_distribution_code||' - '||sqlerrm);
+continue;
+end;
 	
 END LOOP;
 CLOSE c_award_comment;

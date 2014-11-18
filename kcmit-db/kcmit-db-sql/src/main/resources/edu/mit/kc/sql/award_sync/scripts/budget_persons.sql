@@ -73,24 +73,31 @@ end;
 --end;
 
 if     r_bud.APPOINTMENT_TYPE='SUM EMPLOYEE' then
-	ls_appointment_typ_cd:=2;
+	ls_appointment_typ_cd:='2';
 elsif  r_bud.APPOINTMENT_TYPE='REG EMPLOYEE' then
-	ls_appointment_typ_cd:=7;-- code for 12M duration
+	ls_appointment_typ_cd:='7';-- code for 12M duration
 elsif  r_bud.APPOINTMENT_TYPE='TMP EMPLOYEE' then   
-	ls_appointment_typ_cd:=1;     
+	ls_appointment_typ_cd:='1';     
 elsif  r_bud.APPOINTMENT_TYPE='9M DURATION' then   
-	ls_appointment_typ_cd:=3;
+	ls_appointment_typ_cd:='3';
 elsif  r_bud.APPOINTMENT_TYPE='10M DURATION' then   
-	ls_appointment_typ_cd:=4;
+	ls_appointment_typ_cd:='4';
 elsif  r_bud.APPOINTMENT_TYPE='11M DURATION' then   
-	ls_appointment_typ_cd:=5;
+	ls_appointment_typ_cd:='5';
 elsif  r_bud.APPOINTMENT_TYPE='12M DURATION' or r_bud.APPOINTMENT_TYPE='12M EMPLOYEE' then   
-	ls_appointment_typ_cd:=6;       
+	ls_appointment_typ_cd:='6';       
 else
-	  ls_appointment_typ_cd:=1;     
+	  ls_appointment_typ_cd:='1';     
 end if;
-
+/*
 SELECT BUDGET_ID INTO li_budget_id FROM BUDGET WHERE version_number =r_bud.VERSION_NUMBER AND document_number=(SELECT DOCUMENT_NUMBER FROM BUDGET_DOCUMENT WHERE PARENT_DOCUMENT_KEY =(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL WHERE PROPOSAL_NUMBER=ls_proposal_number)AND VER_NBR =r_bud.VERSION_NUMBER); 
+*/
+select t1.budget_id  INTO li_budget_id from budget t1 
+		inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+		where t2.proposal_number = ls_proposal_number
+		and t1.version_number = r_bud.VERSION_NUMBER;
+
+
 li_per_seq_number:=FN_DOCUMENT_NEXTVAL(li_budget_id,'personSequenceNumber');
 
 select count(*) into li_count FROM BUDGET_PERSONS where BUDGET_ID=r_bud.BUDGET_ID AND PERSON_ID=r_bud.PERSON_ID OR ROLODEX_ID=r_bud.PERSON_ID;

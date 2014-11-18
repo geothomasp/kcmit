@@ -22,10 +22,18 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
 select award_person_unit_id into li_award_pers_unit_id from award_person_units a 
 inner join award_persons ap ON a.award_person_id=ap.award_person_id 
 where ap.award_number=r_award_comment.award_number and ap.sequence_number=r_award_comment.Kuali_sequence_number
 and ap.PERSON_ID=r_award_comment.PERSON_ID OR ap.ROLODEX_ID=r_award_comment.PERSON_ID and ap.contact_role_code <> 'KP';
+
+exception
+when others then
+dbms_output.put_line('Error in "insert_award_pers_unit_credit_split.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||' - '||sqlerrm);
+continue;
+end;
+
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	

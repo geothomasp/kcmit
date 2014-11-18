@@ -23,9 +23,23 @@ BEGIN
 		LOOP
 		FETCH c_rates INTO r_rates;
 		EXIT WHEN c_rates%NOTFOUND;
-		
-			SELECT BUDGET_ID INTO li_budget_id FROM BUDGET WHERE version_number =r_rates.VERSION_NUMBER AND document_number=(SELECT DOCUMENT_NUMBER FROM BUDGET_DOCUMENT WHERE PARENT_DOCUMENT_KEY =(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL WHERE PROPOSAL_NUMBER=r_rates.PROPOSAL_NUMBER)AND VER_NBR =r_rates.VERSION_NUMBER);
 
+	begin		
+			select t1.budget_id  INTO li_budget_id  from budget t1 
+			inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+			where t2.proposal_number = r_rates.PROPOSAL_NUMBER
+			and t1.version_number = r_rates.VERSION_NUMBER;
+			
+	exception
+	when no_data_found then
+		null;
+		continue;
+	end;
+		
+			
+/*		
+			SELECT BUDGET_ID INTO li_budget_id FROM BUDGET WHERE version_number = AND document_number=(SELECT DOCUMENT_NUMBER FROM BUDGET_DOCUMENT WHERE PARENT_DOCUMENT_KEY =(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL WHERE PROPOSAL_NUMBER=r_rates.PROPOSAL_NUMBER)AND VER_NBR =r_rates.VERSION_NUMBER);
+*/
 			DELETE FROM EPS_PROP_RATES WHERE BUDGET_ID = li_budget_id;
 		
 	
@@ -40,7 +54,20 @@ BEGIN
 		FETCH c_la INTO r_la;
 		EXIT WHEN c_la%NOTFOUND;
 
+	begin		
+			select t1.budget_id  INTO li_budget_id  from budget t1 
+			inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+			where t2.proposal_number = r_la.PROPOSAL_NUMBER
+			and t1.version_number = r_la.VERSION_NUMBER;	
+	exception
+	when no_data_found then
+		null;
+		continue;
+	end;			
+/*
 			SELECT BUDGET_ID INTO li_budget_id FROM BUDGET WHERE version_number =r_la.VERSION_NUMBER AND document_number=(SELECT DOCUMENT_NUMBER FROM BUDGET_DOCUMENT WHERE PARENT_DOCUMENT_KEY =(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL WHERE PROPOSAL_NUMBER=r_la.PROPOSAL_NUMBER)AND VER_NBR =r_la.VERSION_NUMBER);
+*/			
+			
 			DELETE FROM EPS_PROP_LA_RATES WHERE BUDGET_ID = li_budget_id;
 			
 		END LOOP;
@@ -81,8 +108,12 @@ FETCH c_rates INTO r_rates;
 EXIT WHEN c_rates%NOTFOUND;
 
 	begin
-		SELECT BUDGET_ID INTO li_budget_id FROM BUDGET WHERE version_number =r_rates.VERSION_NUMBER 
-		AND document_number=(SELECT DOCUMENT_NUMBER FROM BUDGET_DOCUMENT WHERE PARENT_DOCUMENT_KEY =(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL WHERE PROPOSAL_NUMBER=r_rates.PROPOSAL_NUMBER)AND VER_NBR =r_rates.VERSION_NUMBER);
+		
+			select t1.budget_id  INTO li_budget_id  from budget t1 
+			inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+			where t2.proposal_number = r_rates.PROPOSAL_NUMBER
+			and t1.version_number = r_rates.VERSION_NUMBER;	
+		
 	exception
 	when no_data_found then
 		null;
@@ -112,8 +143,13 @@ FETCH c_la INTO r_la;
 EXIT WHEN c_la%NOTFOUND;
 
 	begin
-		SELECT BUDGET_ID INTO li_budget_id FROM BUDGET WHERE version_number =r_la.VERSION_NUMBER 
-		AND document_number=(SELECT DOCUMENT_NUMBER FROM BUDGET_DOCUMENT WHERE PARENT_DOCUMENT_KEY =(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL WHERE PROPOSAL_NUMBER=r_la.PROPOSAL_NUMBER)AND VER_NBR =r_la.VERSION_NUMBER);
+	
+			select t1.budget_id  INTO li_budget_id  from budget t1 
+			inner join eps_proposal_budget_ext t2 on t1.budget_id = t2.budget_id
+			where t2.proposal_number = r_la.PROPOSAL_NUMBER
+			and t1.version_number = r_la.VERSION_NUMBER;	
+		
+		
 	exception
 	when no_data_found then
 		null;

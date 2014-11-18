@@ -1,0 +1,14 @@
+
+Started role right migration.05-NOV-14 11.38.08.062426 AM                       
+ALTER TABLE KRIM_PERM_ATTR_DATA_T ENABLE CONSTRAINT KRIM_PERM_ATTR_DATA_TR3 
+                                                    *
+ERROR at line 1:
+ORA-02298: cannot validate (KM52120.KRIM_PERM_ATTR_DATA_TR3) - parent keys not 
+found 
+
+
+
+ 555565925                                                                      
+Loading user roles Completed!!                                                  
+
+completed role right migration.05-NOV-14 11.47.31.451130 AM                     

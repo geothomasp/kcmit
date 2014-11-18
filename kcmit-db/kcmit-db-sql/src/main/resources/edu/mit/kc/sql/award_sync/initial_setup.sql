@@ -136,11 +136,11 @@ inner join TEMP_TAB_TO_SYNC_AWARD t2 on t1.mit_award_number = t2.mit_award_numbe
 inner join OSP$PROPOSAL_ADMIN_DETAILS@coeus.kuali t3 on t3.INST_PROPOSAL_NUMBER = t1.PROPOSAL_NUMBER
 inner join ( select PROPOSAL_NUMBER,VERSION_NUMBER from OSP$BUDGET@coeus.kuali ) t4 on t3.DEV_PROPOSAL_NUMBER = t4.PROPOSAL_NUMBER
 /
-delete from temp_tab_to_sync_award t1 where rowid not in (
-select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
-and t2.sequence_number = t1.sequence_number
-)
-/
+--delete from temp_tab_to_sync_award t1 where rowid not in (
+--select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
+--and t2.sequence_number = t1.sequence_number
+--)
+--/
 CREATE TABLE SYNC_EPS_ALREADY_PRESENT(
 PROPOSAL_NUMBER VARCHAR2(10)
 )

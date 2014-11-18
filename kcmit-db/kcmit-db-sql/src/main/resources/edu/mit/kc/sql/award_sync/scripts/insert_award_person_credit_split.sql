@@ -1,5 +1,12 @@
 select ' Start time of AWARD_PERSON_CREDIT_SPLITS script is '|| localtimestamp from dual
 /
+INSERT INTO INV_CREDIT_TYPE(INV_CREDIT_TYPE_CODE,DESCRIPTION,ADDS_TO_HUNDRED,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,ACTIVE_FLAG,OBJ_ID)
+SELECT iv.INV_CREDIT_TYPE_CODE,iv.DESCRIPTION,iv.ADDS_TO_HUNDRED,iv.UPDATE_TIMESTAMP,iv.UPDATE_USER,1,'Y',SYS_GUID()
+FROM OSP$INV_CREDIT_TYPE@coeus.kuali iv
+where iv.INV_CREDIT_TYPE_CODE not in (select INV_CREDIT_TYPE_CODE from INV_CREDIT_TYPE)
+/
+commit
+/
 DECLARE
 li_cust_id NUMBER(12,0);
 li_award_pers_unit_id NUMBER(12,0);
@@ -22,9 +29,17 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
+
 select award_person_id into li_award_pers_unit_id from award_persons 
 where award_number=r_award_comment.award_number and sequence_number=r_award_comment.Kuali_sequence_number
 and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSON_ID)and contact_role_code <> 'KP';
+
+exception
+when others then
+dbms_output.put_line('Error in "insert_award_person_credit_split.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||' - '||sqlerrm);
+continue;
+end;
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
