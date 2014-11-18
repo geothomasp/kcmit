@@ -275,7 +275,7 @@ public final class KeyConstants {
     public static final String ERROR_SUBMIT_TO_SPONSOR_PERMISSONS = "error.proposalDevelopment.permission.submitToSponsor";
     public static final String MESSAGE_INSTITUTIONAL_PROPOSAL_NOT_CREATED_INROUTE = "message.institutionalproposal.not.created.inroute";
     public static final String ERROR_PROPOSAL_DEVELOPMENT_RESUBMISSION_PROMPT_OPTION_REQUIRED = "error.proposalDevelopment.resubmission.prompt.option.required";
-    
+    public static final String ERROR_IP_COST_SHARE_SOURCE_ACCOUNT_LIMIT_EXCEEDS="error.institutionalProposalCostShare.sourceamount.exceeds";
     // delete proposal
     public static final String ERROR_DELETE_PROPOSAL_IN_HIERARCHY="error.proposalDevelopment.deleteproposal.inhierarchy";
     
