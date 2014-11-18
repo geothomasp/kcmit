@@ -39,6 +39,7 @@ import org.kuali.coeus.common.questionnaire.framework.core.QuestionnaireUsage;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.ModuleQuestionnaireBean;
 import org.kuali.coeus.common.questionnaire.framework.question.QuestionDTO;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,9 @@ public class QuestionnaireAnswerServiceImpl implements QuestionnaireAnswerServic
         return businessObjectService;
     }
 
-
+    @Autowired
+    @Qualifier("parameterService")
+    private ParameterService parameterService; 
 
     /*
      * Get the questionnaire that is 'final' for the specified module.
@@ -814,7 +817,14 @@ public class QuestionnaireAnswerServiceImpl implements QuestionnaireAnswerServic
         } else if (CoeusModule.IRB_MODULE_CODE.equals(moduleItemCode)) {
             return new ProtocolModuleQuestionnaireBean(moduleItemCode, moduleItemKey, moduleSubItemCode, moduleSubItemKey, finalDoc);
         } else if (CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE.equals(moduleItemCode)) {
-            if (CoeusSubModule.PROPOSAL_PERSON_CERTIFICATION.equals(moduleSubItemCode)) {
+            if (getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION").equals(moduleSubItemCode)) {
+                return new ProposalPersonModuleQuestionnaireBean(moduleItemCode, moduleItemKey, moduleSubItemCode, moduleSubItemKey, finalDoc);
+            }else if (getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_COI_CERTIFICATION").equals(moduleSubItemCode)) {
+                return new ProposalPersonModuleQuestionnaireBean(moduleItemCode, moduleItemKey, moduleSubItemCode, moduleSubItemKey, finalDoc);
+            }else if (getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_KP_CERTIFICATION").equals(moduleSubItemCode)) {
                 return new ProposalPersonModuleQuestionnaireBean(moduleItemCode, moduleItemKey, moduleSubItemCode, moduleSubItemKey, finalDoc);
             } else if (CoeusSubModule.PROPOSAL_S2S_SUBMODULE.equals(moduleSubItemCode)) {
                 return new ProposalDevelopmentS2sModuleQuestionnaireBean(moduleItemCode, moduleItemKey, moduleSubItemCode, moduleSubItemKey, finalDoc);
@@ -861,4 +871,18 @@ public class QuestionnaireAnswerServiceImpl implements QuestionnaireAnswerServic
     public void setGlobalVariableService(GlobalVariableService globalVariableService) {
         this.globalVariableService = globalVariableService;
     }
+    /**
+     * Gets the parameterService attribute value.
+     * @return Returns the parameterService.
+     */
+	 public ParameterService getParameterService() {
+	    return parameterService;
+	 }
+	 /**
+	  * Sets the parameterService attribute value.
+	  * @param parameterService The parameterService to set.
+	  */
+	 public void setParameterService(ParameterService parameterService) {
+		 this.parameterService = parameterService;
+	 }
 }

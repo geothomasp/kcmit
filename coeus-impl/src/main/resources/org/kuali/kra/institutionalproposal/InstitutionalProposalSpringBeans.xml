@@ -212,6 +212,7 @@
         <property name="institutionalProposalVersioningService" ref="institutionalProposalVersioningService" />
         <property name="sequenceAccessorService" ref="sequenceAccessorService" />
         <property name="parameterService" ref="parameterService" />
+        <property name="dataObjectService" ref="dataObjectService" />
     </bean>
     
     <bean id="institutionalProposalLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">

@@ -27,6 +27,9 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -38,7 +41,7 @@ public class NegotiationActivityXmlStream implements XmlStream {
     private BusinessObjectService businessObjectService;
     
     private static final String PROP_LOG = "PL";
-    private static final String PROP_TYPE_CODE = "proposalTypeCode";
+    private static final String PROP_TYPE_CODE = "PROPOSAL_TYPE_CODE";
      
     /**
      * This method get's the negotiation
@@ -149,13 +152,20 @@ public class NegotiationActivityXmlStream implements XmlStream {
     protected NegotiationDataType getNegotiationDataType() {
         NegotiationDataType negotiationDataType = NegotiationDataType.Factory.newInstance();   
         NegotiationAssociationType negotiationAssociationType = negotiation.getNegotiationAssociationType(); 
-        
+        Calendar cal = null;
         if(negotiation.getNegotiator() != null ){
             negotiationDataType.setNegotiator(negotiation.getNegotiator().getFullName());
         }    
         if(negotiation.getNegotiationStartDate() != null){
             negotiationDataType.setStartDate(getDateTimeService().getCalendar(negotiation.getNegotiationStartDate())); 
         }
+        
+         cal=Calendar.getInstance();
+         cal.setTime(getDateTimeService().getCurrentDate());
+                 
+     
+		negotiationDataType.setCurrentDate(cal);
+		
         if(negotiation.getNegotiationStatus() != null){
             StatusType statusType = StatusType.Factory.newInstance();
             statusType.setStatusDesc(negotiation.getNegotiationStatus().getDescription());

@@ -83,7 +83,6 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     private static final String DECIMAL_FORMAT = "00000000";
     private static final String PROPOSAL_NUMBER = "proposalNumber";
     private static final String SEQUENCE_NUMBER = "sequenceNumber";
-    
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;
     private VersioningService versioningService;
@@ -420,7 +419,7 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
         }
         institutionalProposal.setSponsorCode(developmentProposal.getSponsorCode());
         institutionalProposal.setTitle(developmentProposal.getTitle());
-        institutionalProposal.setSubcontractFlag(developmentProposal.getSubcontracts());
+        institutionalProposal.setSubcontractFlag(developmentProposal.getSubcontracts());             
         institutionalProposal.setRequestedStartDateTotal(developmentProposal.getRequestedStartDateInitial());
         institutionalProposal.setRequestedEndDateTotal(developmentProposal.getRequestedEndDateInitial());
         institutionalProposal.setDeadlineDate(developmentProposal.getDeadlineDate());
@@ -446,6 +445,9 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
         if (developmentProposal.getRolodex() != null) {
             institutionalProposal.setRolodexId(developmentProposal.getRolodex().getRolodexId());
         }
+        if(institutionalProposal.getAwardType()!=null && developmentProposal.getAnticipatedAwardType()!=null){
+        institutionalProposal.getAwardType().setDescription(developmentProposal.getAnticipatedAwardType().getDescription());
+        }    
     }
     
     protected void doCustomAttributeDataFeed(InstitutionalProposalDocument institutionalProposalDocument, DevelopmentProposal developmentProposal) throws WorkflowException {

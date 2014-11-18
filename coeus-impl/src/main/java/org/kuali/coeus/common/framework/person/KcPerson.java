@@ -385,7 +385,7 @@ public class KcPerson extends TransientBusinessObjectBase implements Contactable
             birthDate = (bio.getBirthDate() != null) ? DateUtils.parseDate(bio.getBirthDate(), new String[] {"mm/dd/yyyy"}) : null;
         }
         catch (ParseException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
         
         return birthDate != null ?  this.calcAge(birthDate): null;
