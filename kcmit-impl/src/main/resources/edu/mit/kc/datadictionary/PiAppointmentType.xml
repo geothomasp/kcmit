@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="PiAppointmentType" parent="PiAppointmentType-parentBean" />
+	<bean id="PiAppointmentType-parentBean" abstract="true" parent="DataObjectEntry"
+		p:dataObjectClass="edu.mit.kc.bo.PiAppointmentType" p:objectLabel="Pi Appointment Types">
+		 <property name="titleAttribute" value="id"/>
+ 		<property name="attributes">
+			<list>
+				<ref bean="PiAppointmentType-typeCode" />
+				<ref bean="PiAppointmentType-description" />			
+			</list>
+		</property>
+	</bean>
+
+	<!-- Attribute Definitions -->
+	<bean id="PiAppointmentType-typeCode" parent="PiAppointmentType-typeCode-parentBean" />
+	<bean id="PiAppointmentType-typeCode-parentBean" abstract="true"
+		parent="AttributeDefinition" p:name="typeCode" p:forceUppercase="false"
+		p:label="Type Code" p:shortLabel="Type Code" p:summary="Type Code"
+		p:description="">
+		<property name="validationPattern">
+			<bean parent="AnyCharacterValidationPattern" />
+		</property>
+		<property name="validCharactersConstraint">
+			<bean parent="AnyCharacterPatternConstraint" />
+		</property>
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="8" />
+		</property>
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="14" />
+		</property>
+	</bean>
+<bean id="PiAppointmentType-description" parent="PiAppointmentType-description-parentBean" />
+	<bean id="PiAppointmentType-description-parentBean" parent="AttributeDefinition"
+		abstract="true" p:name="description" p:forceUppercase="true" p:label="Description"
+		p:shortLabel="Description" p:summary="Description" p:description="Description">
+		<property name="validationPattern">
+			<bean parent="AnyCharacterValidationPattern" />
+		</property>
+		<property name="validCharactersConstraint">
+			<bean parent="AnyCharacterPatternConstraint" />
+		</property>
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="8" />
+		</property>
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="15" />
+		</property>
+	</bean>
+	
+	
+   <!-- Inquiry Definition -->
+   <bean id="PiAppointmentType-InquiryView" parent="PiAppointmentType-InquiryView-parentBean"/>
+   <bean id="PiAppointmentType-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
+    <property name="headerText" value="Pi Appointment Type Inquiry"/>
+    <property name="dataObjectClassName" value="edu.mit.kc.bo.PiAppointmentType"/>
+    <property name="singlePageView" value="true"/>
+    <property name="items">
+      <list>
+        <bean parent="Uif-Disclosure-VerticalBoxSection">
+          <property name="header.headerText" value="Pi Appointment Type" />
+          <property name="items">
+          <list>
+            <ref bean="PiAppointmentType-InquiryView-id"/>
+            <ref bean="PiAppointmentType-InquiryView-parameters"/> 
+          </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+   </bean>
+   <bean id="PiAppointmentType-InquiryView-id" parent="PiAppointmentType-InquiryView-id-parentBean"/>
+   <bean id="PiAppointmentType-InquiryView-id-parentBean" abstract="true" parent="Uif-GridGroup">
+    <property name="layoutManager.numberOfColumns" value="2"/>
+    <property name="items">
+      <list>
+        <bean parent="Uif-InputField" p:propertyName="typeCode"/>
+        <bean parent="Uif-InputField" p:propertyName="description"/>        
+      </list>
+    </property>
+   </bean>
+  
+  <!--  <bean id="PiAppointmentType-InquiryView-parameters" parent="PiAppointmentType-InquiryView-parameters-parentBean"/>
+   <bean id="PiAppointmentType-InquiryView-parameters-parentBean" abstract="true" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3">
+     <property name="headerText" value="Krms Function Parameters"/>
+     <property name="collectionObjectClass" value="edu.mit.kc.bo.KrmsFunctionsParams"/>
+     <property name="propertyName" value="functionsParams"/>
+     <property name="layoutManager.renderSequenceField" value="false"/>
+     <property name="items">
+       <list>
+         <bean parent="Uif-InputField" p:propertyName="functionParamId"/>
+         <bean parent="Uif-InputField" p:propertyName="namespace"/>
+         <bean parent="Uif-InputField" p:propertyName="description"/>
+         <bean parent="Uif-InputField" p:propertyName="type"/>
+        </list>
+     </property>
+    </bean>
+   -->
+	<!-- Lookup Definition -->
+	<bean id="PiAppointmentType-LookupView" parent="PiAppointmentType-LookupView-parentBean" />
+	<bean id="PiAppointmentType-LookupView-parentBean" abstract="true"
+		parent="Uif-LookupView" p:headerText="Pi Appointment Type"
+		p:dataObjectClassName="edu.mit.kc.bo.PiAppointmentType">
+		<property name="defaultSortAttributeNames">
+			<list>
+				<value>typeCode</value>
+			</list>
+		</property>
+		<property name="criteriaFields">
+			<list>
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="typeCode"
+					p:order="10" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="description"
+					p:order="20" />			
+			</list>
+		</property>
+		<property name="resultFields">
+			<list>
+				<bean parent="Uif-DataField" p:propertyName="typeCode"
+					p:order="10" />
+				<bean parent="Uif-DataField" p:propertyName="description"
+					p:order="20" />				
+			</list>
+		</property>
+	</bean>
+</beans>

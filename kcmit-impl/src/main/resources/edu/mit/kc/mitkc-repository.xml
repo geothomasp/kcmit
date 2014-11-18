@@ -81,4 +81,8 @@
 		<foreignkey field-ref="id"/>
 	    </reference-descriptor>
 	</class-descriptor> 
+	<class-descriptor class="edu.mit.kc.bo.PiAppointmentType" table="PI_APPOINTMENT_TYPE">
+		<field-descriptor id="1" name="typeCode" column="PI_APPOINT_TYPE_CODE" jdbc-type="VARCHAR" primarykey="true"/>		
+		<field-descriptor name="description" column="DESCRIPTION" jdbc-type="VARCHAR"/>	
+	</class-descriptor>
 </descriptor-repository>
