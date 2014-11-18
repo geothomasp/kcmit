@@ -89,7 +89,7 @@
     <dependency>
         <groupId>org.kuali.coeus</groupId>
 	    <artifactId>coeus-webapp</artifactId>
-        <version>6.0-s8</version>
+        <version>6.0-s9</version>
         <type>war</type>
          <exclusions>
             <exclusion>
