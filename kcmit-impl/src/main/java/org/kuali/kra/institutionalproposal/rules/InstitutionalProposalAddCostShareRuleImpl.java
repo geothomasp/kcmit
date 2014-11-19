@@ -130,10 +130,8 @@ public class InstitutionalProposalAddCostShareRuleImpl extends CostShareRuleRese
         boolean isValid = true;
         String commitmentAmountField = this.fieldStarter + ".amount";
         if (commitmentAmount == null) {
-        	if (displayNullFieldErrors) {
-            isValid = false;
+        	isValid = false;
             this.reportError(commitmentAmountField, KeyConstants.ERROR_IP_COST_SHARE_COMMITMENT_AMOUNT_REQUIRED);
-        	}
         } else if (commitmentAmount.isLessThan(new ScaleTwoDecimal(0))) {
             isValid = false;
             this.reportError(commitmentAmountField, KeyConstants.ERROR_IP_COST_SHARE_COMMITMENT_AMOUNT_INVALID, new String[] { commitmentAmount.toString() });
