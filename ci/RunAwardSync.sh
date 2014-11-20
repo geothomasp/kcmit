@@ -8,4 +8,5 @@ tod=$(date +%Y%m%d%H%M)
 echo $tod
 echo "spool sqlrun-${tod}.log"
 cd $scriptDir
-sqlplus kcso/qa50kc@KCQA @start_sync.sql
+sqlplus kcso/qawkly50kc@KCQAWKLY @start_sync.sql > award_sync_qawkly-${tod}.log
+sqlplus kcso/dev50kc@KCQDEV @start_sync.sql > award_sync_dev-${tod}.log

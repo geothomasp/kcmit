@@ -1,15 +1,15 @@
-echo `date` 'Starting pfeed.sh ***Coeus Production Database***'
+echo `date` 'Starting pfeed.sh ***Kuali Coeus QA Database***'
 
-ORACLE_SID=OSPA
+ORACLE_SID=KCDEV
 export ORACLE_SID
 
 ORACLE_HOME=/oracle/product/11.2.0/db
 export ORACLE_HOME
 
-ORACLE_CONNECT_STRING=`cat /home/coeus/ospauser/id`
+ORACLE_CONNECT_STRING=`cat /opt/kc/dbcred/dbcred`
 $ORACLE_HOME/bin/sqlplus  $ORACLE_CONNECT_STRING @/home/coeus/pfeed/pfeed.sql
 
 
 echo `date` 'End pfeed.sh'
 
-mail -s 'Person Feed - Production Database - OSPA' mit-kc-dev@mit.edu < /home/coeus/pfeed/pfeed.log
+mail -s 'Person Feed - Dev Database - KCSO' kc-mit-dev@mit.edu < /opt/kc/jobs/pfeed/pfeed.log
