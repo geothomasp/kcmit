@@ -156,32 +156,6 @@ FROM WAREUSER.COEUS_PERSON@WAREHOUSE_COEUS.MIT.EDU cp,
 /
 commit
 /
-rem
-rem ** Don't have to worry about duplicates any more
-rem ** new view in warehouse have taken care of duplicates
-rem
---select 'Deleting Duplicates from warehouse_person ' from dual
---/
-rem
-rem Delete Duplicates from warehouse_person
-rem
-rem
---delete
---from warehouse_person
---where person_id in (
---select person_id
---from warehouse_person
---group by person_id 
---having count(person_id) > 1) and
---rowid not in (select  rowid from warehouse_person p
---where p.person_id = warehouse_person.person_id and 
---rownum = 1)
---/
-rem
-rem
-rem  insert into osp$person any new rows
-rem
-rem
 select 'Inserting new rows into osp$person ' from dual
 /
 insert into osp$person
