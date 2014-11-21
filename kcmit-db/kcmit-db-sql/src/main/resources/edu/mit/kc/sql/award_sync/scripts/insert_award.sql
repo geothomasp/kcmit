@@ -162,5 +162,49 @@ select SEQ_AWARD_AWARD_NUMBER.NEXTVAL from dual
 /
 alter sequence SEQ_AWARD_AWARD_NUMBER increment by 1
 /
+-- update award_sequence_status
+update award set AWARD_SEQUENCE_STATUS = 'ARCHIVED'
+where award_number in (select replace(mit_award_number,'-','-00') from TEMP_TAB_TO_SYNC_AWARD)
+/
+commit
+/
+declare
+ls_doc_typ_id VARCHAR2(40);
+li_need_insert number;
+li_count number:=0;
+cursor c_awd is
+select award_number , max(sequence_number) sequence_number from award 
+where award_number in ( select replace(mit_award_number,'-','-00') from TEMP_TAB_TO_SYNC_AWARD)
+group by award_number;
+r_awd c_awd%ROWTYPE;
+begin
+  li_need_insert := 1;
+	begin     -- UMB added max() below
+	   select max(DOC_TYP_ID) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='AwardDocument';  
+	exception
+	when others then
+	li_need_insert := 0;
+	end;
+
+if li_need_insert = 1 then  
+    open c_awd;
+    loop
+    fetch c_awd into r_awd;
+    exit when c_awd%notfound;
+    /*
+      update krew_doc_hdr_t set DOC_HDR_STAT_CD = 'F' where
+      DOC_HDR_ID = (select document_number from award where award_number =  r_awd.award_number and sequence_number =  r_awd.sequence_number)
+      and DOC_TYP_ID =ls_doc_typ_id;
+      */
+      update award set AWARD_SEQUENCE_STATUS = 'ACTIVE' where award_number =  r_awd.award_number and sequence_number =  r_awd.sequence_number;
+     li_count := li_count + 1;
+     commit;
+    
+    end loop;
+    close c_awd;
+end if;
+dbms_output.put_line('update count is '||li_count);
+end;
+/
 select ' End time of AWARD is '|| localtimestamp from dual
 /
