@@ -60,9 +60,13 @@ CLOSE c_award_comment;
 END;
 /	
 commit
+/ 
+UPDATE award_report_tracking t1
+SET t1.preparer_name = ( select t2.prncpl_nm from krim_prncpl_t t2 where t2.prncpl_id = t1.preparer_id)
+where exists ( select t3.prncpl_nm from krim_prncpl_t t3 where t3.prncpl_id = t1.preparer_id )
+and t1.PREPARER_NAME  is null
 /
-update AWARD_REPORT_TRACKING art set  art.PREPARER_NAME = (select distinct p1.full_name from osp$person p1 where art.PREPARER_ID = p1.person_id)
- where art.PREPARER_NAME  is null;
-/	   
+commit
+/
 select ' End time of AWARD_REPORT_TRACKING  is '|| localtimestamp from dual
 /

@@ -85,6 +85,239 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /	
+---------- Report class code 7 Start --------
+DECLARE
+ls_report_code VARCHAR2(3);
+ls_report_code_1 VARCHAR2(3);
 
+BEGIN
+
+SELECT REPORT_CODE INTO ls_report_code FROM REPORT WHERE DESCRIPTION='Non-competing Continuation';
+SELECT REPORT_CODE INTO ls_report_code_1  FROM REPORT WHERE DESCRIPTION='Competing Renewal';
+
+ INSERT INTO AWARD_REPORT_TERMS(
+          AWARD_REPORT_TERMS_ID,
+          AWARD_ID,
+          AWARD_NUMBER,
+          SEQUENCE_NUMBER,
+          REPORT_CLASS_CODE,
+          REPORT_CODE,
+          FREQUENCY_CODE,
+          FREQUENCY_BASE_CODE,
+          OSP_DISTRIBUTION_CODE,
+          DUE_DATE,
+          VER_NBR,
+          UPDATE_TIMESTAMP,
+          UPDATE_USER,
+          OBJ_ID
+)
+select 
+          SEQUENCE_AWARD_ID.NEXTVAL,
+          t2.award_id,
+          t2.award_number,
+          t2.sequence_number,
+          '7',--Proposals Due
+          ls_report_code,--
+          t1.non_competing_cont_prpsl_due,
+          null,
+          null,
+          null,
+          1,
+          t1.update_timestamp,
+          t1.update_user,
+          sys_guid()
+from osp$award_header@coeus.kuali t1
+inner join award t2 on t2.award_number = replace(t1.mit_award_number,'-','-00') and t2.sequence_number=t1.sequence_number
+INNER JOIN TEMP_TAB_TO_SYNC_AWARD t3 ON t1.MIT_AWARD_NUMBER = t3.MIT_AWARD_NUMBER AND t1.SEQUENCE_NUMBER = t3.SEQUENCE_NUMBER
+WHERE t3.FEED_TYPE = 'N'
+and t1.non_competing_cont_prpsl_due is not null;
+
+commit;
+
+INSERT INTO AWARD_REPORT_TERMS(
+          AWARD_REPORT_TERMS_ID,
+          AWARD_ID,
+          AWARD_NUMBER,
+          SEQUENCE_NUMBER,
+          REPORT_CLASS_CODE,
+          REPORT_CODE,
+          FREQUENCY_CODE,
+          FREQUENCY_BASE_CODE,
+          OSP_DISTRIBUTION_CODE,
+          DUE_DATE,
+          VER_NBR,
+          UPDATE_TIMESTAMP,
+          UPDATE_USER,
+          OBJ_ID
+)
+select 
+          SEQUENCE_AWARD_ID.NEXTVAL,
+          t2.award_id,
+          t2.award_number,
+          t2.sequence_number,
+          '7',--Proposals Due
+          ls_report_code_1,--
+          t1.competing_renewal_prpsl_due,
+          null,
+          null,
+          null,
+          1,
+          t1.update_timestamp,
+          t1.update_user,
+          sys_guid()     
+from osp$award_header@coeus.kuali t1
+inner join award t2 on t2.award_number = replace(t1.mit_award_number,'-','-00') and t2.sequence_number=t1.sequence_number
+INNER JOIN TEMP_TAB_TO_SYNC_AWARD t3 ON t1.MIT_AWARD_NUMBER = t3.MIT_AWARD_NUMBER AND t1.SEQUENCE_NUMBER = t3.SEQUENCE_NUMBER
+WHERE t3.FEED_TYPE = 'N'
+and t1.competing_renewal_prpsl_due is not null;
+
+END;
+/
+commit
+/
+---------- Report class code 7 End --------
+
+---------- Report class code 6 Start ------
+DECLARE
+ls_report_code VARCHAR2(3);
+li_award_id NUMBER(12,0);
+ls_award_number VARCHAR2(16);
+li_award_report_terms_id NUMBER(12,0);
+li_rolodex_id NUMBER(12,0):=100046;
+ls_contact VARCHAR2(3);
+ls_FREQUENCY_BASE_CODE FREQUENCY_BASE.FREQUENCY_BASE_CODE%type;
+
+CURSOR c_invoice IS
+SELECT t1.MIT_AWARD_NUMBER,t1.SEQUENCE_NUMBER,t1.PAYMENT_INVOICE_FREQ_CODE,t1.INVOICE_NUMBER_OF_COPIES,t1.FINAL_INVOICE_DUE 
+FROM OSP$AWARD_HEADER t1
+INNER JOIN TEMP_TAB_TO_SYNC_AWARD t2 ON t1.MIT_AWARD_NUMBER = t2.MIT_AWARD_NUMBER AND t1.SEQUENCE_NUMBER = t2.SEQUENCE_NUMBER
+WHERE t2.FEED_TYPE = 'N'
+AND t1.PAYMENT_INVOICE_FREQ_CODE IS NOT NULL;
+r_invoice c_invoice%ROWTYPE;
+
+BEGIN
+SELECT REPORT_CODE INTO ls_report_code FROM REPORT WHERE DESCRIPTION='Payment/Invoice Frequency';
+
+--select FREQUENCY_BASE_CODE into ls_FREQUENCY_BASE_CODE from FREQUENCY_BASE where DESCRIPTION='As Required'
+
+IF c_invoice%ISOPEN THEN
+CLOSE c_invoice;
+END IF;
+OPEN c_invoice;
+LOOP
+FETCH c_invoice INTO r_invoice;
+EXIT WHEN c_invoice%NOTFOUND;
+
+
+  
+  SELECT SEQUENCE_AWARD_ID.NEXTVAL INTO li_award_report_terms_id FROM DUAL;
+  ls_award_number:=replace(r_invoice.MIT_AWARD_NUMBER,'-','-00');
+  BEGIN
+  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+  EXCEPTION
+  WHEN OTHERS THEN
+    BEGIN
+	  SELECT CHANGE_AWARD_NUMBER into ls_award_number FROM KC_MIG_AWARD_CONV WHERE AWARD_NUMBER=ls_award_number;
+	  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+	EXCEPTION
+	WHEN OTHERS THEN
+	  dbms_output.put_line(ls_award_number||' '||r_invoice.SEQUENCE_NUMBER);
+	  CONTINUE;
+	END;  
+  
+  END;
+
+
+ INSERT INTO AWARD_REPORT_TERMS(AWARD_REPORT_TERMS_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,REPORT_CLASS_CODE,REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,DUE_DATE,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
+ VALUES(li_award_report_terms_id,li_award_id,ls_award_number,r_invoice.SEQUENCE_NUMBER,'6',ls_report_code,r_invoice.PAYMENT_INVOICE_FREQ_CODE,NULL,NULL,NULL,1,SYSDATE,'admin',SYS_GUID());
+ 
+ SELECT CONTACT_TYPE_CODE INTO  ls_contact FROM CONTACT_TYPE WHERE DESCRIPTION='Payment Invoice Contact';
+ 
+ 
+  IF  r_invoice.INVOICE_NUMBER_OF_COPIES IS NOT NULL THEN
+  
+    INSERT INTO AWARD_REP_TERMS_RECNT(AWARD_REP_TERMS_RECNT_ID,CONTACT_ID,AWARD_REPORT_TERMS_ID,CONTACT_TYPE_CODE,ROLODEX_ID,NUMBER_OF_COPIES,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
+	VALUES(SEQ_AWARD_REP_TERMS_RECNT_ID.NEXTVAL,NULL,li_award_report_terms_id,ls_contact,li_rolodex_id,r_invoice.INVOICE_NUMBER_OF_COPIES,1,SYSDATE,'admin',SYS_GUID());
+   
+  END IF;
+  
+END LOOP;
+CLOSE c_invoice;
+END;
+/
+DECLARE
+
+ls_report_code_1 VARCHAR2(3);
+li_award_id NUMBER(12,0);
+ls_award_number VARCHAR2(16);
+li_award_report_terms_id NUMBER(12,0);
+li_rolodex_id NUMBER(12,0):=100046;
+ll_date DATE;
+ls_contact VARCHAR2(3);
+
+CURSOR c_invoice IS
+SELECT t1.MIT_AWARD_NUMBER,t1.SEQUENCE_NUMBER,t1.PAYMENT_INVOICE_FREQ_CODE,t1.INVOICE_NUMBER_OF_COPIES,t1.FINAL_INVOICE_DUE
+FROM OSP$AWARD_HEADER t1
+INNER JOIN TEMP_TAB_TO_SYNC_AWARD t2 ON t1.MIT_AWARD_NUMBER = t2.MIT_AWARD_NUMBER AND t1.SEQUENCE_NUMBER = t2.SEQUENCE_NUMBER
+WHERE t2.FEED_TYPE = 'N'
+AND ( t1.INVOICE_NUMBER_OF_COPIES IS NOT NULL OR t1.FINAL_INVOICE_DUE IS NOT NULL);
+r_invoice c_invoice%ROWTYPE;
+
+BEGIN
+
+SELECT REPORT_CODE INTO ls_report_code_1  FROM REPORT WHERE DESCRIPTION='Final Invoice Due';
+
+IF c_invoice%ISOPEN THEN
+CLOSE c_invoice;
+END IF;
+OPEN c_invoice;
+LOOP
+FETCH c_invoice INTO r_invoice;
+EXIT WHEN c_invoice%NOTFOUND;
+   
+  IF r_invoice.INVOICE_NUMBER_OF_COPIES IS NOT NULL OR r_invoice.FINAL_INVOICE_DUE IS NOT NULL THEN
+   
+     
+  
+  SELECT SEQUENCE_AWARD_ID.NEXTVAL INTO li_award_report_terms_id FROM DUAL;
+  BEGIN
+  SELECT FINAL_EXPIRATION_DATE + 60 INTO ll_date FROM OSP$AWARD_AMOUNT_INFO WHERE MIT_AWARD_NUMBER=r_invoice.MIT_AWARD_NUMBER AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER
+  AND AMOUNT_SEQUENCE_NUMBER=(SELECT MAX(AMOUNT_SEQUENCE_NUMBER) FROM OSP$AWARD_AMOUNT_INFO WHERE MIT_AWARD_NUMBER=r_invoice.MIT_AWARD_NUMBER AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER);
+  EXCEPTION
+  WHEN OTHERS THEN
+  ll_date:=NULL;
+  END;
+  
+  ls_award_number:=replace(r_invoice.MIT_AWARD_NUMBER,'-','-00');
+  BEGIN
+  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+  EXCEPTION
+  WHEN OTHERS THEN  
+	  BEGIN
+	  SELECT CHANGE_AWARD_NUMBER into ls_award_number FROM KC_MIG_AWARD_CONV WHERE AWARD_NUMBER=ls_award_number;
+	  SELECT AWARD_ID INTO li_award_id FROM AWARD WHERE AWARD_NUMBER=ls_award_number AND SEQUENCE_NUMBER=r_invoice.SEQUENCE_NUMBER;
+	  EXCEPTION
+	  WHEN OTHERS THEN
+	  dbms_output.put_line(ls_award_number||' '||r_invoice.SEQUENCE_NUMBER);
+	  CONTINUE;
+	  END;
+  END;
+SELECT CONTACT_TYPE_CODE INTO  ls_contact FROM CONTACT_TYPE WHERE DESCRIPTION='Payment Invoice Contact';
+BEGIN
+ INSERT INTO AWARD_REPORT_TERMS(AWARD_REPORT_TERMS_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,REPORT_CLASS_CODE,REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,DUE_DATE,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
+ VALUES(li_award_report_terms_id,li_award_id,ls_award_number,r_invoice.SEQUENCE_NUMBER,'6',ls_report_code_1,14,6,NULL,ll_date,1,SYSDATE,'admin',SYS_GUID());
+ 
+ INSERT INTO AWARD_REP_TERMS_RECNT(AWARD_REP_TERMS_RECNT_ID,CONTACT_ID,AWARD_REPORT_TERMS_ID,CONTACT_TYPE_CODE,ROLODEX_ID,NUMBER_OF_COPIES,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
+ VALUES(SEQ_AWARD_REP_TERMS_RECNT_ID.NEXTVAL,NULL,li_award_report_terms_id,ls_contact,li_rolodex_id,r_invoice.INVOICE_NUMBER_OF_COPIES,1,SYSDATE,'admin',SYS_GUID());
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line('DUE_DATE:'||ll_date||'MIT_AWARD_NUMBER:'||r_invoice.MIT_AWARD_NUMBER||'SEQUENCE_NUMBER:'||r_invoice.SEQUENCE_NUMBER);
+END;
+END IF;  
+END LOOP;
+CLOSE c_invoice;
+END;
+/
+---------- Report class code 6 End ------
 select ' End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is '|| localtimestamp from dual
 /

@@ -1,10 +1,11 @@
 declare
-li_max number(10);
-ls_query VARCHAR2(400);
+li_doc number(10);
+li_num number;
 begin
-select max(TRANSACTION_ID) into li_max from AWARD_AMOUNT_INFO;
-ls_query:='alter sequence SEQ_TRANSACTION_ID increment by '||li_max;      
-execute immediate(ls_query);  
+select max(TRANSACTION_ID) into li_doc from AWARD_AMOUNT_INFO;
+SELECT SEQ_TRANSACTION_ID.NEXTVAL into li_num  FROM DUAL;
+li_doc:=li_doc - li_num;
+execute immediate('alter sequence SEQ_TRANSACTION_ID increment by '||li_doc);
 
 end;
 /

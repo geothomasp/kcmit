@@ -2,7 +2,7 @@ select ' Start time of AWARD_IDC_RATE script is '|| localtimestamp from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
-ls_award_number VARCHAR2(40);
+ls_award_number VARCHAR2(40) := null;
 
 CURSOR c_award_comment IS
 SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER  Kuali_sequence_number,a.AWARD_ID,ac.MIT_AWARD_NUMBER,ac.SEQUENCE_NUMBER,ac.APPLICABLE_IDC_RATE,ac.IDC_RATE_TYPE_CODE,ac.FISCAL_YEAR,ac.ON_CAMPUS_FLAG,ac.UNDERRECOVERY_OF_IDC,ac.SOURCE_ACCOUNT,ac.DESTINATION_ACCOUNT,ac.START_DATE,ac.END_DATE,ac.UPDATE_TIMESTAMP,ac.UPDATE_USER FROM AWARD a 

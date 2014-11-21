@@ -4,6 +4,7 @@ set heading off;
 set term on;
 set serveroutput on;
 select 'Started syncing, start time: '|| localtimestamp from dual;
+@sync_bo.sql
 @initial_setup.sql
 @sync_award.sql
 @sync_dev_budget.sql

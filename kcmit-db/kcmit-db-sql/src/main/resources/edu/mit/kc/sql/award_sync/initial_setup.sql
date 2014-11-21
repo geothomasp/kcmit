@@ -42,6 +42,39 @@ begin
 
 end;
 /
+declare
+li_count NUMBER;
+ll_migration_exe_date date := sysdate;
+begin
+select count(feed_id) into li_count from SYNC_AWARD_LOG;
+
+if li_count = 0 then
+        INSERT INTO SYNC_AWARD_LOG(
+         feed_id,
+         execution_date
+         )
+         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
+         inner join award t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number
+         and t1.sequence_number = t2.sequence_number;
+		-- and t1.update_timestamp < (ll_migration_exe_date - 14);     
+         
+         commit;
+         
+         INSERT INTO SYNC_AWARD_LOG(
+         feed_id,
+         execution_date
+         )
+         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
+         inner join KC_MIG_AWARD_CONV t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number;
+		-- and t1.update_timestamp < (ll_migration_exe_date - 14);
+         
+         commit;
+end if;
+
+end;
+/
+commit
+/
 CREATE TABLE TEMP_TAB_TO_SYNC_AWARD(
 mit_award_number VARCHAR2(10),
 sequence_number NUMBER(4,0),
@@ -136,43 +169,54 @@ inner join TEMP_TAB_TO_SYNC_AWARD t2 on t1.mit_award_number = t2.mit_award_numbe
 inner join OSP$PROPOSAL_ADMIN_DETAILS@coeus.kuali t3 on t3.INST_PROPOSAL_NUMBER = t1.PROPOSAL_NUMBER
 inner join ( select PROPOSAL_NUMBER,VERSION_NUMBER from OSP$BUDGET@coeus.kuali ) t4 on t3.DEV_PROPOSAL_NUMBER = t4.PROPOSAL_NUMBER
 /
---delete from temp_tab_to_sync_award t1 where rowid not in (
---select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
---and t2.sequence_number = t1.sequence_number
---)
---/
 CREATE TABLE SYNC_EPS_ALREADY_PRESENT(
 PROPOSAL_NUMBER VARCHAR2(10)
 )
 /
-declare
-li_count NUMBER;
-ll_migration_exe_date date := sysdate;
-begin
-select count(feed_id) into li_count from SYNC_AWARD_LOG;
-
-if li_count = 0 then
-        INSERT INTO SYNC_AWARD_LOG(
-         feed_id,
-         execution_date
-         )
-         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
-         inner join award t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number
-         and t1.sequence_number = t2.sequence_number;     
-         
-         commit;
-         
-         INSERT INTO SYNC_AWARD_LOG(
-         feed_id,
-         execution_date
-         )
-         select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
-         inner join KC_MIG_AWARD_CONV t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number;
-         
-         commit;
-end if;
-
-end;
+delete from temp_tab_to_sync_award t1 where rowid not in (
+select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
+and t2.sequence_number = t1.sequence_number and t1.feed_type = t2.feed_type
+)
+/
+delete from temp_tab_to_sync_award t1 where rowid in (
+select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
+and t2.sequence_number = t1.sequence_number  and t2.feed_type <> 'N'
+)
+/
+commit
+/
+delete from temp_tab_to_sync_ip t1 where rowid not in (
+select max(t2.rowid) from temp_tab_to_sync_ip t2 where t1.proposal_number = t2.proposal_number
+and t2.sequence_number = t1.sequence_number and t1.feed_type = t2.feed_type
+)
+/
+delete from temp_tab_to_sync_ip t1 where rowid in (
+select max(t2.rowid) from temp_tab_to_sync_ip t2 where t1.proposal_number = t2.proposal_number
+and t2.sequence_number = t1.sequence_number and t2.feed_type <> 'N'
+)
+/
+commit
+/
+delete from temp_tab_to_sync_dev t1 where rowid not in (
+select max(t2.rowid) from temp_tab_to_sync_dev t2 where t1.proposal_number = t2.proposal_number
+and t1.feed_type = t2.feed_type
+)
+/
+delete from temp_tab_to_sync_dev t1 where rowid in (
+select max(t2.rowid) from temp_tab_to_sync_dev t2 where t1.proposal_number = t2.proposal_number and t2.feed_type <> 'N'
+)
+/
+commit
+/
+delete from temp_tab_to_sync_budget t1 where rowid not in (
+select max(t2.rowid) from temp_tab_to_sync_budget t2 where t1.proposal_number = t2.proposal_number
+and t2.version_number = t1.version_number and t1.feed_type = t2.feed_type
+)
+/
+delete from temp_tab_to_sync_budget t1 where rowid in (
+select max(t2.rowid) from temp_tab_to_sync_budget t2 where t1.proposal_number = t2.proposal_number
+and t2.version_number = t1.version_number  and t2.feed_type <> 'N'
+)
 /
 commit
 /

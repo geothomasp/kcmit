@@ -719,9 +719,8 @@ rem	 Sync last_name
 rem
 select 'Sync last_name.' from dual
 /
-drop   table temp
+drop table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -734,18 +733,16 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id)
 /
-rem
-/*update KRIM_ENTITY_NM_T x
-set last_nm = (select last_name
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_NM_T x
+--set last_nm = (select last_name
+ --                from   temp
+ --                where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_NM_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
 WHEN MATCHED THEN
-  UPDATE SET
+UPDATE SET
 	last_nm   = b.last_name       
 WHEN NOT MATCHED THEN  
 INSERT (ENTITY_NM_ID,OBJ_ID,VER_NBR,ENTITY_ID,NM_TYP_CD,LAST_NM,DFLT_IND,ACTV_IND,LAST_UPDT_DT)  
@@ -758,9 +755,8 @@ rem	 Sync first_name
 rem
 select 'Sync first_name.' from dual
 /
-drop   table temp
+drop table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -773,13 +769,11 @@ as
         e.entity_id
  from    KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id)
 /
-rem
-/* update KRIM_ENTITY_NM_T x
-set first_nm = (select first_name
-                 from   temp
-                  where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_NM_T x
+--set first_nm = (select first_name
+--                 from   temp
+--                  where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_NM_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
@@ -797,9 +791,8 @@ rem	 Sync middle_name
 rem
 select 'Sync middle_name.' from dual
 /
-drop   table temp 
+drop table temp 
 /
-rem
 create table temp 
 as
 (select person_id,
@@ -812,13 +805,11 @@ as
         e.entity_id
  from    KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id)
 /
-rem
-/* update KRIM_ENTITY_NM_T x
-set middle_nm = (select middle_name
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_NM_T x
+--set middle_nm = (select middle_name
+--                 from   temp
+ --                where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_NM_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
@@ -849,7 +840,8 @@ as
         PRNCPL_NM as user_name
  from   KRIM_PRNCPL_T)
 /
-rem
+delete from temp where user_name is null
+/
 update KRIM_PRNCPL_T x
 set PRNCPL_NM = (select user_name
                  from   temp
@@ -861,7 +853,8 @@ commit
 /
 drop   table temp
 /
-rem
+delete from temp where user_name is null
+/
 create table temp
 as
 (select  person_id,
@@ -891,7 +884,7 @@ rem  Call the function fn_set_username_null_pfeed to generate emails with list o
 rem persons whose user_names should be set to NULL
 rem This function will also update user_name column in osp$person table
 var li_ret number;
-exec :li_ret := fn_set_username_null_pfeed('coeus-dev-team@mit.edu', 'Coeus Person Feed Kerberos ID cleanup ** Production **');
+exec :li_ret := fn_set_username_null_pfeed('coeus-dev-team@mit.edu', 'KC Person Feed Prncpl ID cleanup');
 commit;
 rem
 rem
@@ -949,13 +942,11 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id)
 /
-rem
-/*update KRIM_ENTITY_BIO_T x
-set BIRTH_DT = (select date_of_birth
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_BIO_T x
+--set BIRTH_DT = (select date_of_birth
+--                 from   temp
+--                 where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_BIO_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
@@ -977,7 +968,6 @@ select 'Sync age_by_fiscal_year.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -988,7 +978,6 @@ as
         age_by_fiscal_year
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set age_by_fiscal_year = (select age_by_fiscal_year
                  from   temp
@@ -998,14 +987,11 @@ where person_id in (select person_id
 /
 commit
 /
-rem
 rem	 Sync gender
-rem
 select 'Sync gender.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1018,13 +1004,11 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id)
 /
-rem
-/*update KRIM_ENTITY_BIO_T x
-set GNDR_CD = (select gender
-                 from   temp
-                  where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_BIO_T x
+--set GNDR_CD = (select gender
+--                from   temp
+--                 where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_BIO_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
@@ -1044,7 +1028,6 @@ select 'Sync race.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1055,7 +1038,6 @@ as
         race
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set race = (select race
                  from   temp
@@ -1072,7 +1054,6 @@ select 'Sync education_level.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1083,7 +1064,6 @@ as
         education_level
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set education_level = (select education_level
                  from   temp
@@ -1127,7 +1107,6 @@ select 'Sync major.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1138,7 +1117,6 @@ as
         major
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set major = (select major
                  from   temp
@@ -1155,7 +1133,6 @@ select 'Sync is_handicapped.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1166,7 +1143,6 @@ as
         is_handicapped
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set is_handicapped = (select is_handicapped
                  from   temp
@@ -1183,7 +1159,6 @@ select 'Sync handicap_type.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1194,7 +1169,6 @@ as
         handicap_type
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set handicap_type = (select handicap_type
                  from   temp
@@ -1211,7 +1185,6 @@ select 'Sync is_veteran.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1238,7 +1211,6 @@ select 'Sync veteran_type.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1249,7 +1221,6 @@ as
         veteran_type
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set veteran_type = (select veteran_type
                  from   temp
@@ -1266,7 +1237,6 @@ select 'Sync visa_code.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1277,7 +1247,6 @@ as
         visa_code
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set visa_code = (select visa_code
                  from   temp
@@ -1294,7 +1263,6 @@ select 'Sync visa_type.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1305,7 +1273,6 @@ as
         visa_type
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set visa_type = (select visa_type
                  from   temp
@@ -1322,7 +1289,6 @@ select 'Sync visa_renewal_date.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1333,7 +1299,6 @@ as
         visa_renewal_date
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set visa_renewal_date = (select visa_renewal_date
                  from   temp
@@ -1350,7 +1315,6 @@ select 'Sync has_visa.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1361,7 +1325,6 @@ as
         has_visa
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set has_visa = (select has_visa
                  from   temp
@@ -1378,7 +1341,6 @@ select 'Sync office_location.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1389,7 +1351,6 @@ as
         office_location
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set office_location = (select office_location
                  from   temp
@@ -1406,7 +1367,6 @@ select 'Sync office_phone.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1419,13 +1379,11 @@ as
         e.entity_id
  from    KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_PHONE_T e ON p.entity_id=e.entity_id)
 /
-rem
-/*update KRIM_ENTITY_PHONE_T x
-set PHONE_NBR = (select office_phone
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_PHONE_T x
+--set PHONE_NBR = (select office_phone
+--                 from   temp
+--                 where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_PHONE_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
@@ -1445,7 +1403,6 @@ select 'Sync secondry_office_location.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1456,7 +1413,6 @@ as
         secondry_office_location
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set secondry_office_location = (select secondry_office_location
                  from   temp
@@ -1473,7 +1429,6 @@ select 'Sync secondry_office_phone.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1486,13 +1441,11 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_PHONE_T e ON p.entity_id=e.entity_id)
 /
-rem
-/*update KRIM_ENTITY_PHONE_T x
-set PHONE_NBR = (select secondry_office_phone
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-*/
+--update KRIM_ENTITY_PHONE_T x
+--set PHONE_NBR = (select secondry_office_phone
+--                 from   temp
+--                 where  entity_id =x.entity_id)
+--where entity_id in (select entity_id from temp)
 MERGE INTO KRIM_ENTITY_PHONE_T a
 USING temp b
 ON (a.entity_id = b.entity_id)
@@ -1512,7 +1465,6 @@ select 'Sync school.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1523,7 +1475,6 @@ as
         school
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set school = (select school
                  from   temp
@@ -1540,7 +1491,6 @@ select 'Sync year_graduated.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1551,7 +1501,6 @@ as
         year_graduated
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set year_graduated = (select year_graduated
                  from   temp
@@ -1596,7 +1545,6 @@ select 'Sync primary_title.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1607,7 +1555,6 @@ as
         primary_title
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set primary_title = (select primary_title
                  from   temp
@@ -1624,7 +1571,6 @@ select 'Sync directory_title.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1635,7 +1581,6 @@ as
         directory_title
  from   PERSON_EXT_T)
 /
-rem
 update PERSON_EXT_T x
 set directory_title = (select directory_title
                  from   temp
@@ -1652,7 +1597,6 @@ select 'Sync home_unit.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1665,7 +1609,6 @@ as
         e. entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_EMP_INFO_T e ON p.entity_id=e.entity_id)
 /
-rem
 update KRIM_ENTITY_EMP_INFO_T x
 set PRMRY_DEPT_CD = (select home_unit
                  from   temp
@@ -1681,7 +1624,6 @@ select 'Sync home_unit.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1694,8 +1636,6 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
 /
-
-rem
 update KRIM_ENTITY_AFLTN_T x
 set AFLTN_TYP_CD = (select DECODE(is_faculty,'Y','FCLTY','N','STAFF') is_faculty
                  from   temp
@@ -1711,7 +1651,6 @@ select 'Sync is_graduate_student_staff.' from dual
 /
 drop   table temp
 /
-rem
 create table temp
 as
 (select person_id,
@@ -1724,7 +1663,6 @@ as
 		e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
 /
-rem
 update KRIM_ENTITY_AFLTN_T x
 set ACTV_IND = 'N'
 where entity_id in (select entity_id
@@ -2293,7 +2231,7 @@ SEQ_PERSON_APPOINTMENT.NEXTVAL,
  UNIT_NUMBER,                           
  APPOINTMENT_START_DATE,                     
  APPOINTMENT_END_DATE,                    
- decode(ltrim(rtrim(APPOINTMENT_TYPE)), '11 Months', '11M DURATION', '12 Months', '12M DURATION', '9 Months', '9M DURATION', 'Temporary (< 12 months)', 'TMP EMPLOYEE', 'Term (=> 12 months)', 'REG EMPLOYEE', NULL) ,                      
+ decode(ltrim(rtrim(APPOINTMENT_TYPE)), '11 Months', '5', '12 Months', '6', '9 Months', '3', 'Temporary (< 12 months)', '1', 'Term (=> 12 months)', '7', NULL) ,                      
  JOB_TITLE,
  PREFERED_JOB_TITLE,
  decode(substr(JOB_CODE, 3, 1), '-', SUBSTR(JOB_CODE, 4), JOB_CODE),
@@ -2311,7 +2249,7 @@ rem ************************************************
 rem following update is a temp fix for issue COEUSQA-3815
 rem ************************************************
 update PERSON_APPOINTMENT
-set APPOINTMENT_TYPE_CODE = 'REG EMPLOYEE'
+set APPOINTMENT_TYPE_CODE = '7'
 where APPOINTMENT_TYPE_CODE is null
 /
 rem
@@ -2382,7 +2320,7 @@ rem
 insert into PERSON_DEGREE 
 select SEQ_PERSON_DEGREE.NEXTVAL, 
 d.PERSON_ID,
-d.GRADUATION_DATE,
+extract(year from d.GRADUATION_DATE),
 decode(m.grantsdotgov_degree_code, NULL, 'UKNW',   m.grantsdotgov_degree_code),
 d.DEGREE   ,      
 d.FIELD_OF_STUDY ,

@@ -3,7 +3,7 @@ select ' Start time of AWARD_PERSON_UNITS script is '|| localtimestamp from dual
 DECLARE
 li_cust_id NUMBER(12,0);
 li_award_pers_unit_id NUMBER(12,0);
-ls_award_number VARCHAR2(40);
+ls_award_number VARCHAR2(40) := null;
 
 CURSOR c_award_comment IS
 SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER  Kuali_sequence_number,a.AWARD_ID,ac.MIT_AWARD_NUMBER,ac.SEQUENCE_NUMBER,ac.UNIT_NUMBER,ac.LEAD_UNIT_FLAG,ac.PERSON_ID,ac.UPDATE_TIMESTAMP,ac.UPDATE_USER FROM AWARD a 
@@ -22,10 +22,16 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
-select award_person_id into li_award_pers_unit_id from award_persons 
-where award_number=r_award_comment.award_number 
-and sequence_number=r_award_comment.Kuali_sequence_number
-and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSON_ID)and contact_role_code <> 'KP';
+begin
+	select award_person_id into li_award_pers_unit_id from award_persons 
+	where award_number=r_award_comment.award_number 
+	and sequence_number=r_award_comment.Kuali_sequence_number
+	and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSON_ID)and contact_role_code <> 'KP';
+exception
+when others	then
+dbms_output.put_line('Error in "insert_award_person_units.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||' - '||sqlerrm);
+continue;
+end;
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	

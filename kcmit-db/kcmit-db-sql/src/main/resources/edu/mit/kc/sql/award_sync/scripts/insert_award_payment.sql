@@ -3,7 +3,7 @@ select ' Start time of AWARD_PAYMENT_SCHEDULE script is '|| localtimestamp from 
 DECLARE
 
 li_cust_id NUMBER(12,0);
-ls_award_number VARCHAR2(40);
+ls_award_number VARCHAR2(40) := null;
 
 CURSOR c_award_comment IS
 SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER  Kuali_sequence_number,a.AWARD_ID,ac.MIT_AWARD_NUMBER,ac.SEQUENCE_NUMBER,ac.DUE_DATE,ac.AMOUNT,ac.UPDATE_TIMESTAMP,ac.UPDATE_USER,ac.SUBMIT_DATE,ac.SUBMITTED_BY,ac.INVOICE_NUMBER,ac.STATUS_DESCRIPTION FROM AWARD a 
