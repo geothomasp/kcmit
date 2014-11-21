@@ -1,0 +1,195 @@
+
+SQL*Plus: Release 10.2.0.4.0 - Production on Fri Nov 21 09:49:39 2014
+
+Copyright (c) 1982, 2007, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+
+Table truncated.
+
+
+Table dropped.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+293067 rows updated.
+
+
+Commit complete.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+290171 rows created.
+
+CREATE INDEX AWARD_COMMENT_I1 ON AWARD_COMMENT(AWARD_NUMBER,SEQUENCE_NUMBER,COMMENT_TYPE_CODE)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+
+PL/SQL procedure successfully completed.
+
+
+Table altered.
+
+
+Index dropped.
+
+
+Commit complete.
+
+
+Index created.
+
+
+Table altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row updated.
+
+
+3229 rows updated.
+
+
+1481 rows updated.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+   NEXTVAL
+----------
+    371029
+
+
+Sequence altered.
+
+
+274 rows deleted.
+
+
+66 rows deleted.
+
+
+299 rows deleted.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+74134 rows updated.
+
+
+74134 rows updated.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table truncated.
+
+
+Table truncated.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table truncated.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+ALTER TABLE BUDGET_SUB_AWARDS MODIFY ORGANIZATION_ID NULL
+                                     *
+ERROR at line 1:
+ORA-01451: column to be modified to NULL cannot be modified to NULL
+
+
+DECLARE
+*
+ERROR at line 1:
+ORA-01403: no data found
+ORA-06512: at line 96
+
+
+
+Commit complete.
+
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
