@@ -1,36 +1,36 @@
-create or replace function fn_sync_award_disclosure(as_award in OSP$AWARD.MIT_AWARD_NUMBER@COEUS.KUALIK%TYPE ,
-	as_proposal in OSP$proposal.proposal_NUMBER@COEUS.KUALIK%TYPE,
-	as_user_id in OSP$USER.USER_ID@COEUS.KUALIK%type)
+create or replace function fn_sync_award_disclosure(as_award in OSP$AWARD.MIT_AWARD_NUMBER@COEUS.KUALI%TYPE ,
+	as_proposal in OSP$proposal.proposal_NUMBER@COEUS.KUALI%TYPE,
+	as_user_id in OSP$USER.USER_ID@COEUS.KUALI%type)
 
 return number is
 
 li_rc 		number;
-ls_person_id osp$person.person_id@COEUS.KUALIK%type;
+ls_person_id osp$person.person_id@COEUS.KUALI%type;
 li_count NUMBER;
 li_max_seq NUMBER;
 li_event_typ_cd NUMBER := 1 ; --Award
 li_awd_module_cd NUMBER := 1;
 li_apprvd_seq NUMBER;
 
-ls_perDisclNumber   OSP$COI_DISCLOSURE.COI_DISCLOSURE_NUMBER@COEUS.KUALIK%type;
-li_DisclSequence    OSP$COI_DISCLOSURE.SEQUENCE_NUMBER@COEUS.KUALIK%type;
-li_CurrentDisclSeq  OSP$COI_DISCLOSURE.SEQUENCE_NUMBER@COEUS.KUALIK%type;
-li_DispositionCode  OSP$COI_DISCLOSURE.DISCLOSURE_DISPOSITION_CODE@COEUS.KUALIK%type;
-li_ReviewStatusCode  OSP$COI_DISCLOSURE.REVIEW_STATUS_CODE@COEUS.KUALIK%type;
-li_EventType OSP$COI_DISCLOSURE.EVENT_TYPE_CODE@COEUS.KUALIK%type;
-li_AwardSequence    osp$award.sequence_number@COEUS.KUALIK%type;
-li_DisclMaxSeq  OSP$COI_DISCLOSURE.SEQUENCE_NUMBER@COEUS.KUALIK%type;
+ls_perDisclNumber   OSP$COI_DISCLOSURE.COI_DISCLOSURE_NUMBER@COEUS.KUALI%type;
+li_DisclSequence    OSP$COI_DISCLOSURE.SEQUENCE_NUMBER@COEUS.KUALI%type;
+li_CurrentDisclSeq  OSP$COI_DISCLOSURE.SEQUENCE_NUMBER@COEUS.KUALI%type;
+li_DispositionCode  OSP$COI_DISCLOSURE.DISCLOSURE_DISPOSITION_CODE@COEUS.KUALI%type;
+li_ReviewStatusCode  OSP$COI_DISCLOSURE.REVIEW_STATUS_CODE@COEUS.KUALI%type;
+li_EventType OSP$COI_DISCLOSURE.EVENT_TYPE_CODE@COEUS.KUALI%type;
+li_AwardSequence    osp$award.sequence_number@COEUS.KUALI%type;
+li_DisclMaxSeq  OSP$COI_DISCLOSURE.SEQUENCE_NUMBER@COEUS.KUALI%type;
 
 
 CURSOR C_P_DISC_PERSON IS
     select  D.COI_DISCLOSURE_NUMBER, D.SEQUENCE_NUMBER,  D.PERSON_ID, D.DISCLOSURE_DISPOSITION_CODE, D.REVIEW_STATUS_CODE, D.EVENT_TYPE_CODE
-     from osp$coi_disclosure@COEUS.KUALIK d,
+     from osp$coi_disclosure@COEUS.KUALI d,
         (select distinct DD.COI_DISCLOSURE_NUMBER, DD.SEQUENCE_NUMBER
-         from   osp$coi_disc_details@COEUS.KUALIK dd
+         from   osp$coi_disc_details@COEUS.KUALI dd
          where  dd.MODULE_CODE in (2, 3)
          and    dd.MODULE_ITEM_KEY = as_proposal
          and    DD.SEQUENCE_NUMBER = (select max(DD2.SEQUENCE_NUMBER)
-                                     from   osp$coi_disc_details@COEUS.KUALIK dd2
+                                     from   osp$coi_disc_details@COEUS.KUALI dd2
                                      where  DD.COI_DISCLOSURE_NUMBER = DD2.COI_DISCLOSURE_NUMBER
                                      and    DD.MODULE_ITEM_KEY = DD2.MODULE_ITEM_KEY)) discl
          where D.COI_DISCLOSURE_NUMBER = discl.COI_DISCLOSURE_NUMBER
@@ -46,7 +46,7 @@ BEGIN
   begin
         select max(sequence_number)
         into li_AwardSequence
-        from osp$award@COEUS.KUALIK
+        from osp$award@COEUS.KUALI
         where mit_award_number = as_award;
   exception
     when others then
@@ -60,7 +60,7 @@ BEGIN
 
         select max(SEQUENCE_NUMBER)
         into li_DisclMaxSeq
-        from osp$coi_disclosure@COEUS.KUALIK
+        from osp$coi_disclosure@COEUS.KUALI
         where COI_DISCLOSURE_NUMBER = ls_perDisclNumber;
 
         --**************************************************************************
@@ -71,11 +71,11 @@ BEGIN
 
         select  count (D.COI_DISCLOSURE_NUMBER)
         into li_Count
-         from osp$coi_disclosure@COEUS.KUALIK d, osp$coi_disc_details@COEUS.KUALIK dd
+         from osp$coi_disclosure@COEUS.KUALI d, osp$coi_disc_details@COEUS.KUALI dd
          where D.PERSON_ID = ls_person_id
          and D.DISCLOSURE_DISPOSITION_CODE = 1
          and D.SEQUENCE_NUMBER = (select max(d2.sequence_number)
-            from osp$coi_disclosure@COEUS.KUALIK d2
+            from osp$coi_disclosure@COEUS.KUALI d2
             where D.COI_DISCLOSURE_NUMBER = D2.COI_DISCLOSURE_NUMBER
             and D.DISCLOSURE_DISPOSITION_CODE = D2.DISCLOSURE_DISPOSITION_CODE)
          and D.COI_DISCLOSURE_NUMBER = DD.COI_DISCLOSURE_NUMBER
@@ -94,11 +94,11 @@ BEGIN
 
             select  D.SEQUENCE_NUMBER
             into li_CurrentDisclSeq
-             from osp$coi_disclosure@COEUS.KUALIK d
+             from osp$coi_disclosure@COEUS.KUALI d
              where D.PERSON_ID = ls_person_id
              and D.DISCLOSURE_DISPOSITION_CODE = 1
              and D.SEQUENCE_NUMBER = (select max(d2.sequence_number)
-                from osp$coi_disclosure@COEUS.KUALIK d2
+                from osp$coi_disclosure@COEUS.KUALI d2
                 where D.COI_DISCLOSURE_NUMBER = D2.COI_DISCLOSURE_NUMBER
                 and D.DISCLOSURE_DISPOSITION_CODE = D2.DISCLOSURE_DISPOSITION_CODE);
 
@@ -109,7 +109,7 @@ BEGIN
 
             select  count (D.COI_DISCLOSURE_NUMBER)
             into li_Count
-             from osp$coi_disclosure@COEUS.KUALIK d, osp$coi_disc_details@COEUS.KUALIK dd
+             from osp$coi_disclosure@COEUS.KUALI d, osp$coi_disc_details@COEUS.KUALI dd
              where D.PERSON_ID = ls_person_id
              and D.SEQUENCE_NUMBER > li_CurrentDisclSeq
              and D.COI_DISCLOSURE_NUMBER = DD.COI_DISCLOSURE_NUMBER
@@ -250,10 +250,10 @@ BEGIN
                --OR its an approved current disclosure.
 
                --Insert rows for award disclosure - Copy of proposal rows.
-               insert into osp$coi_disc_details@COEUS.KUALIK
+               insert into osp$coi_disc_details@COEUS.KUALI
                select dd.COI_DISCLOSURE_NUMBER,
                 dd.SEQUENCE_NUMBER,
-                SEQ_DISCLOSURE_DETAIL_ID.nextval@COEUS.KUALIK,
+                SEQ_DISCLOSURE_DETAIL_ID.nextval@COEUS.KUALI,
                 1,
                 as_award,
                 dd.ENTITY_NUMBER,
@@ -263,12 +263,12 @@ BEGIN
                 dd.UPDATE_TIMESTAMP,
                 dd.UPDATE_USER,
                 dd.ORG_RELATION_DESCRIPTION
-               from osp$coi_disc_details@COEUS.KUALIK dd
+               from osp$coi_disc_details@COEUS.KUALI dd
                where dd.COI_DISCLOSURE_NUMBER = ls_perDisclNumber
                 and dd.SEQUENCE_NUMBER = li_DisclSequence
                 and dd.MODULE_ITEM_KEY = as_proposal
                 and DD.COI_DISC_DETAILS_NUMBER = (select max(dd2.COI_DISC_DETAILS_NUMBER)
-                        from osp$coi_disc_details@COEUS.KUALIK dd2
+                        from osp$coi_disc_details@COEUS.KUALI dd2
                         where DD.COI_DISCLOSURE_NUMBER = DD2.COI_DISCLOSURE_NUMBER
                         and DD.SEQUENCE_NUMBER = DD2.SEQUENCE_NUMBER
                         and DD.MODULE_ITEM_KEY = DD2.MODULE_ITEM_KEY
@@ -279,10 +279,10 @@ BEGIN
               --  need to do it only if the latest status for proposal is not superseded by award.
               --**************************************************************************
 
-               insert into osp$coi_disc_details@COEUS.KUALIK
+               insert into osp$coi_disc_details@COEUS.KUALI
                select dd.COI_DISCLOSURE_NUMBER,
                 dd.SEQUENCE_NUMBER,
-                SEQ_DISCLOSURE_DETAIL_ID.nextval@COEUS.KUALIK,
+                SEQ_DISCLOSURE_DETAIL_ID.nextval@COEUS.KUALI,
                 DD.MODULE_CODE,
                 dd.MODULE_ITEM_KEY,
                 dd.ENTITY_NUMBER,
@@ -292,12 +292,12 @@ BEGIN
                 dd.UPDATE_TIMESTAMP,
                 dd.UPDATE_USER,
                 dd.ORG_RELATION_DESCRIPTION
-               from osp$coi_disc_details@COEUS.KUALIK dd
+               from osp$coi_disc_details@COEUS.KUALI dd
                where dd.COI_DISCLOSURE_NUMBER = ls_perDisclNumber
                 and dd.SEQUENCE_NUMBER = li_DisclSequence
                 and dd.MODULE_ITEM_KEY = as_proposal
                 and DD.COI_DISC_DETAILS_NUMBER = (select max(dd2.COI_DISC_DETAILS_NUMBER)
-                        from osp$coi_disc_details@COEUS.KUALIK dd2
+                        from osp$coi_disc_details@COEUS.KUALI dd2
                         where DD.COI_DISCLOSURE_NUMBER = DD2.COI_DISCLOSURE_NUMBER
                         and DD.SEQUENCE_NUMBER = DD2.SEQUENCE_NUMBER
                         and DD.MODULE_ITEM_KEY = DD2.MODULE_ITEM_KEY
