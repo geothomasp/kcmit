@@ -104,6 +104,40 @@ commit
 /
 CREATE INDEX TEMP_TAB_TO_SYNC_AWARD_I1 ON TEMP_TAB_TO_SYNC_AWARD(mit_award_number,sequence_number)
 /
+declare
+
+cursor c_tab is
+select t.mit_award_number,t.sequence_number,feed_type,a.award_number,t.feed_id from temp_tab_to_sync_award t
+left outer join award a on t.mit_award_number=replace(a.award_number,'-00','-') and t.sequence_number=a.sequence_number;
+--where a.award_number is null;
+r_tab c_tab%rowtype;
+
+begin
+if c_tab%isopen then
+close c_tab;
+end if;
+open c_tab;
+loop
+fetch c_tab into r_tab;
+exit when c_tab%notfound;
+
+if r_tab.award_number is null then
+update temp_tab_to_sync_award
+set feed_type='N'
+where feed_id = r_tab.feed_id;
+
+else
+update temp_tab_to_sync_award
+set feed_type='C'
+where feed_id = r_tab.feed_id;
+
+end if;
+
+
+end loop;
+close c_tab;
+end;
+/
 CREATE TABLE TEMP_TAB_TO_SYNC_IP(
 PROPOSAL_NUMBER VARCHAR2(10),
 sequence_number NUMBER(4,0),
@@ -127,6 +161,36 @@ commit
 /
 CREATE INDEX TEMP_TAB_TO_SYNC_IP_I1 ON TEMP_TAB_TO_SYNC_IP(PROPOSAL_NUMBER,sequence_number)
 /
+declare
+
+cursor c_tab is
+select t.proposal_number,t.sequence_number,feed_type from temp_tab_to_sync_ip t
+left outer join proposal a on t.proposal_number=a.proposal_number and t.sequence_number=a.sequence_number
+where a.proposal_number is null;
+r_tab c_tab%rowtype;
+
+begin
+if c_tab%isopen then
+close c_tab;
+end if;
+open c_tab;
+loop
+fetch c_tab into r_tab;
+exit when c_tab%notfound;
+
+
+	update temp_tab_to_sync_ip
+	set feed_type='N'
+	where proposal_number = r_tab.proposal_number
+	and  sequence_number = r_tab.sequence_number;	
+
+
+
+end loop;
+close c_tab;
+end;
+/
+
 CREATE TABLE TEMP_TAB_TO_SYNC_DEV(
 PROPOSAL_NUMBER VARCHAR2(10),
 feed_type CHAR(1)
@@ -220,3 +284,4 @@ and t2.version_number = t1.version_number  and t2.feed_type <> 'N'
 /
 commit
 /
+

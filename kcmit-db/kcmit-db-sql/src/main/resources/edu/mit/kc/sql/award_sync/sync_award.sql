@@ -74,5 +74,6 @@ select 'update award: '|| localtimestamp from dual;
 @scripts/update_award_amount_info.sql
 @scripts/update_award_trans.sql
 @scripts/update_award_fna.sql
+@scripts/update_award_sequence_status.sql
 select 'Completed Award : '|| localtimestamp from dual;
 /

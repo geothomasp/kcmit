@@ -1,5 +1,9 @@
 select ' Start time of AWARD is '|| localtimestamp from dual
 /
+alter table award add constraint UQ_AWARD unique(AWARD_NUMBER,SEQUENCE_NUMBER)
+/
+alter table proposal add constraint UQ_PROPOSAL unique(PROPOSAL_NUMBER,SEQUENCE_NUMBER)
+/
 DECLARE
 li_ver_nbr NUMBER(8):=1;
 li_award_id NUMBER(22);
@@ -162,48 +166,32 @@ select SEQ_AWARD_AWARD_NUMBER.NEXTVAL from dual
 /
 alter sequence SEQ_AWARD_AWARD_NUMBER increment by 1
 /
--- update award_sequence_status
-update award set AWARD_SEQUENCE_STATUS = 'ARCHIVED'
-where award_number in (select replace(mit_award_number,'-','-00') from TEMP_TAB_TO_SYNC_AWARD)
-/
-commit
-/
 declare
-ls_doc_typ_id VARCHAR2(40);
-li_need_insert number;
-li_count number:=0;
+ls_unit VARCHAR2(8);
 cursor c_awd is
-select award_number , max(sequence_number) sequence_number from award 
-where award_number in ( select replace(mit_award_number,'-','-00') from TEMP_TAB_TO_SYNC_AWARD)
-group by award_number;
+select award_number , sequence_number from award 
+--where award_number =  '000842-00001'
+order by 1,2;
 r_awd c_awd%ROWTYPE;
 begin
-  li_need_insert := 1;
-	begin     -- UMB added max() below
-	   select max(DOC_TYP_ID) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='AwardDocument';  
-	exception
-	when others then
-	li_need_insert := 0;
-	end;
+open c_awd;
+loop
+fetch c_awd into r_awd;
+exit when c_awd%notfound;
+/*
+select aa.lead_unit_number into ls_unit from award aa where aa.award_number = r_awd.award_number
+and aa.sequence_number = ( select min(sequence_number) from award where award_number = aa.award_number and sequence_number >= r_awd.sequence_number  and lead_unit_number is not null); 
+dbms_output.put_line(r_awd.sequence_number ||'   '||ls_unit);
+*/
+update award a set a.lead_unit_number = (select aa.lead_unit_number from award aa where aa.award_number = r_awd.award_number
+and aa.sequence_number = (select max(sequence_number) from award where award_number = aa.award_number and sequence_number <= r_awd.sequence_number  and lead_unit_number is not null)
+)
+where a.award_number = r_awd.award_number
+and a.sequence_number = r_awd.sequence_number;
 
-if li_need_insert = 1 then  
-    open c_awd;
-    loop
-    fetch c_awd into r_awd;
-    exit when c_awd%notfound;
-    /*
-      update krew_doc_hdr_t set DOC_HDR_STAT_CD = 'F' where
-      DOC_HDR_ID = (select document_number from award where award_number =  r_awd.award_number and sequence_number =  r_awd.sequence_number)
-      and DOC_TYP_ID =ls_doc_typ_id;
-      */
-      update award set AWARD_SEQUENCE_STATUS = 'ACTIVE' where award_number =  r_awd.award_number and sequence_number =  r_awd.sequence_number;
-     li_count := li_count + 1;
-     commit;
-    
-    end loop;
-    close c_awd;
-end if;
-dbms_output.put_line('update count is '||li_count);
+commit;
+end loop;
+close c_awd;
 end;
 /
 select ' End time of AWARD is '|| localtimestamp from dual
