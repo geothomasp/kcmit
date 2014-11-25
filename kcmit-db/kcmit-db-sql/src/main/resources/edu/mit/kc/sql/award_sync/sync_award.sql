@@ -47,6 +47,7 @@ select 'insert award: '|| localtimestamp from dual;
 select 'update award: '|| localtimestamp from dual;
 @scripts/update_award.sql
 @scripts/update_award_special_review.sql
+@scripts/update_award_special_review_com.sql
 @scripts/update_award_cost.sql
 @scripts/update_award_equip.sql
 @scripts/update_award_foriegn_travel.sql

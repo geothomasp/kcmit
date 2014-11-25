@@ -1,12 +1,5 @@
 select ' Start time of AWARD_PERSON_CREDIT_SPLITS script is '|| localtimestamp from dual
 /
-INSERT INTO INV_CREDIT_TYPE(INV_CREDIT_TYPE_CODE,DESCRIPTION,ADDS_TO_HUNDRED,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,ACTIVE_FLAG,OBJ_ID)
-SELECT iv.INV_CREDIT_TYPE_CODE,iv.DESCRIPTION,iv.ADDS_TO_HUNDRED,iv.UPDATE_TIMESTAMP,iv.UPDATE_USER,1,'Y',SYS_GUID()
-FROM OSP$INV_CREDIT_TYPE@coeus.kuali iv
-where iv.INV_CREDIT_TYPE_CODE not in (select INV_CREDIT_TYPE_CODE from INV_CREDIT_TYPE)
-/
-commit
-/
 DECLARE
 li_cust_id NUMBER(12,0);
 li_award_pers_unit_id NUMBER(12,0);
@@ -41,7 +34,7 @@ when others then
 dbms_output.put_line('Error in "insert_award_person_credit_split.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||' - '||sqlerrm);
 continue;
 end;
-
+    BEGIN
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
 	   IF ls_award_number is null THEN
@@ -70,6 +63,11 @@ end;
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,r_award_comment.INV_CREDIT_TYPE_CODE,r_award_comment.CREDIT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
     
 	END IF;	
+	
+	EXCEPTION
+	WHEN OTHERS THEN
+	dbms_output.put_line('Error in "insert_award_person_credit_split.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||','||r_award_comment.INV_CREDIT_TYPE_CODE||' - '||sqlerrm);
+	END;
 	
 END LOOP;
 CLOSE c_award_comment;
