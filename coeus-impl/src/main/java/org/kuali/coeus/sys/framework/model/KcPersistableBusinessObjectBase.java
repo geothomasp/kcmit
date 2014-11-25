@@ -16,6 +16,7 @@
 package org.kuali.coeus.sys.framework.model;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.ojb.broker.PersistenceBrokerException;
@@ -24,6 +25,7 @@ import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.rice.krad.data.jpa.DisableVersioning;
 import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -121,9 +123,16 @@ public abstract class KcPersistableBusinessObjectBase extends PersistableBusines
         return updateUser;
     }
 
+    /**
+     * Sets the update user, making sure it is not the system user and truncating the name so it will fit.
+     *
+     * @param updateUser the user who updated this object
+     */
     @Override
     public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
+    	if (!KRADConstants.SYSTEM_USER.equals(updateUser)) {
+            this.updateUser = StringUtils.substring(updateUser, 0, UPDATE_USER_LENGTH);
+        }
     }
 
     @Override
