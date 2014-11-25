@@ -36,7 +36,8 @@ ls_proposal_number VARCHAR2(8);
 li_krew_rnt_brch NUMBER(19,0);
 li_krew_rnt_node NUMBER(19,0);
 li_krew_rne_node_instn NUMBER(19,0);
-
+ls_doc_typ_id VARCHAR2(40);
+ls_prncpl_id VARCHAR2(40);
 li_loop number;
 li_commit_count number:=0;
 
@@ -114,10 +115,45 @@ ls_proposal_number:=r_proposal.PROPOSAL_NUMBER;
 	WHEN OTHERS THEN
 	dbms_output.put_line('ERROR IN PROPOSAL,PROPOSAL_NUMBER:'||r_proposal.PROPOSAL_NUMBER||'SEQUENCE_NUMBER:'||r_proposal.SEQUENCE_NUMBER||'-'||sqlerrm);
 	END;
-
+	select max(DOC_TYP_ID) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='InstitutionalProposalDocument';
+	select p.prncpl_id into ls_prncpl_id  from KRIM_PRNCPL_T p  where LOWER(p.PRNCPL_NM)=LOWER(r_proposal.UPDATE_USER);
+	
+	INSERT INTO INSTITUTE_PROPOSAL_DOCUMENT(DOCUMENT_NUMBER,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
+	VALUES(ls_document_number,1,r_proposal.UPDATE_TIMESTAMP,r_proposal.UPDATE_USER,sys_guid());
+	
+	INSERT INTO PROPOSAL_IP_REVIEW_JOIN(PROPOSAL_IP_REVIEW_JOIN_ID,PROPOSAL_ID,IP_REVIEW_ID,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
+	VALUES(SEQ_PROPOSAL_IP_REVIEW_JOIN_ID.NEXTVAL,li_proposal_id,li_ip_review,r_proposal.UPDATE_TIMESTAMP,r_proposal.UPDATE_USER,1,sys_guid());
+	
+	INSERT INTO KREW_DOC_HDR_T(DOC_HDR_ID,DOC_TYP_ID,DOC_HDR_STAT_CD,RTE_LVL,STAT_MDFN_DT,CRTE_DT,APRV_DT,FNL_DT,RTE_STAT_MDFN_DT,TTL,APP_DOC_ID,DOC_VER_NBR,INITR_PRNCPL_ID,VER_NBR,RTE_PRNCPL_ID,DTYPE,OBJ_ID,APP_DOC_STAT,APP_DOC_STAT_MDFN_DT)
+    VALUES(ls_document_number,ls_doc_typ_id,'F',0,sysdate,r_proposal.UPDATE_TIMESTAMP,sysdate,NULL,sysdate,('InstitutionalProposalDocument'||'-'||r_proposal.PROPOSAL_NUMBER),NULL,1,nvl(ls_prncpl_id,'unknownuser'),1,NULL,NULL,SYS_GUID(),NULL,NULL);
+	
+	INSERT INTO KRNS_DOC_HDR_T(DOC_HDR_ID,OBJ_ID,VER_NBR,FDOC_DESC,ORG_DOC_HDR_ID,TMPL_DOC_HDR_ID,EXPLANATION)
+	VALUES(ls_document_number,SYS_GUID(),1,r_proposal.PROPOSAL_NUMBER,NULL,NULL,NULL);
+	
+	INSERT INTO KREW_DOC_HDR_CNTNT_T(DOC_HDR_ID)
+	VALUES(ls_document_number);
+	
 	select KREW_RTE_NODE_S.NEXTVAL into li_krew_rnt_brch from dual ; 
 	select KREW_RTE_NODE_S.NEXTVAL into li_krew_rnt_node from dual ;
 	select KREW_RTE_NODE_S.NEXTVAL into li_krew_rne_node_instn from dual ;
+	
+	INSERT INTO KREW_RTE_BRCH_T(RTE_BRCH_ID,NM,PARNT_ID,INIT_RTE_NODE_INSTN_ID,SPLT_RTE_NODE_INSTN_ID,JOIN_RTE_NODE_INSTN_ID,VER_NBR)
+	VALUES(li_krew_rnt_brch,'PRIMARY',NULL,NULL,NULL,NULL,1);
+	
+	INSERT INTO KREW_RTE_NODE_T(RTE_NODE_ID,DOC_TYP_ID,NM,TYP,RTE_MTHD_NM,RTE_MTHD_CD,FNL_APRVR_IND,MNDTRY_RTE_IND,ACTVN_TYP,BRCH_PROTO_ID,VER_NBR,CONTENT_FRAGMENT,GRP_ID,NEXT_DOC_STAT)
+	VALUES(li_krew_rnt_node,ls_doc_typ_id,'Initiated','org.kuali.rice.kew.engine.node.InitialNode',null,null,0,	0,'P',null,1,null,null,null);
+	
+	INSERT INTO KREW_INIT_RTE_NODE_INSTN_T(DOC_HDR_ID,RTE_NODE_INSTN_ID)
+	VALUES(ls_document_number,li_krew_rne_node_instn);
+	
+	INSERT INTO KREW_RTE_NODE_INSTN_T(RTE_NODE_INSTN_ID,DOC_HDR_ID,RTE_NODE_ID,BRCH_ID,PROC_RTE_NODE_INSTN_ID,ACTV_IND,CMPLT_IND,INIT_IND,VER_NBR)
+	VALUES(li_krew_rne_node_instn,ls_document_number,li_krew_rnt_node,li_krew_rnt_brch,NULL,1,0,0,1);
+
+	INSERT INTO KREW_ACTN_RQST_T(ACTN_RQST_ID,PARNT_ID,ACTN_RQST_CD,DOC_HDR_ID,RULE_ID,STAT_CD,RSP_ID,PRNCPL_ID,ROLE_NM,QUAL_ROLE_NM,QUAL_ROLE_NM_LBL_TXT,RECIP_TYP_CD,PRIO_NBR,RTE_TYP_NM,RTE_LVL_NBR,RTE_NODE_INSTN_ID,ACTN_TKN_ID,DOC_VER_NBR,CRTE_DT,RSP_DESC_TXT,FRC_ACTN,ACTN_RQST_ANNOTN_TXT,DLGN_TYP,APPR_PLCY,CUR_IND,VER_NBR,GRP_ID,RQST_LBL)
+    VALUES(KREW_ACTN_RQST_S.NEXTVAL,NULL,'C',ls_document_number,NULL,'A',-3,ls_prncpl_id,NULL,NULL,NULL,'U',0,NULL,0,li_krew_rne_node_instn,NULL,1,SYSDATE,'Initiator needs to complete document.',1,NULL,NULL,'F',1,0,NULL,NULL);
+	
+	INSERT INTO KREW_ACTN_TKN_T(ACTN_TKN_ID,DOC_HDR_ID,PRNCPL_ID,DLGTR_PRNCPL_ID,ACTN_CD,ACTN_DT,DOC_VER_NBR,ANNOTN,CUR_IND,VER_NBR,DLGTR_GRP_ID)
+    VALUES(KREW_ACTN_TKN_S.NEXTVAL,ls_document_number,ls_prncpl_id,NULL,'S',SYSDATE,1,NULL,1,1,NULL);
 
 	INSERT INTO TEMP_KREW_SYNC(DOCUMENT_NUMBER,RTE_BRCH_ID,RTE_NODE_ID,RTE_NODE_INSTN_ID,MODULE)
 	VALUES(ls_document_number,li_krew_rnt_brch,li_krew_rnt_node,li_krew_rne_node_instn,'IP');
@@ -131,6 +167,7 @@ CLOSE c_proposal;
 dbms_output.put_line('Completed PROPOSAL  AND ITS INDICATOR TABLES!!!');
 END;
 /
+/*
 ---------- KREW START----------------------------------
 select ' Start time of PROPOSAL KREW TABLES  is '|| localtimestamp from dual
 /
@@ -197,6 +234,7 @@ INSERT INTO KREW_ACTN_TKN_T(ACTN_TKN_ID,DOC_HDR_ID,PRNCPL_ID,DLGTR_PRNCPL_ID,ACT
 select KREW_ACTN_TKN_S.NEXTVAL,k.DOC_HDR_ID,k.INITR_PRNCPL_ID,NULL,'S',SYSDATE,1,NULL,1,1,NULL from KREW_DOC_HDR_T k inner join TEMP_KREW_SYNC t on k.DOC_HDR_ID=t.DOCUMENT_NUMBER where k.TTL like 'InstitutionalProposalDocument%' AND t.MODULE='IP' ;
 commit
 /
+*/
 declare
 ls_doc_typ_id VARCHAR2(40);
 li_need_insert number;

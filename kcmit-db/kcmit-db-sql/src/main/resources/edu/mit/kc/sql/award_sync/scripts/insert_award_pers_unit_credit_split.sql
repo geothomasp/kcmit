@@ -34,7 +34,8 @@ when others then
 dbms_output.put_line('Error in "insert_award_pers_unit_credit_split.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||' - '||sqlerrm);
 continue;
 end;
-
+   
+   BEGIN
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
@@ -63,6 +64,11 @@ end;
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,r_award_comment.INV_CREDIT_TYPE_CODE,r_award_comment.CREDIT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
     
 	END IF;	
+	
+	EXCEPTION
+	WHEN OTHERS THEN
+	dbms_output.put_line('Error in "insert_award_pers_unit_credit_split.sql" '||r_award_comment.award_number||','||r_award_comment.Kuali_sequence_number||','||r_award_comment.PERSON_ID||','||r_award_comment.INV_CREDIT_TYPE_CODE||' - '||sqlerrm);
+	END;
 	
 END LOOP;
 CLOSE c_award_comment;

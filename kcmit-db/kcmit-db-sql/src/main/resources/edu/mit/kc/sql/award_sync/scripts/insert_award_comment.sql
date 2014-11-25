@@ -1,5 +1,3 @@
-truncate table AWARD_COMMENT
-/
 drop table OSP$AWARD_COMMENTS
 /
 declare
