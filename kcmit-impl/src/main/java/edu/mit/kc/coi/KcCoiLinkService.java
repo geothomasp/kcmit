@@ -27,17 +27,7 @@ public interface KcCoiLinkService {
 	 * Certification Complete in PD : When a person completes PD personnel
 	 * certification and if the questionnaire answers triggers COI, KC should
 	 * call a function to create / update proposal disclosure in Coeus COI.
-	 * 
-	 * 
-	 *  
-	Arguments 
-	proposal Number --> developmentProposalNumber 
-	person Id --> disclosurePersonId 
-	user Id --> loggedInUserId 
-	actype --> flag to identify whether to insert or update.Possible values are 'I' and 'U' for insert and update respectively. 
-	 */
-	
-	
+ */	
 	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId,char actionType) throws SQLException;;
 
 }

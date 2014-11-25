@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jacorb.idl.runtime.char_token;
 import org.kuali.coeus.common.impl.krms.StoredFunctionDao;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
@@ -59,7 +60,7 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	}
 
 	protected String getDBLink() {
-		System.out.println("inside getDBLink-----------> ");
+	
 		try {
 			Parameter parm = this.getParameterService().getParameter(KC_GENERAL_NAMESPACE, DOCUMENT_COMPONENT_NAME,KC_COI_DB_LINK);
 			
@@ -67,15 +68,13 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 				return '@' + parm.getValue();
 			}
 			
-			System.out.println("param value= " + parm);
+		
 
 		} catch (NullPointerException e) {
 			LOGGER.log(Level.ALL, e.getMessage(), e);
 			LOGGER.log(Level.ALL,
 					"DBLINK is not accessible or the parameter value returning null");
-		} finally {
-			System.out.println("param value= ");
-		}
+		} 
 
 		return "";
 	}
@@ -97,18 +96,17 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 		paramValues.add(1, instituteProposalNumber);
 		
 		try {
-			System.out.println("Inside Service FN_COI_PROP_TRANSITION start");
+			
 			result = getDbFunctionExecuteService().executeFunction(
 					"FN_COI_PROP_TRANSITION"+this.getDBLink(), paramValues);
-			System.out.println("result val = " + result);
-			System.out.println("Inside Service FN_COI_PROP_TRANSITION end");
+	
 
 		} catch (Exception ex) {
 			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
 			LOGGER.log(Level.ALL, ex.getMessage(), ex);
 		} finally {
 			try {
-				if (result != null) {
+				if (!result.isEmpty()) {
 					LOGGER.log(Level.INFO, "Function Successfully Invoked");
 				}
 			} catch (Exception e) {
@@ -133,33 +131,30 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	 */
 	public void updateCOIOnLinkIPToAward(String awardNumber,String instituteProposalNumber,String loggedInUserId){
 		
-		System.out.println("Inside Service FN_SYNC_AWARD_DISCLOSURE start");
+	
 		 
 		List<Object> paramValues = new ArrayList<Object>();
-		String result = "";
+		String result = "";		
 		paramValues.add(0, awardNumber);
 		paramValues.add(1, instituteProposalNumber);
 		paramValues.add(2, loggedInUserId);
 		
-		
-		
 		try {
 		result =  getDbFunctionExecuteService().executeFunction("FN_SYNC_AWARD_DISCLOSURE"+this.getDBLink(), paramValues);
-		System.out.println("result val = "+result);
+	
 		} catch (Exception ex) {
 			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
 			LOGGER.log(Level.ALL, ex.getMessage(), ex);
 		} finally {
 			try {
-				if (result != null) {
-					LOGGER.log(Level.INFO, "Function Successfully Invoked");
+				if (!result.isEmpty()) {
+					LOGGER.log(Level.INFO, "Function - updateCOIOnLinkIPToAward Successfully Invoked");
 				}
 			} catch (Exception e) {
 				LOGGER.log(Level.ALL, e.getMessage(), e);
 			}
 		}
-		System.out.println("Inside Service  FN_SYNC_AWARD_DISCLOSURE end");
-		
+			
 	}
 	
 	/**
@@ -173,7 +168,7 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	 * @referenced PL/SQL function FN_SYNC_QNR_FROM_PROP_TO_COI
 	 */
 	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId,char actionType){
-		System.out.println("Inside Service FN_SYNC_QNR_FROM_PROP_TO_COI start");
+	
 		
 		List<Object> paramValues = new ArrayList<Object>();
 		String result = "";
@@ -191,16 +186,15 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 			LOGGER.log(Level.ALL, ex.getMessage(), ex);
 		} finally {
 			try {
-				if (result != null) {
+				if (!result.isEmpty()) {
 					LOGGER.log(Level.INFO, "Function Successfully Invoked");
-					//disconnect connection??
+			
 				}
 			} catch (Exception e) {
 				LOGGER.log(Level.ALL, e.getMessage(), e);
 			}
 		}
-		System.out.println("result val = "+result);
-		System.out.println("Inside Service FN_SYNC_QNR_FROM_PROP_TO_COI end");	
+	
 	}
 	
 }

@@ -16,6 +16,8 @@
 package org.kuali.kra.award.home;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.keyword.KeywordsManager;
 import org.kuali.coeus.common.framework.keyword.ScienceKeyword;
 import org.kuali.coeus.common.framework.person.KcPerson;
@@ -33,6 +35,7 @@ import org.kuali.coeus.common.framework.version.history.VersionHistorySearchBo;
 import org.kuali.coeus.common.permissions.impl.PermissionableKeys;
 import org.kuali.coeus.common.framework.auth.SystemAuthorizationService;
 import org.kuali.coeus.common.framework.auth.perm.Permissionable;
+import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardAmountInfoService;
@@ -87,11 +90,18 @@ import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.role.Role;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.AutoPopulatingList;
 
+import edu.mit.kc.coi.KcCoiLinkService;
+import edu.mit.kc.coi.KcCoiLinkServiceImpl;
+
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -273,6 +283,38 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     private VersionHistorySearchBo versionHistory;
     private transient KcPersonService kcPersonService;
     private transient boolean editAward = false;
+        
+    protected final Log LOG = LogFactory.getLog(Award.class);
+	Logger LOGGER;
+
+    @Qualifier("globalVariableService")
+    private GlobalVariableService globalVariableService;
+    public GlobalVariableService getGlobalVariableService() {
+       
+        if (globalVariableService == null) {
+        	globalVariableService = KcServiceLocator.getService(GlobalVariableService.class);
+   		}
+        return globalVariableService;
+      }
+    public void setGlobalVariableService(GlobalVariableService globalVariableService) {
+        this.globalVariableService = globalVariableService;
+    }
+    
+
+    public KcCoiLinkService kcCoiLinkService;
+    
+   	public KcCoiLinkService getKcCoiLinkService() {
+   		if (kcCoiLinkService == null) {
+   			kcCoiLinkService = KcServiceLocator.getService(KcCoiLinkService.class);
+   		}
+   		
+   		return kcCoiLinkService;
+   	}
+
+   	public void setKcCoiLinkService(KcCoiLinkService kcCoiLinkService) {
+   		this.kcCoiLinkService = kcCoiLinkService;
+   	}
+	
     /**
      * 
      * Constructs an Award BO.
@@ -1808,6 +1850,16 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
             AwardFundingProposal afp = new AwardFundingProposal(this, institutionalProposal);
             fundingProposals.add(afp);
             institutionalProposal.add(afp);
+            //IP is Linked with award COI integration point MITKC-611 case 2     
+            try {
+            	getKcCoiLinkService().updateCOIOnLinkIPToAward(afp.getAward().getAwardNumber(),institutionalProposal.getInstProposalNumber(),getGlobalVariableService().getUserSession().getPrincipalName());
+			
+			} catch(NullPointerException e){
+				LOGGER.log(Level.ALL,"Input parameters return null");
+			}catch (SQLException e) {
+				LOGGER.log(Level.ALL, e.getMessage(), e);
+				LOGGER.log(Level.ALL,"DBLINK is not accessible or the parameter value returning null");
+			}            
         }
     }
 
