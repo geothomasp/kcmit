@@ -115,8 +115,14 @@ ls_proposal_number:=r_proposal.PROPOSAL_NUMBER;
 	WHEN OTHERS THEN
 	dbms_output.put_line('ERROR IN PROPOSAL,PROPOSAL_NUMBER:'||r_proposal.PROPOSAL_NUMBER||'SEQUENCE_NUMBER:'||r_proposal.SEQUENCE_NUMBER||'-'||sqlerrm);
 	END;
-	select max(DOC_TYP_ID) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='InstitutionalProposalDocument';
-	select p.prncpl_id into ls_prncpl_id  from KRIM_PRNCPL_T p  where LOWER(p.PRNCPL_NM)=LOWER(r_proposal.UPDATE_USER);
+	select max(to_number(DOC_TYP_ID)) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='InstitutionalProposalDocument';
+	        
+			begin
+			select p.prncpl_id into ls_prncpl_id  from KRIM_PRNCPL_T p where LOWER(p.PRNCPL_NM)=LOWER(r_proposal.UPDATE_USER);
+			exception
+			when others then
+			ls_prncpl_id:='unknownuser';
+			end;
 	
 	INSERT INTO INSTITUTE_PROPOSAL_DOCUMENT(DOCUMENT_NUMBER,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
 	VALUES(ls_document_number,1,r_proposal.UPDATE_TIMESTAMP,r_proposal.UPDATE_USER,sys_guid());
@@ -125,7 +131,7 @@ ls_proposal_number:=r_proposal.PROPOSAL_NUMBER;
 	VALUES(SEQ_PROPOSAL_IP_REVIEW_JOIN_ID.NEXTVAL,li_proposal_id,li_ip_review,r_proposal.UPDATE_TIMESTAMP,r_proposal.UPDATE_USER,1,sys_guid());
 	
 	INSERT INTO KREW_DOC_HDR_T(DOC_HDR_ID,DOC_TYP_ID,DOC_HDR_STAT_CD,RTE_LVL,STAT_MDFN_DT,CRTE_DT,APRV_DT,FNL_DT,RTE_STAT_MDFN_DT,TTL,APP_DOC_ID,DOC_VER_NBR,INITR_PRNCPL_ID,VER_NBR,RTE_PRNCPL_ID,DTYPE,OBJ_ID,APP_DOC_STAT,APP_DOC_STAT_MDFN_DT)
-    VALUES(ls_document_number,ls_doc_typ_id,'F',0,sysdate,r_proposal.UPDATE_TIMESTAMP,sysdate,NULL,sysdate,('InstitutionalProposalDocument'||'-'||r_proposal.PROPOSAL_NUMBER),NULL,1,nvl(ls_prncpl_id,'unknownuser'),1,NULL,NULL,SYS_GUID(),NULL,NULL);
+    VALUES(ls_document_number,ls_doc_typ_id,'F',0,sysdate,r_proposal.UPDATE_TIMESTAMP,sysdate,NULL,sysdate,('InstitutionalProposalDocument'||'-'||r_proposal.PROPOSAL_NUMBER),NULL,1,ls_prncpl_id,1,NULL,NULL,SYS_GUID(),NULL,NULL);
 	
 	INSERT INTO KRNS_DOC_HDR_T(DOC_HDR_ID,OBJ_ID,VER_NBR,FDOC_DESC,ORG_DOC_HDR_ID,TMPL_DOC_HDR_ID,EXPLANATION)
 	VALUES(ls_document_number,SYS_GUID(),1,r_proposal.PROPOSAL_NUMBER,NULL,NULL,NULL);

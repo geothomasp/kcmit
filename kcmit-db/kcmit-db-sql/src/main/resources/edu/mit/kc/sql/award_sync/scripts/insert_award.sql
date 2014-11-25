@@ -116,8 +116,13 @@ EXIT WHEN c_award%NOTFOUND;
 			INSERT INTO AWARD_DOCUMENT(DOCUMENT_NUMBER,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
 			VALUES(ls_doc_nbr,1,r_award.UPDATE_TIMESTAMP,r_award.UPDATE_USER,SYS_GUID());
 			
-			select max(DOC_TYP_ID) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='AwardDocument';
+			select max(to_number(DOC_TYP_ID)) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM='AwardDocument';
+			begin
 			select p.prncpl_id into ls_prncpl_id  from KRIM_PRNCPL_T p where LOWER(p.PRNCPL_NM)=LOWER(r_award.UPDATE_USER);
+			exception
+			when others then
+			ls_prncpl_id:='unknownuser';
+			end;
 
 
 			SELECT SEQUENCE_AWARD_ID.NEXTVAL INTO li_award_id FROM DUAL;
@@ -129,7 +134,7 @@ EXIT WHEN c_award%NOTFOUND;
             STAT_MDFN_DT,CRTE_DT,APRV_DT,FNL_DT,RTE_STAT_MDFN_DT,TTL,APP_DOC_ID,DOC_VER_NBR,
             INITR_PRNCPL_ID,VER_NBR,RTE_PRNCPL_ID,DTYPE,OBJ_ID,APP_DOC_STAT,APP_DOC_STAT_MDFN_DT)
 			VALUES(ls_doc_nbr,ls_doc_typ_id,'F',0,sysdate,r_award.UPDATE_TIMESTAMP,sysdate,NULL,
-            sysdate,('AwardDocument'||'-'||replace(r_award.MIT_AWARD_NUMBER,'-','-00')),NULL,1,nvl(ls_prncpl_id,'unknownuser'),1,
+            sysdate,('AwardDocument'||'-'||replace(r_award.MIT_AWARD_NUMBER,'-','-00')),NULL,1,ls_prncpl_id,1,
             NULL,NULL,SYS_GUID(),NULL,NULL);
 
 			INSERT INTO KRNS_DOC_HDR_T(DOC_HDR_ID,OBJ_ID,VER_NBR,FDOC_DESC,ORG_DOC_HDR_ID,TMPL_DOC_HDR_ID,EXPLANATION)
