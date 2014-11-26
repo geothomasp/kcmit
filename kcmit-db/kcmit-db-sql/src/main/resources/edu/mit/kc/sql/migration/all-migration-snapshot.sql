@@ -1,0 +1,5 @@
+@DML_MITKC-733_11262014.sql
+@DML_MITKC-734_11262014.sql
+commit;
+EXIT
+/
