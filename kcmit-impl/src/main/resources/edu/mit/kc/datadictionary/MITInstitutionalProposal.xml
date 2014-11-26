@@ -63,6 +63,99 @@
         <property name="summary" value="Title" />
         <property name="description" value="Title" />
     </bean>
-        
+            
+   <bean id="InstitutionalProposal-lookupDefinition" parent="InstitutionalProposal-lookupDefinition-parentBean" />
+  <bean id="InstitutionalProposal-LookupView" parent="InstitutionalProposal-LookupView-parentBean"/>
+    <bean id="InstitutionalProposal-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="Institutional Proposal Lookup" />
+        <property name="lookupableID" value="institutionalProposalLookupable" /><property name="defaultSort" >
+      <bean parent="SortDefinition"/>
+        </property>
+        <property name="resultSetLimit" value="50" />
+        <property name="lookupFields" >
+            <list>
+        <bean parent="FieldDefinition" p:attributeName="proposalNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="proposalTypeCode"/>
+        <bean parent="FieldDefinition" p:attributeName="statusCode"/>
+        <bean parent="FieldDefinition" p:attributeName="currentAccountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="title"/>
+        <bean parent="FieldDefinition" p:useShortLabel="true" p:attributeName="leadUnit.unitNumber"/>
+      <!--   <bean parent="FieldDefinition" p:noLookup="true" p:noDirectInquiry="true" p:useShortLabel="true" p:attributeName="lookupUnit.unitName"/>
+        --> <bean parent="FieldDefinition" p:useShortLabel="true" p:noDirectInquiry="true" p:attributeName="projectPersons.fullName"/>
+        <bean parent="FieldDefinition" p:attributeName="projectPersons.institutionalProposalContactId" p:hidden="true"/>
+        <bean parent="FieldDefinition" p:attributeName="sponsorCode"/>
+        <bean parent="FieldDefinition" p:noLookup="true" p:noDirectInquiry="true" p:attributeName="sponsor.sponsorName"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="proposalNumber"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="proposalType.description"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="activityType.description"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="proposalStatus.description"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="leadUnit.unitNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="leadUnit.unitName"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="currentAccountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="title"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="sponsorCode"/>
+        <bean parent="FieldDefinition" p:attributeName="sponsor.sponsorName"/>
+        <bean parent="FieldDefinition" p:forceInquiry="true" p:attributeName="primeSponsor.sponsorName"/>
+        <bean parent="FieldDefinition" p:attributeName="principalInvestigator.fullName"/>
+        <bean parent="FieldDefinition" p:attributeName="requestedStartDateInitial"/>
+        <bean parent="FieldDefinition" p:attributeName="requestedStartDateTotal"/>
+        <bean parent="FieldDefinition" p:attributeName="requestedEndDateInitial"/>
+        <bean parent="FieldDefinition" p:attributeName="requestedEndDateTotal"/>
+        <bean parent="FieldDefinition" p:attributeName="totalDirectCostInitial"/>
+        <bean parent="FieldDefinition" p:attributeName="totalDirectCostTotal"/>
+        <bean parent="FieldDefinition" p:attributeName="totalIndirectCostInitial"/>
+        <bean parent="FieldDefinition" p:attributeName="totalIndirectCostTotal"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="InstitutionalProposal-LookupView-parentBean" abstract="true" parent="Uif-LookupView">
+    <property name="dataObjectClassName" value="org.kuali.kra.institutionalproposal.home.InstitutionalProposal"/>
+    <property name="headerText" value="Institutional Proposal Lookup"/>
+    <property name="criteriaFields">
+      <list>
+        <bean p:propertyName="proposalNumber" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="proposalTypeCode" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="statusCode" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="currentAccountNumber" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="title" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="leadUnit.unitNumber" parent="Uif-LookupCriteriaInputField"/>
+        <!-- <bean p:propertyName="lookupUnit.unitName" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/> -->
+        <bean p:propertyName="projectPersons.fullName" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="projectPersons.institutionalProposalContactId" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="sponsorCode" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="sponsor.sponsorName" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+            </list>
+        </property>
+        <property name="resultFields" >
+            <list>
+        <bean p:propertyName="proposalNumber" parent="Uif-DataField"/>
+        <bean p:propertyName="proposalType.description" parent="Uif-DataField"/>
+        <bean p:propertyName="activityType.description" parent="Uif-DataField"/>
+        <bean p:propertyName="proposalStatus.description" parent="Uif-DataField"/>
+        <bean p:propertyName="leadUnit.unitNumber" parent="Uif-DataField"/>
+        <bean p:propertyName="leadUnit.unitName" parent="Uif-DataField"/>
+        <bean p:propertyName="currentAccountNumber" parent="Uif-DataField"/>
+        <bean p:propertyName="title" parent="Uif-DataField"/>
+        <bean p:propertyName="sponsorCode" parent="Uif-DataField"/>
+        <bean p:propertyName="sponsor.sponsorName" parent="Uif-DataField"/>
+        <bean p:propertyName="primeSponsor.sponsorName" parent="Uif-DataField"/>
+        <bean p:propertyName="principalInvestigator.fullName" parent="Uif-DataField"/>
+        <bean p:propertyName="requestedStartDateInitial" parent="Uif-DataField"/>
+        <bean p:propertyName="requestedStartDateTotal" parent="Uif-DataField"/>
+        <bean p:propertyName="requestedEndDateInitial" parent="Uif-DataField"/>
+        <bean p:propertyName="requestedEndDateTotal" parent="Uif-DataField"/>
+        <bean p:propertyName="totalDirectCostInitial" parent="Uif-DataField"/>
+        <bean p:propertyName="totalDirectCostTotal" parent="Uif-DataField"/>
+        <bean p:propertyName="totalIndirectCostInitial" parent="Uif-DataField"/>
+        <bean p:propertyName="totalIndirectCostTotal" parent="Uif-DataField"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>    
         
