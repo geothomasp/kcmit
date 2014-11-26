@@ -205,8 +205,10 @@ public abstract class ProposalDevelopmentControllerBase {
          if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID)) {
              ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateAttachmentReferences(form.getDevelopmentProposal());
          }
-
-         form.getEditableCollectionLines().clear();
+         
+         if(form.getEditableCollectionLines()!=null){
+        	 form.getEditableCollectionLines().clear();
+         }
 
          preSave(proposalDevelopmentDocument);
 

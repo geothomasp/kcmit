@@ -495,8 +495,8 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
         String updateUser = null;
         if (institutionalProposalDocument.getUpdateTimestamp() != null) {
             createDateStr = CoreApiServiceLocator.getDateTimeService().toString(institutionalProposalDocument.getUpdateTimestamp(), "MM/dd/yy hh:mm a");
-            updateUser = institutionalProposalDocument.getUpdateUser().length() > NUMBER_30 ? institutionalProposalDocument.getUpdateUser().substring(0, NUMBER_30)
-                    : institutionalProposalDocument.getUpdateUser();
+            updateUser = institutionalProposalDocument.getInstitutionalProposal().getUpdateUser().length() > NUMBER_30 ? institutionalProposalDocument.getInstitutionalProposal().getUpdateUser().substring(0, NUMBER_30)
+                    : institutionalProposalDocument.getInstitutionalProposal().getUpdateUser();
             getDocInfo().add(
                     new HeaderField(UPDATE_TIMESTAMP_DD_NAME, createDateStr + " by " + updateUser));
         } else {
@@ -508,8 +508,10 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
     @Override
     public void populateHeaderFields(WorkflowDocument workflowDocument) {
     	
-    	 super.populateHeaderFields(workflowDocument);
-    	 InstitutionalProposalDocument institutionalProposalDocument=getInstitutionalProposalDocument();
+         InstitutionalProposalDocument institutionalProposalDocument=getInstitutionalProposalDocument();
+    	 getDocInfo().clear();
+     	 getDocInfo().add(new HeaderField("DataDictionary.DocumentHeader.attributes.documentNumber",  getInstitutionalProposalDocument().getDocumentNumber()));
+     	 getDocInfo().add(new HeaderField("DataDictionary.AttributeReference.attributes.workflowDocumentStatus", workflowDocument.getStatus().getLabel()));
          getDocInfo().add(new HeaderField("DataDictionary.InstitutionalProposal.attributes.proposalNumber", institutionalProposalDocument.getInstitutionalProposal().getProposalNumber()));
     	 setupLastUpdate(institutionalProposalDocument);
      }
