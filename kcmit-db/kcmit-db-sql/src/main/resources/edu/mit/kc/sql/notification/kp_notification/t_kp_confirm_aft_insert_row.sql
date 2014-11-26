@@ -16,6 +16,9 @@ ll_coi_rev_code         COI_DISCLOSURE.REVIEW_STATUS_CODE%type;
 ll_COIBasedOnCustomData number;
 li_NeedsCOI             number;
 li_IsPCK                number;
+ls_error_message        VARCHAR2(250):=NULL;
+li_mail_send CHAR(1);
+ls_TestMailReceiver    varchar2(256);       
 
 /** Case 185 Begin **/
 
@@ -23,7 +26,10 @@ li_IsPCK                number;
 ls_ModuleItemKey        AWARD.AWARD_NUMBER%TYPE;
 ls_PersonId             AWARD_PERSONS.PERSON_ID%TYPE;
 ls_disc_num         	COI_DISCLOSURE.COI_DISCLOSURE_NUMBER%TYPE;
-
+mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
+mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE ;
+li_ntfctn_id   KREN_NTFCTN_T.NTFCTN_ID%TYPE;
+li_notification_type_id notification_type.notification_type_id% type;
 
 error_inserting         EXCEPTION;
 
@@ -67,17 +73,17 @@ begin
     --Check if the person has submitted a disclosure for any award in this hierarchy.
     --review status code should be somthing other than 1.
     
-     begin
+       begin
 
      select D.DISCLOSURE_DISPOSITION_CODE, D.REVIEW_STATUS_CODE
      into   ll_coi_disp_code, ll_coi_rev_code
-     from COI_DISCLOSURE d,
+     from osp$coi_disclosure@coeus.kuali d,
         (select distinct DD.COI_DISCLOSURE_NUMBER, DD.SEQUENCE_NUMBER
-         from   COI_DISC_DETAILS dd
+         from   osp$coi_disc_details@coeus.kuali dd
          where  dd.MODULE_CODE = 1
          and    dd.MODULE_ITEM_KEY like  substr(ls_ModuleItemKey, 1, 6) || '%'
          and    DD.SEQUENCE_NUMBER = (select max(DD2.SEQUENCE_NUMBER)
-                                     from   COI_DISC_DETAILS dd2
+                                     from   osp$coi_disc_details@coeus.kuali dd2
                                      where  DD.COI_DISCLOSURE_NUMBER = DD2.COI_DISCLOSURE_NUMBER
                                      and    DD.MODULE_ITEM_KEY = DD2.MODULE_ITEM_KEY)) discl
          where D.PERSON_ID =  ls_PersonId
@@ -89,15 +95,52 @@ begin
            if (ll_coi_rev_code <> 1) then
              -- person has submited the disclosure
                li_COI_Complete := 1;
+			   
            end if;
 
 
     exception
          when others then
            li_COI_Complete := 0;
+		   ls_error_message:= substr(sqlerrm,1,200);
     end;
     
-    
+	-- Sent notification if not COI synced START	
+			if li_COI_Complete= 0 then
+			
+			   BEGIN
+					select VAL into ls_TestMailReceiver
+					from KRCR_PARM_T
+					where PARM_NM = 'EMAIL_NOTIFICATION_TEST_ADDRESS'
+					AND  nmspc_cd ='KC-GEN';
+				EXCEPTION
+				WHEN OTHERS THEN
+				raise_application_error(-20101, 'Error Generating Email. Parameter EMAIL_NOTIFICATION_TEST_ADDRESS not found in parameter table' );
+					return;
+				END;
+			   mail_subject:= 'COI not in sync';
+			   mail_message:='COI Disclosure from coeus not synced with KC and the error message is:'||CHR(13)||ls_error_message;			
+			   li_mail_send := 'Y';
+				begin
+					 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TestMailReceiver,null,ls_TestMailReceiver,mail_subject,mail_message);
+
+				exception
+				when others then
+					li_mail_send := 'N';
+				end;
+				 /* intentionaly commented
+				begin
+					li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('KP Notification',mail_message);
+					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_TestMailReceiver,li_mail_send);
+				exception
+				when others then
+					null;
+				end;
+				intentionaly commented
+				 */
+			end if;
+	-- Sent notification if not COI synced END	
+	
     --Check if the person has completed COI training
     li_Training_Complete := 0;
     
@@ -128,24 +171,7 @@ begin
         Return;
         
     end if;
-       /*
-    ls_disc_num     := fn_get_next_coi_disclosure_num();
-     
-    BEGIN
-        insert into OSP$INV_COI_DISCLOSURE_v2
-        values (ls_disc_num,
-                :new.MIT_AWARD_NUMBER,
-                1,
-                :new.PERSON_ID,
-                'K',  --To denote this is a KP disclosure
-                sysdate,
-                user);
-
-    EXCEPTION
-        when others then
-            raise error_inserting;
-    END ;
-   */    
+    
     
     li_rc := kc_kp_notifications_pkg.fn_gen_kp_coi_notification (ls_PersonId, ls_ModuleItemKey, li_COI_Complete, li_Training_Complete, li_NeedsCOI, li_IsPCK );
         

@@ -8,3 +8,4 @@ set define off;
 @all_longsurvey.sql
 @all_nda.sql
 @all_cac.sql
+@all_citi.sql

@@ -1,1 +1,0 @@
-@ddl_person_feed.sql
