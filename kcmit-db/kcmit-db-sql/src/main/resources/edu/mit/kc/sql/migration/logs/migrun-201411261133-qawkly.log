@@ -1,0 +1,111 @@
+
+SQL*Plus: Release 10.2.0.4.0 - Production on Wed Nov 26 12:37:32 2014
+
+Copyright (c) 1982, 2007, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+2 rows deleted.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+CREATE INDEX REPORT_I ON award_report_terms(REPORT_CLASS_CODE)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+CREATE INDEX AWARD_REP_TERM_I2 ON award_report_terms(AWARD_REPORT_TERMS_ID, REPORT_CLASS_CODE)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+300450 rows deleted.
+
+
+Commit complete.
+
+
+330524 rows deleted.
+
+
+Commit complete.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index dropped.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
