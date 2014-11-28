@@ -134,6 +134,7 @@
 		<property name="dataDictionaryPackages">
 			<list>  
 				<value>classpath:edu/mit/kc/datadictionary/MitNegotiation.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITNegotiationActivity.xml</value>
  				<value>classpath:edu/mit/kc/datadictionary/MITUnit.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITTimeAndMoneyDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITSubAwardDocument.xml</value>
