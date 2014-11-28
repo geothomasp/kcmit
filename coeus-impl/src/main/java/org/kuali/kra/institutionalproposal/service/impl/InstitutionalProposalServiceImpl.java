@@ -344,7 +344,7 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
         return result;
     }
     
-    public boolean generateIPFiscalYearBased(){
+    public boolean generateIPFiscalYearBased() throws NullPointerException{
     	  String value = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT, ParameterConstants.DOCUMENT_COMPONENT, Constants.FISCAL_YEAR_BASED_IP);
           return !value.isEmpty()?(value.equalsIgnoreCase("Y")?true:false):false;
     }
