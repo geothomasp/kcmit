@@ -1,6 +1,6 @@
 #!/bin/bash
 scriptDir="../kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql"
-script60Dir="../../kc/coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/coeus-sql/current/6.0.0"
+script60Dir="../../kc/coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/coeus-sql/current/6.0.0" 
 
 if [ $# -lt 1 ]
 then
