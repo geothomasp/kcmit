@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Script executed from: ${PWD}"
-BASEDIR=$(dirname $0)
+BASEDIR=${PWD}
 scriptDir="${BASEDIR}/../kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql"
 script60Dir="${BASEDIR}/../../kc/coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/coeus-sql/current/6.0.0" 
 echo "Base dir: ${BASEDIR}"
