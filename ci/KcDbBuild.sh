@@ -4,7 +4,7 @@ script60Dir="../../kc/coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/c
 
 if [ $# -lt 1 ]
 then
-	echo "Usage: $0 dbuser=<userid> dbpwd=<password> dbsid=<SID>"
+	echo "Usage: $0 dbuser=<userid> dbpwd=<password> dbsid=<SID>" 
 	exit
 fi
 
