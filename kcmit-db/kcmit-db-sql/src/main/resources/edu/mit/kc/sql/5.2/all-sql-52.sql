@@ -12,3 +12,9 @@
 @all-dml-20140905.sql
 @all-dml-20140916.sql
 @all-dml-20140923.sql
+commit
+/
+EXIT
+/
+
+
