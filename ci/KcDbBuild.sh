@@ -11,34 +11,46 @@ then
 	exit
 fi
 
-cd $scriptDir
 tod=$(date +%Y%m%d%H%M)
 usrid=$dbuser
 pswd=$dbpwd 
 sid=$dbsid
 
-cd 5.2
+cd ${scriptDir}/5.2
 mkdir -p logs
 echo "spool sql52run-${tod}.log"
 sqlplus ${usrid}/${pswd}@${sid} @all-sql-52.sql > logs/sql52run-${tod}.log
+mail -s "sql52run-${tod}.log" geot@mit.edu < sql52run-201411290005.log
 
-cd ../6.0
-mkdir -p logs
-echo "spool sql60run-${tod}.log"
-sqlplus ${usrid}/${pswd}@${sid}  @all-sql-60.sql > logs/sql60run-${tod}.log
-
-
-cd ../notification
-mkdir -p logs
-echo "spool notifrun-${tod}.log"
-sqlplus ${usrid}/${pswd}@${sid} @all-notification-snapshot.sql > logs/notifrun-${tod}.log
-
-cd ../feed
-mkdir -p logs
-echo "spool feedrun-${tod}.log"
-sqlplus ${usrid}/${pswd}@${sid}  @all-feed-snapshot.sql > logs/feedrun-${tod}.log
-
-cd $script60Dir
+cd ${script60Dir}
 mkdir -p logs
 echo "spool kc60run-${tod}.log"
 sqlplus ${usrid}/${pswd}@${sid}  @all-kc60.sql > logs/kc60run-${tod}.log
+mail -s "kc60run-${tod}.log" geot@mit.edu < kc60run-${tod}.log
+
+cd ${scriptDir}/6.0
+mkdir -p logs
+echo "spool sql60run-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid}  @all-sql-60.sql > logs/sql60run-${tod}.log
+mail -s "sql60run-${tod}.log" geot@mit.edu < sql60run-${tod}.log
+
+cd ${scriptDir}/notification
+mkdir -p logs
+echo "spool notifrun-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid} @all-notification-snapshot.sql > logs/notifrun-${tod}.log
+mail -s "notifrun-${tod}.log" geot@mit.edu < notifrun-${tod}.log
+
+cd ${scriptDir}/feed
+mkdir -p logs
+echo "spool feedrun-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid}  @all-feed-snapshot.sql > logs/feedrun-${tod}.log
+mail -s "feedrun-${tod}.log" geot@mit.edu < feedrun-${tod}.log
+
+cd ${scriptDir}/coi
+mkdir -p logs
+echo "spool coirun-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid}  @all-coi-snapshot.sql > logs/coirun-${tod}.log
+mail -s "coirun-${tod}.log" geot@mit.edu < coirun-${tod}.log
+
+exit;
+

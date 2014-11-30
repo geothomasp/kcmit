@@ -21,9 +21,10 @@ exit when c_kp%notfound;
 	if li_count=0 then
 
 		delete from award_persons where award_number=replace(r_kp.mit_award_number,'-','-00') and sequence_number=r_kp.sequence_number and contact_role_code='KP';
-		dbms_output.put_line('Deleted mit award number '||r_kp.mit_award_number||', sequence number '||r_kp.sequence_number);
+		--dbms_output.put_line('Deleted mit award number '||r_kp.mit_award_number||', sequence number '||r_kp.sequence_number);
 
 	end if;
+		dbms_output.put_line('Number of awards deleted while cleaning up key person table with NO indicator : '||li_count);
 
 end loop;
 close c_kp;
@@ -55,6 +56,7 @@ end if;
 		delete from award_persons where award_number=replace(r_kp.mit_award_number,'-','-00') and sequence_number=r_kp.sequence_number  and contact_role_code='KP';
 		dbms_output.put_line('Deleted mit award number '||r_kp.mit_award_number||', sequence number '||r_kp.sequence_number);
 		end if;
+		dbms_output.put_line('Number of awards deleted while cleaning up key person table with NO indicator : '||li_count);
 
 	end loop;
 	close c_kp;
@@ -85,8 +87,9 @@ end if;
 		if li_count=0 then
 
 		delete from proposal_persons where proposal_number=r_kp.proposal_number and sequence_number=r_kp.sequence_number  and contact_role_code='KP';
-		dbms_output.put_line('Deleted proposal number '||r_kp.proposal_number||', sequence number '||r_kp.sequence_number);
+		--dbms_output.put_line('Deleted proposal number '||r_kp.proposal_number||', sequence number '||r_kp.sequence_number);
 		end if;
+		dbms_output.put_line('Number of proposal deleted while cleaning up key person table with NO indicator : '||li_count);
 
 	end loop;
 	close c_kp;
