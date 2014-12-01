@@ -58,7 +58,7 @@ public class MitInstitutionalProposalDocumentRule extends InstitutionalProposalD
         retval &= processInstitutionalProposalFinancialRules(document);
         retval &= processInstitutionalProposalPersonBusinessRules(errorMap, document);
         retval &= processKeywordBusinessRule(document);
-        retval &= processAccountIdBusinessRule(document);
+        //retval &= processAccountIdBusinessRule(document);
         retval &= processCostShareRules(document);
         retval &= validateSponsors(document);
         return retval;
