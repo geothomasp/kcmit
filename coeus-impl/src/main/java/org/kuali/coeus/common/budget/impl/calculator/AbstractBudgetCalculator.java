@@ -722,21 +722,26 @@ public abstract class AbstractBudgetCalculator {
             return;
         }
 
+    	List<String> ohRateTypeCodes = new ArrayList<String>();
         for (ValidCeRateType validCeRateType : rateTypes) {
             validCeRateType.refreshNonUpdateableReferences();
             String rateClassType = validCeRateType.getRateClass().getRateClassTypeCode();
-            if(rateClassType.equals(RateClassType.OVERHEAD.getRateClassType()) && 
+            RateType ohRateType = validCeRateType.getRateType();
+			if(rateClassType.equals(RateClassType.OVERHEAD.getRateClassType()) && 
                     !budget.getBudgetParent().isProposalBudget()){
-                addOHBudgetLineItemCalculatedAmountForAward( validCeRateType.getRateClassCode(), validCeRateType.getRateType(), 
+            	ohRateTypeCodes.add(ohRateType.getRateTypeCode());
+            	if(!ohRateTypeCodes.contains(ohRateType.getRateTypeCode())){
+            		addOHBudgetLineItemCalculatedAmountForAward( validCeRateType.getRateClassCode(), ohRateType, 
                         validCeRateType.getRateClass().getRateClassTypeCode());
+            	}
             }else{
-                addBudgetLineItemCalculatedAmount( validCeRateType.getRateClassCode(), validCeRateType.getRateType(), 
+                addBudgetLineItemCalculatedAmount( validCeRateType.getRateClassCode(), ohRateType, 
                                             validCeRateType.getRateClass().getRateClassTypeCode());
             }
         }
     }
 
-    private void addOHBudgetLineItemCalculatedAmountForAward(String rateClassCode, 
+	private void addOHBudgetLineItemCalculatedAmountForAward(String rateClassCode, 
             RateType rateType, String rateClassType) {
         QueryList<BudgetRate> budgetRates = new QueryList<BudgetRate>(budget.getBudgetRates());
         Equals eqOhRateClassType = new Equals("rateClassType",rateClassType);
@@ -818,7 +823,7 @@ public abstract class AbstractBudgetCalculator {
         validCeQMap.put("costElement", budgetLineItem.getCostElement());
         budgetLineItem.getCostElementBO().refreshReferenceObject("validCeRateTypes");
 
-        QueryList<ValidCeRateType> qValidCeRateTypes = createQueryList(budgetLineItem.getCostElementBO().getValidCeRateTypes());
+        //QueryList<ValidCeRateType> qValidCeRateTypes = createQueryList(budgetLineItem.getCostElementBO().getValidCeRateTypes());
         setInflationRateOnLineItem(budgetLineItem);
 
         setValidCeRateTypeCalculatedAmounts(budgetLineItem);
