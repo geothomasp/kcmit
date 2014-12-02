@@ -3,4 +3,12 @@
 	<param name="mitKcBatchJobUserName">MITKC</param>
  	<param name="kc.mit.core.mode">LOCAL</param>
 	<!-- <param name="kc.kc.core.additionalSpringFiles">classpath:edu/mit/kc/MitKcSpringBeans.xml,classpath:edu/mit/kc/MitKcSchedulerSpringBeans.xml</param> -->
+	<param name="rolecentraldb.keystore.location">path to keystore</param>
+    <param name="rolecentraldb.keystore.password">keystore password</param>
+    <param name="rolecentraldb.truststore.location">path to truststore</param>
+    <param name="rolecentraldb.truststore.password">truststore password</param>
+	<param name="rolecentraldb.host">https://ws-test.mit.edu/rolesws/services/roles</param>
+    <param name="rolecentraldb.port">roles</param>
 </config>
+
+

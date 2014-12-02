@@ -29,4 +29,15 @@ public interface KcMitConstants {
     /* Award Keyperson Maintenance */
     public static final String AWARD_KEYPERSON_MAINTENANCE_ROLE = "Maintain Keyperson"; 
     
+    public static final String ROLE_CENTRAL_DB_KEYSTORE_LOCATION = "rolecentraldb.keystore.location"; 
+    public static final String ROLE_CENTRAL_DB_KEYSTORE_PASSWORD = "rolecentraldb.keystore.password"; 
+    public static final String ROLE_CENTRAL_DB_TRUSTSTORE_LOCATION = "rolecentraldb.truststore.location"; 
+    public static final String ROLE_CENTRAL_DB_TRUSTSTORE_PASSWORD = "rolecentraldb.truststore.password"; 
+    
+    
+    public static final String ENABLE_ROLE_INTEGRATION = "EnableRoleIntegration";
+
+    
+   
+    
 }

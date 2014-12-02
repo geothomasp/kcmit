@@ -85,4 +85,28 @@
 		<field-descriptor id="1" name="typeCode" column="PI_APPOINT_TYPE_CODE" jdbc-type="VARCHAR" primarykey="true"/>		
 		<field-descriptor name="description" column="DESCRIPTION" jdbc-type="VARCHAR"/>	
 	</class-descriptor>
+	
+    <class-descriptor class="edu.mit.kc.roleintegration.RoleCentralMap" table="ROLE_CNTRL_MAP_T">
+    <field-descriptor name="roleCentralMapid" column="ROLE_CNTRL_MAP_ID" jdbc-type="VARCHAR" primarykey="true"  autoincrement="true" sequence-name="SEQ_ROLE_CNTRL_MAP_ID"/>
+    <field-descriptor name="roleId" column="ROLE_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="roleName" column="ROLE_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="centralRoleName" column="CNTRL_ROLE_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="nameSpace" column="NMSPC_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+    <field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+    </class-descriptor> 
+    
+    
+    <class-descriptor class="edu.mit.kc.roleintegration.SyncLog" table="SYNC_LOG">
+	    <field-descriptor name="syncLogid" column="SYNC_LOG_ID" jdbc-type="VARCHAR" primarykey="true"  autoincrement="true" sequence-name="SEQ_SYNC_LOG_ID"/>
+	    <field-descriptor name="centralRoleName" column="ROLE_NM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="principleName" column="PRNCPL_NM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="unitNumber" column="UNIT_NUMBER" jdbc-type="VARCHAR" />
+	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+	    <field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+	    <field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+    </class-descriptor> 
+    
 </descriptor-repository>
