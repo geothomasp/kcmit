@@ -729,10 +729,10 @@ public abstract class AbstractBudgetCalculator {
             RateType ohRateType = validCeRateType.getRateType();
 			if(rateClassType.equals(RateClassType.OVERHEAD.getRateClassType()) && 
                     !budget.getBudgetParent().isProposalBudget()){
-            	ohRateTypeCodes.add(ohRateType.getRateTypeCode());
             	if(!ohRateTypeCodes.contains(ohRateType.getRateTypeCode())){
             		addOHBudgetLineItemCalculatedAmountForAward( validCeRateType.getRateClassCode(), ohRateType, 
                         validCeRateType.getRateClass().getRateClassTypeCode());
+                	ohRateTypeCodes.add(ohRateType.getRateTypeCode());
             	}
             }else{
                 addBudgetLineItemCalculatedAmount( validCeRateType.getRateClassCode(), ohRateType, 
