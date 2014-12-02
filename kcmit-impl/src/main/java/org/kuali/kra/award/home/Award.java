@@ -94,8 +94,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.mit.kc.coi.KcCoiLinkService;
-import edu.mit.kc.coi.KcCoiLinkServiceImpl;
-
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -288,7 +286,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 	Logger LOGGER;
 
     @Qualifier("globalVariableService")
-    private GlobalVariableService globalVariableService;
+    private transient GlobalVariableService globalVariableService;
     public GlobalVariableService getGlobalVariableService() {
        
         if (globalVariableService == null) {
@@ -301,7 +299,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     }
     
 
-    public KcCoiLinkService kcCoiLinkService;
+    private transient KcCoiLinkService kcCoiLinkService;
     
    	public KcCoiLinkService getKcCoiLinkService() {
    		if (kcCoiLinkService == null) {
