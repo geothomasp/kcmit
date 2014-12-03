@@ -1,3 +1,13 @@
+delete from KRIM_ROLE_PERM_T where 
+	ROLE_ID = (SELECT ROLE_ID FROM KRIM_ROLE_T WHERE ROLE_NM = 'Aggregator' AND NMSPC_CD = 'KC-PD') and
+	PERM_ID = (SELECT PERM_ID FROM KRIM_PERM_T WHERE NM = 'NOTIFY_PROPOSAL_PERSONS' AND NMSPC_CD = 'KC-PD')
+/
+delete from KRIM_ROLE_PERM_T where 
+		ROLE_ID = (SELECT ROLE_ID FROM KRIM_ROLE_T WHERE ROLE_NM = 'Aggregator Document Level' AND NMSPC_CD = 'KC-PD') and
+		PERM_ID=(SELECT PERM_ID FROM KRIM_PERM_T WHERE NM = 'NOTIFY_PROPOSAL_PERSONS' AND NMSPC_CD = 'KC-PD')
+/
+delete from KRCR_PARM_T where PARM_NM='notifyAggregatorWhenAllCertificationsComplete' and NMSPC_CD='KC-PD'
+/
 INSERT INTO KRIM_PERM_T (PERM_ID, OBJ_ID, VER_NBR, PERM_TMPL_ID, NMSPC_CD, NM, DESC_TXT, ACTV_IND)
 VALUES (CONCAT ('KC', KRIM_ROLE_PERM_ID_S.NEXTVAL), SYS_GUID(), 1,
 (SELECT PERM_TMPL_ID FROM KRIM_PERM_TMPL_T WHERE NMSPC_CD = 'KC-IDM' AND NM='Perform Document Action'),
@@ -14,5 +24,6 @@ VALUES (CONCAT ('KC', KRIM_ROLE_PERM_ID_S.NEXTVAL), SYS_GUID(), 1,
 (SELECT PERM_ID FROM KRIM_PERM_T WHERE NM = 'NOTIFY_PROPOSAL_PERSONS' AND NMSPC_CD = 'KC-PD'), 'Y')
 /
 INSERT INTO KRCR_PARM_T (NMSPC_CD, CMPNT_CD, PARM_NM, OBJ_ID, VER_NBR, PARM_TYP_CD, VAL, PARM_DESC_TXT, EVAL_OPRTR_CD, APPL_ID)
-VALUES ('KC-PD', 'Document', 'notifyAggregatorWhenAllCertificationsComplete', SYS_GUID(), 1, 'CONFG', 'Y', 'Determines if the aggregator gets a notification when all certifications are complete', 'A', 'KC')
+VALUES ('KC-PD', 'Document', 'notifyAggregatorWhenAllCertificationsComplete', SYS_GUID(), 1, 'CONFG', 'Y', 
+				'Determines if the aggregator gets a notification when all certifications are complete', 'A', 'KC')
 /
