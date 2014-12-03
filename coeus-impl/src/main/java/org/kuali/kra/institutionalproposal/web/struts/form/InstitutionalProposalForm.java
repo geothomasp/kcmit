@@ -41,9 +41,11 @@ import org.kuali.coeus.common.framework.custom.CustomDataDocumentForm;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kns.datadictionary.HeaderNavigation;
 import org.kuali.rice.kns.util.ActionFormUtilMap;
 import org.kuali.rice.kns.web.ui.ExtraButton;
+import org.kuali.rice.kns.web.ui.HeaderField;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import java.util.ArrayList;
@@ -56,6 +58,9 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
 
     private static final long serialVersionUID = 4564236415580911082L;
     private static final String CUSTOM_DATA_NAV_TO = "customData";
+    private static final int NUMBER_30 = 30;
+    public static final String COLUMN = ":";
+    public static final String UPDATE_TIMESTAMP_DD_NAME = "DataDictionary.InstitutionalProposal.attributes.updateTimestamp";
 
     private boolean auditActivated;
     
@@ -484,5 +489,30 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
         
         return extraButtons;
     }
+    
+    private void setupLastUpdate(InstitutionalProposalDocument institutionalProposalDocument) {
+        String createDateStr = null;
+        String updateUser = null;
+        if (institutionalProposalDocument.getUpdateTimestamp() != null) {
+            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(institutionalProposalDocument.getUpdateTimestamp(), "MM/dd/yy hh:mm a");
+            updateUser = institutionalProposalDocument.getInstitutionalProposal().getUpdateUser().length() > NUMBER_30 ? institutionalProposalDocument.getInstitutionalProposal().getUpdateUser().substring(0, NUMBER_30)
+                    : institutionalProposalDocument.getInstitutionalProposal().getUpdateUser();
+            getDocInfo().add(
+                    new HeaderField(UPDATE_TIMESTAMP_DD_NAME, createDateStr + " by " + updateUser));
+        } else {
+            getDocInfo().add(new HeaderField(UPDATE_TIMESTAMP_DD_NAME, Constants.EMPTY_STRING));
+        }
 
+    }
+
+    @Override
+    public void populateHeaderFields(WorkflowDocument workflowDocument) {
+    	
+         InstitutionalProposalDocument institutionalProposalDocument=getInstitutionalProposalDocument();
+    	 getDocInfo().clear();
+     	 getDocInfo().add(new HeaderField("DataDictionary.DocumentHeader.attributes.documentNumber",  getInstitutionalProposalDocument().getDocumentNumber()));
+     	 getDocInfo().add(new HeaderField("DataDictionary.AttributeReference.attributes.workflowDocumentStatus", workflowDocument.getStatus().getLabel()));
+         getDocInfo().add(new HeaderField("DataDictionary.InstitutionalProposal.attributes.proposalNumber", institutionalProposalDocument.getInstitutionalProposal().getProposalNumber()));
+    	 setupLastUpdate(institutionalProposalDocument);
+     }
 }

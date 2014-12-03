@@ -91,7 +91,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
             } else {
                 forward = super.docHandler(mapping, awardForm, request, response);
             } 
-            populateAwardHierarchy(form); 
 
             return forward;
     }
