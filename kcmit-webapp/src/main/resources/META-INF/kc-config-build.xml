@@ -22,4 +22,10 @@ This config file only contains properties that are set by the maven build proces
 	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST">mit-kc-dev@mit.edu</param>
 	<param name="mitKcBatchJobUserName">MITKC</param>
  	<param name="kc.mit.core.mode">LOCAL</param>
+ 	<param name="rolecentraldb.keystore.location">path to keystore</param>
+    <param name="rolecentraldb.keystore.password">keystore password</param>
+    <param name="rolecentraldb.truststore.location">path to truststore</param>
+    <param name="rolecentraldb.truststore.password">truststore password</param>
+	<param name="rolecentraldb.host">https://ws-test.mit.edu/rolesws/services/roles</param>
+    <param name="rolecentraldb.port">roles</param>
 </config>
