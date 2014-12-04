@@ -3,11 +3,6 @@ package edu.mit.kc.web.filter;
 
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -24,7 +19,6 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
-import rolesservice.RolesException_Exception;
 
 import edu.mit.kc.common.BackDoorLoginAuthorizationService;
 import edu.mit.kc.infrastructure.KcMitConstants;
@@ -72,9 +66,7 @@ public class MitKcFilter implements Filter {
 
 			try {
 				roleIntegrationService.updateUserRoles(user);
-			} catch (UnrecoverableKeyException | KeyManagementException
-					| KeyStoreException | CertificateException
-					| NoSuchProviderException | RolesException_Exception ex) {
+			} catch (Throwable  ex) {
 				 LOG.error(ex.getMessage(), ex);
 			}
 		}
