@@ -54,13 +54,21 @@ public class MitKcFilter implements Filter {
 
 		String user = request.getParameter("__login_user");
 		if(user!=null){
+			try{
 		    backboorEnabled = parameterService.getParameterValueAsBoolean(org.kuali.rice.kew.api.KewApiConstants.KEW_NAMESPACE, org.kuali.rice.krad.util.KRADConstants.DetailTypes.BACKDOOR_DETAIL_TYPE, org.kuali.rice.kew.api.KewApiConstants.SHOW_BACK_DOOR_LOGIN_IND);
+		    roleIntegrationEnabled = parameterService.getParameterValueAsBoolean(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+	                Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, KcMitConstants.ENABLE_ROLE_INTEGRATION);
+			}catch (NullPointerException ex){
+				 LOG.error(ex.getMessage(), ex);
+			}
+	    	System.out.println("backboorEnabled"+backboorEnabled);
+	    	System.out.println("roleIntegrationEnabled"+roleIntegrationEnabled);
+
 		    hasBackdoorloginPermission = backDoorLoginAuthorizationService.hasBackdoorLoginPermission(user);
 			hsreq.getSession().setAttribute("hasBackdoorloginPermission",hasBackdoorloginPermission);
 			hsreq.getSession().setAttribute("backboorEnabled", backboorEnabled);
 			
-			roleIntegrationEnabled = parameterService.getParameterValueAsBoolean(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-                Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, KcMitConstants.ENABLE_ROLE_INTEGRATION);
+			
 		if(roleIntegrationEnabled){
 			RoleIntegrationService roleIntegrationService = KcServiceLocator.getService(RoleIntegrationService.class);
 
