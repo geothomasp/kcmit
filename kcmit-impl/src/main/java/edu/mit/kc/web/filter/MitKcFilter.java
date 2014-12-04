@@ -61,8 +61,6 @@ public class MitKcFilter implements Filter {
 			}catch (NullPointerException ex){
 				 LOG.error(ex.getMessage(), ex);
 			}
-	    	System.out.println("backboorEnabled"+backboorEnabled);
-	    	System.out.println("roleIntegrationEnabled"+roleIntegrationEnabled);
 
 		    hasBackdoorloginPermission = backDoorLoginAuthorizationService.hasBackdoorLoginPermission(user);
 			hsreq.getSession().setAttribute("hasBackdoorloginPermission",hasBackdoorloginPermission);
