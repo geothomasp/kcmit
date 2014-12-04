@@ -18,7 +18,7 @@
 This config file only contains properties that are set by the maven build process using property replacement.
 -->
 <config>
-	<param name="version">kc6001-s9-${timestamp}</param>
+	<param name="version">kc6001-s10-${timestamp}</param>
 	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST">mit-kc-dev@mit.edu</param>
 	<param name="mitKcBatchJobUserName">MITKC</param>
  	<param name="kc.mit.core.mode">LOCAL</param>
