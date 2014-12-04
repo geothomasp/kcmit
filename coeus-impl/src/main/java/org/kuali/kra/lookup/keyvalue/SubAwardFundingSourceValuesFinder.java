@@ -17,7 +17,9 @@ package org.kuali.kra.lookup.keyvalue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kuali.coeus.sys.framework.keyvalue.FormViewAwareUifKeyValuesFinderBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
@@ -35,13 +37,14 @@ public class SubAwardFundingSourceValuesFinder extends FormViewAwareUifKeyValues
         StringBuffer fundingValues = new StringBuffer();
         Long subawardID = doc.getSubAward().getSubAwardId();
         List<KeyValue> keyValues = new ArrayList<KeyValue>();
+        Map<String, Long> fieldValues = new HashMap<String, Long>();
+        fieldValues.put("subAwardId", subawardID);
         Collection<SubAwardFundingSource> fundingSource = (Collection<SubAwardFundingSource>) KcServiceLocator
-                .getService(BusinessObjectService.class).findAll(SubAwardFundingSource.class);
+                .getService(BusinessObjectService.class).findMatching(SubAwardFundingSource.class,fieldValues);
+        
         for (SubAwardFundingSource subAwardFunding : fundingSource) {
-            if (subAwardFunding.getSubAwardId().equals(subawardID)) {
                 fundingValues.append(subAwardFunding.getAward().getAwardNumber());
                 keyValues.add(new ConcreteKeyValue(subAwardFunding.getSubAwardFundingSourceId().toString(),"Award:"+subAwardFunding.getAward().getAwardNumber()));
-            }
         }
         if(fundingValues.length() == 0){
             keyValues.add(0, new ConcreteKeyValue("", "No Funding Source has been added to this Subaward"));
