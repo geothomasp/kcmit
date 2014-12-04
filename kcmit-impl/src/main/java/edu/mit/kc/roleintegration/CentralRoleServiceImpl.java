@@ -22,7 +22,11 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 import rolesservice.Roles;
 import rolesservice.RolesAuthorizationExt;
@@ -36,6 +40,7 @@ public class CentralRoleServiceImpl implements CentralRoleService {
     
     private ConfigurationService kualiConfigurationService;
 
+    private ParameterService parameterService;
     protected String serviceHost;
     protected String servicePort;
 
@@ -46,11 +51,15 @@ public class CentralRoleServiceImpl implements CentralRoleService {
     	Roles port = configureApplicantIntegrationSoapPort();
 
     	List<RolesAuthorizationExt> rolesAuthorizationExt = new ArrayList<RolesAuthorizationExt>();
-		try {
-			rolesAuthorizationExt = port.listAuthorizationsByPersonExt(userName,"AWRD",true,true,userName);
-		} catch (SOAPFaultException e) {
+    	
+    	try {
+    		String category = parameterService.getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+    				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, KcMitConstants.ROLE_CENTRAL_DB_CATEGORY_CODE);
+    		rolesAuthorizationExt = port.listAuthorizationsByPersonExt(userName,category,true,true,userName);
+    	} catch (SOAPFaultException | NullPointerException e) {
 			 LOG.error(e.getMessage(), e);
 		}
+    	
     	return rolesAuthorizationExt;
     }
 
@@ -179,5 +188,15 @@ public class CentralRoleServiceImpl implements CentralRoleService {
         host.append(port);
         return host.toString();
     }
+
+
+	public ParameterService getParameterService() {
+		return parameterService;
+	}
+
+
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
+	}
 
 }

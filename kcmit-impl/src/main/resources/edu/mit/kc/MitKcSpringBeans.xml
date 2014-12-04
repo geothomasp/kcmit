@@ -299,5 +299,6 @@
             </bean>
         </property>
        <property name="kualiConfigurationService" ref="kualiConfigurationService"/>
+       <property name="parameterService" ref="parameterService" />
     </bean>
 </beans>
