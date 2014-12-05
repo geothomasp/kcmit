@@ -364,11 +364,7 @@ protected boolean isFandaRateInputInPairs(List<AwardFandaRate> awardFandaRateLis
     List<AwardFandaRate> awardFandaRates = new ArrayList<AwardFandaRate>();
     DateFormat dateFormat = new SimpleDateFormat(Constants.DEFAULT_DATE_FORMAT_PATTERN);
     createHashMapsForRuleEvaluation(awardFandaRateList,a1,b1);
-    boolean valid = evaluateRule(awardFandaRateList,a1,b1);
-    if(!valid) {
-        GlobalVariables.getMessageMap().putError(FANDA_RATES
-                , KeyConstants.INDIRECT_COST_RATE_NOT_IN_PAIR);
-    }
+    boolean valid = checkValidPair(awardFandaRateList);
     isPairChecked = true;
     if(valid){
        int i = 0;
@@ -499,5 +495,41 @@ Collection<ValidRates> getValidRates(ScaleTwoDecimal specialEbRateOnCampus, Scal
     rateValues.put(RATE_CLASS_TYPE, FANDA_RATE_CLASS_TYPE);
     return (Collection<ValidRates>) 
             getKraBusinessObjectService().findMatching(ValidRates.class, rateValues);
+}
+
+private boolean checkValidPair(List<AwardFandaRate> awardFandaRateList){
+    boolean valid = true;
+    List<Integer> awardFandaRateListOff = new ArrayList<Integer>();
+    List<Integer> awardFandaRateListOn = new ArrayList<Integer>();
+    int rowCountOn = 0;
+	for(AwardFandaRate awardFandaRateOn :awardFandaRateList){
+		if(StringUtils.equalsIgnoreCase(awardFandaRateOn.getOnCampusFlag(),"N")){
+
+			if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRateOn.getApplicableFandaRate()).size() > 0){
+				 int rowCountOff = 0;
+				for(AwardFandaRate awardFandaRateOff :awardFandaRateList){
+					if(StringUtils.equalsIgnoreCase(awardFandaRateOff.getOnCampusFlag(),"F") &&
+						awardFandaRateOn.getFandaRateTypeCode().equals(awardFandaRateOff.getFandaRateTypeCode()) && !awardFandaRateListOff.contains(rowCountOff) ){
+						awardFandaRateListOff.add(rowCountOff);
+						awardFandaRateListOn.add(rowCountOn);
+						break;
+					}
+					rowCountOff ++;
+				}
+			}
+
+		}
+		rowCountOn ++;
+	}
+	
+	int row = 0;
+	for(AwardFandaRate awardFandaRate :awardFandaRateList){
+		if(!awardFandaRateListOn.contains(row) && !awardFandaRateListOff.contains(row)){
+			valid = false;
+			reportError(AWARD_FANDA_RATES_ARRAY+"[" + row + "].applicableFandaRate",  KeyConstants.INDIRECT_COST_RATE_NOT_IN_PAIR);
+		}
+		row ++;
+	}
+	return valid;
 }
 }
