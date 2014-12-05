@@ -1,0 +1,70 @@
+
+SQL*Plus: Release 10.2.0.4.0 - Production on Fri Dec 5 09:39:12 2014
+
+Copyright (c) 1982, 2007, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+UPDATE CUSTOM_ATTRIBUTE_DOC_VALUE s
+       *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+
+Commit complete.
+
+TRUNCATE TABLE AWARD_FUNDING_PROPOSALS
+               *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+from  award t,proposal p,OSP$AWARD_FUNDING_PROPOSALS af
+                         *
+ERROR at line 3:
+ORA-00942: table or view does not exist
+
+
+inner join PROPOSAL p on ap.PROPOSAL_ID=p.PROPOSAL_ID
+           *
+ERROR at line 13:
+ORA-06550: line 13, column 12:
+PL/SQL: ORA-00942: table or view does not exist
+ORA-06550: line 12, column 1:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 11, column 8:
+PLS-00341: declaration of cursor 'C_FUND' is incomplete or malformed
+ORA-06550: line 15, column 8:
+PL/SQL: Item ignored
+ORA-06550: line 24, column 19:
+PLS-00320: the declaration of the type of this expression is incomplete or
+malformed
+ORA-06550: line 24, column 1:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 27, column 165:
+PLS-00320: the declaration of the type of this expression is incomplete or
+malformed
+ORA-06550: line 27, column 165:
+PL/SQL: ORA-00904: "R_FUND"."SEQUENCE_NUMBER": invalid identifier
+ORA-06550: line 27, column 1:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 35, column 78:
+PL/SQL: ORA-00942: table or view does not exist
+ORA-06550: line 35, column 13:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 37, column 110:
+PL/SQL: ORA-00942: table or view does not exist
+ORA-06550: line 36, column 14:
+PL/SQL: SQL Statement ignored
+OR
+
+
+
+Commit complete.
+
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
