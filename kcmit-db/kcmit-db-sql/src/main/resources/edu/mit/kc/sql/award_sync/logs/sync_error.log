@@ -1,108 +1,120 @@
 
-Started syncing, start time: 24-NOV-14 09.54.11.122325 AM                       
+Started syncing, start time: 05-DEC-14 04.18.51.426931 PM                       
 
-insert bo: 24-NOV-14 09.54.11.373922 AM                                         
+insert bo: 05-DEC-14 04.18.51.703056 PM                                         
 
-Completed bo : 24-NOV-14 09.54.12.930676 AM                                     
+Completed bo : 05-DEC-14 04.18.53.318630 PM                                     
 
-Completed bo : 24-NOV-14 09.54.13.030630 AM                                     
+Completed bo : 05-DEC-14 04.18.53.420551 PM                                     
 
-insert award: 24-NOV-14 09.54.19.324032 AM                                      
-
- Start time of AWARD is 24-NOV-14 09.55.24.789713 AM                            
-alter table proposal add constraint UQ_PROPOSAL unique(PROPOSAL_NUMBER,SEQUENCE_NUMBER)
-                                    *
+insert award: 05-DEC-14 04.19.01.621079 PM                                      
+CREATE INDEX OSP$PERSON_I ON OSP$PERSON(PERSON_ID)
+             *
 ERROR at line 1:
-ORA-02299: cannot validate (KCSO.UQ_PROPOSAL) - duplicate keys found 
+ORA-00955: name is already used by an existing object 
 
 
 
-     90621                                                                      
+ Start time of AWARD is 05-DEC-14 04.20.03.483570 PM                            
 
- End time of AWARD is 24-NOV-14 09.57.25.468399 AM                              
-SP2-0027: Input is too long (> 2499 characters) - line ignored
+     23844                                                                      
 
- Start time of TEMP TABLES FOR AWARD MODULE  is 24-NOV-14 09.57.25.567382 AM    
+ End time of AWARD is 05-DEC-14 04.21.37.627321 PM                              
+select ' Start time of insert AWARD Krew is '|| localtimestamp from dual;--populating krew_tables in insert_award.sqlselect ' End time of insert AWARD Krew is '|| localtimestamp from dual/
+                                                                        *
+ERROR at line 1:
+ORA-00911: invalid character 
 
- End time of TEMP TABLES FOR AWARD MODULE  is 24-NOV-14 09.57.25.668250 AM      
 
- Start time of VERSION_HISTORY  is 24-NOV-14 09.57.25.769989 AM                 
+
+ End time of TEMP TABLES FOR AWARD MODULE  is 05-DEC-14 04.21.37.872790 PM      
+
+ Start time of VERSION_HISTORY  is 05-DEC-14 04.21.37.992196 PM                 
 Completed VERSION_HISTORY!!!                                                    
 
- End time of VERSION_HISTORY  is 24-NOV-14 09.57.25.959893 AM                   
+ End time of VERSION_HISTORY  is 05-DEC-14 04.21.38.227130 PM                   
 
- Start time of AWARD_SPECIAL_REVIEW script is 24-NOV-14 09.57.26.152948 AM      
+ Start time of AWARD_SPECIAL_REVIEW script is 05-DEC-14 04.21.38.456926 PM      
 
- End time of AWARD_SPECIAL_REVIEW script is 24-NOV-14 09.57.26.833263 AM        
+ End time of AWARD_SPECIAL_REVIEW script is 05-DEC-14 04.21.38.782554 PM        
 
- Start time of AWARD_SPECIAL_REVIEW Update script is 24-NOV-14 09.57.26.935084 A
+ Start time of AWARD_SPECIAL_REVIEW Update script is 05-DEC-14 04.21.38.929882 P
 M                                                                               
                                                                                 
 
- End time of AWARD_SPECIAL_REVIEW Update script is 24-NOV-14 09.57.30.268292 AM 
+ End time of AWARD_SPECIAL_REVIEW Update script is 05-DEC-14 04.21.41.728401 PM 
 
- Start time of AWARD_COST_SHARE  script is 24-NOV-14 09.57.30.370268 AM         
+ Start time of AWARD_COST_SHARE  script is 05-DEC-14 04.21.41.854431 PM         
 
- End time of AWARD_COST_SHARE script is 24-NOV-14 09.57.30.635742 AM            
+ End time of AWARD_COST_SHARE script is 05-DEC-14 04.21.42.105170 PM            
 
- Start time of AWARD_APPROVED_EQUIPMENT  script is 24-NOV-14 09.57.30.737745 AM 
+ Start time of AWARD_APPROVED_EQUIPMENT  script is 05-DEC-14 04.21.42.204720 PM 
 
- End time of AWARD_APPROVED_EQUIPMENT  script is 24-NOV-14 09.57.31.118306 AM   
+ End time of AWARD_APPROVED_EQUIPMENT  script is 05-DEC-14 04.21.42.850484 PM   
 
- Start time of AWARD_APPROVED_FOREIGN_TRAVEL  script is 24-NOV-14 09.57.31.22239
-5 AM                                                                            
+ Start time of AWARD_APPROVED_FOREIGN_TRAVEL  script is 05-DEC-14 04.21.42.96473
+5 PM                                                                            
                                                                                 
 
- End time of AWARD_APPROVED_FOREIGN_TRAVEL script is 24-NOV-14 09.57.31.478613 A
+ End time of AWARD_APPROVED_FOREIGN_TRAVEL script is 05-DEC-14 04.21.43.185542 P
 M                                                                               
                                                                                 
 
- Start time of AWARD_PAYMENT_SCHEDULE script is 24-NOV-14 09.57.31.580367 AM    
+ Start time of AWARD_PAYMENT_SCHEDULE script is 05-DEC-14 04.21.43.312618 PM    
 
- End time of AWARD_PAYMENT_SCHEDULE script is 24-NOV-14 09.57.32.595902 AM      
+ End time of AWARD_PAYMENT_SCHEDULE script is 05-DEC-14 04.21.44.390440 PM      
 
- Start time of AWARD_SCIENCE_KEYWORD script is 24-NOV-14 09.57.32.698189 AM     
+ Start time of AWARD_SCIENCE_KEYWORD script is 05-DEC-14 04.21.44.524778 PM     
 
- End time of AWARD_SCIENCE_KEYWORD script is 24-NOV-14 09.57.32.923323 AM       
+ End time of AWARD_SCIENCE_KEYWORD script is 05-DEC-14 04.21.44.750227 PM       
 
- Start time of AWARD_IDC_RATE script is 24-NOV-14 09.57.33.023684 AM            
+ Start time of AWARD_IDC_RATE script is 05-DEC-14 04.21.44.871673 PM            
 
- End time of AWARD_IDC_RATE script is 24-NOV-14 09.57.34.515615 AM              
+ End time of AWARD_IDC_RATE script is 05-DEC-14 04.21.46.103178 PM              
 
- Start time of AWARD_APPROVED_SUBAWARDS script is 24-NOV-14 09.57.34.618175 AM  
+ Start time of AWARD_APPROVED_SUBAWARDS script is 05-DEC-14 04.21.46.239551 PM  
 
- End time of AWARD_APPROVED_SUBAWARDS script is 24-NOV-14 09.57.34.895370 AM    
+ End time of AWARD_APPROVED_SUBAWARDS script is 05-DEC-14 04.21.46.521095 PM    
 
- Start time of AWARD_TRANSFERRING_SPONSOR is 24-NOV-14 09.57.34.997719 AM       
+ Start time of AWARD_TRANSFERRING_SPONSOR is 05-DEC-14 04.21.46.662276 PM       
 
- End time of AWARD_TRANSFERRING_SPONSOR is 24-NOV-14 09.57.35.228217 AM         
+ End time of AWARD_TRANSFERRING_SPONSOR is 05-DEC-14 04.21.46.887806 PM         
 
- Start time of AWARD_PERSONS(Key Person) script is 24-NOV-14 09.57.35.327661 AM 
+ Start time of AWARD_PERSONS(Key Person) script is 05-DEC-14 04.21.47.017654 PM 
 
- End time of AWARD_PERSONS(Key Person) script is 24-NOV-14 09.57.35.570771 AM   
+ End time of AWARD_PERSONS(Key Person) script is 05-DEC-14 04.21.47.254629 PM   
 
- Start time of AWARD_PERSONS(Investigators) script is 24-NOV-14 09.57.35.670292 
-AM                                                                              
+ Start time of AWARD_PERSONS(Investigators) script is 05-DEC-14 04.21.47.394795 
+PM                                                                              
                                                                                 
 
- End time of AWARD_PERSONS(Investigators) script is 24-NOV-14 09.57.35.940811 AM
+ End time of AWARD_PERSONS(Investigators) script is 05-DEC-14 04.21.47.687216 PM
 
- Start time of AWARD_SPONSOR_TERM script is 24-NOV-14 09.57.36.042689 AM        
+ Start time of AWARD_SPONSOR_TERM script is 05-DEC-14 04.21.47.819591 PM        
 
- End time of AWARD_SPONSOR_TERM script is 24-NOV-14 09.57.45.776071 AM          
+ End time of AWARD_SPONSOR_TERM script is 05-DEC-14 04.21.54.218639 PM          
 
- Start time of AWARD_ATTACHMENT is 24-NOV-14 09.57.45.910469 AM                 
+ Start time of AWARD_ATTACHMENT is 05-DEC-14 04.21.54.357004 PM                 
+SELECT t1.MIT_AWARD_NUMBER,t1.SEQUENCE_NUMBER,t1.DOCUMENT_ID,t1.DOCUMENT_TYPE_CODE,t1.DESCRIPTION,t1.FILE_NAME,t1.DOCUMENT,t1.DOCUMENT_STATUS_CODE,t1.UPDATE_TIMESTAMP,t1.UPDATE_USER,t1.MIME_TYPE FROM OSP$AWARD_DOCUMENTS@coeus.kuali t1
+                                                                                                                                                                                      *
+ERROR at line 2:
+ORA-24801: illegal parameter value in OCI lob function 
+ORA-02063: preceding line from COEUS.KUALI 
+ORA-01691: unable to extend lob segment KCSO.SYS_LOB0000150028C00007$$ by 8192 
+in tablespace KCSO_DATA_TS01 
+
+
 Completed AWARD_ATTACHMENT!!!                                                   
 
- End time of AWARD_ATTACHMENT is 24-NOV-14 09.57.49.000151 AM                   
+ End time of AWARD_ATTACHMENT is 05-DEC-14 04.34.59.434782 PM                   
 
- Start time of AWARD_ATTACHMENT VERSIONNING  is 24-NOV-14 09.57.49.107447 AM    
+ Start time of AWARD_ATTACHMENT VERSIONNING  is 05-DEC-14 04.34.59.534382 PM    
 
- End time of AWARD_ATTACHMENT VERSIONNING  is 24-NOV-14 09.57.49.207996 AM      
+ End time of AWARD_ATTACHMENT VERSIONNING  is 05-DEC-14 04.34.59.637321 PM      
 
- Start time of AWARD_CUSTOM_DATA  is 24-NOV-14 09.57.49.309805 AM               
+ Start time of AWARD_CUSTOM_DATA  is 05-DEC-14 04.34.59.739032 PM               
 
- End time of AWARD_CUSTOM_DATA  is 24-NOV-14 09.57.50.185798 AM                 
+ End time of AWARD_CUSTOM_DATA  is 05-DEC-14 04.35.01.887596 PM                 
 CREATE INDEX AWARD_COMMENT_I1 ON AWARD_COMMENT(AWARD_NUMBER,SEQUENCE_NUMBER,COMMENT_TYPE_CODE)
              *
 ERROR at line 1:
@@ -110,361 +122,346 @@ ORA-00955: name is already used by an existing object
 
 
 
- Start time of AWARD_COMMENT update script is 24-NOV-14 09.57.52.233499 AM      
+ Start time of AWARD_COMMENT update script is 05-DEC-14 04.35.03.889696 PM      
 
- End time of AWARD_COMMENT update script is 24-NOV-14 09.57.52.332498 AM        
+ End time of AWARD_COMMENT update script is 05-DEC-14 04.35.03.993616 PM        
 
- Start time of AWARD_CLOSEOUT  is 24-NOV-14 09.57.52.432720 AM                  
+ Start time of AWARD_CLOSEOUT  is 05-DEC-14 04.35.04.094885 PM                  
 
- End time of AWARD_CLOSEOUT  is 24-NOV-14 09.57.52.715798 AM                    
+ End time of AWARD_CLOSEOUT  is 05-DEC-14 04.35.04.387339 PM                    
 
- Start time of AWARD_PERSON_UNITS script is 24-NOV-14 09.57.52.812712 AM        
-Error in "insert_award_person_units.sql" 021725-00001,3,900025486 - ORA-01403:  
-no data found                                                                   
+ Start time of AWARD_PERSON_UNITS script is 05-DEC-14 04.35.04.491424 PM        
 
- End time of AWARD_PERSON_UNITS script is 24-NOV-14 09.57.53.185865 AM          
+ End time of AWARD_PERSON_UNITS script is 05-DEC-14 04.35.04.884113 PM          
 
- Start time of AWARD_PERSON_CREDIT_SPLITS script is 24-NOV-14 09.57.53.283977 AM
-DECLARE
-*
-ERROR at line 1:
+ Start time of AWARD_PERSON_CREDIT_SPLITS script is 05-DEC-14 04.35.04.984413 PM
+Error in "insert_award_person_credit_split.sql" 020581-00001,7,900014127,1 -    
 ORA-02291: integrity constraint (KCSO.FK_AP_CREDIT_SPLIT_ICT) violated - parent 
-key not found 
-ORA-06512: at line 60 
+key not found                                                                   
+Error in "insert_award_person_credit_split.sql" 020581-00001,7,921658889,1 -    
+ORA-02291: integrity constraint (KCSO.FK_AP_CREDIT_SPLIT_ICT) violated - parent 
+key not found                                                                   
 
+ End time of AWARD_PERSON_CREDIT_SPLITS script is 05-DEC-14 04.35.05.312056 PM  
 
-
- End time of AWARD_PERSON_CREDIT_SPLITS script is 24-NOV-14 09.57.53.801056 AM  
-
- Start time of AWARD_PERS_UNIT_CRED_SPLITS script is 24-NOV-14 09.57.53.900101 A
+ Start time of AWARD_PERS_UNIT_CRED_SPLITS script is 05-DEC-14 04.35.05.411258 P
 M                                                                               
                                                                                 
+Error in "insert_award_pers_unit_credit_split.sql" 020581-00001,7,900014127,1 - 
+ORA-02291: integrity constraint (KCSO.FK_APU_CREDIT_SPLIT_ICT) violated - parent
+key not found                                                                   
+Error in "insert_award_pers_unit_credit_split.sql" 020581-00001,7,921658889,1 - 
+ORA-02291: integrity constraint (KCSO.FK_APU_CREDIT_SPLIT_ICT) violated - parent
+key not found                                                                   
+
+ End time of AWARD_PERS_UNIT_CRED_SPLITS script is 05-DEC-14 04.35.07.347342 PM 
+
+ Start time of AWARD_NOTEPAD script is 05-DEC-14 04.35.07.446859 PM             
+Completed AWARD_NOTEPAD!!!                                                      
+
+ End time of AWARD_NOTEPAD script is 05-DEC-14 04.35.07.687176 PM               
+
+ Start time of AWARD_SPONSOR_CONTACTS script is 05-DEC-14 04.35.07.787834 PM    
+
+ End time of AWARD_SPONSOR_CONTACTS script is 05-DEC-14 04.35.08.647314 PM      
+
+ Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is 05-DEC-14 04.3
+5.08.771756 PM                                                                  
+                                                                                
+
+ End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is 05-DEC-14 04.35.11.5517
+34 PM                                                                           
+                                                                                
+
+ Start time of AWARD_REPORT_TRACKING script is 05-DEC-14 04.35.11.651463 PM     
 DECLARE
 *
 ERROR at line 1:
-ORA-02291: integrity constraint (KCSO.FK_APU_CREDIT_SPLIT_ICT) violated - 
-parent key not found 
-ORA-06512: at line 60 
+ORA-01403: no data found 
+ORA-06512: at line 46 
+ORA-01422: exact fetch returns more than requested number of rows 
 
 
 
- End time of AWARD_PERS_UNIT_CRED_SPLITS script is 24-NOV-14 09.57.54.823590 AM 
-
- Start time of AWARD_NOTEPAD script is 24-NOV-14 09.57.54.927441 AM             
-Completed AWARD_NOTEPAD!!!                                                      
-
- End time of AWARD_NOTEPAD script is 24-NOV-14 09.57.55.130617 AM               
-
- Start time of AWARD_SPONSOR_CONTACTS script is 24-NOV-14 09.57.55.232778 AM    
-
- End time of AWARD_SPONSOR_CONTACTS script is 24-NOV-14 09.57.57.011282 AM      
-
- Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is 24-NOV-14 09.5
-7.57.110379 AM                                                                  
-                                                                                
-
- End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is 24-NOV-14 09.57.58.7253
-90 AM                                                                           
-                                                                                
-
- Start time of AWARD_REPORT_TRACKING script is 24-NOV-14 09.57.58.825686 AM     
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,2 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,1 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-Error in "insert_award_report_tracking.sql" 018413-00001,15,3 - ORA-01422: exact
-fetch returns more than requested number of rows                                
-
- End time of AWARD_REPORT_TRACKING  is 24-NOV-14 09.58.03.053541 AM             
-select ' Start time of AWARD_FUNDING_PROPOSALS  is '|| localtimestamp from dual/INSERT INTO AWARD_FUNDING_PROPOSALS(AWARD_FUNDING_PROPOSAL_ID,AWARD_ID,PROPOSAL_ID,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,ACTIVE,OBJ_ID)select SEQUENCE_AWARD_ID.NEXTVAL,t.award_id, p.proposal_id,af.UPDATE_TIMESTAMP,af.UPDATE_USER,1,'Y',SYS_GUID()from  award t,proposal p,OSP$AWARD_FUNDING_PROPOSALS af,TEMP_TAB_TO_SYNC_AWARD tswhere t.award_number = replace(af.MIT_AWARD_NUMBER,'-','-00')and   t.SEQUENCE_NUMBER = af.SEQUENCE_NUMBERand  af.MIT_AWARD_NUMBER=ts.MIT_AWARD_NUMBERand  af.SEQUENCE_NUMBER=ts.SEQUENCE_NUMBERand p.proposal_number = af.proposal_numberand ts.FEED_TYPE = 'N'and p.sequence_number = af.PROP_SEQUENCE_NUMBER/commit/select ' Start time of AWARD_FUNDING_PROPOSALS  is '|| localtimestamp from dual/
+ End time of AWARD_REPORT_TRACKING  is 05-DEC-14 04.35.15.571902 PM             
+select ' Start time of AWARD_FUNDING_PROPOSALS  is '|| localtimestamp from dual/INSERT INTO AWARD_FUNDING_PROPOSALS(AWARD_FUNDING_PROPOSAL_ID,AWARD_ID,PROPOSAL_ID,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,ACTIVE,OBJ_ID)select SEQUENCE_AWARD_ID.NEXTVAL,t.award_id, p.proposal_id,af.UPDATE_TIMESTAMP,af.UPDATE_USER,1,'Y',SYS_GUID()from  award t,proposal p,OSP$AWARD_FUNDING_PROPOSALS af,TEMP_TAB_TO_SYNC_AWARD tswhere t.award_number = replace(af.MIT_AWARD_NUMBER,'-','-00')and   t.SEQUENCE_NUMBER = af.SEQUENCE_NUMBERand  af.MIT_AWARD_NUMBER=ts.MIT_AWARD_NUMBERand  af.SEQUENCE_NUMBER=ts.SEQUENCE_NUMBERand p.proposal_number = af.proposal_numberand ts.FEED_TYPE = 'N'and p.sequence_number = af.PROP_SEQUENCE_NUMBER/commit/declareli_seq number(4,0);li_proposal_id number(12,0);li_count number;ll_timestamp TIMESTAMP(6);ls_user VARCHAR2(60);cursor c_fund isselect  distinct ap.PROPOSAL_ID,p.PROPOSAL_NUMBER,p.SEQUENCE_NUMBER from AWARD_FUNDING_PROPOSALS apinner join PROPOSAL p on ap.PROPOSAL_ID=p.PROPOSAL_IDinner join TEMP_TAB_TO_SYNC_IP t on t.PROPOSAL_NUMBER=p.PROPOSAL_NUMBER and t.SEQUENCE_NUMBER=p.SEQUENCE_NUMBERwhere t.FEED_TYPE='N'ORDER BY p.PROPOSAL_NUMBER,p.SEQUENCE_NUMBER;r_fund c_fund%rowtype;beginif c_fund%isopen thenclose c_fund;end if;open c_fund;loopfetch c_fund into r_fund;exit when c_fund%notfound;select count(Proposal_number) into  li_count from OSP$AWARD_FUNDING_PROPOSALS@coeus.kuali where PROPOSAL_NUMBER = r_fund.PROPOSAL_NUMBER and PROP_SEQUENCE_NUMBER = r_fund.SEQUENCE_NUMBER;if li_count >0 then    	   if r_fund.SEQUENCE_NUMBER<> 1 then          select UPDATE_TIMESTAMP,UPDATE_USER into ll_timestamp,ls_user  from PROPOSAL where PROPOSAL_ID = r_fund.PROPOSAL_ID;       li_seq:=r_fund.SEQUENCE_NUMBER-1;        SELECT PROPOSAL_ID INTO li_proposal_id FROM  PROPOSAL WHERE PROPOSAL_NUMBER=r_fund.PROPOSAL_NUMBER AND SEQUENCE_NUMBER=li_seq;        INSERT INTO AWARD_FUNDING_PROPOSALS(AWARD_FUNDING_PROPOSAL_ID,AWARD_ID,PROPOSAL_ID,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,ACTIVE,OBJ_ID)        SELECT SEQUENCE_AWARD_ID.NEXTVAL,af.AWARD_ID,r_fund.PROPOSAL_ID,ll_timestamp,ls_user,1,'Y',sys_guid() FROM AWARD_FUNDING_PROPOSALS af         WHERE  PROPOSAL_ID=li_proposal_id;    end if;end if;end loop;close c_fund;end;/select ' Start time of AWARD_FUNDING_PROPOSALS  is '|| localtimestamp from dual;/
                                                                                 *
 ERROR at line 1:
 ORA-00933: SQL command not properly ended 
 
 
 
- End time of AWARD_UNIT_CONTACTS is 24-NOV-14 09.58.03.357425 AM                
+ End time of AWARD_UNIT_CONTACTS is 05-DEC-14 04.35.15.929573 PM                
 
- Start time of AWARD_HIERARCHY script is 24-NOV-14 09.58.03.465270 AM           
+ Start time of AWARD_HIERARCHY script is 05-DEC-14 04.35.16.031683 PM           
 Completed AWARD_HIERARCHY!!!                                                    
 
- End time of AWARD_HIERARCHY script is 24-NOV-14 09.58.03.715872 AM             
+ End time of AWARD_HIERARCHY script is 05-DEC-14 04.35.16.408046 PM             
 
- Start time of AWARD_AMOUNT_TRANSACTION is 24-NOV-14 09.58.03.818001 AM         
+ Start time of AWARD_AMOUNT_TRANSACTION is 05-DEC-14 04.35.16.533817 PM         
 Completed AWARD_AMOUNT_INFO!!!                                                  
 
- End time of AWARD_AMOUNT_TRANSACTION is 24-NOV-14 09.58.10.528681 AM           
+ End time of AWARD_AMOUNT_TRANSACTION is 05-DEC-14 04.35.21.487557 PM           
 
- Start time of AWARD_AMOUNT_INFO is 24-NOV-14 09.58.10.628053 AM                
+ Start time of AWARD_AMOUNT_INFO is 05-DEC-14 04.35.21.586423 PM                
 
- End time of AWARD_AMOUNT_INFO is 24-NOV-14 09.58.10.728984 AM                  
+ End time of AWARD_AMOUNT_INFO is 05-DEC-14 04.35.21.695760 PM                  
 
-update award: 24-NOV-14 09.58.10.953507 AM                                      
+update award: 05-DEC-14 04.35.21.907216 PM                                      
 
- Star time of UPDATE_AWARD is 24-NOV-14 09.58.11.052972 AM                      
+ Star time of UPDATE_AWARD is 05-DEC-14 04.35.22.009194 PM                      
 
- End time of UPDATE_AWARD is 24-NOV-14 09.58.11.473126 AM                       
+ End time of UPDATE_AWARD is 05-DEC-14 04.35.22.387799 PM                       
 
- Start time of UPDATE_AWARD_SPECIAL_REVIEW is 24-NOV-14 09.58.11.573668 AM      
+ Start time of UPDATE_AWARD_SPECIAL_REVIEW is 05-DEC-14 04.35.22.487694 PM      
 
- End time of UPDATE_AWARD_SPECIAL_REVIEW is 24-NOV-14 09.58.11.774382 AM        
+ End time of UPDATE_AWARD_SPECIAL_REVIEW is 05-DEC-14 04.35.22.699183 PM        
 
- Start time of UPDATE_AWARD_COST_SHARE is 24-NOV-14 09.58.11.875410 AM          
-
- End time of UPDATE_AWARD_COST_SHARE is 24-NOV-14 09.58.12.067936 AM            
-
- Start time of UPDATE_AWARD_APPROVED_EQUIPMENT is 24-NOV-14 09.58.12.168371 AM  
-
- End time of UPDATE_AWARD_APPROVED_EQUIPMENT is 24-NOV-14 09.58.12.353316 AM    
-
- Start time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is 24-NOV-14 09.58.12.453459
- AM                                                                             
-                                                                                
-
- End time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is 24-NOV-14 09.58.12.648540 A
+ Start time of AWARD_SPECIAL_REVIEW Update script is 05-DEC-14 04.35.22.806554 P
 M                                                                               
                                                                                 
 
- Start time of UPDATE_AWARD_PAYMENT_SCHEDULE is 24-NOV-14 09.58.12.747895 AM    
+ End time of AWARD_SPECIAL_REVIEW Update script is 05-DEC-14 04.35.24.199376 PM 
 
- End time of UPDATE_AWARD_PAYMENT_SCHEDULE is 24-NOV-14 09.58.12.933435 AM      
+ Start time of UPDATE_AWARD_COST_SHARE is 05-DEC-14 04.35.24.305024 PM          
 
- Start time of UPDATE_AWARD_SCIENCE_KEYWORD is 24-NOV-14 09.58.13.035424 AM     
+ End time of UPDATE_AWARD_COST_SHARE is 05-DEC-14 04.35.24.494559 PM            
 
- End time of UPDATE_AWARD_SCIENCE_KEYWORD is 24-NOV-14 09.58.13.225749 AM       
+ Start time of UPDATE_AWARD_APPROVED_EQUIPMENT is 05-DEC-14 04.35.24.594551 PM  
 
- Start time of UPDATE_AWARD_IDC_RATE is 24-NOV-14 09.58.13.328305 AM            
+ End time of UPDATE_AWARD_APPROVED_EQUIPMENT is 05-DEC-14 04.35.24.782019 PM    
 
- End time of UPDATE_AWARD_IDC_RATE is 24-NOV-14 09.58.13.528407 AM              
+ Start time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is 05-DEC-14 04.35.24.879462
+ PM                                                                             
+                                                                                
 
- Start time of UPDATE_AWARD_APPROVED_SUBAWARDS is 24-NOV-14 09.58.13.628212 AM  
+ End time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is 05-DEC-14 04.35.25.067230 P
+M                                                                               
+                                                                                
 
- End time of UPDATE_AWARD_APPROVED_SUBAWARDS is 24-NOV-14 09.58.13.825849 AM    
+ Start time of UPDATE_AWARD_PAYMENT_SCHEDULE is 05-DEC-14 04.35.25.172352 PM    
 
- Start time of UPDATE_AWARD_TRANSFERRING_SPONSOR is 24-NOV-14 09.58.13.928484 AM
+ End time of UPDATE_AWARD_PAYMENT_SCHEDULE is 05-DEC-14 04.35.25.361620 PM      
 
- End time of UPDATE_AWARD_TRANSFERRING_SPONSOR is 24-NOV-14 09.58.14.123106 AM  
+ Start time of UPDATE_AWARD_SCIENCE_KEYWORD is 05-DEC-14 04.35.25.464502 PM     
 
- Start time of UPDATE_AWARD_PERSONS is 24-NOV-14 09.58.14.224928 AM             
+ End time of UPDATE_AWARD_SCIENCE_KEYWORD is 05-DEC-14 04.35.25.639790 PM       
 
- End time of UPDATE_AWARD_PERSONS is 24-NOV-14 09.58.14.419542 AM               
+ Start time of UPDATE_AWARD_IDC_RATE is 05-DEC-14 04.35.25.739141 PM            
 
- Start time of UPDATE_AWARD_PERSONS is 24-NOV-14 09.58.14.522105 AM             
+ End time of UPDATE_AWARD_IDC_RATE is 05-DEC-14 04.35.25.927283 PM              
 
- End time of UPDATE_AWARD_PERSONS is 24-NOV-14 09.58.14.720349 AM               
+ Start time of UPDATE_AWARD_APPROVED_SUBAWARDS is 05-DEC-14 04.35.26.024470 PM  
 
- Start time of UPDATE_AWARD_ATTACHMENT is 24-NOV-14 09.58.14.848178 AM          
+ End time of UPDATE_AWARD_APPROVED_SUBAWARDS is 05-DEC-14 04.35.26.204679 PM    
+
+ Start time of UPDATE_AWARD_TRANSFERRING_SPONSOR is 05-DEC-14 04.35.26.304438 PM
+
+ End time of UPDATE_AWARD_TRANSFERRING_SPONSOR is 05-DEC-14 04.35.26.486820 PM  
+
+ Start time of UPDATE_AWARD_PERSONS is 05-DEC-14 04.35.26.587119 PM             
+
+ End time of UPDATE_AWARD_PERSONS is 05-DEC-14 04.35.26.774663 PM               
+
+ Start time of UPDATE_AWARD_PERSONS is 05-DEC-14 04.35.26.873306 PM             
+
+ End time of UPDATE_AWARD_PERSONS is 05-DEC-14 04.35.27.063998 PM               
+
+ Start time of UPDATE_AWARD_ATTACHMENT is 05-DEC-14 04.35.27.164548 PM          
+DROP TABLE TEMP_ATTACHMENT_FILE_UPD
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
 Completed AWARD_ATTACHMENT!!!                                                   
 
- End time of UPDATE_AWARD_ATTACHMENT is 24-NOV-14 09.58.16.353284 AM            
+ End time of UPDATE_AWARD_ATTACHMENT is 05-DEC-14 04.51.17.997511 PM            
 
- Start time of UPDATE_AWARD_CUSTOM_DATA is 24-NOV-14 09.58.16.453463 AM         
+ Start time of UPDATE_AWARD_CUSTOM_DATA is 05-DEC-14 04.51.18.102215 PM         
 
- End time of UPDATE_AWARD_CUSTOM_DATA is 24-NOV-14 09.58.16.640734 AM           
+ End time of UPDATE_AWARD_CUSTOM_DATA is 05-DEC-14 04.51.18.317238 PM           
 
- Start time of UPDATE_AWARD_COMMENT is 24-NOV-14 09.58.16.742768 AM             
+ Start time of UPDATE_AWARD_COMMENT is 05-DEC-14 04.51.18.420295 PM             
 
- End time of UPDATE_AWARD_COMMENT is 24-NOV-14 09.58.17.000836 AM               
+ End time of UPDATE_AWARD_COMMENT is 05-DEC-14 04.51.18.702280 PM               
 
- Start time of UPDATE_AWARD_CLOSEOUT is 24-NOV-14 09.58.17.100218 AM            
+ Start time of UPDATE_AWARD_CLOSEOUT is 05-DEC-14 04.51.18.812111 PM            
 
- End time of UPDATE_AWARD_CLOSEOUT is 24-NOV-14 09.58.17.293079 AM              
+ End time of UPDATE_AWARD_CLOSEOUT is 05-DEC-14 04.51.19.012986 PM              
 
- Start time of UPDATE_AWARD_PERSON_UNITS is 24-NOV-14 09.58.17.395223 AM        
+ Start time of UPDATE_AWARD_PERSON_UNITS is 05-DEC-14 04.51.19.116886 PM        
 
- End time of UPDATE_AWARD_PERSON_UNITS is 24-NOV-14 09.58.17.580195 AM          
+ End time of UPDATE_AWARD_PERSON_UNITS is 05-DEC-14 04.51.19.314142 PM          
 
- Start time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is 24-NOV-14 09.58.17.678439 AM
+ Start time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is 05-DEC-14 04.51.19.417546 PM
 
- End time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is 24-NOV-14 09.58.17.882924 AM  
+ End time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is 05-DEC-14 04.51.19.615419 PM  
 
- Start time of UPDATE_AWARD_PERS_UNIT_CRED_SPLITS is 24-NOV-14 09.58.17.985830 A
+ Start time of UPDATE_AWARD_PERS_UNIT_CRED_SPLITS is 05-DEC-14 04.51.19.723414 P
 M                                                                               
                                                                                 
 
- End time of UPDATE_AWARD_PERS_UNIT_CRED_SPLITS is 24-NOV-14 09.58.18.175753 AM 
+ End time of UPDATE_AWARD_PERS_UNIT_CRED_SPLITS is 05-DEC-14 04.51.19.910218 PM 
 
- Start time of UPDATE_AWARD_NOTEPAD is 24-NOV-14 09.58.18.274898 AM             
+ Start time of UPDATE_AWARD_NOTEPAD is 05-DEC-14 04.51.20.005174 PM             
 
- End time of UPDATE_AWARD_NOTEPAD is 24-NOV-14 09.58.18.457624 AM               
+ End time of UPDATE_AWARD_NOTEPAD is 05-DEC-14 04.51.20.203656 PM               
 
- Start time of UPDATE_AWARD_SPONSOR_CONTACTS is 24-NOV-14 09.58.18.560871 AM    
+ Start time of UPDATE_AWARD_SPONSOR_CONTACTS is 05-DEC-14 04.51.20.306039 PM    
 
- End time of UPDATE_AWARD_SPONSOR_CONTACTS is 24-NOV-14 09.58.18.747681 AM      
+ End time of UPDATE_AWARD_SPONSOR_CONTACTS is 05-DEC-14 04.51.20.512938 PM      
 
- Start time of UPDATE_AWARD_REP_TERMS_RECNT is 24-NOV-14 09.58.18.848495 AM     
+ Start time of UPDATE_AWARD_REP_TERMS_RECNT is 05-DEC-14 04.51.20.611982 PM     
 
- End time of UPDATE_AWARD_REP_TERMS_RECNT is 24-NOV-14 09.58.19.048825 AM       
+ End time of UPDATE_AWARD_REP_TERMS_RECNT is 05-DEC-14 04.51.20.810145 PM       
 
- Start time of UPDATE_AWARD_SPONSOR_TERM is 24-NOV-14 09.58.19.148046 AM        
+ Start time of UPDATE_AWARD_SPONSOR_TERM is 05-DEC-14 04.51.20.920789 PM        
 
- End time of UPDATE_AWARD_SPONSOR_TERM is 24-NOV-14 09.58.19.373473 AM          
+ End time of UPDATE_AWARD_SPONSOR_TERM is 05-DEC-14 04.51.21.155628 PM          
 
- Start time of UPDATE_AWARD_REPORT_TRACKING is 24-NOV-14 09.58.19.473312 AM     
+ Start time of UPDATE_AWARD_REPORT_TRACKING is 05-DEC-14 04.51.21.258439 PM     
 
- End time of UPDATE_AWARD_REPORT_TRACKING is 24-NOV-14 09.58.19.678372 AM       
+ End time of UPDATE_AWARD_REPORT_TRACKING is 05-DEC-14 04.51.21.492545 PM       
 
- Start time of UPDATE_AWARD_FUNDING_PROPOSALS is 24-NOV-14 09.58.19.788640 AM   
+ Start time of UPDATE_AWARD_FUNDING_PROPOSALS is 05-DEC-14 04.51.21.597074 PM   
 
- End time of UPDATE_AWARD_FUNDING_PROPOSALS is 24-NOV-14 09.58.19.968542 AM     
+ End time of UPDATE_AWARD_FUNDING_PROPOSALS is 05-DEC-14 04.51.21.787059 PM     
 
- Start time of UPDATE_AWARD_UNIT_CONTACTS is 24-NOV-14 09.58.20.067815 AM       
+ Start time of UPDATE_AWARD_UNIT_CONTACTS is 05-DEC-14 04.51.21.892925 PM       
 
- End time of UPDATE_AWARD_UNIT_CONTACTS is 24-NOV-14 09.58.20.258226 AM         
+ End time of UPDATE_AWARD_UNIT_CONTACTS is 05-DEC-14 04.51.22.097523 PM         
 
- Start time of UPDATE_AWARD_AMOUNT_INFO is 24-NOV-14 09.58.20.362755 AM         
+ Start time of UPDATE_AWARD_AMOUNT_INFO is 05-DEC-14 04.51.22.203735 PM         
 
- End time of UPDATE_AWARD_AMOUNT_INFO is 24-NOV-14 09.58.20.553351 AM           
+ End time of UPDATE_AWARD_AMOUNT_INFO is 05-DEC-14 04.51.22.403719 PM           
 
- Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is 24-NOV-14 09.58.20.653790 AM  
+ Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is 05-DEC-14 04.51.22.521093 PM  
 
- End time of UPDATE_AWARD_AMOUNT_TRANSACTION is 24-NOV-14 09.58.20.833497 AM    
+ End time of UPDATE_AWARD_AMOUNT_TRANSACTION is 05-DEC-14 04.51.22.715177 PM    
 
- Start time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is 24-NOV-14 09.58.20.935542 AM
+ Start time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is 05-DEC-14 04.51.22.822708 PM
 
- End time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is 24-NOV-14 09.58.22.208635 AM  
+ End time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is 05-DEC-14 04.51.24.711396 PM  
 
- Start time of award_sequence_status_update is 24-NOV-14 09.58.22.307822 AM     
+ Start time of award_sequence_status_update is 05-DEC-14 04.51.24.812984 PM     
 
- End time of award_sequence_status_update is 24-NOV-14 09.58.22.518577 AM       
+ End time of award_sequence_status_update is 05-DEC-14 04.51.25.035542 PM       
 
-Completed Award : 24-NOV-14 09.58.22.618274 AM                                  
+Completed Award : 05-DEC-14 04.51.25.137810 PM                                  
 
-Completed Award : 24-NOV-14 09.58.22.717899 AM                                  
+Completed Award : 05-DEC-14 04.51.25.236738 PM                                  
 
-insert development proposal: 24-NOV-14 09.58.22.980232 AM                       
+insert development proposal: 05-DEC-14 04.51.25.513742 PM                       
 
- Start time of insert to EPS_PROPOSAL is 24-NOV-14 09.58.23.272423 AM           
+ Start time of insert to EPS_PROPOSAL is 05-DEC-14 04.51.25.778406 PM           
 
                                                                                
 Successfully inserted EPS_PROPOSAL and EPS_PROPOSAL_DOCUMENT                    
 
-     61611                                                                      
+     49536                                                                      
 
- End time of insert to EPS_PROPOSAL is 24-NOV-14 09.58.23.965835 AM             
+ End time of insert to EPS_PROPOSAL is 05-DEC-14 04.51.27.151319 PM             
 
- Start time of insert to EPS_PROPOSAL is 24-NOV-14 09.58.24.127332 AM           
+ Start time of insert to EPS_PROPOSAL is 05-DEC-14 04.51.27.319853 PM           
 
- End time of updating EPS_PROPOSAL is 24-NOV-14 09.58.24.398321 AM              
+ End time of updating EPS_PROPOSAL is 05-DEC-14 04.51.27.588676 PM              
 
-Completed development proposal: 24-NOV-14 09.58.24.558338 AM                    
+Completed development proposal: 05-DEC-14 04.51.27.753003 PM                    
 
-insert budget proposal: 24-NOV-14 09.58.24.655800 AM                            
+insert budget proposal: 05-DEC-14 04.51.27.852824 PM                            
 
- Start time of BUDGET is 24-NOV-14 09.58.24.755419 AM                           
+ Start time of BUDGET is 05-DEC-14 04.51.27.952904 PM                           
 
- End time of BUDGET is 24-NOV-14 09.58.25.011404 AM                             
+ End time of BUDGET is 05-DEC-14 04.51.28.235330 PM                             
 
- Start time of BUDGET_PERIODS is 24-NOV-14 09.58.25.113691 AM                   
+ Start time of BUDGET_PERIODS is 05-DEC-14 04.51.28.337639 PM                   
 
- End time of BUDGET_PERIODS is 24-NOV-14 09.58.25.300570 AM                     
+ End time of BUDGET_PERIODS is 05-DEC-14 04.51.28.619772 PM                     
 
- Start time of BUDGET_MODULAR is 24-NOV-14 09.58.25.402787 AM                   
+ Start time of BUDGET_MODULAR is 05-DEC-14 04.51.28.725566 PM                   
 
- End time of BUDGET_MODULAR is 24-NOV-14 09.58.25.583225 AM                     
+ End time of BUDGET_MODULAR is 05-DEC-14 04.51.28.982538 PM                     
 
- Start time of BUDGET_MODULAR_IDC script is 24-NOV-14 09.58.25.680467 AM        
+ Start time of BUDGET_MODULAR_IDC script is 05-DEC-14 04.51.29.087409 PM        
 
- End time of BUDGET_MODULAR_IDC script is 24-NOV-14 09.58.25.863569 AM          
+ End time of BUDGET_MODULAR_IDC script is 05-DEC-14 04.51.29.365176 PM          
 
- Start time of BUDGET_PERSONS is 24-NOV-14 09.58.25.965321 AM                   
+ Start time of BUDGET_PERSONS is 05-DEC-14 04.51.29.468002 PM                   
 
- End time of BUDGET_PERSONS is 24-NOV-14 09.58.26.173381 AM                     
+ End time of BUDGET_PERSONS is 05-DEC-14 04.51.29.726193 PM                     
 
  Start time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  scri
-pt is 24-NOV-14 09.58.26.275719 AM                                              
+pt is 05-DEC-14 04.51.29.829943 PM                                              
                                                                                 
 
  End time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  script
- is 24-NOV-14 09.58.26.555658 AM                                                
+ is 05-DEC-14 04.51.30.160005 PM                                                
                                                                                 
 
  Start time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET
-_RATE_AND_BASE  script is 24-NOV-14 09.58.26.688458 AM                          
+_RATE_AND_BASE  script is 05-DEC-14 04.51.30.260468 PM                          
                                                                                 
 
  End time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_R
-ATE_AND_BASE  script is 24-NOV-14 09.58.27.126172 AM                            
+ATE_AND_BASE  script is 05-DEC-14 04.51.30.617899 PM                            
                                                                                 
 
- Start time of BUDGET_PROJECT_INCOME is 24-NOV-14 09.58.27.225371 AM            
+ Start time of BUDGET_PROJECT_INCOME is 05-DEC-14 04.51.30.720727 PM            
 
- End time of BUDGET_PROJECT_INCOME is 24-NOV-14 09.58.27.590800 AM              
+ End time of BUDGET_PROJECT_INCOME is 05-DEC-14 04.51.31.082075 PM              
 
- Start time of EPS_PROP_COST_SHARING is 24-NOV-14 09.58.27.690350 AM            
+ Start time of EPS_PROP_COST_SHARING is 05-DEC-14 04.51.31.185429 PM            
 
- End time of EPS_PROP_COST_SHARING is 24-NOV-14 09.58.28.020241 AM              
+ End time of EPS_PROP_COST_SHARING is 05-DEC-14 04.51.31.550510 PM              
 
- Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is 24-NOV-14 09.58.28.12
-0625 AM                                                                         
+ Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is 05-DEC-14 04.51.31.65
+0451 PM                                                                         
                                                                                 
 
- End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is 24-NOV-14 09.58.28.4808
-82 AM                                                                           
+ End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is 05-DEC-14 04.51.32.1162
+26 PM                                                                           
                                                                                 
 
- Start time of EPS_PROP_IDC_RATE script is 24-NOV-14 09.58.28.585347 AM         
+ Start time of EPS_PROP_IDC_RATE script is 05-DEC-14 04.51.32.221552 PM         
 
- End time of EPS_PROP_IDC_RATE script is 24-NOV-14 09.58.28.918659 AM           
+ End time of EPS_PROP_IDC_RATE script is 05-DEC-14 04.51.32.620514 PM           
 
-Completed budget : 24-NOV-14 09.58.29.015465 AM                                 
+Completed budget : 05-DEC-14 04.51.32.722439 PM                                 
 
-Completed budget : 24-NOV-14 09.58.29.110198 AM                                 
+Completed budget : 05-DEC-14 04.51.32.830106 PM                                 
 
-insert Institute proposal: 24-NOV-14 09.58.29.365876 AM                         
+insert Institute proposal: 05-DEC-14 04.51.33.108433 PM                         
 
- Start time of  Insert to PROPOSAL is 24-NOV-14 09.58.29.465360 AM              
+ Start time of  Insert to PROPOSAL is 05-DEC-14 04.51.33.210858 PM              
 Completed PROPOSAL  AND ITS INDICATOR TABLES!!!                                 
 
- Start time of PROPOSAL KREW TABLES  is 24-NOV-14 09.58.29.872961 AM            
+ 198244218                                                                      
 
- 396488436                                                                      
+ End time of PROPOSAL KREW TABLES  is 05-DEC-14 04.51.34.350120 PM              
 
- End time of PROPOSAL KREW TABLES  is 24-NOV-14 09.58.31.891356 AM              
+ End time of  Insert to PROPOSAL is 05-DEC-14 04.51.34.452073 PM                
 
- End time of  Insert to PROPOSAL is 24-NOV-14 09.58.31.991136 AM                
+ Start time of Insert to PROPOSAL_ADMIN_DETAILS is 05-DEC-14 04.51.34.549357 PM 
 
- Start time of Insert to PROPOSAL_ADMIN_DETAILS is 24-NOV-14 09.58.32.088119 AM 
+ End time of  Insert to PROPOSAL_ADMIN_DETAILS is 05-DEC-14 04.51.34.739570 PM  
 
- End time of  Insert to PROPOSAL_ADMIN_DETAILS is 24-NOV-14 09.58.32.278630 AM  
+ Start time of insert_proposal_version_history is 05-DEC-14 04.51.34.837315 PM  
+Completed VERSION_HISTORY !!!                                                   
 
- Start time of  update PROPOSAL is 24-NOV-14 09.58.32.378013 AM                 
+ End time of insert_proposal_version_history is 05-DEC-14 04.51.35.015434 PM    
 
- End time of  update PROPOSAL is 24-NOV-14 09.58.32.598448 AM                   
+ Start time of  update PROPOSAL is 05-DEC-14 04.51.35.117333 PM                 
 
- Start time of update PROPOSAL_ADMIN_DETAILS is 24-NOV-14 09.58.32.698212 AM    
+ End time of  update PROPOSAL is 05-DEC-14 04.51.35.325325 PM                   
 
- End time of  Update PROPOSAL_ADMIN_DETAILS is 24-NOV-14 09.58.32.880770 AM     
+ Start time of update PROPOSAL_ADMIN_DETAILS is 05-DEC-14 04.51.35.422814 PM    
 
-Completed Institute proposal : 24-NOV-14 09.58.32.982851 AM                     
+ End time of  Update PROPOSAL_ADMIN_DETAILS is 05-DEC-14 04.51.35.604989 PM     
 
-Completed Institute proposal : 24-NOV-14 09.58.33.079699 AM                     
+Completed Institute proposal : 05-DEC-14 04.51.35.702682 PM                     
+
+Completed Institute proposal : 05-DEC-14 04.51.35.798148 PM                     
 declare
 *
 ERROR at line 1:
@@ -478,4 +475,4 @@ ORA-06512: at line 122
 
 
 
-Completed syncing, end time: 24-NOV-14 09.58.34.000420 AM                       
+Completed syncing, end time: 05-DEC-14 04.51.36.260793 PM                       

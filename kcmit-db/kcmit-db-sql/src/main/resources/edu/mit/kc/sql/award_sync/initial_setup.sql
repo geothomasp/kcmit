@@ -55,8 +55,8 @@ if li_count = 0 then
          )
          select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
          inner join award t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number
-         and t1.sequence_number = t2.sequence_number;
-		-- and t1.update_timestamp < (ll_migration_exe_date - 14);     
+         and t1.sequence_number = t2.sequence_number
+		 and t1.update_timestamp < (ll_migration_exe_date - 7);
          
          commit;
          
@@ -65,15 +65,13 @@ if li_count = 0 then
          execution_date
          )
          select distinct feed_id,ll_migration_exe_date from osp$sap_feed_details@coeus.kuali t1  
-         inner join KC_MIG_AWARD_CONV t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number;
-		-- and t1.update_timestamp < (ll_migration_exe_date - 14);
+         inner join KC_MIG_AWARD_CONV t2 on replace(t1.mit_award_number,'-','-00') = t2.award_number
+		 and t1.update_timestamp < (ll_migration_exe_date - 7);
          
          commit;
 end if;
 
 end;
-/
-commit
 /
 CREATE TABLE TEMP_TAB_TO_SYNC_AWARD(
 mit_award_number VARCHAR2(10),
@@ -138,6 +136,8 @@ end loop;
 close c_tab;
 end;
 /
+commit
+/
 CREATE TABLE TEMP_TAB_TO_SYNC_IP(
 PROPOSAL_NUMBER VARCHAR2(10),
 sequence_number NUMBER(4,0),
@@ -190,7 +190,8 @@ end loop;
 close c_tab;
 end;
 /
-
+commit
+/
 CREATE TABLE TEMP_TAB_TO_SYNC_DEV(
 PROPOSAL_NUMBER VARCHAR2(10),
 feed_type CHAR(1)
@@ -284,4 +285,3 @@ and t2.version_number = t1.version_number  and t2.feed_type <> 'N'
 /
 commit
 /
-

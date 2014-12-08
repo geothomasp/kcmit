@@ -15,10 +15,7 @@ then
 	#sudo -u coeus cp -u /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-train-web:/home/coeus/kc/deployment/.
 	#sleep 1
 fi
-if [ "$env" == "kcqa" -o "$env" == "all" ]
+if [ "$env" == "kctrain"]
 then
-	sudo -u www scp /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-qa-web:/usr/local/tomcat_kc_qa/webapps/kc-qa.war
-	sleep 3
-	#sudo -u coeus cp -u /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc_qa_web:/home/coeus/kc/deployment/.
-	#sleep 1
+	sudo -u www scp /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-train-web:/usr/local/tomcat-kc-train/webapps/kc-train.war
 fi
