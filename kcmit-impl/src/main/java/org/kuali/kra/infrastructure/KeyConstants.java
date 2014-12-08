@@ -130,7 +130,7 @@ public final class KeyConstants {
 
     public static final String ERROR_PERSON_EDITABLE_FIELD_EXISTS = "error.person.editable.field.exists";
     public static final String ERROR_INVESTIGATOR_CREDIT_TYPE_EXISTS = "error.investigator.credit.type.exists";
-
+    public static final String INFO_PERSONNEL_INVALID_ROLE = "info.personnel.invalid.role";
     // proposal ynq errors
     public static final String ERROR_REQUIRED_FOR_EXPLANATION = "error.required.for.explanation";
     public static final String ERROR_REQUIRED_FOR_REVIEW_DATE = "error.required.for.reviewDate";
@@ -188,7 +188,7 @@ public final class KeyConstants {
     public static final String ERROR_REQUIRE_ONE_NARRATIVE_MODIFY_WITH_ARG="error.narrative.one.modify.with.arg";
     public static final String ERROR_NARRATIVE_USER_RIGHT_NO_PERMISSION="error.narrative.no.permission";
     public static final String ERROR_PERMISSION_VIEWER_ONLY_KEY = "error.viewer.only";
-    
+    public static final String ERROR_UNFINISHED_PERMISSIONS = "error.unsaved.permissions";    
     // Authorization
     public static final String AUTHORIZATION_VIOLATION = "error.authorization.violation";
     
