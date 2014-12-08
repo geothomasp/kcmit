@@ -17,8 +17,8 @@
 
 <c:set var="AUDIT_ERRORS" value="<%=org.kuali.kra.infrastructure.Constants.AUDIT_ERRORS%>" />
 <c:set var="AUDIT_WARNINGS" value="<%=org.kuali.kra.infrastructure.Constants.AUDIT_WARNINGS%>" />
-
-<kra:dataValidation auditActivated="${KualiForm.auditActivated}" topTab="true" categories="${AUDIT_ERRORS},${AUDIT_WARNINGS}" 
+<c:set var="HOLD_PROMPT" value="<%=edu.mit.kc.infrastructure.KcMitConstants.HOLD_PROMPT%>" />
+<kra:dataValidation auditActivated="${KualiForm.auditActivated}" topTab="true" categories="${AUDIT_ERRORS},${AUDIT_WARNINGS},${HOLD_PROMPT}" 
 			     	helpParameterNamespace="KC-AWARD"  helpParameterDetailType="Document" helpParameterName="awardDataValidationHelpUrl">
                     <p>You can activate a Validation check to determine any errors or incomplete information. The following Validations types will be determined:</p>
                     <ul>

@@ -38,7 +38,9 @@ public interface KcMitConstants {
     public static final String ENABLE_ROLE_INTEGRATION = "EnableRoleIntegration";
     
     public static final String ROLE_CENTRAL_DB_CATEGORY_CODE = "RoleCentralDbCategoryCode";
-
+    
+    
+    public static final String HOLD_PROMPT = "Hold Prompt";
     
    
     
