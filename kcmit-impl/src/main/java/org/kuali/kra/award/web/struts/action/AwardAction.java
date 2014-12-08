@@ -73,6 +73,7 @@ import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.home.AwardService;
+import org.kuali.kra.award.home.AwardSponsorTerm;
 import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubaward;
 import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
 import org.kuali.kra.award.infrastructure.AwardRoleConstants;
@@ -1089,6 +1090,8 @@ public class AwardAction extends BudgetParentActionBase {
         awardForm.setReportClassForPaymentsAndInvoices((ReportClass) initializedObjects.get(
                                                         Constants.REPORT_CLASS_FOR_PAYMENTS_AND_INVOICES_PANEL));
         awardForm.buildReportTrackingBeans();
+        
+        getAwardReportTermsOrderedList(awardForm);
 
     }
 
@@ -1907,5 +1910,45 @@ public class AwardAction extends BudgetParentActionBase {
     @Override
     public ActionForward takeSuperUserActions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         return superUserActionHelper(SuperUserAction.TAKE_SUPER_USER_ACTIONS, mapping, form, request, response);
+    }
+    
+    protected void getAwardReportTermsOrderedList(AwardForm awardForm){
+    	
+    	Award award = awardForm.getAwardDocument().getAward();
+    	
+         List<AwardSponsorTerm> awardSponsorTerms = award.getAwardSponsorTerms();
+         List<AwardSponsorTerm> awardSponsorTermsSortedList = new ArrayList<AwardSponsorTerm>();
+         List<String> awardSponsorTermTypes = new ArrayList<String>();
+       
+         for(AwardSponsorTerm awardSponsorTerm : awardSponsorTerms){
+        	 if(!awardSponsorTermTypes.contains(awardSponsorTerm.getSponsorTermTypeCode())){
+        		 awardSponsorTermTypes.add(awardSponsorTerm.getSponsorTermTypeCode());
+        	 }
+         }
+         for(String awardSponsorTermType : awardSponsorTermTypes){
+             List<AwardSponsorTerm> awardSponsorTermsList = new ArrayList<AwardSponsorTerm>();
+             List<Integer> sponsorTermCodes = new ArrayList<Integer> ();
+        	 for(AwardSponsorTerm awardSponsorTerm : awardSponsorTerms){
+        		 if(awardSponsorTermType.equals(awardSponsorTerm.getSponsorTermTypeCode())){
+        			 awardSponsorTermsList.add(awardSponsorTerm);
+        			 sponsorTermCodes.add(Integer.parseInt(awardSponsorTerm.getSponsorTermCode()));
+        		 }
+        	 }
+        	 
+             Collections.sort(sponsorTermCodes);
+             for(Integer sponsorTermCode:sponsorTermCodes){
+                 for(AwardSponsorTerm awardSponsorTerm:awardSponsorTermsList){
+                     if(sponsorTermCode.equals(Integer.parseInt(awardSponsorTerm.getSponsorTermCode()))){
+                    	 awardSponsorTermsSortedList.add(awardSponsorTerm);
+                     }
+                 }
+           }
+        	 
+        	 
+        	 
+         }
+         
+         awardForm.getAwardDocument().getAward().setAwardSponsorTerms(awardSponsorTermsSortedList);
+       
     }
 }
