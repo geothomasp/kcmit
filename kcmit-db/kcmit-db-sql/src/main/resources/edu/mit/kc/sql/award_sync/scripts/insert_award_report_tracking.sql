@@ -32,7 +32,7 @@ EXIT WHEN c_award_comment%NOTFOUND;
  
 begin
  
- select AWARD_REPORT_TERMS_ID into li_award_reports_id from AWARD_REPORT_TERMS 
+ select MAX(AWARD_REPORT_TERMS_ID) into li_award_reports_id from AWARD_REPORT_TERMS 
  where AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.SEQUENCE_NUMBER
  AND REPORT_CLASS_CODE=r_award_comment.REPORT_CLASS_CODE AND REPORT_CODE=r_award_comment.REPORT_CODE 
  AND FREQUENCY_CODE=r_award_comment.FREQUENCY_CODE AND FREQUENCY_BASE_CODE=r_award_comment.FREQUENCY_BASE_CODE 
@@ -45,7 +45,7 @@ when others then
 
 --dbms_output.put_line('Error in "insert_award_report_tracking.sql" '||r_award_comment.award_number||','||r_award_comment.SEQUENCE_NUMBER||','||r_award_comment.OSP_DISTRIBUTION_CODE||' - '||sqlerrm);
 
- select AWARD_REPORT_TERMS_ID into li_award_reports_id from AWARD_REPORT_TERMS 
+ select MAX(AWARD_REPORT_TERMS_ID) into li_award_reports_id from AWARD_REPORT_TERMS 
  where AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.SEQUENCE_NUMBER
  AND REPORT_CLASS_CODE=r_award_comment.REPORT_CLASS_CODE AND REPORT_CODE=r_award_comment.REPORT_CODE 
  AND FREQUENCY_CODE=r_award_comment.FREQUENCY_CODE AND FREQUENCY_BASE_CODE=r_award_comment.FREQUENCY_BASE_CODE 
