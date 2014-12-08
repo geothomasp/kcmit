@@ -409,9 +409,11 @@ private static final String SUBAWARD_VERSION_EDITPENDING_PROMPT_KEY = "message.s
         if (new SubAwardDocumentRule().
         processAddSubAwardCloseoutBusinessRules(subAwardCloseout)) {
             if (subAwardCloseout.getDateFollowup() == null) {
+            	if(subAwardCloseout.getDateRequested() != null) {
                 subAwardCloseout.setDateFollowup(
                 this.getSubAwardService().getCalculatedFollowupDate(
                 subAwardCloseout.getDateRequested()));
+            	}
             }
             addCloseoutToSubAward(subAwardForm.
             getSubAwardDocument().getSubAward(), subAwardCloseout);

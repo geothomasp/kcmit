@@ -143,7 +143,6 @@
     <property name="validCharactersConstraint">
       <bean parent="NumericPatternConstraint"/>
     </property>
-    <property name="required" value="true" />
     <property name="control" >
       <bean parent="TextControlDefinition" p:size="10"/>
     </property>
@@ -167,7 +166,6 @@
     <property name="validCharactersConstraint">
       <bean parent="NumericPatternConstraint"/>
     </property>
-    <property name="required" value="true" />
     <property name="control" >
       <bean parent="TextControlDefinition" p:size="10"/>
     </property>
