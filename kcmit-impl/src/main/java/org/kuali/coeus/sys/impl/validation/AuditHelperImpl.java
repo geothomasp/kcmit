@@ -24,7 +24,7 @@ import java.util.Iterator;
 @Component("auditHelper")
 public class AuditHelperImpl implements AuditHelper {
 
-    private static final CharSequence HOLD_PROMPT = null;
+	private String HOLD_PROMPT ="Hold Prompt";
 	@Autowired
     @Qualifier("kualiRuleService")
     private KualiRuleService ruleService;
