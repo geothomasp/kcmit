@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_COMMENT is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_COMMENT is ' from dual
 /
 DECLARE
 li_commit_count NUMBER;
@@ -64,5 +64,5 @@ INNER JOIN AWARD a ON a.AWARD_NUMBER=replace(t2.MIT_AWARD_NUMBER,'-','-00') AND 
 LEFT OUTER JOIN  AWARD_COMMENT c ON ac.MIT_AWARD_NUMBER=replace(c.AWARD_NUMBER,'-00','-') AND ac.SEQUENCE_NUMBER=c.SEQUENCE_NUMBER AND ac.COMMENT_CODE=c.COMMENT_TYPE_CODE
 WHERE t2.FEED_TYPE = 'C' AND c. AWARD_NUMBER IS NULL
 /
-select ' End time of UPDATE_AWARD_COMMENT is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_COMMENT is ' from dual
 /	

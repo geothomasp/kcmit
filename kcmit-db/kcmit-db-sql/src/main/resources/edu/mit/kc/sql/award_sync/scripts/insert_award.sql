@@ -1,4 +1,4 @@
-select ' Start time of AWARD is '|| localtimestamp from dual
+select ' Start time of AWARD is ' from dual
 /
 alter table award add constraint UQ_AWARD unique(AWARD_NUMBER,SEQUENCE_NUMBER)
 /
@@ -244,5 +244,5 @@ end loop;
 close c_awd;
 end;
 /
-select ' End time of AWARD is '|| localtimestamp from dual
+select ' End time of AWARD is ' from dual
 /

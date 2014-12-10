@@ -32,8 +32,8 @@ select 'insert award: '|| localtimestamp from dual;
 @scripts/insert_award_comment_update.sql
 @scripts/insert_award_closeout.sql
 @scripts/insert_award_person_units.sql
-@scripts/insert_award_person_credit_split.sql
-@scripts/insert_award_pers_unit_credit_split.sql
+--@scripts/insert_award_person_credit_split.sql
+--@scripts/insert_award_pers_unit_credit_split.sql
 @scripts/insert_award_notepad.sql
 @scripts/insert_award_spons_contact.sql
 @scripts/insert_award_report_terms.sql
@@ -63,8 +63,8 @@ select 'update award: '|| localtimestamp from dual;
 @scripts/update_award_comments.sql
 @scripts/update_award_closeout.sql
 @scripts/update_award_person_units.sql
-@scripts/update_award_pers_credit_split.sql
-@scripts/update_award_pers_unit_credit.sql
+--@scripts/update_award_pers_credit_split.sql
+--@scripts/update_award_pers_unit_credit.sql
 @scripts/update_award_notepad.sql
 @scripts/update_award_spons_con.sql
 @scripts/update_award_report.sql

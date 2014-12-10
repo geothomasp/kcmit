@@ -243,7 +243,7 @@ select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = 
 and t2.sequence_number = t1.sequence_number and t1.feed_type = t2.feed_type
 )
 /
-delete from temp_tab_to_sync_award t1 where rowid in (
+delete from temp_tab_to_sync_award t1 where rowid not in (
 select max(t2.rowid) from temp_tab_to_sync_award t2 where t1.mit_award_number = t2.mit_award_number
 and t2.sequence_number = t1.sequence_number  and t2.feed_type <> 'N'
 )
@@ -255,7 +255,7 @@ select max(t2.rowid) from temp_tab_to_sync_ip t2 where t1.proposal_number = t2.p
 and t2.sequence_number = t1.sequence_number and t1.feed_type = t2.feed_type
 )
 /
-delete from temp_tab_to_sync_ip t1 where rowid in (
+delete from temp_tab_to_sync_ip t1 where rowid not in (
 select max(t2.rowid) from temp_tab_to_sync_ip t2 where t1.proposal_number = t2.proposal_number
 and t2.sequence_number = t1.sequence_number and t2.feed_type <> 'N'
 )
@@ -267,7 +267,7 @@ select max(t2.rowid) from temp_tab_to_sync_dev t2 where t1.proposal_number = t2.
 and t1.feed_type = t2.feed_type
 )
 /
-delete from temp_tab_to_sync_dev t1 where rowid in (
+delete from temp_tab_to_sync_dev t1 where rowid not in (
 select max(t2.rowid) from temp_tab_to_sync_dev t2 where t1.proposal_number = t2.proposal_number and t2.feed_type <> 'N'
 )
 /
@@ -278,7 +278,7 @@ select max(t2.rowid) from temp_tab_to_sync_budget t2 where t1.proposal_number = 
 and t2.version_number = t1.version_number and t1.feed_type = t2.feed_type
 )
 /
-delete from temp_tab_to_sync_budget t1 where rowid in (
+delete from temp_tab_to_sync_budget t1 where rowid not in (
 select max(t2.rowid) from temp_tab_to_sync_budget t2 where t1.proposal_number = t2.proposal_number
 and t2.version_number = t1.version_number  and t2.feed_type <> 'N'
 )

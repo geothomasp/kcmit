@@ -1,4 +1,4 @@
-select ' Start time of VERSION_HISTORY  is '|| localtimestamp from dual
+select ' Start time of VERSION_HISTORY  is ' from dual
 /
 declare
 li_max_sequence_num NUMBER;
@@ -21,5 +21,5 @@ when others then
 dbms_output.put_line('ERROR IN VERSION_HISTORY,AWARD_NUMBER/SEQUENCE NUMBER:');
 END;
 /
-select ' End time of VERSION_HISTORY  is '|| localtimestamp from dual
+select ' End time of VERSION_HISTORY  is ' from dual
 /

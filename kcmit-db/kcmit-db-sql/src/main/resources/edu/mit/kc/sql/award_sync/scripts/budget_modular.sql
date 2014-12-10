@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_MODULAR is '|| localtimestamp from dual
+select ' Start time of BUDGET_MODULAR is ' from dual
 /
 DECLARE
 li_budget_period_number NUMBER(12,0);
@@ -49,5 +49,5 @@ END LOOP;
 CLOSE c_modular;
 END;
 /
-select ' End time of BUDGET_MODULAR is '|| localtimestamp from dual
+select ' End time of BUDGET_MODULAR is ' from dual
 /

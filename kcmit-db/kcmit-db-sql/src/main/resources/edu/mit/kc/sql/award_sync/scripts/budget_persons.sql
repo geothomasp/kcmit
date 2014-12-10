@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_PERSONS is '|| localtimestamp from dual
+select ' Start time of BUDGET_PERSONS is ' from dual
 /
 DECLARE
 ls_doc_nbr VARCHAR2(40);
@@ -132,5 +132,5 @@ END LOOP;
 CLOSE c_bud;
 END;
 /
-select ' End time of BUDGET_PERSONS is '|| localtimestamp from dual
+select ' End time of BUDGET_PERSONS is ' from dual
 /

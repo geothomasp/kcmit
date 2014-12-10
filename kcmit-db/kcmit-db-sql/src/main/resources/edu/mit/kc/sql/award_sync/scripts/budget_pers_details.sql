@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_RATE_AND_BASE  script is '|| localtimestamp from dual
+select ' Start time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_RATE_AND_BASE  script is ' from dual
 /
 DECLARE
 li_ver_nbr number(8):=1;
@@ -297,5 +297,5 @@ end if;
                 END;                      
  
 /
-select ' End time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_RATE_AND_BASE  script is '|| localtimestamp from dual
+select ' End time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_RATE_AND_BASE  script is ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of  update PROPOSAL is '|| localtimestamp from dual
+select ' Start time of  update PROPOSAL is ' from dual
 /
 DECLARE
 li_ver_nbr NUMBER(8):=1;
@@ -151,5 +151,5 @@ CLOSE c_proposal;
 
 END;
 /
-select ' End time of  update PROPOSAL is '|| localtimestamp from dual
+select ' End time of  update PROPOSAL is ' from dual
 /

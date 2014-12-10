@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_PROJECT_INCOME is '|| localtimestamp from dual
+select ' Start time of BUDGET_PROJECT_INCOME is ' from dual
 /
 -- truncate if the budget already exist
 DECLARE
@@ -97,5 +97,5 @@ END LOOP;
 CLOSE c_project;       
 END;
 /
-select ' End time of BUDGET_PROJECT_INCOME is '|| localtimestamp from dual
+select ' End time of BUDGET_PROJECT_INCOME is ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of AWARD_PERSON_CREDIT_SPLITS script is '|| localtimestamp from dual
+select ' Start time of AWARD_PERSON_CREDIT_SPLITS script is ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -73,5 +73,5 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_PERSON_CREDIT_SPLITS script is '|| localtimestamp from dual
+select ' End time of AWARD_PERSON_CREDIT_SPLITS script is ' from dual
 /

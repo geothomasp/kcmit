@@ -1,4 +1,4 @@
-select ' Start time of AWARD_REPORT_TRACKING script is '|| localtimestamp from dual
+select ' Start time of AWARD_REPORT_TRACKING script is ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -78,5 +78,5 @@ and t1.PREPARER_NAME  is null
 /
 commit
 /
-select ' End time of AWARD_REPORT_TRACKING  is '|| localtimestamp from dual
+select ' End time of AWARD_REPORT_TRACKING  is ' from dual
 /

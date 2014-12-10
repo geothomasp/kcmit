@@ -1,4 +1,4 @@
-select ' Start time of AWARD_COST_SHARE  script is '|| localtimestamp from dual
+select ' Start time of AWARD_COST_SHARE  script is ' from dual
 /
 DECLARE
 
@@ -52,5 +52,5 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_COST_SHARE script is '|| localtimestamp from dual
+select ' End time of AWARD_COST_SHARE script is ' from dual
 /

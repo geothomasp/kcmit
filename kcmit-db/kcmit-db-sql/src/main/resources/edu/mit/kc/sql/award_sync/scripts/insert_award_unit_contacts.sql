@@ -1,4 +1,4 @@
-select ' Start time of AWARD_UNIT_CONTACTS is '|| localtimestamp from dual
+select ' Start time of AWARD_UNIT_CONTACTS is ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -33,5 +33,5 @@ CLOSE c_award_comment;
 END;
 /
 
-select ' End time of AWARD_UNIT_CONTACTS is '|| localtimestamp from dual
+select ' End time of AWARD_UNIT_CONTACTS is ' from dual
 /

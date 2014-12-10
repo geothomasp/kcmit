@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_SPONSOR_TERM is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_SPONSOR_TERM is ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -71,5 +71,5 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_SPONSOR_TERM is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_SPONSOR_TERM is ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of AWARD_SPECIAL_REVIEW Update script is '|| localtimestamp from dual
+select ' Start time of AWARD_SPECIAL_REVIEW Update script is ' from dual
 /
 alter table AWARD_SPECIAL_REVIEW drop column  COMMENTS
 /
@@ -63,5 +63,5 @@ commit
 ALTER INDEX	AWARD_SPECIAL_REVIEWP1	REBUILD;
 commit;
 /
-select ' End time of AWARD_SPECIAL_REVIEW Update script is '|| localtimestamp from dual
+select ' End time of AWARD_SPECIAL_REVIEW Update script is ' from dual
 /

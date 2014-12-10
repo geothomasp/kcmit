@@ -1,4 +1,4 @@
-select ' Start time of insert_proposal_version_history is '|| localtimestamp from dual
+select ' Start time of insert_proposal_version_history is ' from dual
 /
 declare
 li_max_sequence_num NUMBER;
@@ -22,5 +22,5 @@ when others then
 dbms_output.put_line('ERROR IN VERSION_HISTORY,PROPOSAL_NUMBER/SEQUENCE NUMBER:'||sqlerrm);    
 END;
 /   
-select ' End time of insert_proposal_version_history is '|| localtimestamp from dual
+select ' End time of insert_proposal_version_history is ' from dual
 /

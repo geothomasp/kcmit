@@ -1,4 +1,4 @@
-select ' Start time of AWARD_TRANSFERRING_SPONSOR is '|| localtimestamp from dual
+select ' Start time of AWARD_TRANSFERRING_SPONSOR is ' from dual
 /
 
 DECLARE
@@ -57,5 +57,5 @@ END;
 
 /
 
-select ' End time of AWARD_TRANSFERRING_SPONSOR is '|| localtimestamp from dual
+select ' End time of AWARD_TRANSFERRING_SPONSOR is ' from dual
 /

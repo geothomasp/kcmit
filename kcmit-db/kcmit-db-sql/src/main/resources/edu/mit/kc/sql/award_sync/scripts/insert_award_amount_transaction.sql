@@ -1,4 +1,4 @@
-select ' Start time of AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
+select ' Start time of AWARD_AMOUNT_TRANSACTION is ' from dual
 /
 -- Migrate award amount transaction + doc handler end 
 -- Starts AWARD_AMOUNT_INFO
@@ -204,5 +204,5 @@ AND ts.FEED_TYPE = 'N'
 /
 commit
 /
-select ' End time of AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
+select ' End time of AWARD_AMOUNT_TRANSACTION is ' from dual
 /

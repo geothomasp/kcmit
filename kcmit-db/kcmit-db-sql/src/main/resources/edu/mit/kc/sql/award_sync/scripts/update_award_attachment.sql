@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_ATTACHMENT is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_ATTACHMENT is ' from dual
 /
 DROP TABLE TEMP_ATTACHMENT_FILE_UPD
 /
@@ -134,5 +134,5 @@ commit;
 dbms_output.put_line('Completed AWARD_ATTACHMENT!!!');
 END;
 /
-select ' End time of UPDATE_AWARD_ATTACHMENT is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_ATTACHMENT is ' from dual
 /	

@@ -1,4 +1,4 @@
-select ' Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is '|| localtimestamp from dual
+select ' Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is ' from dual
 /
 DECLARE
 li_budget_id number(12);
@@ -170,5 +170,5 @@ END LOOP;
 CLOSE c_la;
 END;
 /
-select ' End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is '|| localtimestamp from dual
+select ' End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is ' from dual
 /

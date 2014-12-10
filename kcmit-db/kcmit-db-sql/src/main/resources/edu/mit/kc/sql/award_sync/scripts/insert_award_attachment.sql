@@ -1,4 +1,4 @@
-select ' Start time of AWARD_ATTACHMENT is '|| localtimestamp from dual
+select ' Start time of AWARD_ATTACHMENT is ' from dual
 /
 declare
 li_count number;
@@ -154,5 +154,5 @@ commit;
 dbms_output.put_line('Completed AWARD_ATTACHMENT!!!');
 END;
 /
-select ' End time of AWARD_ATTACHMENT is '|| localtimestamp from dual
+select ' End time of AWARD_ATTACHMENT is ' from dual
 /

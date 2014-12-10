@@ -1,4 +1,4 @@
-select ' Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is '|| localtimestamp from dual
+select ' Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -336,5 +336,5 @@ CLOSE c_invoice;
 END;
 /
 ---------- Report class code 6 End ------
-select ' End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is '|| localtimestamp from dual
+select ' End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is ' from dual
 /

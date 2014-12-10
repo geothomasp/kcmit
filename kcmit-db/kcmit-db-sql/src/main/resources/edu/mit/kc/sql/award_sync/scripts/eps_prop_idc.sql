@@ -1,4 +1,4 @@
-select ' Start time of EPS_PROP_IDC_RATE script is '|| localtimestamp from dual
+select ' Start time of EPS_PROP_IDC_RATE script is ' from dual
 /
 DECLARE
 ls_doc_nbr VARCHAR2(40);
@@ -103,5 +103,5 @@ BEGIN
    CLOSE c_idc; 
 END;
 /
-select ' End time of EPS_PROP_IDC_RATE script is '|| localtimestamp from dual
+select ' End time of EPS_PROP_IDC_RATE script is ' from dual
 /

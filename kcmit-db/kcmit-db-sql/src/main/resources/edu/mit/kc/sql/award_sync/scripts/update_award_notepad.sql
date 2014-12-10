@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_NOTEPAD is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_NOTEPAD is ' from dual
 /
 DECLARE
 
@@ -50,5 +50,5 @@ END LOOP;
 CLOSE c_notepad;
 END;
 /
-select ' End time of UPDATE_AWARD_NOTEPAD is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_NOTEPAD is ' from dual
 /

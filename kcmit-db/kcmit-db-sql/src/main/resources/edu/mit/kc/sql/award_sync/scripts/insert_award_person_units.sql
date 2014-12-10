@@ -1,4 +1,4 @@
-select ' Start time of AWARD_PERSON_UNITS script is '|| localtimestamp from dual
+select ' Start time of AWARD_PERSON_UNITS script is ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -69,7 +69,7 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_PERSON_UNITS script is '|| localtimestamp from dual
+select ' End time of AWARD_PERSON_UNITS script is ' from dual
 /
 --INSERT INTO AWARD_PERSON_UNITS(AWARD_PERSON_UNIT_ID,AWARD_PERSON_ID,UNIT_NUMBER,LEAD_UNIT_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 --select SEQUENCE_AWARD_ID.NEXTVAL,z.* from (

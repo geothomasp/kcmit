@@ -1,4 +1,4 @@
-select ' Start time of AWARD_SPONSOR_CONTACTS script is '|| localtimestamp from dual
+select ' Start time of AWARD_SPONSOR_CONTACTS script is ' from dual
 /
 DECLARE
 
@@ -60,5 +60,5 @@ CLOSE c_award_comment;
 END;
 
 /
-select ' End time of AWARD_SPONSOR_CONTACTS script is '|| localtimestamp from dual
+select ' End time of AWARD_SPONSOR_CONTACTS script is ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is ' from dual
 /
 DECLARE
 
@@ -29,5 +29,5 @@ END LOOP;
 CLOSE c_trans_upd;
 END;
 /
-select ' End time of UPDATE_AWARD_AMOUNT_TRANSACTION is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_AMOUNT_TRANSACTION is ' from dual
 /

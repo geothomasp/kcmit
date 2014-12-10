@@ -15,7 +15,7 @@ end;
 /
 commit
 /
-select ' Start time of insert to EPS_PROPOSAL is '|| localtimestamp from dual
+select ' Start time of insert to EPS_PROPOSAL is ' from dual
 /
 DECLARE
 ls_submit_flag CHAR(1):='N';
@@ -419,7 +419,7 @@ select SEQ_PROPOSAL_NUMBER_KRA.NEXTVAL from dual
 /
 alter sequence SEQ_PROPOSAL_NUMBER_KRA increment by 1
 /
-select ' End time of insert to EPS_PROPOSAL is '|| localtimestamp from dual
+select ' End time of insert to EPS_PROPOSAL is ' from dual
 /
 commit
 /

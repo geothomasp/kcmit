@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_PERIODS is '|| localtimestamp from dual
+select ' Start time of BUDGET_PERIODS is ' from dual
 /
 DECLARE
 li_count NUMBER;
@@ -53,5 +53,5 @@ END LOOP;
 CLOSE c_period;
 END;
 /
-select ' End time of BUDGET_PERIODS is '|| localtimestamp from dual
+select ' End time of BUDGET_PERIODS is ' from dual
 /

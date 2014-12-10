@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_SPONSOR_CONTACTS is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_SPONSOR_CONTACTS is ' from dual
 /
 DECLARE
 
@@ -46,5 +46,5 @@ CLOSE c_award_comment;
 END;
 
 /
-select ' End time of UPDATE_AWARD_SPONSOR_CONTACTS is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_SPONSOR_CONTACTS is ' from dual
 /

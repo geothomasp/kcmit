@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_AMOUNT_INFO is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_AMOUNT_INFO is ' from dual
 /
 DECLARE
 li_ver_nbr NUMBER(8):=1;
@@ -202,5 +202,5 @@ AND ts.FEED_TYPE = 'C'
 /
 commit
 /
-select ' End time of UPDATE_AWARD_AMOUNT_INFO is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_AMOUNT_INFO is ' from dual
 /

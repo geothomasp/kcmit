@@ -1,4 +1,4 @@
-select ' Start time of AWARD_PAYMENT_SCHEDULE script is '|| localtimestamp from dual
+select ' Start time of AWARD_PAYMENT_SCHEDULE script is ' from dual
 /
 DECLARE
 
@@ -55,5 +55,5 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_PAYMENT_SCHEDULE script is '|| localtimestamp from dual
+select ' End time of AWARD_PAYMENT_SCHEDULE script is ' from dual
 /

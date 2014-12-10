@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_UNIT_CONTACTS is '|| localtimestamp from dual
+select ' Start time of UPDATE_AWARD_UNIT_CONTACTS is ' from dual
 /
 DECLARE
 
@@ -42,5 +42,5 @@ END LOOP;
 CLOSE c_unit;
 END;
 /
-select ' End time of UPDATE_AWARD_UNIT_CONTACTS is '|| localtimestamp from dual
+select ' End time of UPDATE_AWARD_UNIT_CONTACTS is ' from dual
 /
