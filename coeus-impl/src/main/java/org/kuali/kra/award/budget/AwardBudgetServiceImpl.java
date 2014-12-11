@@ -337,11 +337,12 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         if(awardBudget.getOhRatesNonEditable()){
             awardBudget.setOhRateClassCode(getAwardParameterValue(Constants.AWARD_BUDGET_DEFAULT_FNA_RATE_CLASS_CODE));
             awardBudget.setUrRateClassCode(getAwardParameterValue( Constants.AWARD_BUDGET_DEFAULT_UNDERRECOVERY_RATE_CLASS_CODE));
+//            awardBudget.setOhRateTypeCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_OVERHEAD_RATE_TYPE_CODE));
         }else{
             awardBudget.setOhRateClassCode(getBudgetParameterValue(Constants.BUDGET_DEFAULT_OVERHEAD_RATE_CODE));
             awardBudget.setUrRateClassCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_UNDERRECOVERY_RATE_CODE));
+            awardBudget.setOhRateTypeCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_OVERHEAD_RATE_TYPE_CODE));
         }
-        awardBudget.setOhRateTypeCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_OVERHEAD_RATE_TYPE_CODE));
         awardBudget.setModularBudgetFlag(parameterService.getParameterValueAsBoolean(Budget.class, Constants.BUDGET_DEFAULT_MODULAR_FLAG));
         awardBudget.setAwardBudgetStatusCode(getAwardParameterValue( KeyConstants.AWARD_BUDGET_STATUS_IN_PROGRESS));
         // do not want the Budget adjustment doc number to be copied over to the new budget.

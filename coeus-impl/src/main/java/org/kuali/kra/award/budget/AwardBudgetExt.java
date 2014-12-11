@@ -17,6 +17,7 @@ package org.kuali.kra.award.budget;
 
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
+import org.kuali.kra.award.commitments.AwardFandaRate;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.bo.DocumentNextvalue;
 import org.kuali.kra.bo.NextValue;
@@ -135,7 +136,13 @@ public class AwardBudgetExt extends Budget {
      */
     public boolean getOhRatesNonEditable() {
         Award award = (Award) getBudgetDocument().getBudget().getBudgetParent();
-        return award.getAwardFandaRate().isEmpty() ? false : true;
+        List<AwardFandaRate> fnaRates = award.getAwardFandaRate();
+        if(fnaRates.isEmpty()){
+        	return false;
+        }else{
+        	setOhRateTypeCode(fnaRates.get(0).getFandaRateTypeCode());
+        	return true;
+        }
     }
 
     /**
