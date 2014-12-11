@@ -10,5 +10,8 @@ tod=$(date +%Y%m%d%H%M)
 echo $tod
 echo "spool sqlrun-${tod}.log"
 sqlplus kcso/qawkly50kc@KCQAWKLY @start_sync.sql > logs/award_sync_qawkly-${tod}.log
-#sqlplus kcso/dev50kc@KCDEV @start_sync.sql > logs/award_sync_dev-${tod}.log
+#sqlplus kcso/dev50kc@KCDEV @start_sync.sql > logs/award_sync-${tod}.log
+git add .
+git commit -am 'award sync ran on ${tod}'
+git push origin master
 exit

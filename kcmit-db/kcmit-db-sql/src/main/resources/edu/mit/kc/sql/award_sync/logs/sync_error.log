@@ -1,15 +1,21 @@
 
-Started syncing, start time: 10-DEC-14 07.08.28.970387 PM                       
+Started syncing, start time: 10-DEC-14 10.55.27.025918 PM                       
 
-insert bo: 10-DEC-14 07.08.28.978777 PM                                         
+insert bo: 10-DEC-14 10.55.27.275731 PM                                         
 
-Completed bo : 10-DEC-14 07.08.29.391659 PM                                     
+Completed bo : 10-DEC-14 10.55.28.533095 PM                                     
 
-Completed bo : 10-DEC-14 07.08.29.395476 PM                                     
+Completed bo : 10-DEC-14 10.55.28.635184 PM                                     
 
-insert award: 10-DEC-14 07.08.29.420671 PM                                      
+insert award: 10-DEC-14 10.55.35.128713 PM                                      
+CREATE INDEX OSP$PERSON_I ON OSP$PERSON(PERSON_ID)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
 
- Start time of AWARD is 10-DEC-14 07.09.10.123870 PM                            
+
+
+ Start time of AWARD is                                                         
 alter table award add constraint UQ_AWARD unique(AWARD_NUMBER,SEQUENCE_NUMBER)
                                           *
 ERROR at line 1:
@@ -23,435 +29,507 @@ ORA-02261: such unique or primary key already exists in the table
 
 
 
-    304899                                                                      
+     23869                                                                      
 
- End time of AWARD is 10-DEC-14 07.10.09.315892 PM                              
+ End time of AWARD is                                                           
+select ' Start time of insert AWARD Krew is ' from dual;--populating krew_tables in insert_award.sqlselect ' End time of insert AWARD Krew is ' from dual;/
+                                                       *
+ERROR at line 1:
+ORA-00911: invalid character 
 
- Start time of insert AWARD Krew is 10-DEC-14 07.10.09.320981 PM                
 
- End time of insert AWARD Krew is 10-DEC-14 07.10.09.325068 PM                  
 
- End time of insert AWARD Krew is 10-DEC-14 07.10.09.328385 PM                  
+ End time of TEMP TABLES FOR AWARD MODULE  is                                   
 
- Start time of TEMP TABLES FOR AWARD MODULE  is 10-DEC-14 07.10.09.346862 PM    
-
- End time of TEMP TABLES FOR AWARD MODULE  is 10-DEC-14 07.10.09.351035 PM      
-
- Start time of VERSION_HISTORY  is 10-DEC-14 07.10.09.361195 PM                 
+ Start time of VERSION_HISTORY  is                                              
 Completed VERSION_HISTORY!!!                                                    
 
- End time of VERSION_HISTORY  is 10-DEC-14 07.10.09.469948 PM                   
+ End time of VERSION_HISTORY  is                                                
 
- Start time of AWARD_SPECIAL_REVIEW script is 10-DEC-14 07.10.09.506038 PM      
+ Start time of AWARD_SPECIAL_REVIEW script is                                   
 
- End time of AWARD_SPECIAL_REVIEW script is 10-DEC-14 07.10.09.674439 PM        
+ End time of AWARD_SPECIAL_REVIEW script is                                     
 
- Start time of AWARD_SPECIAL_REVIEW Update script is 10-DEC-14 07.10.09.692764 P
-M                                                                               
-                                                                                
+ Start time of AWARD_SPECIAL_REVIEW Update script is                            
 
- End time of AWARD_SPECIAL_REVIEW Update script is 10-DEC-14 07.10.15.906581 PM 
+ End time of AWARD_SPECIAL_REVIEW Update script is                              
 
- Start time of AWARD_COST_SHARE  script is 10-DEC-14 07.10.15.920804 PM         
+ Start time of AWARD_COST_SHARE  script is                                      
 
- End time of AWARD_COST_SHARE script is 10-DEC-14 07.10.18.934429 PM            
+ End time of AWARD_COST_SHARE script is                                         
 
- Start time of AWARD_APPROVED_EQUIPMENT  script is 10-DEC-14 07.10.18.946510 PM 
+ Start time of AWARD_APPROVED_EQUIPMENT  script is                              
 
- End time of AWARD_APPROVED_EQUIPMENT  script is 10-DEC-14 07.10.19.510934 PM   
+ End time of AWARD_APPROVED_EQUIPMENT  script is                                
 
- Start time of AWARD_APPROVED_FOREIGN_TRAVEL  script is 10-DEC-14 07.10.19.52538
-5 PM                                                                            
-                                                                                
+ Start time of AWARD_APPROVED_FOREIGN_TRAVEL  script is                         
 
- End time of AWARD_APPROVED_FOREIGN_TRAVEL script is 10-DEC-14 07.10.19.667306 P
-M                                                                               
-                                                                                
+ End time of AWARD_APPROVED_FOREIGN_TRAVEL script is                            
 
- Start time of AWARD_PAYMENT_SCHEDULE script is 10-DEC-14 07.10.19.679048 PM    
+ Start time of AWARD_PAYMENT_SCHEDULE script is                                 
 
- End time of AWARD_PAYMENT_SCHEDULE script is 10-DEC-14 07.10.25.530506 PM      
+ End time of AWARD_PAYMENT_SCHEDULE script is                                   
 
- Start time of AWARD_SCIENCE_KEYWORD script is 10-DEC-14 07.10.25.550793 PM     
+ Start time of AWARD_SCIENCE_KEYWORD script is                                  
 
- End time of AWARD_SCIENCE_KEYWORD script is 10-DEC-14 07.10.25.572333 PM       
+ End time of AWARD_SCIENCE_KEYWORD script is                                    
 
- Start time of AWARD_IDC_RATE script is 10-DEC-14 07.10.25.583248 PM            
+ Start time of AWARD_IDC_RATE script is                                         
 
- End time of AWARD_IDC_RATE script is 10-DEC-14 07.10.32.970266 PM              
+ End time of AWARD_IDC_RATE script is                                           
 
- Start time of AWARD_APPROVED_SUBAWARDS script is 10-DEC-14 07.10.32.991415 PM  
+ Start time of AWARD_APPROVED_SUBAWARDS script is                               
 
- End time of AWARD_APPROVED_SUBAWARDS script is 10-DEC-14 07.10.33.210535 PM    
+ End time of AWARD_APPROVED_SUBAWARDS script is                                 
 
- Start time of AWARD_TRANSFERRING_SPONSOR is 10-DEC-14 07.10.33.229403 PM       
+ Start time of AWARD_TRANSFERRING_SPONSOR is                                    
 
- End time of AWARD_TRANSFERRING_SPONSOR is 10-DEC-14 07.10.33.374725 PM         
+ End time of AWARD_TRANSFERRING_SPONSOR is                                      
 
- Start time of AWARD_PERSONS(Key Person) script is 10-DEC-14 07.10.33.386643 PM 
+ Start time of AWARD_PERSONS(Key Person) script is                              
 
- End time of AWARD_PERSONS(Key Person) script is 10-DEC-14 07.10.33.478299 PM   
+ End time of AWARD_PERSONS(Key Person) script is                                
 
- Start time of AWARD_PERSONS(Investigators) script is 10-DEC-14 07.10.33.489051 
-PM                                                                              
-                                                                                
+ Start time of AWARD_PERSONS(Investigators) script is                           
 
- End time of AWARD_PERSONS(Investigators) script is 10-DEC-14 07.10.33.746007 PM
+ End time of AWARD_PERSONS(Investigators) script is                             
 
- Start time of AWARD_SPONSOR_TERM script is 10-DEC-14 07.10.33.758360 PM        
+ Start time of AWARD_SPONSOR_TERM script is                                     
 
- End time of AWARD_SPONSOR_TERM script is 10-DEC-14 07.10.35.796973 PM          
+ End time of AWARD_SPONSOR_TERM script is                                       
 
- Start time of AWARD_ATTACHMENT is 10-DEC-14 07.10.35.812561 PM                 
+ Start time of AWARD_ATTACHMENT is                                              
 Completed AWARD_ATTACHMENT!!!                                                   
 
- End time of AWARD_ATTACHMENT is 10-DEC-14 07.10.37.595668 PM                   
+ End time of AWARD_ATTACHMENT is                                                
 
- Start time of AWARD_ATTACHMENT VERSIONNING  is 10-DEC-14 07.10.37.599878 PM    
+ Start time of AWARD_ATTACHMENT VERSIONNING  is                                 
 
- End time of AWARD_ATTACHMENT VERSIONNING  is 10-DEC-14 07.10.37.603358 PM      
+ End time of AWARD_ATTACHMENT VERSIONNING  is                                   
 
- Start time of AWARD_CUSTOM_DATA  is 10-DEC-14 07.10.37.608445 PM               
+ Start time of AWARD_CUSTOM_DATA  is                                            
 
- End time of AWARD_CUSTOM_DATA  is 10-DEC-14 07.10.37.950106 PM                 
+ End time of AWARD_CUSTOM_DATA  is                                              
 CREATE INDEX AWARD_COMMENT_I1 ON AWARD_COMMENT(AWARD_NUMBER,SEQUENCE_NUMBER,COMMENT_TYPE_CODE)
              *
 ERROR at line 1:
 ORA-00955: name is already used by an existing object 
 
 
-DECLARE
-*
-ERROR at line 1:
-ORA-02291: integrity constraint (KM52120.FK_AWARD_COMMENT_COMMENT_TYPE) 
-violated - parent key not found 
-ORA-06512: at line 22 
 
+ Start time of AWARD_COMMENT update script is                                   
 
+ End time of AWARD_COMMENT update script is                                     
 
- Start time of AWARD_COMMENT update script is 10-DEC-14 07.10.39.277346 PM      
+ Start time of AWARD_CLOSEOUT  is                                               
 
- End time of AWARD_COMMENT update script is 10-DEC-14 07.10.39.281874 PM        
+ End time of AWARD_CLOSEOUT  is                                                 
 
- Start time of AWARD_CLOSEOUT  is 10-DEC-14 07.10.39.295656 PM                  
+ Start time of AWARD_PERSON_UNITS script is                                     
 
- End time of AWARD_CLOSEOUT  is 10-DEC-14 07.10.39.338413 PM                    
+ End time of AWARD_PERSON_UNITS script is                                       
 
- Start time of AWARD_PERSON_UNITS script is 10-DEC-14 07.10.39.351987 PM        
-
- End time of AWARD_PERSON_UNITS script is 10-DEC-14 07.10.39.739546 PM          
-
- Start time of AWARD_PERSON_CREDIT_SPLITS script is 10-DEC-14 07.10.39.755300 PM
-
- End time of AWARD_PERSON_CREDIT_SPLITS script is 10-DEC-14 07.10.39.977299 PM  
-
- Start time of AWARD_PERS_UNIT_CRED_SPLITS script is 10-DEC-14 07.10.39.991653 P
-M                                                                               
-                                                                                
-
- End time of AWARD_PERS_UNIT_CRED_SPLITS script is 10-DEC-14 07.10.44.638022 PM 
-
- Start time of AWARD_NOTEPAD script is 10-DEC-14 07.10.44.655642 PM             
+ Start time of AWARD_NOTEPAD script is                                          
 Completed AWARD_NOTEPAD!!!                                                      
 
- End time of AWARD_NOTEPAD script is 10-DEC-14 07.10.44.679103 PM               
+ End time of AWARD_NOTEPAD script is                                            
 
- Start time of AWARD_SPONSOR_CONTACTS script is 10-DEC-14 07.10.44.688038 PM    
+ Start time of AWARD_SPONSOR_CONTACTS script is                                 
 
- End time of AWARD_SPONSOR_CONTACTS script is 10-DEC-14 07.10.45.070778 PM      
+ End time of AWARD_SPONSOR_CONTACTS script is                                   
 
- Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is 10-DEC-14 07.1
-0.45.090347 PM                                                                  
-                                                                                
+ Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is               
 
- End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is 10-DEC-14 07.10.46.3785
-48 PM                                                                           
-                                                                                
+ End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is                        
 
- Start time of AWARD_REPORT_TRACKING script is 10-DEC-14 07.10.46.385518 PM     
+ Start time of AWARD_REPORT_TRACKING script is                                  
 
- End time of AWARD_REPORT_TRACKING  is 10-DEC-14 07.10.47.924836 PM             
+ End time of AWARD_REPORT_TRACKING  is                                          
+SP2-0027: Input is too long (> 2499 characters) - line ignored
 
-Start time of AWARD_FUNDING_PROPOSALS  is 10-DEC-14 07.10.47.942749 PM          
+ Start time of AWARD_UNIT_CONTACTS is                                           
 
-Start time of AWARD_FUNDING_PROPOSALS  is 10-DEC-14 07.10.48.861123 PM          
+ End time of AWARD_UNIT_CONTACTS is                                             
 
-Start time of AWARD_FUNDING_PROPOSALS  is 10-DEC-14 07.10.48.864850 PM          
-
- Start time of AWARD_UNIT_CONTACTS is 10-DEC-14 07.10.48.881684 PM              
-
- End time of AWARD_UNIT_CONTACTS is 10-DEC-14 07.10.48.903178 PM                
-
- Start time of AWARD_HIERARCHY script is 10-DEC-14 07.10.48.919606 PM           
+ Start time of AWARD_HIERARCHY script is                                        
 Completed AWARD_HIERARCHY!!!                                                    
 
- End time of AWARD_HIERARCHY script is 10-DEC-14 07.10.49.019668 PM             
+ End time of AWARD_HIERARCHY script is                                          
 
- Start time of AWARD_AMOUNT_TRANSACTION is 10-DEC-14 07.10.49.023846 PM         
+ Start time of AWARD_AMOUNT_TRANSACTION is                                      
 Completed AWARD_AMOUNT_INFO!!!                                                  
 
- End time of AWARD_AMOUNT_TRANSACTION is 10-DEC-14 07.10.50.885107 PM           
+ End time of AWARD_AMOUNT_TRANSACTION is                                        
 
- Start time of AWARD_AMOUNT_INFO is 10-DEC-14 07.10.50.889421 PM                
+ Start time of AWARD_AMOUNT_INFO is                                             
 
- End time of AWARD_AMOUNT_INFO is 10-DEC-14 07.10.50.892803 PM                  
+ End time of AWARD_AMOUNT_INFO is                                               
 
-update award: 10-DEC-14 07.10.50.973644 PM                                      
+update award: 10-DEC-14 11.15.42.026000 PM                                      
 
- Star time of UPDATE_AWARD is 10-DEC-14 07.10.50.986698 PM                      
+ Star time of UPDATE_AWARD is                                                   
 
- End time of UPDATE_AWARD is 10-DEC-14 07.10.53.951773 PM                       
+ End time of UPDATE_AWARD is                                                    
 
- Start time of UPDATE_AWARD_SPECIAL_REVIEW is 10-DEC-14 07.10.53.974925 PM      
+ Start time of UPDATE_AWARD_SPECIAL_REVIEW is                                   
 
- End time of UPDATE_AWARD_SPECIAL_REVIEW is 10-DEC-14 07.10.58.742218 PM        
+ End time of UPDATE_AWARD_SPECIAL_REVIEW is                                     
 
- Start time of AWARD_SPECIAL_REVIEW Update script is 10-DEC-14 07.10.58.760146 P
-M                                                                               
-                                                                                
+ Start time of AWARD_SPECIAL_REVIEW Update script is                            
 
- End time of AWARD_SPECIAL_REVIEW Update script is 10-DEC-14 07.11.04.052142 PM 
+ End time of AWARD_SPECIAL_REVIEW Update script is                              
 
- Start time of UPDATE_AWARD_COST_SHARE is 10-DEC-14 07.11.04.056747 PM          
+ Start time of UPDATE_AWARD_COST_SHARE is                                       
 
- End time of UPDATE_AWARD_COST_SHARE is 10-DEC-14 07.11.04.220645 PM            
+ End time of UPDATE_AWARD_COST_SHARE is                                         
 
- Start time of UPDATE_AWARD_APPROVED_EQUIPMENT is 10-DEC-14 07.11.04.226231 PM  
+ Start time of UPDATE_AWARD_APPROVED_EQUIPMENT is                               
 
- End time of UPDATE_AWARD_APPROVED_EQUIPMENT is 10-DEC-14 07.11.04.474249 PM    
+ End time of UPDATE_AWARD_APPROVED_EQUIPMENT is                                 
 
- Start time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is 10-DEC-14 07.11.04.483443
- PM                                                                             
-                                                                                
+ Start time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is                          
 
- End time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is 10-DEC-14 07.11.04.612731 P
-M                                                                               
-                                                                                
+ End time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is                            
 
- Start time of UPDATE_AWARD_PAYMENT_SCHEDULE is 10-DEC-14 07.11.04.629062 PM    
+ Start time of UPDATE_AWARD_PAYMENT_SCHEDULE is                                 
 
- End time of UPDATE_AWARD_PAYMENT_SCHEDULE is 10-DEC-14 07.11.04.799523 PM      
+ End time of UPDATE_AWARD_PAYMENT_SCHEDULE is                                   
 
- Start time of UPDATE_AWARD_SCIENCE_KEYWORD is 10-DEC-14 07.11.04.815034 PM     
+ Start time of UPDATE_AWARD_SCIENCE_KEYWORD is                                  
 
- End time of UPDATE_AWARD_SCIENCE_KEYWORD is 10-DEC-14 07.11.04.836574 PM       
+ End time of UPDATE_AWARD_SCIENCE_KEYWORD is                                    
 
- Start time of UPDATE_AWARD_IDC_RATE is 10-DEC-14 07.11.04.845324 PM            
+ Start time of UPDATE_AWARD_IDC_RATE is                                         
 
- End time of UPDATE_AWARD_IDC_RATE is 10-DEC-14 07.11.05.167242 PM              
+ End time of UPDATE_AWARD_IDC_RATE is                                           
 
- Start time of UPDATE_AWARD_APPROVED_SUBAWARDS is 10-DEC-14 07.11.05.181594 PM  
+ Start time of UPDATE_AWARD_APPROVED_SUBAWARDS is                               
 
- End time of UPDATE_AWARD_APPROVED_SUBAWARDS is 10-DEC-14 07.11.09.134825 PM    
+ End time of UPDATE_AWARD_APPROVED_SUBAWARDS is                                 
 
- Start time of UPDATE_AWARD_TRANSFERRING_SPONSOR is 10-DEC-14 07.11.09.145378 PM
+ Start time of UPDATE_AWARD_TRANSFERRING_SPONSOR is                             
 
- End time of UPDATE_AWARD_TRANSFERRING_SPONSOR is 10-DEC-14 07.11.09.201198 PM  
+ End time of UPDATE_AWARD_TRANSFERRING_SPONSOR is                               
 
- Start time of UPDATE_AWARD_PERSONS is 10-DEC-14 07.11.09.206863 PM             
+ Start time of UPDATE_AWARD_PERSONS is                                          
 
- End time of UPDATE_AWARD_PERSONS is 10-DEC-14 07.11.09.282194 PM               
+ End time of UPDATE_AWARD_PERSONS is                                            
 
- Start time of UPDATE_AWARD_PERSONS is 10-DEC-14 07.11.09.287038 PM             
+ Start time of UPDATE_AWARD_PERSONS is                                          
 
- End time of UPDATE_AWARD_PERSONS is 10-DEC-14 07.11.09.341918 PM               
+ End time of UPDATE_AWARD_PERSONS is                                            
 
- Start time of UPDATE_AWARD_ATTACHMENT is 10-DEC-14 07.11.09.351309 PM          
+ Start time of UPDATE_AWARD_ATTACHMENT is                                       
 Completed AWARD_ATTACHMENT!!!                                                   
 
- End time of UPDATE_AWARD_ATTACHMENT is 10-DEC-14 07.11.10.188028 PM            
+ End time of UPDATE_AWARD_ATTACHMENT is                                         
 
- Start time of UPDATE_AWARD_CUSTOM_DATA is 10-DEC-14 07.11.10.193025 PM         
+ Start time of UPDATE_AWARD_CUSTOM_DATA is                                      
 
- End time of UPDATE_AWARD_CUSTOM_DATA is 10-DEC-14 07.11.15.092334 PM           
+ End time of UPDATE_AWARD_CUSTOM_DATA is                                        
 
- Start time of UPDATE_AWARD_COMMENT is 10-DEC-14 07.11.15.096535 PM             
+ Start time of UPDATE_AWARD_COMMENT is                                          
 
- End time of UPDATE_AWARD_COMMENT is 10-DEC-14 07.11.17.750504 PM               
+ End time of UPDATE_AWARD_COMMENT is                                            
 
- Start time of UPDATE_AWARD_CLOSEOUT is 10-DEC-14 07.11.17.754995 PM            
+ Start time of UPDATE_AWARD_CLOSEOUT is                                         
 
- End time of UPDATE_AWARD_CLOSEOUT is 10-DEC-14 07.11.17.779590 PM              
+ End time of UPDATE_AWARD_CLOSEOUT is                                           
 
- Start time of UPDATE_AWARD_PERSON_UNITS is 10-DEC-14 07.11.17.791155 PM        
+ Start time of UPDATE_AWARD_PERSON_UNITS is                                     
 
- End time of UPDATE_AWARD_PERSON_UNITS is 10-DEC-14 07.11.18.881416 PM          
+ End time of UPDATE_AWARD_PERSON_UNITS is                                       
 
- Start time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is 10-DEC-14 07.11.18.885706 PM
+ Start time of UPDATE_AWARD_NOTEPAD is                                          
 
- End time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is 10-DEC-14 07.11.19.235918 PM  
+ End time of UPDATE_AWARD_NOTEPAD is                                            
 
- Start time of UPDATE_AWARD_PERS_UNIT_CRED_SPLITS is 10-DEC-14 07.11.19.240302 P
-M                                                                               
-                                                                                
-DECLARE
+ Start time of UPDATE_AWARD_SPONSOR_CONTACTS is                                 
+
+ End time of UPDATE_AWARD_SPONSOR_CONTACTS is                                   
+
+ Start time of UPDATE_AWARD_REP_TERMS_RECNT is                                  
+
+ End time of UPDATE_AWARD_REP_TERMS_RECNT is                                    
+
+ Start time of UPDATE_AWARD_SPONSOR_TERM is                                     
+
+ End time of UPDATE_AWARD_SPONSOR_TERM is                                       
+
+ Start time of UPDATE_AWARD_REPORT_TRACKING is                                  
+
+ End time of UPDATE_AWARD_REPORT_TRACKING is                                    
+
+ Start time of UPDATE_AWARD_FUNDING_PROPOSALS is                                
+
+ End time of UPDATE_AWARD_FUNDING_PROPOSALS is                                  
+
+ Start time of UPDATE_AWARD_UNIT_CONTACTS is                                    
+
+ End time of UPDATE_AWARD_UNIT_CONTACTS is                                      
+
+ Start time of UPDATE_AWARD_AMOUNT_INFO is                                      
+Completed AWARD_AMOUNT_INFO!!!                                                  
+INSERT INTO PENDING_TRANSACTIONS(TRANSACTION_ID,DOCUMENT_NUMBER,SOURCE_AWARD_NUMBER,DESTINATION_AWARD_NUMBER,OBLIGATED_AMOUNT,ANTICIPATED_AMOUNT,COMMENTS,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID,OBLIGATED_DIRECT_AMOUNT,OBLIGATED_INDIRECT_AMOUNT,ANTICIPATED_DIRECT_AMOUNT,ANTICIPATED_INDIRECT_AMOUNT,PROCESSED_FLAG,SINGLE_NODE_TRANS)
 *
 ERROR at line 1:
-ORA-01422: exact fetch returns more than requested number of rows 
-ORA-06512: at line 23 
+ORA-00001: unique constraint (KCSO.PENDING_TRANSACTIONSP1) violated 
 
 
 
- End time of UPDATE_AWARD_PERS_UNIT_CRED_SPLITS is 10-DEC-14 07.11.27.314667 PM 
+ End time of UPDATE_AWARD_AMOUNT_INFO is                                        
 
- Start time of UPDATE_AWARD_NOTEPAD is 10-DEC-14 07.11.27.329371 PM             
+ Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is                               
 
- End time of UPDATE_AWARD_NOTEPAD is 10-DEC-14 07.11.27.344987 PM               
+ End time of UPDATE_AWARD_AMOUNT_TRANSACTION is                                 
 
- Start time of UPDATE_AWARD_SPONSOR_CONTACTS is 10-DEC-14 07.11.27.349363 PM    
+ Start time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is                             
 
- End time of UPDATE_AWARD_SPONSOR_CONTACTS is 10-DEC-14 07.11.29.122691 PM      
+ End time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is                               
 
- Start time of UPDATE_AWARD_REP_TERMS_RECNT is 10-DEC-14 07.11.29.140734 PM     
+ Start time of award_sequence_status_update is                                  
 
- End time of UPDATE_AWARD_REP_TERMS_RECNT is 10-DEC-14 07.11.42.482849 PM       
+ End time of award_sequence_status_update is                                    
 
- Start time of UPDATE_AWARD_SPONSOR_TERM is 10-DEC-14 07.11.42.498211 PM        
+Completed Award : 10-DEC-14 11.33.05.635238 PM                                  
 
- End time of UPDATE_AWARD_SPONSOR_TERM is 10-DEC-14 07.11.54.464225 PM          
+Completed Award : 10-DEC-14 11.33.05.739240 PM                                  
 
- Start time of UPDATE_AWARD_REPORT_TRACKING is 10-DEC-14 07.11.54.496409 PM     
+insert development proposal: 10-DEC-14 11.33.06.010171 PM                       
 
- End time of UPDATE_AWARD_REPORT_TRACKING is 10-DEC-14 07.11.57.242243 PM       
-
- Start time of UPDATE_AWARD_FUNDING_PROPOSALS is 10-DEC-14 07.11.57.266691 PM   
-
- End time of UPDATE_AWARD_FUNDING_PROPOSALS is 10-DEC-14 07.11.57.837390 PM     
-
- Start time of UPDATE_AWARD_UNIT_CONTACTS is 10-DEC-14 07.11.57.850703 PM       
-
- End time of UPDATE_AWARD_UNIT_CONTACTS is 10-DEC-14 07.11.57.874774 PM         
-
- Start time of UPDATE_AWARD_AMOUNT_INFO is 10-DEC-14 07.11.57.892053 PM         
-Completed AWARD_AMOUNT_INFO!!!                                                  
-
- End time of UPDATE_AWARD_AMOUNT_INFO is 10-DEC-14 07.12.05.105619 PM           
-
- Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is 10-DEC-14 07.12.05.139185 PM  
-
- End time of UPDATE_AWARD_AMOUNT_TRANSACTION is 10-DEC-14 07.12.05.174583 PM    
-
- Start time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is 10-DEC-14 07.12.05.192515 PM
-
- End time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is 10-DEC-14 07.12.06.332306 PM  
-
- Start time of award_sequence_status_update is 10-DEC-14 07.12.06.353972 PM     
-
- End time of award_sequence_status_update is 10-DEC-14 07.12.07.125771 PM       
-
-Completed Award : 10-DEC-14 07.12.07.129149 PM                                  
-
-Completed Award : 10-DEC-14 07.12.07.131357 PM                                  
-
-insert development proposal: 10-DEC-14 07.12.07.157778 PM                       
-
- Start time of insert to EPS_PROPOSAL is 10-DEC-14 07.12.07.213020 PM           
+ Start time of insert to EPS_PROPOSAL is                                        
 
                                                                                
 Successfully inserted EPS_PROPOSAL and EPS_PROPOSAL_DOCUMENT                    
 
- 811695296                                                                      
+    396688                                                                      
 
- End time of insert to EPS_PROPOSAL is 10-DEC-14 07.12.07.694583 PM             
+ End time of insert to EPS_PROPOSAL is                                          
 
- Start time of insert to EPS_PROPOSAL is 10-DEC-14 07.12.07.720393 PM           
+ Start time of insert to EPS_PROPOSAL is                                        
 
- End time of updating EPS_PROPOSAL is 10-DEC-14 07.12.07.871302 PM              
+ End time of updating EPS_PROPOSAL is                                           
 
-Completed development proposal: 10-DEC-14 07.12.07.876608 PM                    
+Completed development proposal: 10-DEC-14 11.33.08.337222 PM                    
 
-insert budget proposal: 10-DEC-14 07.12.07.879305 PM                            
+insert budget proposal: 10-DEC-14 11.33.08.444030 PM                            
 
- Start time of BUDGET is 10-DEC-14 07.12.07.893664 PM                           
+ Start time of BUDGET is                                                        
 
- End time of BUDGET is 10-DEC-14 07.12.08.050302 PM                             
+ End time of BUDGET is                                                          
 
- Start time of BUDGET_PERIODS is 10-DEC-14 07.12.08.054298 PM                   
+ Start time of BUDGET_PERIODS is                                                
 
- End time of BUDGET_PERIODS is 10-DEC-14 07.12.08.144049 PM                     
+ End time of BUDGET_PERIODS is                                                  
 
- Start time of BUDGET_MODULAR is 10-DEC-14 07.12.08.156560 PM                   
+ Start time of BUDGET_MODULAR is                                                
 
- End time of BUDGET_MODULAR is 10-DEC-14 07.12.08.367070 PM                     
+ End time of BUDGET_MODULAR is                                                  
 
- Start time of BUDGET_MODULAR_IDC script is 10-DEC-14 07.12.08.371077 PM        
+ Start time of BUDGET_MODULAR_IDC script is                                     
 
- End time of BUDGET_MODULAR_IDC script is 10-DEC-14 07.12.08.392388 PM          
+ End time of BUDGET_MODULAR_IDC script is                                       
 
- Start time of BUDGET_PERSONS is 10-DEC-14 07.12.08.409397 PM                   
+ Start time of BUDGET_PERSONS is                                                
+DECLARE
+*
+ERROR at line 1:
+ORA-01722: invalid number 
+ORA-06512: at line 101 
 
- End time of BUDGET_PERSONS is 10-DEC-14 07.12.08.540995 PM                     
+
+
+ End time of BUDGET_PERSONS is                                                  
 
  Start time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  scri
-pt is 10-DEC-14 07.12.08.554821 PM                                              
+pt is                                                                           
                                                                                 
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 1 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 2 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 3 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 4 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
+Missing data in BUDGET or BUDGET_PERIODS while inserting into BUDGET_DETAILS ,  
+Proposal Number is 21967 ,Version Number is 1 and Budget Period is 5 .ORA-02291:
+integrity constraint (KCSO.FK2_BUDGET_DETAILS) violated - parent key not found  
 
  End time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  script
- is 10-DEC-14 07.12.08.596394 PM                                                
+ is                                                                             
                                                                                 
 
  Start time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET
-_RATE_AND_BASE  script is 10-DEC-14 07.12.08.615005 PM                          
+_RATE_AND_BASE  script is                                                       
                                                                                 
 
  End time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_R
-ATE_AND_BASE  script is 10-DEC-14 07.12.08.667573 PM                            
+ATE_AND_BASE  script is                                                         
                                                                                 
 
- Start time of BUDGET_PROJECT_INCOME is 10-DEC-14 07.12.08.674594 PM            
+ Start time of BUDGET_PROJECT_INCOME is                                         
 
- End time of BUDGET_PROJECT_INCOME is 10-DEC-14 07.12.08.699828 PM              
+ End time of BUDGET_PROJECT_INCOME is                                           
 
- Start time of EPS_PROP_COST_SHARING is 10-DEC-14 07.12.08.703713 PM            
+ Start time of EPS_PROP_COST_SHARING is                                         
 
- End time of EPS_PROP_COST_SHARING is 10-DEC-14 07.12.08.732696 PM              
+ End time of EPS_PROP_COST_SHARING is                                           
 
- Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is 10-DEC-14 07.12.08.74
-0617 PM                                                                         
-                                                                                
+ Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is                      
 
- End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is 10-DEC-14 07.12.08.7818
-91 PM                                                                           
-                                                                                
+ End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is                        
 
- Start time of EPS_PROP_IDC_RATE script is 10-DEC-14 07.12.08.786824 PM         
+ Start time of EPS_PROP_IDC_RATE script is                                      
 
- End time of EPS_PROP_IDC_RATE script is 10-DEC-14 07.12.08.812164 PM           
+ End time of EPS_PROP_IDC_RATE script is                                        
 
-Completed budget : 10-DEC-14 07.12.08.815521 PM                                 
+Completed budget : 10-DEC-14 11.33.36.036999 PM                                 
 
-Completed budget : 10-DEC-14 07.12.08.818097 PM                                 
+Completed budget : 10-DEC-14 11.33.36.139530 PM                                 
 
-insert Institute proposal: 10-DEC-14 07.12.08.823440 PM                         
+insert Institute proposal: 10-DEC-14 11.33.36.393010 PM                         
 
- Start time of  Insert to PROPOSAL is 10-DEC-14 07.12.08.833174 PM              
+ Start time of  Insert to PROPOSAL is                                           
 Completed PROPOSAL  AND ITS INDICATOR TABLES!!!                                 
 
-2577174834                                                                      
+ 495610545                                                                      
 
- End time of PROPOSAL KREW TABLES  is 10-DEC-14 07.12.09.583669 PM              
+ End time of PROPOSAL KREW TABLES  is                                           
 
- End time of  Insert to PROPOSAL is 10-DEC-14 07.12.09.586203 PM                
+ End time of  Insert to PROPOSAL is                                             
 
- Start time of Insert to PROPOSAL_ADMIN_DETAILS is 10-DEC-14 07.12.09.614575 PM 
+ Start time of Insert to PROPOSAL_ADMIN_DETAILS is                              
 
- End time of  Insert to PROPOSAL_ADMIN_DETAILS is 10-DEC-14 07.12.09.657149 PM  
+ End time of  Insert to PROPOSAL_ADMIN_DETAILS is                               
 
- Start time of insert_proposal_version_history is 10-DEC-14 07.12.09.668544 PM  
+ Start time of insert_proposal_version_history is                               
 Completed VERSION_HISTORY !!!                                                   
 
- End time of insert_proposal_version_history is 10-DEC-14 07.12.09.683227 PM    
+ End time of insert_proposal_version_history is                                 
 
- Start time of  update PROPOSAL is 10-DEC-14 07.12.09.697229 PM                 
+ Start time of  update PROPOSAL is                                              
 
- End time of  update PROPOSAL is 10-DEC-14 07.12.10.239116 PM                   
+ End time of  update PROPOSAL is                                                
 
- Start time of update PROPOSAL_ADMIN_DETAILS is 10-DEC-14 07.12.10.248217 PM    
+ Start time of update PROPOSAL_ADMIN_DETAILS is                                 
 
- End time of  Update PROPOSAL_ADMIN_DETAILS is 10-DEC-14 07.12.10.260054 PM     
+ End time of  Update PROPOSAL_ADMIN_DETAILS is                                  
 
-Completed Institute proposal : 10-DEC-14 07.12.10.263287 PM                     
+Completed Institute proposal : 10-DEC-14 11.33.39.136939 PM                     
 
-Completed Institute proposal : 10-DEC-14 07.12.10.266157 PM                     
+Completed Institute proposal : 10-DEC-14 11.33.39.239448 PM                     
 
-Completed syncing, end time: 10-DEC-14 07.12.10.734431 PM                       
+Completed syncing, end time: 10-DEC-14 11.33.42.144101 PM                       
