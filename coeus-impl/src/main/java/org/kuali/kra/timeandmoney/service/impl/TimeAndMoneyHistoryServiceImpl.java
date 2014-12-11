@@ -271,6 +271,7 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
                         transactionDetails.addAll(transactionDetailsA);
                         List<TransactionDetail> transactionDetailsB = 
                             ((List<TransactionDetail>)businessObjectService.findMatchingOrderBy(TransactionDetail.class, fieldValues2, "transactionDetailId", true));
+                        transactionDetails.addAll(transactionDetailsB);
                         if (transactionDetails.size() > 0) {
                             AwardAmountInfoHistory awardAmountInfoHistory = new AwardAmountInfoHistory();
                             awardAmountInfoHistory.setAwardAmountInfo(awardAmountInfo);
