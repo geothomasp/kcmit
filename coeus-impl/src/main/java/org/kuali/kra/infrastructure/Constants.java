@@ -450,7 +450,7 @@ public interface Constants {
     public static final String MAPPING_INSTITUTIONAL_PROPOSAL_MEDUSA_PAGE = "medusa";
     
     public static final String INSTITUTIONAL_PROPSAL_PROPSAL_NUMBER_SEQUENCE = "SEQ_PROPOSAL_PROPOSAL_ID";
-    public static final String IP_NUMBER_SEQUENCE_FY_BASED = "SEQ_IP_FY_BASED_ID";
+    public static final String IP_NUMBER_SEQUENCE_FY_BASED = "SEQ_INST_PROPOSAL_NUMBER";
     public static final String FISCAL_YEAR_BASED_IP = "GENERATE_IP_BASED_ON_FY";
     public static final String COST_SHARE_COMMENT_TYPE_CODE = "9";
     public static final String FANDA_RATE_COMMENT_TYPE_CODE = "8";
