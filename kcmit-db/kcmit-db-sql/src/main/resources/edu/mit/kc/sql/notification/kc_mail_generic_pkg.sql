@@ -13,7 +13,7 @@ create or replace PACKAGE KC_MAIL_GENERIC_PKG is
                        AV_COPY_TO   IN  VARCHAR2,
 					   AV_REPLY_TO  IN  VARCHAR2,
 					   AV_SUBJECT IN NOTIFICATION_TYPE.SUBJECT%TYPE,
-					   AV_MESSAGE IN NOTIFICATION_TYPE.SUBJECT%TYPE );							 
+					   AV_MESSAGE IN NOTIFICATION_TYPE.MESSAGE%TYPE );							 
 									 
 FUNCTION FN_INSERT_KREN_NTFCTN( AV_NOTIF_MODULE IN VARCHAR2,
 								  AV_MESSAGE IN VARCHAR2)
@@ -73,7 +73,7 @@ This procedure will return mail subject and message
                        AV_COPY_TO   IN  VARCHAR2,
 					   AV_REPLY_TO  IN  VARCHAR2,
 					   AV_SUBJECT IN NOTIFICATION_TYPE.SUBJECT%TYPE,
-					   AV_MESSAGE IN NOTIFICATION_TYPE.SUBJECT%TYPE )
+					   AV_MESSAGE IN NOTIFICATION_TYPE.MESSAGE%TYPE )
 IS  
 mail_conn              utl_smtp.connection; 
 mesg                   clob;
