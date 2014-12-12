@@ -25,9 +25,9 @@
         p:documentTypeName="RoleCentralMapMaintenanceDocument"/>
 
 
-    <bean id="PropAwardPersonRole-MaintenanceView" parent="Uif-MaintenanceView"
-          p:headerText="Proposal Award Person Role Maintenance"
-          p:title="Proposal Award Person Role Maintenance"
+    <bean id="RoleCentralMap-MaintenanceView" parent="Uif-MaintenanceView"
+          p:headerText="Role Central Map Maintenance"
+          p:title="Role Central Map Maintenance"
           p:dataObjectClassName="edu.mit.kc.roleintegration.RoleCentralMap">
         <property name="items">
          <list merge="true">             
