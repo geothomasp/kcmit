@@ -15,3 +15,6 @@ select 'Completed syncing, end time: '|| localtimestamp from dual;
 Spool Off;
 Set define On;
 Set feedback On;
+exit
+/
+

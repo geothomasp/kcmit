@@ -884,7 +884,7 @@ rem  Call the function fn_set_username_null_pfeed to generate emails with list o
 rem persons whose user_names should be set to NULL
 rem This function will also update user_name column in osp$person table
 var li_ret number;
-exec :li_ret := fn_set_username_null_pfeed('coeus-dev-team@mit.edu', 'KC Person Feed Prncpl ID cleanup');
+exec :li_ret := fn_set_username_null_pfeed('kc-mit-dev@mit.edu', 'KC Person Feed Prncpl ID cleanup');
 commit;
 rem
 rem
