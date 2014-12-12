@@ -77,8 +77,8 @@
     <bean id="RoleCentralMap-roleName-parentBean" abstract="true" parent="AttributeDefinition" >
         <property name="name" value="roleName" />
         <property name="forceUppercase" value="false" />
-        <property name="label" value="Role Name" />
-        <property name="shortLabel" value="Role Name" />
+        <property name="label" value="KC Role Name" />
+        <property name="shortLabel" value="KC Role Name" />
         <property name="maxLength" value="60" />
         <property name="validationPattern" >
             <bean parent="AlphaNumericValidationPattern" />
@@ -115,7 +115,7 @@
         <property name="forceUppercase" value="false" />
         <property name="label" value="Central Role Name" />
         <property name="shortLabel" value="Central Role Name" />
-        <property name="maxLength" value="10" />
+        <property name="maxLength" value="60" />
         <property name="validationPattern" >
             <bean parent="AlphaNumericValidationPattern" />
         </property>
@@ -174,7 +174,7 @@
     </property>
     <property name="criteriaFields">
       <list>
-         <bean p:propertyName="roleName" parent="Uif-LookupCriteriaInputField" p:fieldLabel.labelText="Role Name">
+         <bean p:propertyName="roleName" parent="Uif-LookupCriteriaInputField" p:fieldLabel.labelText="KC Role Name">
             <property name="quickfinder">
                 <bean parent="Uif-QuickFinderByScript" p:dataObjectClassName="org.kuali.rice.kim.impl.role.RoleBo"
                       p:fieldConversions="name:roleName"/>
