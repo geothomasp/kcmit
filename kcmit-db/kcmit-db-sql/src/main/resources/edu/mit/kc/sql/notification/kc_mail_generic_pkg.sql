@@ -13,7 +13,7 @@ create or replace PACKAGE KC_MAIL_GENERIC_PKG is
                        AV_COPY_TO   IN  VARCHAR2,
 					   AV_REPLY_TO  IN  VARCHAR2,
 					   AV_SUBJECT IN NOTIFICATION_TYPE.SUBJECT%TYPE,
-					   AV_MESSAGE IN NOTIFICATION_TYPE.MESSAGE%TYPE );							 
+					   AV_MESSAGE IN CLOB );							 
 									 
 FUNCTION FN_INSERT_KREN_NTFCTN( AV_NOTIF_MODULE IN VARCHAR2,
 								  AV_MESSAGE IN VARCHAR2)
@@ -73,7 +73,7 @@ This procedure will return mail subject and message
                        AV_COPY_TO   IN  VARCHAR2,
 					   AV_REPLY_TO  IN  VARCHAR2,
 					   AV_SUBJECT IN NOTIFICATION_TYPE.SUBJECT%TYPE,
-					   AV_MESSAGE IN NOTIFICATION_TYPE.MESSAGE%TYPE )
+					   AV_MESSAGE IN CLOB )
 IS  
 mail_conn              utl_smtp.connection; 
 mesg                   clob;
@@ -85,7 +85,8 @@ ls_recipients          varchar2(2000);
 ls_Allrecipients       varchar2(2000);
 li_pos                 number;
 ls_emailid             varchar2(200);
-
+ v_len integer;
+ v_cur_pos number := 1;
 BEGIN 
 
 	BEGIN
@@ -230,8 +231,18 @@ BEGIN
       mesg := mesg || '<p>-----------------------------------------------------</p>' || crlf ;
     END IF;
     
-    utl_smtp.write_data(mail_conn, mesg);
-    utl_smtp.write_data(mail_conn, AV_MESSAGE);            
+    utl_smtp.write_data(mail_conn, mesg); 
+    
+    --split message into 25k byte chunks  start
+      v_len := DBMS_LOB.getlength(AV_MESSAGE);
+      while v_cur_pos <= v_len 
+      loop       
+        UTL_SMTP.WRITE_DATA(mail_conn, DBMS_LOB.SUBSTR(AV_MESSAGE,32000,v_cur_pos));  
+        v_cur_pos := v_cur_pos + 32000;
+      end loop;
+    --- utl_smtp.write_data(mail_conn, AV_MESSAGE);  
+    -- split message into 25k byte chunks  Ends
+     
     utl_smtp.close_data(mail_conn);
     utl_smtp.quit(mail_conn);
  
