@@ -139,6 +139,8 @@
 				<value>classpath:edu/mit/kc/datadictionary/MITTimeAndMoneyDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITSubAwardDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITRolodex.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITSponsor.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITOrganization.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalLog.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposalDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposal.xml</value>
