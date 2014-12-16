@@ -552,6 +552,7 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
     }
 
     public List<CSM> getCommitteeScheduleMinutes() {
+    	if(committeeScheduleMinutes!=null)
         Collections.sort(committeeScheduleMinutes, new Comparator<CSM>() {
             @Override
             public int compare(CSM o1, CSM o2) {
