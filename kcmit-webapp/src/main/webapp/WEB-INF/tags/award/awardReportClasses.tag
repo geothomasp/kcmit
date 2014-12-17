@@ -290,16 +290,21 @@ function updateBaseDateDisplay(selectBox) {
 							<c:choose>
 								<c:when
 									test="${KualiForm.document.awardList[0].awardReportTermItems[status.index].dueDate =='1900-01-01'}">
-									<!-- by default date(01/01/1900) its blank -->
+									<kul:htmlControlAttribute
+										property="document.awardList[0].awardReportTermItems[${status.index}].dueDate"
+										attributeEntry="${awardReportTermAttributes.dueDate}"
+										displayMask="true" displayMaskValue="" />
+
 								</c:when>
 								<c:otherwise>
 									<kul:htmlControlAttribute
 										property="document.awardList[0].awardReportTermItems[${status.index}].dueDate"
 										attributeEntry="${awardReportTermAttributes.dueDate}" />
+
 								</c:otherwise>
 							</c:choose>
-						</div>
-					</td>
+			</div>
+		    </td>
 			</td>
 			<td valign="middle">
 			<div align="center">
