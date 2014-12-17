@@ -207,7 +207,11 @@ public class BudgetAction extends BudgetActionBase {
         budgetForm.getDocument().prepareForSave();
         
         Budget budget = budgetDoc.getBudget();
-        getBudgetCommonService(budget.getBudgetParent()).calculateBudgetOnSave(budget);
+        if (budgetForm.getActionName().equals("BudgetSummaryTotalsAction")) {
+        	getBudgetCommonService(budget.getBudgetParent()).calculateBudgetOnSave(budget);
+        }else{
+        	getBudgetCalculationService().calculateBudget(budget);
+        }
         ActionForward forward = super.save(mapping, form, request, response);
         BudgetForm savedBudgetForm = (BudgetForm) form;
         AwardBudgetDocument savedBudgetDoc = savedBudgetForm.getBudgetDocument();
@@ -219,7 +223,11 @@ public class BudgetAction extends BudgetActionBase {
         return forward;
     }
 
-    protected BudgetSummaryService getBudgetSummaryService() {
+    private BudgetCalculationService getBudgetCalculationService() {
+		return KcServiceLocator.getService(BudgetCalculationService.class);
+	}
+
+	protected BudgetSummaryService getBudgetSummaryService() {
         return KcServiceLocator.getService(BudgetSummaryService.class);
     }
 

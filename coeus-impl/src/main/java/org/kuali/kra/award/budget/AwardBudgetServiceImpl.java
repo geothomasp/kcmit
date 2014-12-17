@@ -41,6 +41,7 @@ import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
 import org.kuali.coeus.common.budget.framework.core.BudgetParent;
 import org.kuali.coeus.common.budget.framework.core.BudgetParentDocument;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItemCalculatedAmount;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPerson;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
@@ -806,7 +807,7 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
                 budget.getBudgetSummaryTotals() == null ||
                 budget.getBudgetSummaryTotals().get("personnelFringeTotals") == null ||
                 budgetPeriod == null ||
-                CollectionUtils.validIndexForList(budgetPeriod.getBudgetPeriod() - 1, budget.getBudgetSummaryTotals().get("personnelFringeTotals"))) {
+                !CollectionUtils.validIndexForList(budgetPeriod.getBudgetPeriod() - 1, budget.getBudgetSummaryTotals().get("personnelFringeTotals"))) {
             return ScaleTwoDecimal.ZERO;
         }
         return budget.getBudgetSummaryTotals().get("personnelFringeTotals").get(budgetPeriod.getBudgetPeriod() - 1);
@@ -832,15 +833,21 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         for (BudgetPeriod awardBudgetPeriod : awardBudgetPeriods) {
             AwardBudgetPeriodExt budgetPeriod = (AwardBudgetPeriodExt)awardBudgetPeriod;
             ScaleTwoDecimal periodFringeTotal = getPeriodFringeTotal(budgetPeriod, budget);
-            if(!periodFringeTotal.equals(ScaleTwoDecimal.ZERO) || !budgetPeriod.getTotalFringeAmount().equals(ScaleTwoDecimal.ZERO)){
-                budgetPeriod.setTotalDirectCost(budgetPeriod.getTotalDirectCost().subtract(periodFringeTotal).add(budgetPeriod.getTotalFringeAmount()));
-                budgetPeriod.setTotalCost(budgetPeriod.getTotalDirectCost().add(budgetPeriod.getTotalIndirectCost()));
-            }
+            ScaleTwoDecimal prevPeriodFringeTotal = budgetPeriod.getPrevTotalFringeAmount();
+            ScaleTwoDecimal totalFringeAmount = budgetPeriod.getTotalFringeAmount();
+            ScaleTwoDecimal fringeAmountDiff = totalFringeAmount.subtract(prevPeriodFringeTotal);
+        	ScaleTwoDecimal totalDirect = budgetPeriod.getTotalDirectCost().add(fringeAmountDiff);
+        	budgetPeriod.setPrevTotalFringeAmount(totalFringeAmount);
+			if(!totalDirect.equals(budgetPeriod.getTotalDirectCost())){
+				budgetPeriod.setTotalDirectCost(totalDirect);
+			}
+            budgetPeriod.setTotalCost(budgetPeriod.getTotalDirectCost().add(budgetPeriod.getTotalIndirectCost()));
         }
         setBudgetCostsFromPeriods(budget);
     }
     
-    public void populateSummaryCalcAmounts(Budget budget,BudgetPeriod budgetPeriod) {
+
+	public void populateSummaryCalcAmounts(Budget budget,BudgetPeriod budgetPeriod) {
         AwardBudgetPeriodExt awardBudgetPeriod = (AwardBudgetPeriodExt)budgetPeriod;
         List<AwardBudgetPeriodSummaryCalculatedAmount> awardBudgetPeriodFringeAmounts = awardBudgetPeriod.getAwardBudgetPeriodFringeAmounts();
         awardBudgetPeriodFringeAmounts.clear();
