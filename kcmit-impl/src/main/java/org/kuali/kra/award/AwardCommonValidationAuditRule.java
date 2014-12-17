@@ -22,6 +22,8 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import edu.mit.kc.award.service.AwardCommonValidationService;
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.rules.rule.DocumentAuditRule;
@@ -57,7 +59,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	}
 	
     if (!retval) {
-    	auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_COMMON, link));
+    	auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_COMMON, link));
     	reportAndCreateAuditCluster();            
      }
 	return retval;

@@ -27,6 +27,8 @@ import org.kuali.rice.krad.util.AuditCluster;
 import org.kuali.rice.krad.util.AuditError;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +98,7 @@ public class AwardCostShareAuditRule implements DocumentAuditRule {
         	 if (awardCostShare.getDestination() == null) {
                  isValid = false;
                  addAuditError(new AuditError("document.awardList[0].awardCostShares["+awardCostShares.indexOf(awardCostShare)+"].destination", 
-                		 KeyConstants.ERROR_COST_SHARE_DESTINATION,
+                		 KcMitConstants.ERROR_COST_SHARE_DESTINATION,
                          Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.COST_SHARE_PANEL_ANCHOR));        		 
                 		
              } 	
@@ -119,7 +121,7 @@ public class AwardCostShareAuditRule implements DocumentAuditRule {
         	 if (awardCostShare.getSource() == null) {
                  isValid = false;
                  addAuditError(new AuditError("document.awardList[0].awardCostShares["+awardCostShares.indexOf(awardCostShare)+"].source", 
-                		 KeyConstants.ERROR_COST_SHARE_SOURCE,
+                		 KcMitConstants.ERROR_COST_SHARE_SOURCE,
                          Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.COST_SHARE_PANEL_ANCHOR));        		 
                 		
              } 	
@@ -132,7 +134,7 @@ public class AwardCostShareAuditRule implements DocumentAuditRule {
         boolean isValid = true;   
         
        if(award.getAwardTransactionType()==null) {
-           addAuditError(new AuditError("document.awardList[0].awardTransactionTypeCode",KeyConstants.ERROR_AWARD_TRANSACTION_TYPE,Constants.MAPPING_AWARD_HOME_PAGE ));
+           addAuditError(new AuditError("document.awardList[0].awardTransactionTypeCode",KcMitConstants.ERROR_AWARD_TRANSACTION_TYPE,Constants.MAPPING_AWARD_HOME_PAGE ));
                     isValid = false;
                 }
             
@@ -159,7 +161,7 @@ public class AwardCostShareAuditRule implements DocumentAuditRule {
         	 if (awardCostShare.getSource() != null && awardCostShare.getSource().toString().length()>7) {
                  isValid = false;
                  addAuditError(new AuditError("document.awardList[0].awardCostShares["+awardCostShares.indexOf(awardCostShare)+"].source", 
-                		 KeyConstants.ERROR_COST_SHARE_SOURCE_LIMIT,
+                		 KcMitConstants.ERROR_COST_SHARE_SOURCE_LIMIT,
                          Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.COST_SHARE_PANEL_ANCHOR));        		 
              } 	
         }
@@ -176,7 +178,7 @@ public class AwardCostShareAuditRule implements DocumentAuditRule {
         	 if (awardCostShare.getDestination() != null && awardCostShare.getDestination().toString().length()>7) {
                  isValid = false;
                  addAuditError(new AuditError("document.awardList[0].awardCostShares["+awardCostShares.indexOf(awardCostShare)+"].destination", 
-                		 KeyConstants.ERROR_COST_SHARE_DESTINATION_LIMIT,
+                		 KcMitConstants.ERROR_COST_SHARE_DESTINATION_LIMIT,
                          Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.COST_SHARE_PANEL_ANCHOR));        		 
              } 	
         }

@@ -42,6 +42,31 @@ public interface KcMitConstants {
     
     public static final String HOLD_PROMPT = "Hold Prompt";
     
+    public static final String ERROR_AWARD_TRANSACTION_TYPE = "error.award.no.transaction.type";
+    //Award Hold Prompts
+    public static final String ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE = "error.award.status.hold.sponsor.code";
+    public static final String ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW ="error.award.status.hold.human.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW ="error.award.status.hold.multiple.human.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW ="error.award.status.hold.animal.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ANIMAL_REVIEW ="error.award.status.hold.multiple.animal.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW ="error.award.status.hold.dna.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW="error.award.status.hold.multiple.dna.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW="error.award.status.hold.isotop.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW="error.award.status.hold.multiple.isotop.review";
+    public static final String ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW="error.award.status.hold.bio.review"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW="error.award.status.hold.multiple.bio.review";
+    public static final String ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW="error.award.status.hold.inter.review";
+    public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW="error.award.status.hold.multiple.inter.review";
+    public static final String ERROR_AWARD_HOLD_PROMPT_REPORT_TERM="error.award.status.hold.report.term"; 
+    public static final String ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW="error.award.status.hold.no.specialreview";
+    public static final String ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW="error.award.status.hold.no.term.spreview";
+    public static final String ERROR_AWARD_HOLD_PROMPT_COMMON="error.award.status.hold.common.violation";
+    public static final String ERROR_COST_SHARE_SOURCE="error.awardCostShare.source.required";
+    public static final String ERROR_COST_SHARE_DESTINATION="error.awardCostShare.destination.required";
+    public static final String ERROR_COST_SHARE_SOURCE_LIMIT="error.awardCostShare.source.limit";
+    public static final String ERROR_COST_SHARE_DESTINATION_LIMIT="error.awardCostShare.destination.limit";
+    public static final String ERROR_OBLIGATED_OR_ANTICIPATED_AMOUNT_REQUIRED = "error.transaction.amount.required";
+    public static final String ERROR_IP_COST_SHARE_SOURCE_ACCOUNT_LIMIT_EXCEEDS="error.institutionalProposalCostShare.sourceamount.exceeds";
    
     
 }

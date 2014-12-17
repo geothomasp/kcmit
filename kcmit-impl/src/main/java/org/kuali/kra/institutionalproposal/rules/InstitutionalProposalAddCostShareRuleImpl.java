@@ -23,6 +23,8 @@ import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposalCostShare;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -150,7 +152,7 @@ public class InstitutionalProposalAddCostShareRuleImpl extends CostShareRuleRese
         } else if(sourceAccount.toString().length() > SOURCE_ACCOUNT_LIMIT) {
         	if (displayNullFieldErrors) {
         		isValid = false;
-            	this.reportError(sourceAccountField, KeyConstants.ERROR_IP_COST_SHARE_SOURCE_ACCOUNT_LIMIT_EXCEEDS);
+            	this.reportError(sourceAccountField, KcMitConstants.ERROR_IP_COST_SHARE_SOURCE_ACCOUNT_LIMIT_EXCEEDS);
         	}
           }
         

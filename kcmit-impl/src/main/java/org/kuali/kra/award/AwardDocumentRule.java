@@ -82,6 +82,8 @@ import org.kuali.rice.krad.util.AuditError;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -681,7 +683,7 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
     		 if (award.getAwardTransactionTypeCode() == null) {  
     			 success = false;
                  String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
-                 String messageKey = KeyConstants.ERROR_AWARD_TRANSACTION_TYPE;
+                 String messageKey = KcMitConstants.ERROR_AWARD_TRANSACTION_TYPE;
                  String errorKey = "document.awardList[0].awardTransactionTypeCode"; 
                  auditErrors.add(new AuditError(errorKey, messageKey, link));
               } 

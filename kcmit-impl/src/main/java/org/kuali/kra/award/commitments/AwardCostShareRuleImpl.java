@@ -23,6 +23,8 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,7 +115,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         String sourceField = fieldStarter + ".source";
         if (awardCostShare.getSource() == null) {
             isValid = false;
-            this.reportError(sourceField, KeyConstants.ERROR_COST_SHARE_SOURCE);
+            this.reportError(sourceField, KcMitConstants.ERROR_COST_SHARE_SOURCE);
         } 
        
         return isValid;
@@ -124,7 +126,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         String destinationField = fieldStarter + ".destination";
         if (awardCostShare.getDestination() == null) {
             isValid = false;
-            this.reportError(destinationField, KeyConstants.ERROR_COST_SHARE_DESTINATION);
+            this.reportError(destinationField, KcMitConstants.ERROR_COST_SHARE_DESTINATION);
         } 
        
         return isValid;
@@ -139,7 +141,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         String sourceField = fieldStarter + ".source";
         if (awardCostShare.getSource() != null && awardCostShare.getSource().toString().length()>7) {
             isValid = false;
-            this.reportError(sourceField, KeyConstants.ERROR_COST_SHARE_SOURCE_LIMIT);
+            this.reportError(sourceField, KcMitConstants.ERROR_COST_SHARE_SOURCE_LIMIT);
         } 
        
         return isValid;
@@ -155,7 +157,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         String destinationField = fieldStarter + ".destination";
         if (awardCostShare.getDestination() != null && awardCostShare.getDestination().toString().length()>7) {
             isValid = false;
-            this.reportError(destinationField, KeyConstants.ERROR_COST_SHARE_DESTINATION_LIMIT);
+            this.reportError(destinationField, KcMitConstants.ERROR_COST_SHARE_DESTINATION_LIMIT);
         } 
        
         return isValid;

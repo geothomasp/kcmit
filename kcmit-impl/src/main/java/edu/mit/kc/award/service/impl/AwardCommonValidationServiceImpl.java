@@ -24,6 +24,8 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import edu.mit.kc.award.service.AwardCommonValidationService;
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -69,14 +71,14 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
         String sponsorCode=award.getSponsorCode();
         String primeSponsorCode=award.getPrimeSponsorCode();           
         String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
-        String messageKey = KeyConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE;
+        String messageKey = KcMitConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE;
         String errorKey = "document.awardList[0].awardStatus";
         boolean awardSponsorNsf = getParameterService().getParameterValueAsBoolean(
                 "KC-AWARD", "Document", "ENABLE_AWARD_NSF_RCR_REVIEW_VALID");
          if(awardSponsorNsf && sponsorCode!=null && sponsorCode.equalsIgnoreCase(NIH_SPONSOR_CODE)||primeSponsorCode!=null && primeSponsorCode.equalsIgnoreCase(NIH_SPONSOR_CODE)){                
             valid = false;
             auditWarnings.add(new AuditError(errorKey, messageKey, link));
-            GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE , KeyConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE); 
+            GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE , KcMitConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE); 
          } 
         return valid;
         }
@@ -134,41 +136,41 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
           noOfInterReviews ++;            
       }}}
       if(noOfHumanReviews==1){
-          auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW, link));
-          GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW);
+          auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW, link));
+          GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW);
      }else if(noOfHumanReviews > 1){
-         auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW, link));
-         GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW);
+         auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW, link));
+         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW);
      } if(noOfAnimalReviews==1){
-         auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW, link));
-         GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW);
+         auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW, link));
+         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW);
     }else if(noOfAnimalReviews > 1){
-        auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW, link));
-        GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW);
+        auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW, link));
+        GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW);
     } if(noOfDnaReviews==1){
-        auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW, link));
-        GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW);
+        auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW, link));
+        GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW);
    }else if(noOfDnaReviews > 1){
-       auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW, link));
-       GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW);
+       auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW, link));
+       GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW);
    } if(noOfIsotopReviews==1){
-       auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW, link));
-       GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW);
+       auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW, link));
+       GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW);
   }else if(noOfIsotopReviews > 1){
-      auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW, link));
-      GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW);
+      auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW, link));
+      GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW);
   } if(noOfBioReviews==1){
-      auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW, link));
-      GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW);
+      auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW, link));
+      GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW);
  }else if(noOfBioReviews > 1){
-     auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW, link));
-     GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW);
+     auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW, link));
+     GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW);
  } if(noOfInterReviews==1){
-     auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW, link));
-     GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW);
+     auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW, link));
+     GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW);
 }else if(noOfInterReviews > 1){
-    auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW, link));
-    GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW);
+    auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW, link));
+    GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW);
 }
  return valid;
   }
@@ -198,8 +200,8 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
         	int datePastDue = reportTracking.getDueDate().compareTo(dateBefore74Days);
         	if(dateToCompare<0 && datePastDue<0){
             valid=false;
-            auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW, link));
-            GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW);
+            auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW, link));
+            GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW);
         }
     }}
     }}
@@ -234,16 +236,16 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     if(noOfSpecialReview > 0){
        if(noOfSpreviewHumanAnimal ==0){
            valid = false;
-           auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW, link));
-           GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW);
+           auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW, link));
+           GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW);
        }else if(noOfSpreviewHumanAnimal > 0){
            valid = false;
-           auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW, link)); 
-           GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW);
+           auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW, link)); 
+           GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW);
        }else{
            valid=false;
-           auditWarnings.add(new AuditError(errorKey, KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW, link));
-           GlobalVariables.getMessageMap().putWarning(KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW,KeyConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW);
+           auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW, link));
+           GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW);
        }
     }
         return valid;

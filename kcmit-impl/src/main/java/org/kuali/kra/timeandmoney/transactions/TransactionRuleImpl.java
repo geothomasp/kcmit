@@ -33,6 +33,8 @@ import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -256,7 +258,7 @@ public class TransactionRuleImpl extends KcTransactionalDocumentRuleBase impleme
         // this has already been done... if (awardAmountInfo.getObliDistributableAmount().subtract(pendingTransaction.getObligatedAmount()).isNegative()) {
         ScaleTwoDecimal decimal = new ScaleTwoDecimal(0.00);
        if (pendingTransaction.getObligatedAmount().isLessEqual(decimal) && pendingTransaction.getAnticipatedAmount().isLessEqual(decimal)) {
-         reportError(TRANSACTION_AMOUNT, KeyConstants.ERROR_OBLIGATED_OR_ANTICIPATED_AMOUNT_REQUIRED);
+         reportError(TRANSACTION_AMOUNT, KcMitConstants.ERROR_OBLIGATED_OR_ANTICIPATED_AMOUNT_REQUIRED);
             valid = false;
         }
         
