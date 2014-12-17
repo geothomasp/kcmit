@@ -268,8 +268,7 @@ public interface Constants {
     public static final String SUBCONTRACTOR_DIRECT_GT_25K_PARAM = "SUBCONTRACTOR_DIRECT_GT_25K";
     public static final String SUBCONTRACTOR_DIRECT_LT_25K_PARAM = "SUBCONTRACTOR_DIRECT_LT_25K";
     
-    // research.gov 
-    public static final String RESEARCH_GOV_SERVICE_HOST = "research.gov.s2s.host";
+    
     //Grants.gov
     public static final String S2S_SUBMISSIONTYPE_CODE_KEY="document.developmentProposalList[0].s2sOpportunity.s2sSubmissionTypeCode";
     public static final String GRANTS_GOV_PANEL_ANCHOR  = "Opportunity";
@@ -450,7 +449,8 @@ public interface Constants {
     public static final String MAPPING_INSTITUTIONAL_PROPOSAL_MEDUSA_PAGE = "medusa";
     
     public static final String INSTITUTIONAL_PROPSAL_PROPSAL_NUMBER_SEQUENCE = "SEQ_PROPOSAL_PROPOSAL_ID";
-    
+    public static final String IP_NUMBER_SEQUENCE_FY_BASED = "SEQ_INST_PROPOSAL_NUMBER";
+    public static final String FISCAL_YEAR_BASED_IP = "GENERATE_IP_BASED_ON_FY";
     public static final String COST_SHARE_COMMENT_TYPE_CODE = "9";
     public static final String FANDA_RATE_COMMENT_TYPE_CODE = "8";
     public static final String PAYMENT_AND_INVOICES_COMMENT_TYPE_CODE = "1";
@@ -743,7 +743,6 @@ public interface Constants {
     public static final String MAPPING_SUBAWARD_PAGE = "subAward";
     public static final String MAPPING_FUNDING_SOURCE_PAGE = "fundingSource";
     public static final String MAPPING_FINANCIAL_PAGE ="financial";
-    public static final String MAPPING_TEMPLATE_PAGE ="templateInformation";
     public static final String MAPPING_AMOUNT_RELEASED_PAGE="amountReleased";
     public static final String MAPPING_CONTACTS_PAGE="contacts";
     public static final String MAPPING_CLOSEOUT_PAGE="closeout";
@@ -756,17 +755,6 @@ public interface Constants {
     public static final String SUBAWARD_FINANCIAL_PANEL_NAME ="Financial";
     public static final String SUBAWARD_FINANCIAL_ANTICIPATED_AMOUNT = "document.subAwardList[0].totalAnticipatedAmount";
     public static final String SUBAWARD_FINANCIAL_OBLIGATED_AMOUNT = "document.subAwardList[0].totalObligatedAmount";
-    public static final String PARAMETER_FDP_PRIME_ADMINISTRATIVE_CONTACT_CODE = "FDP_Prime_Administrative_Contact_Code";
-    public static final String PARAMETER_FDP_PRIME_AUTHORIZED_OFFICIAL_CODE = "FDP_Prime_Authorized_Official_Code";
-    public static final String PARAMETER_FDP_PRIME_FINANCIAL_CONTACT_CODE = "FDP_Prime_Financial_Contact_Code";
-    public static final String PARAMETER_FDP_SUB_ADMINISTRATIVE_CONTACT_CODE = "FDP_Sub_Administrative_Contact_Code";
-    public static final String PARAMETER_FDP_SUB_AUTHORIZED_CONTACT_CODE = "FDP_Sub_Authorized_Official_Code";
-    public static final String PARAMETER_FDP_SUB_FINANCIAL_CONTACT_CODE = "FDP_Sub_Financial_Contact_Code";
-    public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_3B = "Subaward_FDP_Attachment_3B_Form_ID";
-    public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_4 = "Subaward_FDP_Attachment_4_Form_ID";
-    public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_5 = "Subaward_FDP_Attachment_5_Form_ID";
-    public static final String PARAMETER_PRINT_ATTACHMENT_TYPE_INCLUSION = "Subaward_Print_Attachment_Type_Inclusion";
-    
     // coi
     public static final String MODULE_NAMESPACE_COIDISCLOSURE = "KC-COIDISCLOSURE";
     public static final String PARAMETER_COI_ATTACHMENT_DEFAULT_SORT = "coiAttachmentDefaultSort";
@@ -881,10 +869,23 @@ public interface Constants {
     public static final String IRB_MODULE = "irb";
     public static final String IACUC_MODULE = "iacuc";
     
-    public static final String PD_INITIATED_ROUTE_NODE_NAME = "Initiated";
 
     //Prop Dev Parameter
     public static final String SPONSOR_HIERACHY_REQ_DIV_PROG_CODES = "SPONSOR_HIERACHY_REQ_DIV_PROG_CODES";
-    
-}
+    public static final String MAPPING_TEMPLATE_PAGE ="templateInformation";
+    public static final String NEW_PERSON_LOOKUP_FLAG = "newPersonLookupFlag";
+    public static final String RESEARCH_GOV_SERVICE_HOST = "research.gov.s2s.host";
+    public static final String PARAMETER_FDP_PRIME_ADMINISTRATIVE_CONTACT_CODE = "FDP_Prime_Administrative_Contact_Code";
+    public static final String PARAMETER_FDP_PRIME_AUTHORIZED_OFFICIAL_CODE = "FDP_Prime_Authorized_Official_Code";
+    public static final String PARAMETER_FDP_PRIME_FINANCIAL_CONTACT_CODE = "FDP_Prime_Financial_Contact_Code";
+    public static final String PARAMETER_FDP_SUB_ADMINISTRATIVE_CONTACT_CODE = "FDP_Sub_Administrative_Contact_Code";
+    public static final String PARAMETER_FDP_SUB_AUTHORIZED_CONTACT_CODE = "FDP_Sub_Authorized_Official_Code";
+    public static final String PARAMETER_FDP_SUB_FINANCIAL_CONTACT_CODE = "FDP_Sub_Financial_Contact_Code";
+    public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_3B = "Subaward_FDP_Attachment_3B_Form_ID";
+    public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_4 = "Subaward_FDP_Attachment_4_Form_ID";
+    public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_5 = "Subaward_FDP_Attachment_5_Form_ID";
+    public static final String PARAMETER_PRINT_ATTACHMENT_TYPE_INCLUSION = "Subaward_Print_Attachment_Type_Inclusion";
+    public static final String PD_INITIATED_ROUTE_NODE_NAME = "Initiated";
 
+        
+}

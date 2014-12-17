@@ -259,10 +259,13 @@ public class AwardTemplateXmlStream implements XmlStream {
 					.valueOf(ospDistributionCode));
 		}
 		Distribution distribution = awardTemplateReportTerm.getDistribution();
-		String ospDescription = distribution.getDescription();
-		if (ospDescription != null) {
-			reportTermDetailsType.setOSPDistributionDesc(ospDescription);
+		if(distribution!=null){
+			String ospDescription = distribution.getDescription();
+			if (ospDescription != null) {
+				reportTermDetailsType.setOSPDistributionDesc(ospDescription);
+			}
 		}
+		
 	}
 
 	/*

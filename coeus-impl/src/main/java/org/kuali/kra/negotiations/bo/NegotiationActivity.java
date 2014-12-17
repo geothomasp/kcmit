@@ -108,7 +108,7 @@ public class NegotiationActivity extends KcPersistableBusinessObjectBase {
             } else {
                 end = endDate.getTime();
             }
-            return (((end - start) / MILLISECS_PER_DAY) + 1) + "";
+            return (((end - start) / MILLISECS_PER_DAY)) + "";
         }
     }
 

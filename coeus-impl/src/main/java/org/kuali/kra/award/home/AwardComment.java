@@ -182,7 +182,7 @@ public class AwardComment extends AwardAssociate implements Comparable<AwardComm
     public String getUpdateTimestampDateString() {
         Calendar cal = Calendar.getInstance();
         cal.setTime((Date) getUpdateTimestamp());
-        return Integer.toString(cal.get(Calendar.MONTH)) + "/" + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + "/" + Integer.toString(cal.get(Calendar.YEAR));
+        return Integer.toString(cal.get(Calendar.MONTH)+1) + "/" + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + "/" + Integer.toString(cal.get(Calendar.YEAR));
     }
 
     public void resetPersistenceState() {
