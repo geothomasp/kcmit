@@ -45,6 +45,7 @@ import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
+import org.kuali.coeus.sys.impl.validation.DataValidationItem;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.infrastructure.RoleConstants;
@@ -195,8 +196,7 @@ public abstract class ProposalDevelopmentControllerBase {
         UifFormBase form =  getKcCommonControllerService().initForm(this.createInitialForm(request), request, response);
         return form;
     }
-     
-private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
+    private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
    
     
     public KcCoiLinkService kcCoiLinkService;
@@ -212,7 +212,7 @@ private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitControll
 	public void setKcCoiLinkService(KcCoiLinkService kcCoiLinkService) {
 		this.kcCoiLinkService = kcCoiLinkService;
 	}
-    
+     
     /**
      * Create the original set of Proposal Users for a new Proposal Development Document.
      * The creator the proposal is assigned to the AGGREGATOR role.
@@ -369,9 +369,30 @@ private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitControll
      
      protected ModelAndView navigate(ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
          populateAdHocRecipients(form.getProposalDevelopmentDocument());
-         releasePessimisticLocks(form);
-
+         String navigateToPageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
+         if (isNavigateToAttachmentsOrBudget(navigateToPageId) ||
+                 isNavigateAwayFromAttachment(navigateToPageId,form.getPageId()) ||
+                 isNavigateAwayFromBudget(navigateToPageId,form.getPageId())) {
+             releasePessimisticLocks(form);
+             form.setEvaluateFlagsAndModes(true);
+             form.setCanEditView(null);
+         }
          return save(form);
+     }
+
+    protected boolean isNavigateToAttachmentsOrBudget(String navigateToPageId) {
+        return StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID) ||
+                StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID);
+    }
+
+    protected boolean isNavigateAwayFromBudget(String navigateToPageId, String pageId) {
+       return StringUtils.equals(pageId,ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID) &&
+               !StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID);
+    }
+
+    protected boolean isNavigateAwayFromAttachment(String navigateToPageId, String pageId) {
+        return StringUtils.equals(pageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID) &&
+                !StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID);
      }
 
     protected void releasePessimisticLocks(DocumentFormBase form) {
@@ -474,7 +495,7 @@ private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitControll
                     for (AnswerHeader answerHeader : person.getQuestionnaireHelper().getAnswerHeaders()) {
                         boolean wasComplete = answerHeader.isCompleted();
                         allCertificationsWereComplete &= wasComplete;
-                        getLegacyDataAdapter().save(answerHeader);//person.getFullName() person.getPersonId() person.getPersonName()
+                        getLegacyDataAdapter().save(answerHeader);
                         person.getQuestionnaireHelper().populateAnswers();
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
                         allCertificationAreNowComplete &= isComplete;
@@ -620,10 +641,10 @@ private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitControll
     public AuditHelper.ValidationState getValidationState(ProposalDevelopmentDocumentForm form) {
         AuditHelper.ValidationState severityLevel = AuditHelper.ValidationState.OK;
         form.setAuditActivated(true);
-        List<ProposalDevelopmentDataValidationItem> dataValidationItems = ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService())
-                .populateDataValidation(form,form.getView().getViewIndex());
+        List<DataValidationItem> dataValidationItems = ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService())
+                .populateDataValidation(form);
         if(dataValidationItems != null && dataValidationItems.size() > 0 ) {
-            for(ProposalDevelopmentDataValidationItem validationItem : dataValidationItems) {
+            for(DataValidationItem validationItem : dataValidationItems) {
                 if (StringUtils.endsWith(validationItem.getSeverity(),Constants.AUDIT_ERRORS)) {
                     severityLevel = AuditHelper.ValidationState.ERROR;
                     break;
@@ -674,6 +695,10 @@ private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitControll
         if (proposalDevelopmentDocumentForm.getDeferredMessages() != null
                 && proposalDevelopmentDocumentForm.getDeferredMessages().hasMessages()){
             MessageMap messageMap = proposalDevelopmentDocumentForm.getDeferredMessages();
+            MessageMap currentMessageMap = getGlobalVariableService().getMessageMap();
+            messageMap.getErrorMessages().putAll(currentMessageMap.getErrorMessages());
+            messageMap.getInfoMessages().putAll(currentMessageMap.getInfoMessages());
+            messageMap.getWarningMessages().putAll(currentMessageMap.getWarningMessages());
             getGlobalVariableService().setMessageMap(messageMap);
         }
         proposalDevelopmentDocumentForm.setDeferredMessages(null);

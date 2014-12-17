@@ -6,12 +6,12 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.validation.Auditable;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.rice.krad.util.AuditCluster;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.rules.rule.event.DocumentAuditEvent;
 import org.kuali.rice.krad.service.KualiRuleService;
-import org.kuali.rice.krad.util.AuditCluster;
-import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -92,7 +92,6 @@ public class AuditHelperImpl implements AuditHelper {
         }
         return result;
     }
-
     
     public <T extends Auditable> ValidationState isValidHoldPrompt(final T form, boolean unconditionally) {
         ValidationState result = ValidationState.OK;
@@ -116,7 +115,7 @@ public class AuditHelperImpl implements AuditHelper {
         
         return result;
     }
-    
+
     public KualiRuleService getRuleService() {
         return ruleService;
     }
@@ -124,5 +123,4 @@ public class AuditHelperImpl implements AuditHelper {
     public void setRuleService(KualiRuleService kualiRuleService) {
         this.ruleService = kualiRuleService;
     }
-
 }
