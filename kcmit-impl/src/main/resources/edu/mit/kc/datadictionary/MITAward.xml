@@ -206,7 +206,7 @@
 		    <bean p:attributeName="sponsorCode" parent="FieldDefinition" />
 		    <bean p:attributeName="sponsor.sponsorName" parent="FieldDefinition" />
 		    <bean p:attributeName="title" parent="FieldDefinition" />
-			<bean p:attributeName="projectPersons.fullName" parent="FieldDefinition" />
+			<bean p:attributeName="projectPersons.fullName" p:noDirectInquiry="true" parent="FieldDefinition" />
 		    <bean p:attributeName="unitNumber" parent="FieldDefinition" />
 		    <bean p:attributeName="leadUnit.unitName" parent="FieldDefinition" />
 		    <bean p:attributeName="lookupOspAdministratorName" parent="FieldDefinition" />
