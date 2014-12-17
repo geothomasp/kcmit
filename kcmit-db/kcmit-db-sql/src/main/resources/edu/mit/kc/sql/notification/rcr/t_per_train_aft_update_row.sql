@@ -23,8 +23,12 @@ begin
     ls_PersonId := :new.PERSON_ID;
     li_TrainingCode := :new.TRAINING_CODE;
     
-    select count(training_code)  into ll_Count from training where upper(description) like '%RCR%';
-       
+    select count(*) 
+    into ll_Count
+    from training_modules
+    where TRAINING_CODE = li_TrainingCode
+    and MODULE_CODE = 100;	
+	
     ldt_Submitted := :new.DATE_SUBMITTED;
     ldt_Acknowledged := :new.DATE_ACKNOWLEDGED;
     
