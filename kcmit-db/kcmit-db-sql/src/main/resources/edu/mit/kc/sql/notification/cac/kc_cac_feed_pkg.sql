@@ -1222,10 +1222,10 @@ FUNCTION  fn_gen_cac_emails(ad_RunDate in date)
 
 mail_conn             utl_smtp.connection;
 mesg                     clob;
---mesg                     VARCHAR2(32767);
+mesg_osp                   clob;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
 tab                     varchar2(1) := chr(9);
-
+li_number 		number := 0;
 
 ls_recipients           varchar2(2000);
 ls_PROTOCOL_NUMBER          CAC_LOG_DATA.PROTOCOL_NUMBER_CAC%TYPE ;
@@ -1238,6 +1238,8 @@ ls_APPROVAL_DATE_CAC        CAC_LOG_DATA.APPROVAL_DATE_CAC%TYPE ;
 ll_MAIL_SENT_STATUS    varchar2(8);
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
 mail_message   clob;
+mail_message_in_table   clob;
+mail_message_osp  clob;
 li_ntfctn_id   KREN_NTFCTN_T.NTFCTN_ID%TYPE;
 li_notification_type_id notification_type.notification_type_id% type;
 
@@ -1255,18 +1257,17 @@ cursor cur_osp_email is
         order by LOG_INDICATOR;
 
 BEGIN      
-   
+  
     open cur_cac_email;
         mesg := '';
         loop
         FETCH cur_cac_email INTO  ls_PROTOCOL_NUMBER, ls_AWARD_IP_NUMBER,ls_WBS_IP_CAC, ls_COMMENTS;
         EXIT WHEN cur_cac_email%NOTFOUND;
-
         mesg := mesg || '<tr>
                 <td>' || ls_PROTOCOL_NUMBER || '</td>
                 <td>' || ls_WBS_IP_CAC || '</td>
                 <td>' || ls_COMMENTS || '</td>
-               </tr>';               
+               </tr>'; 
         end loop;
    close cur_cac_email;
         
@@ -1274,9 +1275,14 @@ BEGIN
        ll_MAIL_SENT_STATUS := 'Y';
        -- sending email start
 		begin
-			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,200,'501',mail_subject,mail_message);
-			 mail_message := replace(mail_message, '{list}',mesg );	
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,200,'501',mail_subject,mail_message_in_table);
+             --mail_message := replace(mail_message_in_table, '{list}',mesg );
+             li_number := instr(mail_message_in_table,'{list}');
+             mail_message := RPAD(mail_message_in_table,li_number);
+             mail_message := mail_message || mesg || substr(mail_message_in_table , li_number+7);             
+             
+                        
+             KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);		
 		exception
 		when others then
 			ll_MAIL_SENT_STATUS := 'N';	
@@ -1305,16 +1311,15 @@ BEGIN
 	    when others then
 		NULL;	
         end;
+      
         
-        
---second eamil
-   open cur_osp_email;
-        mesg := '';
+--second eamil    
+   open cur_osp_email; 
+    mesg_osp := '';     
         loop
         FETCH cur_osp_email INTO  ls_PROTOCOL_NUMBER, ls_AWARD_IP_NUMBER,ls_WBS_IP_CAC, ls_COMMENTS, ls_APPROVAL_DATE_CAC;
         EXIT WHEN cur_osp_email%NOTFOUND;
-
-        mesg := mesg || '<tr>
+        mesg_osp := mesg_osp || '<tr>
                 <td>' || ls_PROTOCOL_NUMBER || '</td>
                 <td>' || ls_AWARD_IP_NUMBER || '</td>
                 <td>' || ls_WBS_IP_CAC || '</td>
@@ -1324,12 +1329,17 @@ BEGIN
         end loop;
   close cur_osp_email;
        ls_recipients := 'coeus-data@mit.edu' ;
-       ll_MAIL_SENT_STATUS := 'Y';
+       ll_MAIL_SENT_STATUS := 'Y';       
+       --mail_message := '';
        -- sending email start
 		begin
-			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,200,'502',mail_subject,mail_message);
-			 mail_message := replace(mail_message, '{list}',mesg );	
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,200,'502',mail_subject,mail_message_in_table);
+             --mail_message := replace(mail_message_in_table, '{list}',mesg_osp );
+             li_number := instr(mail_message_in_table,'{list}');
+	     mail_message := RPAD(mail_message_in_table,li_number);
+             mail_message := mail_message || mesg_osp || substr(mail_message_in_table , li_number+7);
+             
+             KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);	
 		exception
 		when others then
 			ll_MAIL_SENT_STATUS := 'N';	

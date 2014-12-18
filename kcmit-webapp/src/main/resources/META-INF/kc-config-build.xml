@@ -28,4 +28,5 @@ This config file only contains properties that are set by the maven build proces
     <param name="rolecentraldb.truststore.password">truststore password</param>
 	<param name="rolecentraldb.host">https://ws-test.mit.edu/rolesws/services/roles</param>
     <param name="rolecentraldb.port">roles</param>
+    <param name="CAC.FILE">/home/coeus/cac/CAC.tab</param>
 </config>

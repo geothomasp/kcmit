@@ -35,12 +35,20 @@
         <property name="kcNotificationService" ref="kcNotificationService" />
         <property name="dbFunctionExecuteService" ref="dbFunctionExecuteService" />
     </bean>
-
+	<bean id="cacDataFeedService" class="edu.mit.kc.cac.CacDataFeedServiceImpl">
+        <property name="parameterService" ref="parameterService"/>
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="kcNotificationService" ref="kcNotificationService" />
+        <property name="dbFunctionExecuteService" ref="dbFunctionExecuteService" /> 
+    </bean>
     <bean id="citiTrainingDataFeedJobDetail" class="org.quartz.JobDetail" >
         <property name="jobClass" value="edu.mit.kc.citi.CitiTrainingDataFeedJobDetail" />
         <property name="name" value="citiTrainingDataFeedJobDetail" />
     </bean>
-    
+    <bean id="cacDataFeedJobDetail" class="org.quartz.JobDetail" >
+        <property name="jobClass" value="edu.mit.kc.cac.CacDataFeedJobDetail" />
+        <property name="name" value="cacDataFeedJobDetail" />
+    </bean>
     <bean id="citiTrainingDataFeedTrigger" class="org.kuali.coeus.sys.framework.scheduling.KcCronTriggerBean">
         <property name="jobDetail" ref="citiTrainingDataFeedJobDetail" />
         <property name="parameterService" ref="parameterService" />    
@@ -50,12 +58,22 @@
         <property name="parameterNamespace" value="KC-ADM" />
         <property name="parameterComponent" value="All" />
     </bean>
+    <bean id="cacDataFeedTrigger" class="org.kuali.coeus.sys.framework.scheduling.KcCronTriggerBean">
+        <property name="jobDetail" ref="cacDataFeedJobDetail" />
+        <property name="parameterService" ref="parameterService" />    
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="cronExpressionParameterName" value="CAC_DATA_FEED_CRON_TRIGGER" />
+        <property name="triggerEnabledParameterName" value="ENABLE_CAC_DATA_FEED" />
+        <property name="parameterNamespace" value="KC-ADM" />
+        <property name="parameterComponent" value="All" />
+    </bean>
 	<bean id="jobFactoryBean" class="org.springframework.scheduling.quartz.SpringBeanJobFactory"/>
 
     <bean id="mitKcSchedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref local="citiTrainingDataFeedTrigger"/>
+                <ref local="cacDataFeedTrigger"/>
             </list>
         </property>
         <property name="jobFactory" ref="jobFactoryBean"/>
@@ -67,6 +85,9 @@
             <map>
                 <entry key="citiTrainingDataFeedService" > 
                     <ref bean="citiTrainingDataFeedService" /> 
+                </entry>
+                <entry key="cacDataFeedService" > 
+                    <ref bean="cacDataFeedService" /> 
                 </entry>
                 <entry key="parameterService"> 
                     <ref bean="parameterService" /> 

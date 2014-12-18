@@ -84,41 +84,7 @@ sysdate,
 sys_guid()
 )
 /
-INSERT INTO NOTIFICATION_TYPE(
-NOTIFICATION_TYPE_ID,
-MODULE_CODE,
-ACTION_CODE,
-DESCRIPTION,
-SUBJECT,
-MESSAGE,
-PROMPT_USER,
-SEND_NOTIFICATION,
-UPDATE_USER,
-UPDATE_TIMESTAMP,
-VER_NBR,
-OBJ_ID)
-VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
-200,
-'502',
-'CAC - Update Special Review Animal Protocols with data from CAC, send email to coeus-data@mit.edu',
-'CAC Notifications -- to OSP',
-' <table border="1">
-                <tr>
-                <th>PROTOCOL NUMBER</th>
-                <th>AWARD/IP NUMBER</th>
-                <th>WBS NUMBER</th>
-                <th>COMMENTS</th>
-                <th>CAC APPROVAL DATE</th>
-               </tr>
-               {list} </table>',
-'N',
-'N',
-user,
-sysdate,
-1,
-sys_guid()
-)
-/
+
 INSERT INTO NOTIFICATION_TYPE(
 NOTIFICATION_TYPE_ID,
 MODULE_CODE,
@@ -137,7 +103,7 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 '503',
 'CAC - Update Special Review Animal Protocols with data from CAC, send email to coeus-data@mit.edu',
 'CAC Notification No Data -- to OSP',
-'There is no CAC data to process',
+'There is no CAC data to process.',
 'N',
 'N',
 user,
@@ -146,6 +112,144 @@ sysdate,
 sys_guid()
 )
 /
+INSERT INTO NOTIFICATION_TYPE(
+NOTIFICATION_TYPE_ID,
+MODULE_CODE,
+ACTION_CODE,
+DESCRIPTION,
+SUBJECT,
+MESSAGE,
+PROMPT_USER,
+SEND_NOTIFICATION,
+UPDATE_USER,
+UPDATE_TIMESTAMP,
+VER_NBR,
+OBJ_ID)
+VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
+200,
+'504',
+'CAC - daily dataload completion Notification',
+'Load CAC Data',
+' CAC daily dataload completed.',
+'N',
+'N',
+user,
+sysdate,
+1,
+sys_guid()
+)
+/
+delete from kc_qrtz_cron_triggers where trigger_name='cacDataFeedTrigger'
+/
+delete from kc_qrtz_triggers where trigger_name='cacDataFeedTrigger'
+/
+delete from kc_qrtz_job_details where job_name='cacDataFeedJobDetail'
+/
+Insert into KRCR_PARM_T (NMSPC_CD,CMPNT_CD,PARM_NM,OBJ_ID,VER_NBR,PARM_TYP_CD,VAL,PARM_DESC_TXT,EVAL_OPRTR_CD,APPL_ID) 
+	values ('KC-ADM','All','CAC_DATA_FEED_CRON_TRIGGER',SYS_GUID(),1,'CONFG','0 5 7 * * ?','Cron expression for CAC feed','A','KC')
+/
+Insert into KRCR_PARM_T (NMSPC_CD,CMPNT_CD,PARM_NM,OBJ_ID,VER_NBR,PARM_TYP_CD,VAL,PARM_DESC_TXT,EVAL_OPRTR_CD,APPL_ID) 
+	values ('KC-ADM','All','ENABLE_CAC_DATA_FEED',SYS_GUID(),1,'CONFG','Y','CAC feed enable flag','A','KC')
+/
+commit
+/
+insert into cac_data(
+                  CAC_DATA_ID,
+                  APPROVAL_DATE             ,
+                  CONTACT_EMAIL             ,
+                  DEPT                      ,
+                  EXPIRATION_DATE           ,
+                  FUNDING_AGENCY            ,
+                  FUNDING_AGENCY2           ,
+                  FUNDING_AGENCY3           ,
+                  FUNDING_AGENCY4           ,
+                  FUNDING_AGENCY5           ,
+                  FUNDING_AGENCY6           ,
+                  GRANT_NUMBER              ,
+                  GRANT_NUMBER2             ,
+                  GRANT_NUMBER3             ,
+                  GRANT_NUMBER4             ,
+                  GRANT_NUMBER5             ,
+                  GRANT_NUMBER6             ,
+                  PI_EMAIL                  ,
+                  PI_FIRST_NAME             ,
+                  PI_LAST_NAME              ,
+                  PREVIOUS_PROTOCOL_NUMBER  ,
+                  PROPOSAL_TYPE             ,
+                  PROTOCOL_NUMBER           ,
+                  REVIEW_LEVEL              ,
+                  SUBMISSION_DATE           ,
+                  WBS_IP_1                  ,
+                  WBS_IP_2                  ,
+                  WBS_IP_3                  ,
+                  WBS_IP_4                  ,
+                  WBS_IP_5                  ,
+                  WBS_IP_6 )
+  select    SEQ_CAC_DATA_ID.NEXTVAL,
+            APPROVAL_DATE             ,
+              CONTACT_EMAIL             ,
+              DEPT                      ,
+              EXPIRATION_DATE           ,
+              FUNDING_AGENCY            ,
+              FUNDING_AGENCY2           ,
+              FUNDING_AGENCY3           ,
+              FUNDING_AGENCY4           ,
+              FUNDING_AGENCY5           ,
+              FUNDING_AGENCY6           ,
+              GRANT_NUMBER              ,
+              GRANT_NUMBER2             ,
+              GRANT_NUMBER3             ,
+              GRANT_NUMBER4             ,
+              GRANT_NUMBER5             ,
+              GRANT_NUMBER6             ,
+              PI_EMAIL                  ,
+              PI_FIRST_NAME             ,
+              PI_LAST_NAME              ,
+              PREVIOUS_PROTOCOL_NUMBER  ,
+              PROPOSAL_TYPE             ,
+              PROTOCOL_NUMBER           ,
+              REVIEW_LEVEL              ,
+              SUBMISSION_DATE           ,
+              WBS_IP_1                  ,
+              WBS_IP_2                  ,
+              WBS_IP_3                  ,
+              WBS_IP_4                  ,
+              WBS_IP_5                  ,
+              WBS_IP_6      
+       from CAC_DATA@coeus.kuali
+/
+insert into cac_log_data(
+                  CAC_LOG_DATA_ID,
+                  PROTOCOL_NUMBER_CAC             ,
+                  AWARD_IP_NUMBER             ,
+                  WBS_IP_CAC                      ,
+                  COMMENTS           ,
+                  LOG_NOTE            ,
+                  SPREV_APPROVAL_DATE           ,
+                  AWARD_EXPIRATION_DATE           ,
+                  SUBMISSION_DATE_CAC           ,
+                  APPROVAL_DATE_CAC           ,
+                  LOG_INDICATOR           ,
+                  UPDATE_TIMESTAMP              ,
+                  VER_NBR             ,
+                  OBJ_ID  )
+  select    SEQ_CAC_LOG_DATA_ID.NEXTVAL,
+            PROTOCOL_NUMBER_CAC             ,
+                  AWARD_IP_NUMBER             ,
+                  WBS_IP_CAC                      ,
+                  COMMENTS           ,
+                  LOG_NOTE            ,
+                  SPREV_APPROVAL_DATE           ,
+                  AWARD_EXPIRATION_DATE           ,
+                  SUBMISSION_DATE_CAC           ,
+                  APPROVAL_DATE_CAC           ,
+                  LOG_INDICATOR           ,
+                  UPDATE_TIMESTAMP              ,
+                  1,
+                  SYS_GUID()    
+       from CAC_LOG_DATA@coeus.kuali
+/
+/*
 declare
     
   ll_cac_data_rows Number := 0; 
@@ -200,6 +304,7 @@ declare
          
          --begin
             insert into cac_data(
+                  CAC_DATA_ID,
                   APPROVAL_DATE             ,
                   CONTACT_EMAIL             ,
                   DEPT                      ,
@@ -229,10 +334,10 @@ declare
                   WBS_IP_3                  ,
                   WBS_IP_4                  ,
                   WBS_IP_5                  ,
-                  WBS_IP_6                  ,
-                  VER_NBR,
-                  OBJ_ID)
-           VALUES(r_cac_data.APPROVAL_DATE             ,
+                  WBS_IP_6 )
+           VALUES(
+                  SEQ_CAC_DATA_ID.NEXTVAL,
+                  r_cac_data.APPROVAL_DATE             ,
                   r_cac_data.CONTACT_EMAIL             ,
                   r_cac_data.DEPT                      ,
                   r_cac_data.EXPIRATION_DATE           ,
@@ -261,9 +366,7 @@ declare
                   r_cac_data.WBS_IP_3                  ,
                   r_cac_data.WBS_IP_4                  ,
                   r_cac_data.WBS_IP_5                  ,
-                  r_cac_data.WBS_IP_6                  ,
-                  1,
-                  SYS_GUID());
+                  r_cac_data.WBS_IP_6       );
          --end;
          end loop;
        CLOSE c_cac_data;  
@@ -272,3 +375,4 @@ declare
   end if;  
 end;
 /
+*/

@@ -55,6 +55,39 @@
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />
 
     </class-descriptor>
+    <class-descriptor class="edu.mit.kc.cac.Cac" table="CAC_DATA">
+	<field-descriptor name="cacDataId" column="CAC_DATA_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEQ_CAC_DATA_ID" autoincrement="true" />
+		<field-descriptor name="approvalDate" column="APPROVAL_DATE" jdbc-type="VARCHAR" />
+		<field-descriptor name="contactEmail" column="CONTACT_EMAIL" jdbc-type="VARCHAR" />
+		<field-descriptor name="dept" column="DEPT" jdbc-type="VARCHAR" />
+		<field-descriptor name="expirationDate" column="EXPIRATION_DATE" jdbc-type="VARCHAR" />
+		<field-descriptor name="fundingAgency" column="FUNDING_AGENCY" jdbc-type="VARCHAR" />
+		<field-descriptor name="fundingAgency2" column="FUNDING_AGENCY2" jdbc-type="VARCHAR" />
+		<field-descriptor name="fundingAgency3" column="FUNDING_AGENCY3" jdbc-type="VARCHAR" />
+		<field-descriptor name="fundingAgency4" column="FUNDING_AGENCY4" jdbc-type="VARCHAR" />
+		<field-descriptor name="fundingAgency5" column="FUNDING_AGENCY5" jdbc-type="VARCHAR" />
+		<field-descriptor name="fundingAgency6" column="FUNDING_AGENCY6" jdbc-type="VARCHAR" />
+		<field-descriptor name="grantNumber" column="GRANT_NUMBER" jdbc-type="VARCHAR" />
+		<field-descriptor name="grantNumber2" column="GRANT_NUMBER2" jdbc-type="VARCHAR" />
+		<field-descriptor name="grantNumber3" column="GRANT_NUMBER3" jdbc-type="VARCHAR" />
+		<field-descriptor name="grantNumber4" column="GRANT_NUMBER4" jdbc-type="VARCHAR" />
+		<field-descriptor name="grantNumber5" column="GRANT_NUMBER5" jdbc-type="VARCHAR" />
+		<field-descriptor name="grantNumber6" column="GRANT_NUMBER6" jdbc-type="VARCHAR" />
+		<field-descriptor name="piEmail" column="PI_EMAIL" jdbc-type="VARCHAR" />
+		<field-descriptor name="piFirstName" column="PI_FIRST_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="piLastName" column="PI_LAST_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="previousProtocolNumber" column="PREVIOUS_PROTOCOL_NUMBER" jdbc-type="VARCHAR" />
+		<field-descriptor name="proposalType" column="PROPOSAL_TYPE" jdbc-type="VARCHAR" />
+		<field-descriptor name="protocolNumber" column="PROTOCOL_NUMBER" jdbc-type="VARCHAR" />
+		<field-descriptor name="reviewLevel" column="REVIEW_LEVEL" jdbc-type="VARCHAR" />
+		<field-descriptor name="submissionDate" column="SUBMISSION_DATE" jdbc-type="VARCHAR" />
+		<field-descriptor name="wbsIp1" column="WBS_IP_1" jdbc-type="VARCHAR" />
+		<field-descriptor name="wbsIp2" column="WBS_IP_2" jdbc-type="VARCHAR" />
+		<field-descriptor name="wbsIp3" column="WBS_IP_3" jdbc-type="VARCHAR" />
+		<field-descriptor name="wbsIp4" column="WBS_IP_4" jdbc-type="VARCHAR" />
+		<field-descriptor name="wbsIp5" column="WBS_IP_5" jdbc-type="VARCHAR" />
+		<field-descriptor name="wbsIp6" column="WBS_IP_6" jdbc-type="VARCHAR" />
+	</class-descriptor>
     <class-descriptor class="edu.mit.kc.bo.KrmsFunctions" table="KRMS_FUNC_T">
 		<field-descriptor id="1" name="id" column="FUNC_ID" jdbc-type="VARCHAR" primarykey="true"/>
 		<field-descriptor name="namespace" column="NMSPC_CD" jdbc-type="VARCHAR"/>
