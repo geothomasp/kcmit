@@ -153,4 +153,9 @@
 		
 	</bean>
 
+  <bean id="InstituteRate-lookupDefinition" parent="MIT-InstituteRate-lookupDefinition-parentBean" />
+  <bean id="MIT-InstituteRate-lookupDefinition-parentBean" parent="InstituteRate-lookupDefinition-parentBean">
+  <property name="resultSetLimit" value="1000" />
+  </bean>
+  
 </beans>
