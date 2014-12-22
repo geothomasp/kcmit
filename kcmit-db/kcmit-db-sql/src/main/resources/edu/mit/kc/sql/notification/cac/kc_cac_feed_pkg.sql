@@ -1278,8 +1278,8 @@ BEGIN
 			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,200,'501',mail_subject,mail_message_in_table);
              --mail_message := replace(mail_message_in_table, '{list}',mesg );
              li_number := instr(mail_message_in_table,'{list}');
-             mail_message := RPAD(mail_message_in_table,li_number);
-             mail_message := mail_message || mesg || substr(mail_message_in_table , li_number+7);             
+             mail_message := RPAD(mail_message_in_table,li_number-1);
+             mail_message := mail_message || mesg || substr(mail_message_in_table , li_number+6);             
              
                         
              KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);		
@@ -1336,8 +1336,8 @@ BEGIN
 			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,200,'502',mail_subject,mail_message_in_table);
              --mail_message := replace(mail_message_in_table, '{list}',mesg_osp );
              li_number := instr(mail_message_in_table,'{list}');
-	     mail_message := RPAD(mail_message_in_table,li_number);
-             mail_message := mail_message || mesg_osp || substr(mail_message_in_table , li_number+7);
+	     mail_message := RPAD(mail_message_in_table,li_number-1);
+             mail_message := mail_message || mesg_osp || substr(mail_message_in_table , li_number+6);
              
              KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);	
 		exception
