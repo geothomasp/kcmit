@@ -144,8 +144,8 @@
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalLog.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposalDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposal.xml</value>
-				<!-- <value>classpath:edu/mit/kc/datadictionary/MitDevelopmentProposal.xml</value> -->
-				<value>classpath:edu/mit/kc/datadictionary/MitAwardSpecialReview.xml</value>
+<!-- 				<value>classpath:edu/mit/kc/datadictionary/MitDevelopmentProposal.xml</value>
+ -->			<value>classpath:edu/mit/kc/datadictionary/MitAwardSpecialReview.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTermRecipient.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTerm.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardPaymentSchedule.xml</value>
@@ -161,6 +161,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/CitiTraining.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/RoleCentralMap.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/docs/RoleCentralMapMaintenanceDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitProposalDevelopmentDocument.xml</value>
 			</list>
 		</property>
         <property name="databaseRepositoryFilePaths">
