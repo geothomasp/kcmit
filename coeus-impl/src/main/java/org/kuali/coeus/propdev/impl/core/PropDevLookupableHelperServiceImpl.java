@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.PermissionConstants;
@@ -18,6 +19,7 @@ import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
 import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
 import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.lookup.LookupForm;
 import org.kuali.rice.krad.lookup.LookupableImpl;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.LookupService;
@@ -235,12 +237,21 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
      */
 	@Override
 	public void buildPropDevEditActionLink(Link actionLink, Object model,String title) throws WorkflowException {
+		boolean actionLinkTitleFlag=true;
+		LookupForm lookupFormValue=(LookupForm) model;
+		Map<String, String> lookupFormValueList = lookupFormValue.getLookupCriteria();
+		String proposalStateTypeCode=lookupFormValueList.get("proposalStateTypeCode");
+		if(proposalStateTypeCode != null && proposalStateTypeCode.equals(ProposalState.APPROVED_AND_SUBMITTED)){
+			actionLinkTitleFlag=false;
+		} 
+		    if (actionLinkTitleFlag) {
 			actionLink.setTitle(title);
 			actionLink.setLinkText(title);
 			actionLink.setHref(getConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
 	                + KRADConstants.DOCHANDLER_DO_URL
 	                + actionLink.getHref()
 	                + KRADConstants.DOCHANDLER_URL_CHUNK);
+		    }
 
 	}
 
