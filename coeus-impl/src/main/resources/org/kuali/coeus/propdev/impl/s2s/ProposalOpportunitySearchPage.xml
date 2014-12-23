@@ -177,7 +177,7 @@
 					p:readOnly="@{#lp.mandatory}" p:readOnlyDisplayReplacement="Yes"
                     p:fieldLabel.labelText="[0]">
                     <property name="control">
-                        <bean parent="Uif-CheckboxControl" p:disabled="@{!#line.available or !#editModes['printProposal']}" />
+                        <bean parent="Uif-CheckboxControl" p:disabled="@{!#line.available or !#editModes['printProposal'] or document.developmentProposal.proposalStateTypeCode eq '6'}" />
                     </property>
                     <property name="fieldLabel.inlineComponents">
                         <list>
@@ -319,6 +319,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-SecondaryActionButton" p:actionLabel="Add User Attached Form" p:order="10"
+                      p:render="@{document.developmentProposal.proposalStateTypeCode ne '6'}"
                       p:actionScript="showDialog('PropDev-OpportunityPage-AddUserAttachedForm');" p:iconClass="icon-plus"/>
                 <bean parent="PropDev-OpportunityPage-UserAttachedForms-Collection" p:order="20"/>
             </list>
