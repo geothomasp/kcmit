@@ -236,6 +236,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
     public ModelAndView sendAllCertificationNotifications(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
         int index = 0;
         for (ProposalPerson proposalPerson : form.getDevelopmentProposal().getProposalPersons()) {
+        	if(proposalPerson.isSelectedPerson()){
             boolean certificationComplete = true;
             for (AnswerHeader answerHeader : proposalPerson.getQuestionnaireHelper().getAnswerHeaders()) {
                 certificationComplete &= answerHeader.isCompleted();
@@ -245,7 +246,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
             }
 
             index++;
-        }
+        }}
         return getRefreshControllerService().refresh(form);
     }
 
