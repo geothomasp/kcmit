@@ -1,0 +1,251 @@
+
+SQL*Plus: Release 10.2.0.4.0 - Production on Wed Dec 31 13:14:19 2014
+
+Copyright (c) 1982, 2007, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+
+'RUNNINGDDLSNAPSHOT'
+--------------------
+running ddl snapshot
+
+
+Table altered.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Sequence created.
+
+
+Commit complete.
+
+
+Commit complete.
+
+
+'RUNNINGDMLSNAPSHOT'
+--------------------
+running dml snapshot
+
+
+188 rows created.
+
+
+20 rows created.
+
+
+3 rows created.
+
+
+17180 rows created.
+
+
+320 rows created.
+
+
+0 rows created.
+
+
+0 rows created.
+
+
+197 rows created.
+
+
+12308 rows created.
+
+
+44 rows created.
+
+
+60431 rows created.
+
+
+2 rows created.
+
+
+47023 rows created.
+
+SELECT REVIEW_ROLE_CODE,DESCRIPTION,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM WL$PROP_REVIEW_ROLE@coeus,kuali
+                                                                                                             *
+ERROR at line 2:
+ORA-00942: table or view does not exist
+
+
+
+9 rows created.
+
+
+270 rows created.
+
+
+11 rows created.
+
+INSERT INTO WL_PROP_REVIEW_DETAILS(PROP_REV_DET_ID,PROPOSAL_NUMBER,REVIEW_NUMBER,PERSON_ID,ROUTING_NUMBER,REVIEW_ACTION_CODE,REVIEW_ROLE_CODE,REVIEW_TIME_SPENT_CODE,TIME_SPENT_ASSIS_DLC_CODE,SUBMISSION_VEHICLE_CODE,REVIEWED_DEAN_OFFICE_FLAG,COMMENTS,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (KCSO.FK2_PROP_REVIEW_DETAILS) violated -
+parent key not found
+
+
+
+19 rows created.
+
+
+1652 rows created.
+
+
+304 rows created.
+
+
+1 row created.
+
+
+3 rows created.
+
+
+942 rows created.
+
+
+0 rows created.
+
+
+Commit complete.
+
+
+Commit complete.
+
+
+Commit complete.
+
+
+Commit complete.
+
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
