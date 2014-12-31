@@ -149,7 +149,7 @@
 	 <bean id="Unit-lookupDefinition" parent="MIT-Unit-lookupDefinition-parentBean" />
 	<!-- MITKC-140 start -->
 	<bean id="MIT-Unit-lookupDefinition-parentBean" parent="MIT2-Unit-lookupDefinition-parentBean">
-		<property name="resultSetLimit" value="500" />
+		<property name="resultSetLimit" value="1500" />
 		
 	</bean>
 
