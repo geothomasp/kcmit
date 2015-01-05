@@ -152,7 +152,7 @@
                       p:render="@{#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).PROPOSAL_ATTACHMENT_TYPE_NAME}')}"
                       p:order="80"/>
                 <bean parent="Uif-InputField" p:propertyName="narrative.multipartFile" p:fieldLabel.labelText="@{!#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).PROPOSAL_ATTACHMENT_TYPE_NAME}')?'File':'New File'}"
-                      p:order="90" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
+                      p:order="90"  p:render="@{document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12'}" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
                     <property name="control">
                         <bean parent="Uif-FileControl"/>
                     </property>
@@ -163,10 +163,10 @@
             <list>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="addNarrative"
                       p:successCallback="Kc.Dialog.closeDialogWithoutError('PropDev-AttachmentsPage-ProposalDetails')"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null}" p:order="0"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null and (document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12')}" p:order="0"/>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="saveNarrative"
                       p:successCallback="Kc.Dialog.closeDialogWithoutError('PropDev-AttachmentsPage-ProposalDetails')"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null}" p:order="10"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null and (document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12')}" p:order="10"/>
             </list>
         </property>
     </bean>

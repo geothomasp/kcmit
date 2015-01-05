@@ -42,7 +42,7 @@
 
 	<bean id="PropDev-OpportunityPage-ButtonSection" parent="PropDev-OpportunityPage-ButtonSection-parentBean" />
  	<bean id="PropDev-OpportunityPage-ButtonSection-parentBean" abstract="true" parent="Uif-HorizontalBoxSubSection"
- 			p:render="@{document.developmentProposal.s2sOpportunity?.opportunityId != null and !document.developmentProposal.isChild()}">
+ 			p:render="@{(document.developmentProposal.s2sOpportunity?.opportunityId != null and !document.developmentProposal.isChild()) and (document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12' )}">
  		<property name="items">
  		<list>
  			<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Remove opportunity"
@@ -177,7 +177,7 @@
 					p:readOnly="@{#lp.mandatory}" p:readOnlyDisplayReplacement="Yes"
                     p:fieldLabel.labelText="[0]">
                     <property name="control">
-                        <bean parent="Uif-CheckboxControl" p:disabled="@{!#line.available or !#editModes['printProposal'] or document.developmentProposal.proposalState?.code eq '6'}" />
+                        <bean parent="Uif-CheckboxControl" p:disabled="@{!#line.available or !#editModes['printProposal'] or document.developmentProposal.proposalState?.code ne '1' or document.developmentProposal.proposalState?.code ne '12'}" />
                     </property>
                     <property name="fieldLabel.inlineComponents">
                         <list>
@@ -319,7 +319,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-SecondaryActionButton" p:actionLabel="Add User Attached Form" p:order="10"
-                      p:render="@{document.developmentProposal.proposalState?.code ne '6'}"
+                      p:render="@{document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12'}"
                       p:actionScript="showDialog('PropDev-OpportunityPage-AddUserAttachedForm');" p:iconClass="icon-plus"/>
                 <bean parent="PropDev-OpportunityPage-UserAttachedForms-Collection" p:order="20"/>
             </list>

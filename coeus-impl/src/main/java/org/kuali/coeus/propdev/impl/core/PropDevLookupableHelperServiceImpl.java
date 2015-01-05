@@ -267,11 +267,13 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
         boolean canModifyProposal = getKcAuthorizationService().hasPermission(getGlobalVariableService().getUserSession().getPrincipalId(),
         				(ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(docId)),
         				PermissionConstants.MODIFY_PROPOSAL);
-        if (!canModifyProposal) {
+        ProposalDevelopmentDocument proposalDevelopmentDocument =  (ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(docId));
+        if (!canModifyProposal || !proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) ||
+        		!proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)) {
             fieldGroup.setRender(false);
         }
     }
-
+    
 	public KcAuthorizationService getKcAuthorizationService() {
 		return kcAuthorizationService;
 	}
