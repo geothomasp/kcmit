@@ -238,20 +238,19 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
 	@Override
 	public void buildPropDevEditActionLink(Link actionLink, Object model,String title) throws WorkflowException {
 		boolean actionLinkTitleFlag=true;
-		LookupForm lookupFormValue=(LookupForm) model;
-		Map<String, String> lookupFormValueList = lookupFormValue.getLookupCriteria();
-		String proposalStateTypeCode=lookupFormValueList.get("proposalStateTypeCode");
-		if(proposalStateTypeCode != null && proposalStateTypeCode.equals(ProposalState.APPROVED_AND_SUBMITTED)){
+		ProposalDevelopmentDocument proposalDevelopmentDocument =  (ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(actionLink.getHref()));
+		if(proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode() != null &&
+				!proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) && !proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)){
 			actionLinkTitleFlag=false;
 		} 
-		    if (actionLinkTitleFlag) {
+		if (actionLinkTitleFlag) {
 			actionLink.setTitle(title);
 			actionLink.setLinkText(title);
 			actionLink.setHref(getConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
-	                + KRADConstants.DOCHANDLER_DO_URL
-	                + actionLink.getHref()
-	                + KRADConstants.DOCHANDLER_URL_CHUNK);
-		    }
+					+ KRADConstants.DOCHANDLER_DO_URL
+					+ actionLink.getHref()
+					+ KRADConstants.DOCHANDLER_URL_CHUNK);
+		}
 
 	}
 
@@ -267,9 +266,7 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
         boolean canModifyProposal = getKcAuthorizationService().hasPermission(getGlobalVariableService().getUserSession().getPrincipalId(),
         				(ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(docId)),
         				PermissionConstants.MODIFY_PROPOSAL);
-        ProposalDevelopmentDocument proposalDevelopmentDocument =  (ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(docId));
-        if (!canModifyProposal || !proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) ||
-        		!proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)) {
+        if (!canModifyProposal) {
             fieldGroup.setRender(false);
         }
     }
