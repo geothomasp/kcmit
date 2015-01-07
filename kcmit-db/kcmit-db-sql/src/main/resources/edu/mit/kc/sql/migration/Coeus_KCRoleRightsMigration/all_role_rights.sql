@@ -24,3 +24,6 @@ select 'completed role right migration.'|| localtimestamp from dual;
 Spool Off;
 Set define On;
 Set feedback On;
+/
+EXIT
+/

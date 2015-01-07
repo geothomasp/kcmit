@@ -46,6 +46,12 @@ echo "spool feedrun-${tod}.log"
 sqlplus ${usrid}/${pswd}@${sid}  @all-feed-snapshot.sql > logs/feedrun-${tod}.log
 mail -s "feedrun-${tod}.log" geot@mit.edu < logs/feedrun-${tod}.log
 
+cd ${scriptDir}/migration/Coeus_KCRoleRightsMigration
+mkdir -p logs
+echo "spool rolerefreshrun-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid}  @all_role_rights.sql > logs/rolerefreshrun-${tod}.log
+mail -s "rolerefreshrun-${tod}.log" geot@mit.edu < logs/rolerefreshrun-${tod}.log
+
 cd ${scriptDir}/coi
 mkdir -p logs
 echo "spool coirun-${tod}.log"
