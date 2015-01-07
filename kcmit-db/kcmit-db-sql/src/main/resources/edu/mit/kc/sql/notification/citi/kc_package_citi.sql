@@ -133,18 +133,27 @@ function FN_GET_TRAINING_MODULE (li_training_code number) return number is
  li_module_code  number;
 
   begin
-/*
+
     SELECT TRAINING_MODULES.MODULE_CODE
     INTO  li_module_code
     FROM TRAINING_MODULES
     WHERE TRAINING_MODULES.TRAINING_CODE = li_training_code;
-*/
+	
+/*
      IF li_training_code in(15,14,17,23,24,25,26,27) THEN
 	    li_module_code:=7;
 	 ELSIF li_training_code in(40,41,42,43,44,45,46,47,48,49,50,51) THEN
 	    li_module_code:=100;
 	 END IF;
+*/
 
+    return li_module_code;
+    
+     EXCEPTION
+          WHEN OTHERS then
+          return 0;
+          
+	 
     return li_module_code;
 
      EXCEPTION
