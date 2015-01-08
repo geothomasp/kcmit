@@ -265,15 +265,17 @@ WHERE e.PROPOSAL_NUMBER=r_eps.PROPOSAL_NUMBER;
 UPDATE EPS_PROPOSAL_BUDGET_EXT e 
 SET e.PROPOSAL_NUMBER=r_eps.NEW_PROPOSAL_NUMBER
 WHERE e.PROPOSAL_NUMBER=r_eps.PROPOSAL_NUMBER;
-                                                                                        
-UPDATE EPS_PROPOSAL_BUDGET_EXT e 
-SET e.PROPOSAL_NUMBER=r_eps.NEW_PROPOSAL_NUMBER
-WHERE e.PROPOSAL_NUMBER=r_eps.PROPOSAL_NUMBER; 
+                                                                                      
                                                                                         
 UPDATE PROTOCOL_FUNDING_SOURCE e 
 SET e.FUNDING_SOURCE=r_eps.NEW_PROPOSAL_NUMBER
 WHERE e.FUNDING_SOURCE=r_eps.PROPOSAL_NUMBER
 AND e.FUNDING_SOURCE_TYPE_CODE=1 ; 
+
+UPDATE questionnaire_answer_header e 
+SET e.module_item_key=r_eps.NEW_PROPOSAL_NUMBER
+WHERE e.module_item_key=r_eps.PROPOSAL_NUMBER
+AND e.module_item_code = 3 ; 
 
 EXCEPTION
 WHEN OTHERS THEN
