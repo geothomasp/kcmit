@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_PERSON_UNITS is ' from dual
+select ' Started UPDATE_AWARD_PERSON_UNITS ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -22,9 +22,11 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
-select award_person_id into li_award_pers_unit_id from award_persons 
-where award_number=r_award_comment.award_number and sequence_number=r_award_comment.Kuali_sequence_number
-and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSON_ID)and contact_role_code <> 'KP';
+begin
+
+	select award_person_id into li_award_pers_unit_id from award_persons 
+	where award_number=r_award_comment.award_number and sequence_number=r_award_comment.Kuali_sequence_number
+	and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSON_ID)and contact_role_code <> 'KP';
 
 	
 	   IF ls_award_number is null THEN
@@ -42,11 +44,15 @@ and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSO
 
        INSERT INTO AWARD_PERSON_UNITS(AWARD_PERSON_UNIT_ID,AWARD_PERSON_ID,UNIT_NUMBER,LEAD_UNIT_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,r_award_comment.UNIT_NUMBER,r_award_comment.LEAD_UNIT_FLAG,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
-    
+ 
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_PERSON_UNITS. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end; 
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_PERSON_UNITS is ' from dual
+select ' Ended UPDATE_AWARD_PERSON_UNITS ' from dual
 /

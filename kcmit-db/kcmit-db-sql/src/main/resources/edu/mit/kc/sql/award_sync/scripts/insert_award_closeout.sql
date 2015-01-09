@@ -1,4 +1,4 @@
-select ' Start time of AWARD_CLOSEOUT  is ' from dual
+select ' Started AWARD_CLOSEOUT ' from dual
 /
 DECLARE
 ll_due_date	DATE;
@@ -66,5 +66,5 @@ END;
 /
 commit
 /
-select ' End time of AWARD_CLOSEOUT  is ' from dual
+select ' Ended AWARD_CLOSEOUT ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of AWARD_SPECIAL_REVIEW script is ' from dual
+select ' Started AWARD_SPECIAL_REVIEW ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -22,7 +22,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
-
+begin
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
@@ -52,11 +52,17 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	   VALUES(SEQ_AWARD_SPECIAL_REVIEW_ID.NEXTVAL,null,r_award_comment.AWARD_ID,1,r_award_comment.SPECIAL_REVIEW_NUMBER,r_award_comment.SPECIAL_REVIEW_CODE,r_award_comment.APPROVAL_TYPE_CODE,r_award_comment.PROTOCOL_NUMBER,r_award_comment.APPLICATION_DATE,r_award_comment.APPROVAL_DATE,r_award_comment.UPDATE_USER,r_award_comment.UPDATE_TIMESTAMP,SYS_GUID());
     
 	END IF;	
+
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_SPECIAL_REVIEW. AWARD_ID,SPECIAL_REVIEW_NUMBER'||r_award_comment.AWARD_ID||','||r_award_comment.SPECIAL_REVIEW_NUMBER||'-'||sqlerrm);
+end;		
+	
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /	
 
-select ' End time of AWARD_SPECIAL_REVIEW script is ' from dual
+select ' Ended AWARD_SPECIAL_REVIEW ' from dual
 /

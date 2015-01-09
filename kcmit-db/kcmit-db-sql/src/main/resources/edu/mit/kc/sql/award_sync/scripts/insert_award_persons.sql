@@ -1,4 +1,4 @@
-select ' Start time of AWARD_PERSONS(Investigators) script is ' from dual
+select ' Started AWARD_PERSONS(Investigators) ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -27,6 +27,8 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	 li_seq:=li_seq + 1;
      END IF;
 
+begin
+	 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
 	   IF ls_award_number is null THEN
@@ -56,10 +58,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
     
 	END IF;	
 	
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_PERSONS. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
+	
 END LOOP;
 CLOSE c_award_comment;
 END;
-/	
-
-select ' End time of AWARD_PERSONS(Investigators) script is ' from dual
+/
+select ' Ended AWARD_PERSONS(Investigators) ' from dual
 /

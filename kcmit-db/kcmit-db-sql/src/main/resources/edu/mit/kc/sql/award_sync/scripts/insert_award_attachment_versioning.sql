@@ -1,5 +1,5 @@
-select ' Start time of AWARD_ATTACHMENT VERSIONNING  is ' from dual
+select ' Started AWARD_ATTACHMENT VERSIONNING ' from dual
 /
 -- not using
-select ' End time of AWARD_ATTACHMENT VERSIONNING  is ' from dual
+select ' Ended AWARD_ATTACHMENT VERSIONNING ' from dual
 /

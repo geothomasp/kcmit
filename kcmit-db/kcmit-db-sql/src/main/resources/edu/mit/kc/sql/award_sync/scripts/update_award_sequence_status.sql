@@ -1,4 +1,4 @@
-select ' Start time of award_sequence_status_update is ' from dual
+select ' Started award_sequence_status_update ' from dual
 /
 DECLARE
 ls_award_sequence_status VARCHAR2(10);
@@ -134,7 +134,5 @@ END LOOP;
 CLOSE c_sync;
 END;
 /
-select ' End time of award_sequence_status_update is ' from dual
-/        
-        
-        
+select ' Ended award_sequence_status_update ' from dual
+/

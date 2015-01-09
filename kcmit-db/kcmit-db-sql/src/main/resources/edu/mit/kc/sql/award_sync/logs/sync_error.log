@@ -1,21 +1,15 @@
 
-Started syncing, start time: 11-DEC-14 10.18.45.966381 PM                       
+Started syncing, start time: 09-JAN-15 05.33.53.141353 PM                       
 
-insert bo: 11-DEC-14 10.18.46.294169 PM                                         
+insert bo: 09-JAN-15 05.33.53.221314 PM                                         
 
-Completed bo : 11-DEC-14 10.18.47.670524 PM                                     
+Completed bo : 09-JAN-15 05.33.53.705249 PM                                     
 
-Completed bo : 11-DEC-14 10.18.47.805798 PM                                     
+Completed bo : 09-JAN-15 05.33.53.708085 PM                                     
 
-insert award: 11-DEC-14 10.18.56.966405 PM                                      
-CREATE INDEX OSP$PERSON_I ON OSP$PERSON(PERSON_ID)
-             *
-ERROR at line 1:
-ORA-00955: name is already used by an existing object 
+insert award: 09-JAN-15 05.33.56.904635 PM                                      
 
-
-
- Start time of AWARD is                                                         
+ Started AWARD                                                                  
 alter table award add constraint UQ_AWARD unique(AWARD_NUMBER,SEQUENCE_NUMBER)
                                           *
 ERROR at line 1:
@@ -29,87 +23,85 @@ ORA-02261: such unique or primary key already exists in the table
 
 
 
-     23873                                                                      
+    304931                                                                      
 
- End time of AWARD is                                                           
-select ' Start time of insert AWARD Krew is ' from dual;--populating krew_tables in insert_award.sqlselect ' End time of insert AWARD Krew is ' from dual;/
-                                                       *
-ERROR at line 1:
-ORA-00911: invalid character 
+ Ended AWARD                                                                    
 
+ Started AWARD Krew                                                             
 
+ Ended AWARD Krew                                                               
 
- End time of TEMP TABLES FOR AWARD MODULE  is                                   
+ Ended AWARD Krew                                                               
 
- Start time of VERSION_HISTORY  is                                              
+ Started VERSION_HISTORY                                                        
 Completed VERSION_HISTORY!!!                                                    
 
- End time of VERSION_HISTORY  is                                                
+ Ended VERSION_HISTORY                                                          
 
- Start time of AWARD_SPECIAL_REVIEW script is                                   
+ Started AWARD_SPECIAL_REVIEW                                                   
 
- End time of AWARD_SPECIAL_REVIEW script is                                     
+ Ended AWARD_SPECIAL_REVIEW                                                     
 
- Start time of AWARD_SPECIAL_REVIEW Update script is                            
+ Started AWARD_SPECIAL_REVIEW Update                                            
 
- End time of AWARD_SPECIAL_REVIEW Update script is                              
+ EndedAWARD_SPECIAL_REVIEW Update                                               
 
- Start time of AWARD_COST_SHARE  script is                                      
+ Started AWARD_COST_SHARE                                                       
 
- End time of AWARD_COST_SHARE script is                                         
+ Ended AWARD_COST_SHARE                                                         
 
- Start time of AWARD_APPROVED_EQUIPMENT  script is                              
+ Started AWARD_APPROVED_EQUIPMENT                                               
 
- End time of AWARD_APPROVED_EQUIPMENT  script is                                
+ Ended AWARD_APPROVED_EQUIPMENT                                                 
 
- Start time of AWARD_APPROVED_FOREIGN_TRAVEL  script is                         
+ Started AWARD_APPROVED_FOREIGN_TRAVEL                                          
 
- End time of AWARD_APPROVED_FOREIGN_TRAVEL script is                            
+ Ended AWARD_APPROVED_FOREIGN_TRAVEL script                                     
 
- Start time of AWARD_PAYMENT_SCHEDULE script is                                 
+ Started AWARD_PAYMENT_SCHEDULE                                                 
 
- End time of AWARD_PAYMENT_SCHEDULE script is                                   
+ Ended AWARD_PAYMENT_SCHEDULE                                                   
 
- Start time of AWARD_SCIENCE_KEYWORD script is                                  
+ Started AWARD_SCIENCE_KEYWORD                                                  
 
- End time of AWARD_SCIENCE_KEYWORD script is                                    
+ Ended AWARD_SCIENCE_KEYWORD script                                             
 
- Start time of AWARD_IDC_RATE script is                                         
+ Started AWARD_IDC_RATE script                                                  
 
- End time of AWARD_IDC_RATE script is                                           
+ Ended AWARD_IDC_RATE script                                                    
 
- Start time of AWARD_APPROVED_SUBAWARDS script is                               
+ Started AWARD_APPROVED_SUBAWARDS                                               
 
- End time of AWARD_APPROVED_SUBAWARDS script is                                 
+ Ended AWARD_APPROVED_SUBAWARDS                                                 
 
- Start time of AWARD_TRANSFERRING_SPONSOR is                                    
+ Started AWARD_TRANSFERRING_SPONSOR                                             
 
- End time of AWARD_TRANSFERRING_SPONSOR is                                      
+ Ended AWARD_TRANSFERRING_SPONSOR                                               
 
- Start time of AWARD_PERSONS(Key Person) script is                              
+ Started AWARD_PERSONS(Key Person)                                              
 
- End time of AWARD_PERSONS(Key Person) script is                                
+ Ended AWARD_PERSONS(Key Person)                                                
 
- Start time of AWARD_PERSONS(Investigators) script is                           
+ Started AWARD_PERSONS(Investigators)                                           
 
- End time of AWARD_PERSONS(Investigators) script is                             
+ Ended AWARD_PERSONS(Investigators)                                             
 
- Start time of AWARD_SPONSOR_TERM script is                                     
+ Started AWARD_SPONSOR_TERM                                                     
 
- End time of AWARD_SPONSOR_TERM script is                                       
+ Ended AWARD_SPONSOR_TERM                                                       
 
- Start time of AWARD_ATTACHMENT is                                              
+ Started AWARD_ATTACHMENT                                                       
 Completed AWARD_ATTACHMENT!!!                                                   
 
- End time of AWARD_ATTACHMENT is                                                
+ Ended AWARD_ATTACHMENT                                                         
 
- Start time of AWARD_ATTACHMENT VERSIONNING  is                                 
+ Started AWARD_ATTACHMENT VERSIONNING                                           
 
- End time of AWARD_ATTACHMENT VERSIONNING  is                                   
+ Ended AWARD_ATTACHMENT VERSIONNING                                             
 
- Start time of AWARD_CUSTOM_DATA  is                                            
+ Started AWARD_CUSTOM_DATA                                                      
 
- End time of AWARD_CUSTOM_DATA  is                                              
+ Ended AWARD_CUSTOM_DATA                                                        
 CREATE INDEX AWARD_COMMENT_I1 ON AWARD_COMMENT(AWARD_NUMBER,SEQUENCE_NUMBER,COMMENT_TYPE_CODE)
              *
 ERROR at line 1:
@@ -117,283 +109,282 @@ ORA-00955: name is already used by an existing object
 
 
 
- Start time of AWARD_COMMENT update script is                                   
+ Started AWARD_COMMENT                                                          
 
- End time of AWARD_COMMENT update script is                                     
+ Ended AWARD_COMMENT                                                            
 
- Start time of AWARD_CLOSEOUT  is                                               
+ Started AWARD_CLOSEOUT                                                         
 
- End time of AWARD_CLOSEOUT  is                                                 
+ Ended AWARD_CLOSEOUT                                                           
 
- Start time of AWARD_PERSON_UNITS script is                                     
+ Started AWARD_PERSON_UNITS                                                     
 
- End time of AWARD_PERSON_UNITS script is                                       
+ Ended AWARD_PERSON_UNITS                                                       
 
- Start time of AWARD_NOTEPAD script is                                          
+ Started AWARD_NOTEPAD                                                          
 Completed AWARD_NOTEPAD!!!                                                      
 
- End time of AWARD_NOTEPAD script is                                            
+ Ended AWARD_NOTEPAD                                                            
 
- Start time of AWARD_SPONSOR_CONTACTS script is                                 
+ Started AWARD_SPONSOR_CONTACTS                                                 
 
- End time of AWARD_SPONSOR_CONTACTS script is                                   
+ Ended AWARD_SPONSOR_CONTACTS                                                   
 
- Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is               
+ Started AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT                               
 
- End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is                        
+ Ended AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT                                 
 
- Start time of AWARD_REPORT_TRACKING script is                                  
+ Started AWARD_REPORT_TRACKING script                                           
 
- End time of AWARD_REPORT_TRACKING  is                                          
-SP2-0027: Input is too long (> 2499 characters) - line ignored
+ Ended AWARD_REPORT_TRACKING                                                    
 
- Start time of AWARD_UNIT_CONTACTS is                                           
+Started AWARD_FUNDING_PROPOSALS                                                 
 
- End time of AWARD_UNIT_CONTACTS is                                             
+Started AWARD_FUNDING_PROPOSALS                                                 
 
- Start time of AWARD_HIERARCHY script is                                        
+ Started AWARD_UNIT_CONTACTS                                                    
+
+ Ended AWARD_UNIT_CONTACTS                                                      
+
+ Started AWARD_HIERARCHY script                                                 
 Completed AWARD_HIERARCHY!!!                                                    
 
- End time of AWARD_HIERARCHY script is                                          
+ Ended AWARD_HIERARCHY script                                                   
 
- Start time of AWARD_AMOUNT_TRANSACTION is                                      
+ Started AWARD_AMOUNT_TRANSACTION                                               
 Completed AWARD_AMOUNT_INFO!!!                                                  
 
- End time of AWARD_AMOUNT_TRANSACTION is                                        
+ Ended AWARD_AMOUNT_TRANSACTION                                                 
 
- Start time of AWARD_AMOUNT_INFO is                                             
+ Started AWARD_AMOUNT_INFO                                                      
 
- End time of AWARD_AMOUNT_INFO is                                               
+ Ended AWARD_AMOUNT_INFO                                                        
 
-update award: 11-DEC-14 10.39.45.561879 PM                                      
+update award: 09-JAN-15 05.37.10.145159 PM                                      
 
- Star time of UPDATE_AWARD is                                                   
+ Stared UPDATE_AWARD                                                            
 
- End time of UPDATE_AWARD is                                                    
+ Ended UPDATE_AWARD                                                             
 
- Start time of UPDATE_AWARD_SPECIAL_REVIEW is                                   
+ Started UPDATE_AWARD_SPECIAL_REVIEW                                            
 
- End time of UPDATE_AWARD_SPECIAL_REVIEW is                                     
+ Ended UPDATE_AWARD_SPECIAL_REVIEW                                              
 
- Start time of AWARD_SPECIAL_REVIEW Update script is                            
+ Started AWARD_SPECIAL_REVIEW Update                                            
 
- End time of AWARD_SPECIAL_REVIEW Update script is                              
+ Ended AWARD_SPECIAL_REVIEW Update                                              
 
- Start time of UPDATE_AWARD_COST_SHARE is                                       
+ Started UPDATE_AWARD_COST_SHARE                                                
 
- End time of UPDATE_AWARD_COST_SHARE is                                         
+ Ended UPDATE_AWARD_COST_SHARE                                                  
 
- Start time of UPDATE_AWARD_APPROVED_EQUIPMENT is                               
+ Started UPDATE_AWARD_APPROVED_EQUIPMENT                                        
 
- End time of UPDATE_AWARD_APPROVED_EQUIPMENT is                                 
+ Ended UPDATE_AWARD_APPROVED_EQUIPMENT                                          
 
- Start time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is                          
+ Started UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL                                   
 
- End time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is                            
+ Ended UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL                                     
 
- Start time of UPDATE_AWARD_PAYMENT_SCHEDULE is                                 
+ Started UPDATE_AWARD_PAYMENT_SCHEDULE                                          
 
- End time of UPDATE_AWARD_PAYMENT_SCHEDULE is                                   
+ Ended UPDATE_AWARD_PAYMENT_SCHEDULE                                            
 
- Start time of UPDATE_AWARD_SCIENCE_KEYWORD is                                  
+ Started UPDATE_AWARD_SCIENCE_KEYWORD                                           
 
- End time of UPDATE_AWARD_SCIENCE_KEYWORD is                                    
+ Ended UPDATE_AWARD_SCIENCE_KEYWORD                                             
 
- Start time of UPDATE_AWARD_IDC_RATE is                                         
+Started UPDATE_AWARD_IDC_RATE                                                   
 
- End time of UPDATE_AWARD_IDC_RATE is                                           
+Ended UPDATE_AWARD_IDC_RATE                                                     
 
- Start time of UPDATE_AWARD_APPROVED_SUBAWARDS is                               
+ Started UPDATE_AWARD_APPROVED_SUBAWARDS                                        
 
- End time of UPDATE_AWARD_APPROVED_SUBAWARDS is                                 
+ Ended UPDATE_AWARD_APPROVED_SUBAWARDS                                          
 
- Start time of UPDATE_AWARD_TRANSFERRING_SPONSOR is                             
+ Started UPDATE_AWARD_TRANSFERRING_SPONSOR                                      
 
- End time of UPDATE_AWARD_TRANSFERRING_SPONSOR is                               
+ Ended UPDATE_AWARD_TRANSFERRING_SPONSOR                                        
 
- Start time of UPDATE_AWARD_PERSONS is                                          
+ Started UPDATE_AWARD_PERSONS                                                   
 
- End time of UPDATE_AWARD_PERSONS is                                            
+ Ended UPDATE_AWARD_PERSONS                                                     
 
- Start time of UPDATE_AWARD_PERSONS is                                          
+ Started UPDATE_AWARD_PERSONS                                                   
 
- End time of UPDATE_AWARD_PERSONS is                                            
+ Ended UPDATE_AWARD_PERSONS                                                     
 
- Start time of UPDATE_AWARD_ATTACHMENT is                                       
+ Started UPDATE_AWARD_ATTACHMENT                                                
 Completed AWARD_ATTACHMENT!!!                                                   
 
- End time of UPDATE_AWARD_ATTACHMENT is                                         
+ Ended UPDATE_AWARD_ATTACHMENT                                                  
 
- Start time of UPDATE_AWARD_CUSTOM_DATA is                                      
+ Started UPDATE_AWARD_CUSTOM_DATA                                               
 
- End time of UPDATE_AWARD_CUSTOM_DATA is                                        
+ Ended UPDATE_AWARD_CUSTOM_DATA                                                 
 
- Start time of UPDATE_AWARD_COMMENT is                                          
+ Started UPDATE_AWARD_COMMENT                                                   
 
- End time of UPDATE_AWARD_COMMENT is                                            
+ Ended UPDATE_AWARD_COMMENT                                                     
 
- Start time of UPDATE_AWARD_CLOSEOUT is                                         
+ Started UPDATE_AWARD_CLOSEOUT                                                  
 
- End time of UPDATE_AWARD_CLOSEOUT is                                           
+ Ended UPDATE_AWARD_CLOSEOUT                                                    
 
- Start time of UPDATE_AWARD_PERSON_UNITS is                                     
+ Started UPDATE_AWARD_PERSON_UNITS                                              
 
- End time of UPDATE_AWARD_PERSON_UNITS is                                       
+ Ended UPDATE_AWARD_PERSON_UNITS                                                
 
- Start time of UPDATE_AWARD_NOTEPAD is                                          
+ Started UPDATE_AWARD_NOTEPAD                                                   
 
- End time of UPDATE_AWARD_NOTEPAD is                                            
+ Ended UPDATE_AWARD_NOTEPAD                                                     
 
- Start time of UPDATE_AWARD_SPONSOR_CONTACTS is                                 
+ Started UPDATE_AWARD_SPONSOR_CONTACTS                                          
 
- End time of UPDATE_AWARD_SPONSOR_CONTACTS is                                   
+ Ended UPDATE_AWARD_SPONSOR_CONTACTS                                            
 
- Start time of UPDATE_AWARD_REP_TERMS_RECNT is                                  
+ Started UPDATE_AWARD_REP_TERMS_RECNT                                           
 
- End time of UPDATE_AWARD_REP_TERMS_RECNT is                                    
+ Ended UPDATE_AWARD_REP_TERMS_RECNT                                             
 
- Start time of UPDATE_AWARD_SPONSOR_TERM is                                     
+ Started UPDATE_AWARD_SPONSOR_TERM                                              
 
- End time of UPDATE_AWARD_SPONSOR_TERM is                                       
+ Ended UPDATE_AWARD_SPONSOR_TERM                                                
 
- Start time of UPDATE_AWARD_REPORT_TRACKING is                                  
+ Started UPDATE_AWARD_REPORT_TRACKING                                           
 
- End time of UPDATE_AWARD_REPORT_TRACKING is                                    
+ Ended UPDATE_AWARD_REPORT_TRACKING                                             
 
- Start time of UPDATE_AWARD_FUNDING_PROPOSALS is                                
+ Started UPDATE_AWARD_FUNDING_PROPOSALS                                         
 
- End time of UPDATE_AWARD_FUNDING_PROPOSALS is                                  
+ Ended UPDATE_AWARD_FUNDING_PROPOSALS                                           
 
- Start time of UPDATE_AWARD_UNIT_CONTACTS is                                    
+ Started UPDATE_AWARD_UNIT_CONTACTS                                             
 
- End time of UPDATE_AWARD_UNIT_CONTACTS is                                      
+ Ended UPDATE_AWARD_UNIT_CONTACTS                                               
 
- Start time of UPDATE_AWARD_AMOUNT_INFO is                                      
+ Started UPDATE_AWARD_AMOUNT_INFO                                               
 Completed AWARD_AMOUNT_INFO!!!                                                  
 
- End time of UPDATE_AWARD_AMOUNT_INFO is                                        
+ Ended UPDATE_AWARD_AMOUNT_INFO                                                 
 
- Start time of UPDATE_AWARD_AMOUNT_TRANSACTION is                               
+ Started UPDATE_AWARD_AMOUNT_TRANSACTION                                        
 
- End time of UPDATE_AWARD_AMOUNT_TRANSACTION is                                 
+ Ended UPDATE_AWARD_AMOUNT_TRANSACTION                                          
 
- Start time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is                             
+ Started UPDATE_AWARD_AMT_FNA_DISTRIBUTION                                      
 
- End time of UPDATE_AWARD_AMT_FNA_DISTRIBUTION is                               
+ Ended UPDATE_AWARD_AMT_FNA_DISTRIBUTION                                        
 
- Start time of award_sequence_status_update is                                  
+ Started award_sequence_status_update                                           
 
- End time of award_sequence_status_update is                                    
+ Ended award_sequence_status_update                                             
 
-Completed Award : 11-DEC-14 10.56.52.767330 PM                                  
+Completed Award : 09-JAN-15 05.37.23.505207 PM                                  
 
-Completed Award : 11-DEC-14 10.56.52.869588 PM                                  
+Completed Award : 09-JAN-15 05.37.23.508993 PM                                  
 
-insert development proposal: 11-DEC-14 10.56.53.165254 PM                       
+insert development proposal: 09-JAN-15 05.37.23.529399 PM                       
 
  Start time of insert to EPS_PROPOSAL is                                        
 
                                                                                
 Successfully inserted EPS_PROPOSAL and EPS_PROPOSAL_DOCUMENT                    
 
-    793380                                                                      
+    188380                                                                      
 
  End time of insert to EPS_PROPOSAL is                                          
 
- Start time of insert to EPS_PROPOSAL is                                        
+ Started insert to EPS_PROPOSAL                                                 
 
- End time of updating EPS_PROPOSAL is                                           
+ Ended updating EPS_PROPOSAL                                                    
 
-Completed development proposal: 11-DEC-14 10.56.55.460377 PM                    
+Completed development proposal: 09-JAN-15 05.37.24.017313 PM                    
 
-insert budget proposal: 11-DEC-14 10.56.55.569699 PM                            
+insert budget proposal: 09-JAN-15 05.37.24.019791 PM                            
 
- Start time of BUDGET is                                                        
+ Started BUDGET                                                                 
 
- End time of BUDGET is                                                          
+ Ended BUDGET                                                                   
 
- Start time of BUDGET_PERIODS is                                                
+ Started BUDGET_PERIODS                                                         
 
- End time of BUDGET_PERIODS is                                                  
+ Ended BUDGET_PERIODS                                                           
 
- Start time of BUDGET_MODULAR is                                                
+ Started BUDGET_MODULAR                                                         
 
- End time of BUDGET_MODULAR is                                                  
+ Ended BUDGET_MODULAR                                                           
 
- Start time of BUDGET_MODULAR_IDC script is                                     
+ Started BUDGET_MODULAR_IDC                                                     
 
- End time of BUDGET_MODULAR_IDC script is                                       
+ Ended BUDGET_MODULAR_IDC                                                       
 
- Start time of BUDGET_PERSONS is                                                
+ Started BUDGET_PERSONS                                                         
 
- End time of BUDGET_PERSONS is                                                  
+ Ended BUDGET_PERSONS                                                           
 
- Start time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  scri
-pt is                                                                           
+ Started BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE            
+
+ Ended BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE              
+
+ Started BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_RATE_
+AND_BASE                                                                        
                                                                                 
 
- End time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  script
- is                                                                             
+ Ended BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_RATE_AN
+D_BASE                                                                          
                                                                                 
 
- Start time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET
-_RATE_AND_BASE  script is                                                       
-                                                                                
+ Started BUDGET_PROJECT_INCOME                                                  
 
- End time of BUDGET_PERSONNEL_DETAILS,BUDGET_PERSONNEL_CAL_AMTS,BUDGET_PER_DET_R
-ATE_AND_BASE  script is                                                         
-                                                                                
+ Ended BUDGET_PROJECT_INCOME                                                    
 
- Start time of BUDGET_PROJECT_INCOME is                                         
+ Started EPS_PROP_COST_SHARING                                                  
 
- End time of BUDGET_PROJECT_INCOME is                                           
+ Ended of EPS_PROP_COST_SHARING                                                 
 
- Start time of EPS_PROP_COST_SHARING is                                         
+ Started EPS_PROP_RATES, EPS_PROP_LA_RATES                                      
 
- End time of EPS_PROP_COST_SHARING is                                           
+ Ended EPS_PROP_RATES, EPS_PROP_LA_RATES                                        
 
- Start time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is                      
+ Started EPS_PROP_IDC_RATE script                                               
 
- End time of EPS_PROP_RATES, EPS_PROP_LA_RATES script is                        
+ Ended EPS_PROP_IDC_RATE script                                                 
 
- Start time of EPS_PROP_IDC_RATE script is                                      
+Completed budget : 09-JAN-15 05.37.26.821486 PM                                 
 
- End time of EPS_PROP_IDC_RATE script is                                        
+Completed budget : 09-JAN-15 05.37.26.823685 PM                                 
 
-Completed budget : 11-DEC-14 10.57.00.664821 PM                                 
+insert Institute proposal: 09-JAN-15 05.37.26.829551 PM                         
 
-Completed budget : 11-DEC-14 10.57.00.772313 PM                                 
-
-insert Institute proposal: 11-DEC-14 10.57.01.060609 PM                         
-
- Start time of  Insert to PROPOSAL is                                           
+ Started PROPOSAL                                                               
 Completed PROPOSAL  AND ITS INDICATOR TABLES!!!                                 
 
- 594732654                                                                      
+2775419052                                                                      
 
- End time of PROPOSAL KREW TABLES  is                                           
+ Ended PROPOSAL KREW TABLES                                                     
 
- End time of  Insert to PROPOSAL is                                             
+ Ended PROPOSAL                                                                 
 
- Start time of Insert to PROPOSAL_ADMIN_DETAILS is                              
+ Started PROPOSAL_ADMIN_DETAILS                                                 
 
- End time of  Insert to PROPOSAL_ADMIN_DETAILS is                               
+ Ended PROPOSAL_ADMIN_DETAILS                                                   
 
- Start time of insert_proposal_version_history is                               
+ Started insert_proposal_version_history                                        
 Completed VERSION_HISTORY !!!                                                   
 
- End time of insert_proposal_version_history is                                 
+ Ended insert_proposal_version_history                                          
 
- Start time of  update PROPOSAL is                                              
+ Started update PROPOSAL                                                        
 
- End time of  update PROPOSAL is                                                
+ Ended update PROPOSAL                                                          
 
- Start time of update PROPOSAL_ADMIN_DETAILS is                                 
+ Started update PROPOSAL_ADMIN_DETAILS                                          
 
- End time of  Update PROPOSAL_ADMIN_DETAILS is                                  
+ Ended Update PROPOSAL_ADMIN_DETAILS                                            
 
-Completed Institute proposal : 11-DEC-14 10.57.03.669789 PM                     
+Completed Institute proposal : 09-JAN-15 05.37.28.065918 PM                     
 
-Completed Institute proposal : 11-DEC-14 10.57.03.777077 PM                     
+Completed Institute proposal : 09-JAN-15 05.37.28.068092 PM                     
 
-Completed syncing, end time: 11-DEC-14 10.57.06.378204 PM                       
+Completed syncing, end time: 09-JAN-15 05.37.30.572452 PM                       

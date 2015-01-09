@@ -1,5 +1,5 @@
-select ' Start time of TEMP TABLES FOR AWARD MODULE  is ' from dual
+select ' Started TEMP TABLES FOR AWARD MODULE  ' from dual
 /
 --not using
-select ' End time of TEMP TABLES FOR AWARD MODULE  is ' from dual
+select ' Ended TEMP TABLES FOR AWARD MODULE  ' from dual
 /

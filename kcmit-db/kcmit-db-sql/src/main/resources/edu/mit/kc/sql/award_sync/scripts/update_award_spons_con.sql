@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_SPONSOR_CONTACTS is ' from dual
+select ' Started UPDATE_AWARD_SPONSOR_CONTACTS ' from dual
 /
 DECLARE
 
@@ -24,6 +24,8 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
+
 	   IF ls_award_number is null THEN
 	
 	          DELETE FROM AWARD_SPONSOR_CONTACTS WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.Kuali_sequence_number;
@@ -39,12 +41,17 @@ EXIT WHEN c_award_comment%NOTFOUND;
 
        INSERT INTO AWARD_SPONSOR_CONTACTS(AWARD_SPONSOR_CONTACT_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,ROLODEX_ID,FULL_NAME,CONTACT_ROLE_CODE,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.ROLODEX_ID,r_award_comment.FULL_NAME,r_award_comment.CONTACT_TYPE_CODE,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
-    
+
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_SPONSOR_CONTACTS. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end; 
+ 
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 
 /
-select ' End time of UPDATE_AWARD_SPONSOR_CONTACTS is ' from dual
+select ' Ended UPDATE_AWARD_SPONSOR_CONTACTS ' from dual
 /

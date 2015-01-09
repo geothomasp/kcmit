@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is ' from dual
+select ' Started UPDATE_AWARD_PERSON_CREDIT_SPLITS ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -26,7 +26,7 @@ select award_person_id into li_award_pers_unit_id from award_persons
 where award_number=r_award_comment.award_number and sequence_number=r_award_comment.Kuali_sequence_number
 and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSON_ID)and contact_role_code <> 'KP';
 
-
+begin
  	
 	   IF ls_award_number is null THEN
 	
@@ -43,11 +43,15 @@ and (PERSON_ID = r_award_comment.PERSON_ID or ROLODEX_ID = r_award_comment.PERSO
    
        INSERT INTO AWARD_PERSON_CREDIT_SPLITS(AWARD_PERSON_CREDIT_SPLIT_ID,AWARD_PERSON_ID,INV_CREDIT_TYPE_CODE,CREDIT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,r_award_comment.INV_CREDIT_TYPE_CODE,r_award_comment.CREDIT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
-    
+
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_PERSON_CREDIT_SPLITS. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	    
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_PERSON_CREDIT_SPLITS is ' from dual
+select ' Ended UPDATE_AWARD_PERSON_CREDIT_SPLITS ' from dual
 /

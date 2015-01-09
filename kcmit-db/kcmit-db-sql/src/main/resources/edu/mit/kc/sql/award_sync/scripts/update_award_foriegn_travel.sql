@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is ' from dual
+select ' Started UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -22,9 +22,8 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
 
-
-	
 	   IF ls_award_number is null THEN
 	
 	      DELETE FROM AWARD_APPROVED_FOREIGN_TRAVEL WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.SEQUENCE_NUMBER;
@@ -42,11 +41,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
       INSERT INTO AWARD_APPROVED_FOREIGN_TRAVEL(AWARD_APPR_FORN_TRAVEL_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,PERSON_ID,ROLODEX_ID,TRAVELER_NAME,DESTINATION,START_DATE,END_DATE,AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	  VALUES(SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.SEQUENCE_NUMBER,r_award_comment.PERSON_ID,r_award_comment.ROLODEX_ID,r_award_comment.PERSON_NAME,r_award_comment.DESTINATION,r_award_comment.DATE_FROM,r_award_comment.DATE_TO,r_award_comment.AMOUNT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
 
-
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_APPROVED_FOREIGN_TRAVEL. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL is ' from dual
+select ' Ended UPDATE_AWARD_APPROVED_FOREIGN_TRAVEL ' from dual
 /

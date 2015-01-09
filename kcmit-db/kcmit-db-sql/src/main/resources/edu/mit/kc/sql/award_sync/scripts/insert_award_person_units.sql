@@ -1,4 +1,4 @@
-select ' Start time of AWARD_PERSON_UNITS script is ' from dual
+select ' Started AWARD_PERSON_UNITS ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -36,6 +36,8 @@ dbms_output.put_line('Error in "insert_award_person_units.sql" '||r_award_commen
 continue;
 end;
 
+begin
+
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
 	   IF ls_award_number is null THEN
@@ -65,16 +67,14 @@ end;
     
 	END IF;	
 	
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_PERSON_UNITS. AWARD_PERSON_ID,UNIT_NUMBER'||li_award_pers_unit_id||','||r_award_comment.UNIT_NUMBER||'-'||sqlerrm);
+end;	
+	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_PERSON_UNITS script is ' from dual
+select ' Ended AWARD_PERSON_UNITS ' from dual
 /
---INSERT INTO AWARD_PERSON_UNITS(AWARD_PERSON_UNIT_ID,AWARD_PERSON_ID,UNIT_NUMBER,LEAD_UNIT_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
---select SEQUENCE_AWARD_ID.NEXTVAL,z.* from (
---select  (select AWARD_PERSON_ID from AWARD_PERSONS where AWARD_NUMBER=p.kuali_awd AND SEQUENCE_NUMBER=p.kuali_sequence_number and (person_id = FN_GET_PERSON(p.PERSON_ID) or rolodex_id=FN_GET_ROLODEX(p.PERSON_ID)) and contact_role_code <> 'KP') AWARD_PERSON_ID,p.UNIT_NUMBER,p.LEAD_UNIT_FLAG,p.UPDATE_TIMESTAMP,p.UPDATE_USER,1,sys_guid()
---from(select distinct v1.kuali_awd,v2.SEQUENC kuali_sequence_number,v1.MIT_SEQUENCE_NUMBER,v1.MIT_AWARD_NUMBER,v1.SEQUENCE_NUMBER,v1.UNIT_NUMBER,v1.PERSON_ID,v1.LEAD_UNIT_FLAG,v1.UPDATE_TIMESTAMP,v1.UPDATE_USER,v1.INV_FLAG
---from V_AWARD_UNITS v1 inner join 
---temp_award_pers_units v2 on v1.kuali_awd=v2.kuali_awd and v1.MIT_SEQUENCE_NUMBER=v2.kuali_sequence_number)p)z where z.AWARD_PERSON_ID is not null;
-

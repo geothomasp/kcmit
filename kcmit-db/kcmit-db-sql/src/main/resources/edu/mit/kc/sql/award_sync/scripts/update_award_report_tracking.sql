@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_REPORT_TRACKING is ' from dual
+select ' Started UPDATE_AWARD_REPORT_TRACKING ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -30,7 +30,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
  
-
+begin
  
      IF ls_award_number is null THEN
 	
@@ -46,20 +46,24 @@ EXIT WHEN c_award_comment%NOTFOUND;
 		  
 	   END IF;
     
-INSERT INTO AWARD_REPORT_TRACKING(AWARD_REPORT_TERM_ID,AWARD_NUMBER,PI_PERSON_ID,PI_ROLODEX_ID,PI_NAME,LEAD_UNIT_NUMBER,REPORT_CLASS_CODE,
-REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,STATUS_CODE,BASE_DATE,DUE_DATE,ACTIVITY_DATE,OVERDUE,COMMENTS,
-PREPARER_ID,PREPARER_NAME,SPONSOR_CODE,SPONSOR_AWARD_NUMBER,TITLE,LAST_UPDATE_USER,LAST_UPDATE_DATE,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
-VALUES(li_award_reports_id,r_award_comment.AWARD_NUMBER,r_award_comment.PERSON_ID,r_award_comment.ROLODEX_ID,r_award_comment.full_name,r_award_comment.lead_unit_number,r_award_comment.REPORT_CLASS_CODE,
-r_award_comment.REPORT_CODE,r_award_comment.FREQUENCY_CODE,r_award_comment.FREQUENCY_BASE_CODE,r_award_comment.OSP_DISTRIBUTION_CODE,
-r_award_comment.STATUS_CODE,null,r_award_comment.DUE_DATE,r_award_comment.ACTIVITY_DATE,
-r_award_comment.OVERDUE_COUNTER,r_award_comment.COMMENTS,
-r_award_comment.PREPARER_ID,null,r_award_comment.SPONSOR_CODE,r_award_comment.SPONSOR_AWARD_NUMBER,r_award_comment.TITLE,r_award_comment.UPDATE_USER,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
+	INSERT INTO AWARD_REPORT_TRACKING(AWARD_REPORT_TERM_ID,AWARD_NUMBER,PI_PERSON_ID,PI_ROLODEX_ID,PI_NAME,LEAD_UNIT_NUMBER,REPORT_CLASS_CODE,
+	REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,STATUS_CODE,BASE_DATE,DUE_DATE,ACTIVITY_DATE,OVERDUE,COMMENTS,
+	PREPARER_ID,PREPARER_NAME,SPONSOR_CODE,SPONSOR_AWARD_NUMBER,TITLE,LAST_UPDATE_USER,LAST_UPDATE_DATE,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
+	VALUES(li_award_reports_id,r_award_comment.AWARD_NUMBER,r_award_comment.PERSON_ID,r_award_comment.ROLODEX_ID,r_award_comment.full_name,r_award_comment.lead_unit_number,r_award_comment.REPORT_CLASS_CODE,
+	r_award_comment.REPORT_CODE,r_award_comment.FREQUENCY_CODE,r_award_comment.FREQUENCY_BASE_CODE,r_award_comment.OSP_DISTRIBUTION_CODE,
+	r_award_comment.STATUS_CODE,null,r_award_comment.DUE_DATE,r_award_comment.ACTIVITY_DATE,
+	r_award_comment.OVERDUE_COUNTER,r_award_comment.COMMENTS,
+	r_award_comment.PREPARER_ID,null,r_award_comment.SPONSOR_CODE,r_award_comment.SPONSOR_AWARD_NUMBER,r_award_comment.TITLE,r_award_comment.UPDATE_USER,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
 
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_REPORT_TRACKING. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;		
 
 	   
 END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of UPDATE_AWARD_REPORT_TRACKING is ' from dual
+select ' Ended UPDATE_AWARD_REPORT_TRACKING ' from dual
 /

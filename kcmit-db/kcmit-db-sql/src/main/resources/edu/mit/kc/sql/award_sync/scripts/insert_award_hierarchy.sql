@@ -1,4 +1,4 @@
-select ' Start time of AWARD_HIERARCHY script is ' from dual
+select ' Started AWARD_HIERARCHY script ' from dual
 /
 DECLARE
 li_ver_nbr NUMBER(8):=1;
@@ -67,5 +67,5 @@ CLOSE c_hierarchy;
 dbms_output.put_line('Completed AWARD_HIERARCHY!!!');
 END;
 /
-select ' End time of AWARD_HIERARCHY script is ' from dual
+select ' Ended AWARD_HIERARCHY script ' from dual
 /

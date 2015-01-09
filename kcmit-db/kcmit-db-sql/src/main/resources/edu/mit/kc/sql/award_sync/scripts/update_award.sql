@@ -1,4 +1,4 @@
-select ' Star time of UPDATE_AWARD is ' from dual
+select ' Stared UPDATE_AWARD  ' from dual
 /
 DECLARE
 li_ver_nbr NUMBER(8):=1;
@@ -157,5 +157,5 @@ ALTER TABLE AWARD_PERSON_UNITS DISABLE  CONSTRAINT FK_APU_AW_PERSON
 /
 ALTER TABLE AWARD_PERSON_CREDIT_SPLITS DISABLE CONSTRAINT FK_AP_CREDIT_SPLIT_AP
 /
-select ' End time of UPDATE_AWARD is ' from dual
+select ' Ended UPDATE_AWARD ' from dual
 /

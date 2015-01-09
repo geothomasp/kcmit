@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_CLOSEOUT is ' from dual
+select ' Started UPDATE_AWARD_CLOSEOUT ' from dual
 /	
 DECLARE
 ll_due_date	DATE;
@@ -62,5 +62,5 @@ END LOOP;
 CLOSE c_awd_closout;
 END;
 /
-select ' End time of UPDATE_AWARD_CLOSEOUT is ' from dual
+select ' Ended UPDATE_AWARD_CLOSEOUT ' from dual
 /	

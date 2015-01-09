@@ -1,5 +1,5 @@
-select ' Start time of AWARD_AMOUNT_INFO is ' from dual
+select ' Started AWARD_AMOUNT_INFO ' from dual
 /
 --insertion to award_amount_info in insert_award_amount_transaction.sql
-select ' End time of AWARD_AMOUNT_INFO is ' from dual
+select ' Ended AWARD_AMOUNT_INFO ' from dual
 /

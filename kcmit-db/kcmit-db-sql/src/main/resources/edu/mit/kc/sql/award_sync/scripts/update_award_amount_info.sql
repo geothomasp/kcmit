@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_AMOUNT_INFO is ' from dual
+select ' Started UPDATE_AWARD_AMOUNT_INFO ' from dual
 /
 DECLARE
 li_ver_nbr NUMBER(8):=1;
@@ -221,5 +221,5 @@ end;
 /
 commit
 /
-select ' End time of UPDATE_AWARD_AMOUNT_INFO is ' from dual
+select ' Ended UPDATE_AWARD_AMOUNT_INFO ' from dual
 /

@@ -853,8 +853,6 @@ commit
 /
 drop   table temp
 /
-delete from temp where user_name is null
-/
 create table temp
 as
 (select  person_id,
@@ -864,6 +862,8 @@ as
  select PRNCPL_ID as person_id,
         PRNCPL_NM as user_name
  from   KRIM_PERSON_DOCUMENT_T)
+/
+delete from temp where user_name is null
 /
 rem
 update KRIM_PERSON_DOCUMENT_T x

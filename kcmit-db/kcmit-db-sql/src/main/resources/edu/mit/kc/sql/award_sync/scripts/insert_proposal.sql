@@ -1,4 +1,4 @@
-select ' Start time of  Insert to PROPOSAL is ' from dual
+select ' Started PROPOSAL ' from dual
 /
 declare
 li_count number;
@@ -293,8 +293,8 @@ select SEQ_PROPOSAL_NUMBER.NEXTVAL from dual
 /
 alter sequence SEQ_PROPOSAL_NUMBER increment by 1
 / 
-select ' End time of PROPOSAL KREW TABLES  is ' from dual
+select ' Ended PROPOSAL KREW TABLES  ' from dual
 /
 ---------- KREW ENDS ----------------------------------
-select ' End time of  Insert to PROPOSAL is ' from dual
+select ' Ended PROPOSAL ' from dual
 /

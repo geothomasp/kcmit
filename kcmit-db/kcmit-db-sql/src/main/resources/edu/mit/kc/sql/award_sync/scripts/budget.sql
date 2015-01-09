@@ -1,4 +1,4 @@
-select ' Start time of BUDGET is ' from dual
+select ' Started BUDGET  ' from dual
 /
 DECLARE
 li_ver_nbr number(8):=1;
@@ -240,5 +240,5 @@ CLOSE c_budget;
 
 END;
 /
-select ' End time of BUDGET is ' from dual
+select ' Ended BUDGET  ' from dual
 /

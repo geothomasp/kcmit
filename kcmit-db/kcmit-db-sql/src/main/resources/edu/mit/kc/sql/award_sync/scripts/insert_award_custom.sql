@@ -1,4 +1,4 @@
-select ' Start time of AWARD_CUSTOM_DATA  is ' from dual
+select ' Started AWARD_CUSTOM_DATA ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -21,6 +21,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
@@ -49,10 +50,15 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	   VALUES(SEQ_AWARD_CUSTOM_DATA_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,li_cust_id,r_award_comment.COLUMN_VALUE,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
     
 	END IF;
+
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_CUSTOM_DATA. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_CUSTOM_DATA  is ' from dual
+select ' Ended AWARD_CUSTOM_DATA ' from dual
 /

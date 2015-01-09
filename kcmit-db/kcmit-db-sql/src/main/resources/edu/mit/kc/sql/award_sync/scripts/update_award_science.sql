@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_SCIENCE_KEYWORD is ' from dual
+select ' Started UPDATE_AWARD_SCIENCE_KEYWORD ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -22,6 +22,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
 	
 	   IF ls_award_number is null THEN
 	
@@ -38,11 +39,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
        INSERT INTO AWARD_SCIENCE_KEYWORD(AWARD_SCIENCE_KEYWORD_ID,AWARD_ID,VER_NBR,SCIENCE_KEYWORD_CODE,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,1,r_award_comment.SCIENCE_CODE,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,SYS_GUID());
     
-
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_SCIENCE_KEYWORD. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_SCIENCE_KEYWORD is ' from dual
+select ' Ended UPDATE_AWARD_SCIENCE_KEYWORD ' from dual
 /

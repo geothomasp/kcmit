@@ -1,4 +1,4 @@
-select ' Start time of AWARD_COST_SHARE  script is ' from dual
+select ' Started AWARD_COST_SHARE ' from dual
 /
 DECLARE
 
@@ -21,6 +21,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	   
@@ -48,9 +49,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
   
     END IF;	
 	
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_COST_SHARE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
+	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_COST_SHARE script is ' from dual
+select ' Ended AWARD_COST_SHARE ' from dual
 /

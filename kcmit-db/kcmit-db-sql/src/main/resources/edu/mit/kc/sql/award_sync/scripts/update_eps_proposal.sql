@@ -1,4 +1,4 @@
-select ' Start time of insert to EPS_PROPOSAL is ' from dual
+select ' Started insert to EPS_PROPOSAL ' from dual
 /
 DECLARE
 ls_submit_flag CHAR(1):='N';
@@ -207,7 +207,7 @@ WHEN OTHERS THEN
 dbms_output.put_line('Error while updating EPS_PROPOSAL or EPS_PROPOSAL_DOCUMENT  and exception is '||substr(sqlerrm,1,200));
 END;
 /
-select ' End time of updating EPS_PROPOSAL is ' from dual
+select ' Ended updating EPS_PROPOSAL ' from dual
 /
 commit
 /

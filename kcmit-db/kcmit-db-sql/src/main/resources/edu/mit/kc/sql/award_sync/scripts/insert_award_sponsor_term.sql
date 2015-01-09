@@ -1,4 +1,4 @@
-select ' Start time of AWARD_SPONSOR_TERM script is ' from dual
+select ' Started AWARD_SPONSOR_TERM  ' from dual
 /
 
 DECLARE
@@ -47,6 +47,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
+begin
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
@@ -72,10 +73,15 @@ EXIT WHEN c_award_comment%NOTFOUND;
          INSERT INTO AWARD_SPONSOR_TERM(AWARD_SPONSOR_TERM_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,SPONSOR_TERM_ID,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
          VALUES(SEQ_AWARD_SPONSOR_TERM.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.SPONSOR_TERM_ID,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
     END IF;	
+
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_SPONSOR_TERM. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of AWARD_SPONSOR_TERM script is ' from dual
+select ' Ended AWARD_SPONSOR_TERM ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of AWARD_NOTEPAD script is ' from dual
+select ' Started AWARD_NOTEPAD ' from dual
 /
 DECLARE
 li_ver_nbr NUMBER(8):=1;
@@ -67,5 +67,5 @@ CLOSE c_notepad;
 dbms_output.put_line('Completed AWARD_NOTEPAD!!!');
 END;
 /
-select ' End time of AWARD_NOTEPAD script is ' from dual
+select ' Ended AWARD_NOTEPAD ' from dual
 /

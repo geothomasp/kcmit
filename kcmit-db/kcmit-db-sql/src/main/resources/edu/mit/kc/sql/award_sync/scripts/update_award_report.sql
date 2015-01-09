@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_REP_TERMS_RECNT is ' from dual
+select ' Started UPDATE_AWARD_REP_TERMS_RECNT ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -28,6 +28,11 @@ select count(OSP_DISTRIBUTION_CODE) into li_count FROM DISTRIBUTION WHERE OSP_DI
 	ELSE
 	  ls_distribution_code:=r_award_comment.OSP_DISTRIBUTION_CODE;
   END IF;
+ 
+ if ls_distribution_code = -1 then
+	ls_distribution_code := null;
+ end if;
+ 
  
  select SEQUENCE_AWARD_ID.NEXTVAL into li_award_reports_id from dual;
 	
@@ -64,5 +69,5 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_REP_TERMS_RECNT is ' from dual
+select ' Ended UPDATE_AWARD_REP_TERMS_RECNT ' from dual
 /

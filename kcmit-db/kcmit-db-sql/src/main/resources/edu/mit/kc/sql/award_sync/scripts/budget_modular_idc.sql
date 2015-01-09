@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_MODULAR_IDC script is ' from dual
+select ' Started BUDGET_MODULAR_IDC ' from dual
 /
 DECLARE
 li_budget_period_number NUMBER(12,0);
@@ -54,5 +54,5 @@ END LOOP;
 CLOSE c_modular;
 END;
 /
-select ' End time of BUDGET_MODULAR_IDC script is ' from dual
+select ' Ended BUDGET_MODULAR_IDC ' from dual
 /

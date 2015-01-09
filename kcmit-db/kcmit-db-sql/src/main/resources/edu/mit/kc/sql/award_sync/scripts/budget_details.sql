@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  script is ' from dual
+select ' Started BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE ' from dual
 /
 DECLARE
 li_ver_nbr number(8):=1;
@@ -235,5 +235,5 @@ select to_number(r_details.PROPOSAL_NUMBER) into ls_proposal_number from dual;
       END;     
     
 /
-select ' End time of BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  script is ' from dual
+select ' Ended BUDGET_DETAILS,BUDGET_DETAILS_CAL_AMTS,BUDGET_RATE_AND_BASE  ' from dual
 /

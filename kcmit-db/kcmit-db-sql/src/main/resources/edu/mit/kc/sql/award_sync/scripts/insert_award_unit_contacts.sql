@@ -1,4 +1,4 @@
-select ' Start time of AWARD_UNIT_CONTACTS is ' from dual
+select ' Started AWARD_UNIT_CONTACTS ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -32,6 +32,5 @@ END LOOP;
 CLOSE c_award_comment;
 END;
 /
-
-select ' End time of AWARD_UNIT_CONTACTS is ' from dual
+select ' Ended AWARD_UNIT_CONTACTS ' from dual
 /

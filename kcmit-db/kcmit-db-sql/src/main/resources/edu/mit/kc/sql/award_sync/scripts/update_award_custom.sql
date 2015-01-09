@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_CUSTOM_DATA is ' from dual
+select ' Started UPDATE_AWARD_CUSTOM_DATA ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -22,7 +22,7 @@ FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
 
-   
+ begin  
 	
 	   IF ls_award_number is null THEN
 	
@@ -44,11 +44,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
        INSERT INTO AWARD_CUSTOM_DATA(AWARD_CUSTOM_DATA_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,CUSTOM_ATTRIBUTE_ID,VALUE,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	   VALUES(SEQ_AWARD_CUSTOM_DATA_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.SEQUENCE_NUMBER,li_cust_id,r_award_comment.COLUMN_VALUE,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
     
-
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_CUSTOM_DATA. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_CUSTOM_DATA is ' from dual
+select ' Ended UPDATE_AWARD_CUSTOM_DATA ' from dual
 /

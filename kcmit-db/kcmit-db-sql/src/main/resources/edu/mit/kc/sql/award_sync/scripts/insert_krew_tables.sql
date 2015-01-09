@@ -1,1 +1,1 @@
-select ' Start time of insert AWARD Krew is ' from dual;--populating krew_tables in insert_award.sqlselect ' End time of insert AWARD Krew is ' from dual;/
+select ' Started AWARD Krew ' from dual;--populating krew_tables in insert_award.sqlselect ' Ended AWARD Krew ' from dual;/

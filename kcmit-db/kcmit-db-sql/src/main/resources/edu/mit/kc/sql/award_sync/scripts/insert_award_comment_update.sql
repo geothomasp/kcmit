@@ -1,5 +1,5 @@
-select ' Start time of AWARD_COMMENT update script is ' from dual
+select ' Started AWARD_COMMENT ' from dual
 /
 -- obsolete
-select ' End time of AWARD_COMMENT update script is ' from dual
+select ' Ended AWARD_COMMENT ' from dual
 /

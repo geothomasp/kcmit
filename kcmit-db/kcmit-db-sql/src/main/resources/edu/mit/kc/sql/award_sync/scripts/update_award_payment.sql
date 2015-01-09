@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_PAYMENT_SCHEDULE is ' from dual
+select ' Started UPDATE_AWARD_PAYMENT_SCHEDULE  ' from dual
 /
 DECLARE
 
@@ -21,7 +21,8 @@ OPEN c_award_comment;
 LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
-	
+
+begin	
 	   IF ls_award_number is null THEN
 	
            DELETE FROM AWARD_PAYMENT_SCHEDULE WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.SEQUENCE_NUMBER;
@@ -37,11 +38,15 @@ EXIT WHEN c_award_comment%NOTFOUND;
 
        INSERT INTO AWARD_PAYMENT_SCHEDULE(AWARD_PAYMENT_SCHEDULE_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,DUE_DATE,AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,SUBMIT_DATE,SUBMITTED_BY,INVOICE_NUMBER,STATUS_DESCRIPTION,STATUS,LAST_UPDATE_USER,LAST_UPDATE_TIMESTAMP,OVERDUE,REPORT_STATUS_CODE,SUBMITTED_BY_PERSON_ID,VER_NBR,OBJ_ID)
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.SEQUENCE_NUMBER,r_award_comment.DUE_DATE,r_award_comment.AMOUNT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,r_award_comment.SUBMIT_DATE,r_award_comment.SUBMITTED_BY,r_award_comment.INVOICE_NUMBER,r_award_comment.STATUS_DESCRIPTION,null,r_award_comment.UPDATE_USER,r_award_comment.UPDATE_TIMESTAMP,null,null,null,1,SYS_GUID());
- 
+
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_PAYMENT_SCHEDULE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_PAYMENT_SCHEDULE is ' from dual
+select ' Ended UPDATE_AWARD_PAYMENT_SCHEDULE  ' from dual
 /

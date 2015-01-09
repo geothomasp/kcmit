@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_COST_SHARE is ' from dual
+select ' Started UPDATE_AWARD_COST_SHARE ' from dual
 /	
 DECLARE
 
@@ -20,10 +20,8 @@ OPEN c_award_comment;
 LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
-
-
-   
-	   
+ 
+begin	   
 	   IF ls_award_number is null THEN
 	   
 	       DELETE FROM AWARD_COST_SHARE WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=r_award_comment.SEQUENCE_NUMBER;
@@ -40,11 +38,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
        INSERT INTO AWARD_COST_SHARE(AWARD_COST_SHARE_ID,VERIFICATION_DATE,COST_SHARE_MET,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,PROJECT_PERIOD,COST_SHARE_PERCENTAGE,COST_SHARE_TYPE_CODE,SOURCE,DESTINATION,COMMITMENT_AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	   VALUES(SEQ_AWARD_COST_SHARE_ID.NEXTVAL,NULL,NULL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.SEQUENCE_NUMBER,r_award_comment.FISCAL_YEAR,r_award_comment.COST_SHARING_PERCENTAGE,r_award_comment.COST_SHARING_TYPE_CODE,r_award_comment.SOURCE_ACCOUNT,r_award_comment.DESTINATION_ACCOUNT,r_award_comment.AMOUNT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
   
-
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_COST_SHARE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
 	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_COST_SHARE is ' from dual
+select ' Ended UPDATE_AWARD_COST_SHARE ' from dual
 /

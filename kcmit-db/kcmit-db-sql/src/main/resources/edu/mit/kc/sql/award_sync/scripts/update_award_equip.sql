@@ -1,4 +1,4 @@
-select ' Start time of UPDATE_AWARD_APPROVED_EQUIPMENT is ' from dual
+select ' Started UPDATE_AWARD_APPROVED_EQUIPMENT ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -21,8 +21,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
-
-   
+begin  
 	
 	   IF ls_award_number is null THEN
 	
@@ -38,16 +37,17 @@ EXIT WHEN c_award_comment%NOTFOUND;
 		   
 		END IF;   
   
-
-	
-
       INSERT INTO AWARD_APPROVED_EQUIPMENT(AWARD_APPROVED_EQUIPMENT_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,ITEM,VENDOR,MODEL,AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	  VALUES(SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.SEQUENCE_NUMBER,r_award_comment.ITEM,r_award_comment.VENDOR,r_award_comment.MODEL,r_award_comment.AMOUNT,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,1,SYS_GUID());
 
+exception
+when others then
+	dbms_output.put_line('Error in update of AWARD_APPROVED_EQUIPMENT. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;	
 
 END LOOP;
 CLOSE c_award_comment;
 END;
 /
-select ' End time of UPDATE_AWARD_APPROVED_EQUIPMENT is ' from dual
+select ' Ended UPDATE_AWARD_APPROVED_EQUIPMENT ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of EPS_PROP_COST_SHARING is ' from dual
+select ' Started EPS_PROP_COST_SHARING ' from dual
 /
 -- delete 
 DECLARE
@@ -77,5 +77,5 @@ END LOOP;
 
 END;
 /
-select ' End time of EPS_PROP_COST_SHARING is ' from dual
+select ' Ended of EPS_PROP_COST_SHARING ' from dual
 /

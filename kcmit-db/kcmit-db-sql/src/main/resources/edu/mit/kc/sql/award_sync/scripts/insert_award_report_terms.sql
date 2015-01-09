@@ -1,4 +1,4 @@
-select ' Start time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT script is ' from dual
+select ' Started AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -8,7 +8,7 @@ li_seq number(4,0);
 li_count number;
 ls_distribution_code VARCHAR2(3);
 CURSOR c_award_comment IS
-SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER  Kuali_sequence_number,a.AWARD_ID,ac.MIT_AWARD_NUMBER,ac.SEQUENCE_NUMBER,ac.REPORT_CLASS_CODE,ac.REPORT_CODE,ac.FREQUENCY_CODE,ac.FREQUENCY_BASE_CODE,ac.OSP_DISTRIBUTION_CODE,ac.CONTACT_TYPE_CODE,ac.ROLODEX_ID,ac.DUE_DATE,ac.NUMBER_OF_COPIES,ac.UPDATE_TIMESTAMP,ac.UPDATE_USER 
+SELECT a.AWARD_NUMBER,a.SEQUENCE_NUMBER  Kuali_sequence_number,a.AWARD_ID,ac.MIT_AWARD_NUMBER,ac.SEQUENCE_NUMBER,ac.REPORT_CLASS_CODE,ac.REPORT_CODE,DECODE(ac.FREQUENCY_CODE,-1,NULL,ac.FREQUENCY_CODE) FREQUENCY_CODE,DECODE(ac.FREQUENCY_BASE_CODE,-1,NULL,ac.FREQUENCY_BASE_CODE) FREQUENCY_BASE_CODE,DECODE(ac.OSP_DISTRIBUTION_CODE,-1,NULL,ac.OSP_DISTRIBUTION_CODE) OSP_DISTRIBUTION_CODE,ac.CONTACT_TYPE_CODE,ac.ROLODEX_ID,ac.DUE_DATE,ac.NUMBER_OF_COPIES,ac.UPDATE_TIMESTAMP,ac.UPDATE_USER 
 FROM AWARD a 
 INNER JOIN TEMP_TAB_TO_SYNC_AWARD t ON a.AWARD_NUMBER=replace(t.MIT_AWARD_NUMBER,'-','-00') AND a.SEQUENCE_NUMBER=t.SEQUENCE_NUMBER
 LEFT OUTER JOIN OSP$AWARD_REPORT_TERMS@coeus.kuali ac ON t.MIT_AWARD_NUMBER=ac.MIT_AWARD_NUMBER
@@ -29,10 +29,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
  li_seq:=r_award_comment.Kuali_sequence_number;
  select count(OSP_DISTRIBUTION_CODE) into li_count FROM DISTRIBUTION WHERE OSP_DISTRIBUTION_CODE=r_award_comment.OSP_DISTRIBUTION_CODE;
   IF li_count=0 THEN
-    ls_distribution_code:=-1;
+    ls_distribution_code:= null;
 	ELSE
 	  ls_distribution_code:=r_award_comment.OSP_DISTRIBUTION_CODE;
   END IF;
+  IF ls_distribution_code = -1 Then
+	ls_distribution_code := null;
+  end if;
+  
   IF li_seq=1 THEN
 	 li_seq:=li_seq + 1;
   END IF;
@@ -336,5 +340,5 @@ CLOSE c_invoice;
 END;
 /
 ---------- Report class code 6 End ------
-select ' End time of AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT is ' from dual
+select ' Ended AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT ' from dual
 /

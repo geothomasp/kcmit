@@ -1,6 +1,5 @@
-select ' Start time of BUDGET_PROJECT_INCOME is ' from dual
+select ' Started BUDGET_PROJECT_INCOME ' from dual
 /
--- truncate if the budget already exist
 DECLARE
 	li_budget_id number(12);
 CURSOR c_project IS
@@ -97,5 +96,5 @@ END LOOP;
 CLOSE c_project;       
 END;
 /
-select ' End time of BUDGET_PROJECT_INCOME is ' from dual
+select ' Ended BUDGET_PROJECT_INCOME ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of Insert to PROPOSAL_ADMIN_DETAILS is ' from dual
+select ' Started PROPOSAL_ADMIN_DETAILS ' from dual
 /
 
 DECLARE
@@ -37,5 +37,5 @@ END LOOP;
 CLOSE c_prop;
 END;
 /
-select ' End time of  Insert to PROPOSAL_ADMIN_DETAILS is ' from dual
+select ' Ended PROPOSAL_ADMIN_DETAILS ' from dual
 /

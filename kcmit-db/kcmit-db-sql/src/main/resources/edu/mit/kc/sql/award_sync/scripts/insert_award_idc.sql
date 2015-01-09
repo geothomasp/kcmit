@@ -1,4 +1,4 @@
-select ' Start time of AWARD_IDC_RATE script is ' from dual
+select ' Started AWARD_IDC_RATE script ' from dual
 /
 DECLARE
 li_cust_id NUMBER(12,0);
@@ -21,7 +21,7 @@ LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
 
-
+begin
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
 	   IF ls_award_number is null THEN
@@ -50,9 +50,14 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	   VALUES(SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.AWARD_ID,r_award_comment.APPLICABLE_IDC_RATE,r_award_comment.IDC_RATE_TYPE_CODE,r_award_comment.FISCAL_YEAR,r_award_comment.ON_CAMPUS_FLAG,r_award_comment.UNDERRECOVERY_OF_IDC,r_award_comment.SOURCE_ACCOUNT,r_award_comment.DESTINATION_ACCOUNT,r_award_comment.START_DATE,r_award_comment.END_DATE,1,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,SYS_GUID());
 
 	END IF;	
+exception
+when others then
+	dbms_output.put_line('ERROR IN AWARD_IDC_RATE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+end;		
+	
 END LOOP;
 CLOSE c_award_comment;
 END;
 /	
-select ' End time of AWARD_IDC_RATE script is ' from dual
+select ' Ended AWARD_IDC_RATE script ' from dual
 /

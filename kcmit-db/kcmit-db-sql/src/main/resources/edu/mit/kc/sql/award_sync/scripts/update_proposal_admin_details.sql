@@ -1,4 +1,4 @@
-select ' Start time of update PROPOSAL_ADMIN_DETAILS is ' from dual
+select ' Started update PROPOSAL_ADMIN_DETAILS ' from dual
 /
 declare
 li_count number;
@@ -62,5 +62,5 @@ close cur_ip;
 commit;
 end;
 /
-select ' End time of  Update PROPOSAL_ADMIN_DETAILS is ' from dual
+select ' Ended Update PROPOSAL_ADMIN_DETAILS ' from dual
 /

@@ -1,4 +1,4 @@
-select ' Start time of BUDGET_MODULAR is ' from dual
+select ' Started BUDGET_MODULAR ' from dual
 /
 DECLARE
 li_budget_period_number NUMBER(12,0);
@@ -23,6 +23,7 @@ LOOP
 FETCH c_modular INTO r_modular;
 EXIT WHEN c_modular%NOTFOUND;
 
+begin
 
   
   select count(*) into li_count from BUDGET_MODULAR where BUDGET_ID=r_modular.BUDGET_ID and BUDGET_PERIOD=r_modular.BUDGET_PERIOD;
@@ -45,9 +46,14 @@ EXIT WHEN c_modular%NOTFOUND;
 
   END IF;
   
+exception
+when others then
+	dbms_output.put_line('Error in update of BUDGET_MODULAR. BUDGET_ID,BUDGET_PERIOD'||r_modular.BUDGET_ID||','||r_modular.BUDGET_PERIOD||'-'||sqlerrm);
+end; 
+ 
 END LOOP;
 CLOSE c_modular;
 END;
 /
-select ' End time of BUDGET_MODULAR is ' from dual
+select ' Ended BUDGET_MODULAR ' from dual
 /
