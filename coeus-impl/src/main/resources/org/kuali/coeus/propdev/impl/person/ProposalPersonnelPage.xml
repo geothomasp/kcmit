@@ -668,7 +668,7 @@
 						<bean parent="Uif-SecondaryActionButton" 
 							p:cssClasses="pull-right"
 							p:methodToCall="sendAllCertificationNotifications"
-							p:successCallback="window.location.href='@{#ConfigProperties['application.url']}/kc-pd-krad/proposalDevelopment?methodToCall=sendAllCertificationNotifications&amp;formKey=@{formKey}';dismissDialog('PropDev-Personal-NotifyPersonsDialog');"
+							p:successCallback="dismissDialog('PropDev-Personal-NotifyPersonsDialog');"
 							p:refreshId="PropDev-Personal-NotifyPersonsDialog" p:actionLabel="Notify"
 							p:order="10" />
 					</list>
