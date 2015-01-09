@@ -41,7 +41,6 @@ begin
 	select mbr_id from  krim_role_mbr_t 
 	where role_id in (select role_id from KRIM_ROLE_T where ROLE_NM = 'Award Budget Administrator')
 	);
-	
 	commit;			
 								
 EXCEPTION
