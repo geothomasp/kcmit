@@ -97,8 +97,6 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
                 proposalPersonBiography.setPersonnelAttachment(null);
             }
         }
-        DocumentNextvalue documentNextvalue = proposaldevelopmentDocument.getDocumentNextvalueBo(Constants.PROP_PERSON_BIO_NUMBER);
-        getDataObjectService().save(documentNextvalue);
         proposalPersonBiography = getDataObjectService().save(proposalPersonBiography);
         proposalPersonBiography.setPersonnelAttachment(null);
         proposaldevelopmentDocument.getDevelopmentProposal().getPropPersonBios().add(proposalPersonBiography);
