@@ -91,7 +91,7 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
 
         QueryByCriteria.Builder query = lookupCriteriaGenerator.generateCriteria(DevelopmentProposal.class, modifiedSearchCriteria,
                 wildcardAsLiteralSearchCriteria, getLookupService().allPrimaryKeyValuesPresentAndNotWildcard(DevelopmentProposal.class, modifiedSearchCriteria));
-        if (!bounded && searchResultsLimit != null) {
+        if (bounded && searchResultsLimit != null) {
             query.setMaxResults(searchResultsLimit);
         }
         if (StringUtils.isBlank(adjustedSearchCriteria.get("proposalNumber"))
@@ -105,7 +105,7 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
                 query.setPredicates(PredicateFactory.in("proposalNumber", proposalNumbers));
             }
         }
-
+        
         return filterPermissions(getDataObjectService().findMatching(DevelopmentProposal.class, query.build()).getResults());
 
     }
@@ -236,9 +236,8 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
      * @throws WorkflowException 
      */
 	@Override
-	public void buildPropDevEditActionLink(Link actionLink, Object model,String title) throws WorkflowException {
+	public void buildPropDevEditActionLink(Link actionLink, Object model,String title,ProposalDevelopmentDocument proposalDevelopmentDocument) throws WorkflowException {
 		boolean actionLinkTitleFlag=true;
-		ProposalDevelopmentDocument proposalDevelopmentDocument =  (ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(actionLink.getHref()));
 		if(proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode() != null &&
 				!proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) && !proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)){
 			actionLinkTitleFlag=false;
@@ -262,9 +261,9 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
      * @param docId the id of document to check
      * @throws WorkflowException
      */
-    public void canModifyProposal(FieldGroup fieldGroup, Object model, String docId) throws WorkflowException {
+    public void canModifyProposal(FieldGroup fieldGroup, Object model, ProposalDevelopmentDocument proposalDevelopmentDocument) throws WorkflowException {
         boolean canModifyProposal = getKcAuthorizationService().hasPermission(getGlobalVariableService().getUserSession().getPrincipalId(),
-        				(ProposalDevelopmentDocument)(getDocumentService().getByDocumentHeaderId(docId)),
+        		proposalDevelopmentDocument,
         				PermissionConstants.MODIFY_PROPOSAL);
         if (!canModifyProposal) {
             fieldGroup.setRender(false);
