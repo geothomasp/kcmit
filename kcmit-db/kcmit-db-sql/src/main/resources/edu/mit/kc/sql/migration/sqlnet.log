@@ -17,3 +17,21 @@ Fatal NI connect error 12170.
     nt secondary err code: 60
     nt OS err code: 0
   Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12505, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=kc-stage-db.mit.edu)(PORT=1521))(CONNECT_DATA=(SID=KCSTAGE)(CID=(PROGRAM=sqlplus)(HOST=localhost)(USER=geo))))
+
+  VERSION INFORMATION:
+	TNS for MacOS X Server: Version 10.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for MacOS X Server: Version 10.2.0.4.0 - Production
+  Time: 12-JAN-2015 21:40:07
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: Message 12564 not found; No message file for product=network, facility=TNS
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
