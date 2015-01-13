@@ -501,20 +501,23 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
                 if (submission.getProtocol().isActive()) {
                     PS existingSubmission = latestSubmissions.get(key);
                     if (existingSubmission == null) {
-                        latestSubmissions.put(key, submission);
+                    //  latestSubmissions.put(key, submission);
+                    	returnList.add(submission);
                     } else {
                         int newInt = submission.getSequenceNumber().intValue();
                         int existInt = existingSubmission.getSequenceNumber().intValue();
                         int newSubNum = submission.getSubmissionNumber().intValue();
                         int existSubNum = existingSubmission.getSubmissionNumber().intValue();
                         if ((newInt > existInt) || ((newInt == existInt) && (newSubNum > existSubNum))){
-                            latestSubmissions.put(key, submission);
+                           // latestSubmissions.put(key, submission);
+                        	returnList.add(submission); 
                         }
                     }
                 }
             }
+            
         }
-        returnList.addAll(latestSubmissions.values());
+      //  returnList.addAll(latestSubmissions.values());
         return returnList;
     }
 
