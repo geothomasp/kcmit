@@ -543,7 +543,8 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
         String updateUser = null;
         if (doc.getUpdateTimestamp() != null) {
             createDateStr = CoreApiServiceLocator.getDateTimeService().toString(doc.getUpdateTimestamp(), "MM/dd/yy");
-            updateUser = doc.getUpdateUser().length() > NUMBER_30 ? doc.getUpdateUser().substring(0, NUMBER_30) : doc.getUpdateUser(); 
+            updateUser = GlobalVariables.getUserSession().getLoggedInUserPrincipalName().length() > NUMBER_30 ? GlobalVariables.getUserSession().getLoggedInUserPrincipalName().substring(0, NUMBER_30) : GlobalVariables.getUserSession().getLoggedInUserPrincipalName(); 
+            		
         }
         return createDateStr + " by " + updateUser;
     }
