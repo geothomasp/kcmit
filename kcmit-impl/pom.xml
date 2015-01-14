@@ -256,7 +256,7 @@
          <dependency>
             <groupId>org.kuali.coeus</groupId>
             <artifactId>coeus-impl</artifactId>
-            <version>6.0.0-s11</version>
+            <version>6.0.0-s13</version>
         </dependency>
        
 <!--         <dependency>
