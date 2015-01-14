@@ -183,7 +183,9 @@ public abstract class KcTransactionalDocumentBase extends TransactionalDocumentB
 
     @Override
     public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
+    	 if (!KRADConstants.SYSTEM_USER.equals(updateUser)) {
+             this.updateUser = StringUtils.substring(updateUser, 0, UPDATE_USER_LENGTH);
+         }
     }
 
     @Override
@@ -193,9 +195,7 @@ public abstract class KcTransactionalDocumentBase extends TransactionalDocumentB
 
     @Override
     public void setUpdateUserSet(boolean updateUserSet) {
-    	   if (!KRADConstants.SYSTEM_USER.equals(updateUser)) {
-               this.updateUser = StringUtils.substring(updateUser, 0, UPDATE_USER_LENGTH);
-           }
+    	   this.updateUserSet = updateUserSet;
     }
 
     public void setDocumentNextvalues(List<DocumentNextvalue> documentNextvalues) {
