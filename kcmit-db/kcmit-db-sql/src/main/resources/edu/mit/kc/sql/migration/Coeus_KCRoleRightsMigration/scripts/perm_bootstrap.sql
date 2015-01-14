@@ -379,7 +379,9 @@ Insert into KC_PERM_BOOTSTRAP (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,D
 Insert into KC_PERM_BOOTSTRAP (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) values ('1160','FFC76D8616DCC4F7E040007F01000986',1,'61','KC-B','Maintain KRMS Agenda','Maintain Budget KRMS Agenda','Y');
 Insert into KC_PERM_BOOTSTRAP (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) values ('1161','FFC76DC6FFD766BBE040007F0100098E',1,'5','KC-SUBAWARD','Submit Subaward Document','Submit subaward document permission','Y');
 Insert into KC_PERM_BOOTSTRAP (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) values ('1162','FFC76DC6FFDA66BBE040007F0100098E',1,'61','KC-AB','Maintain KRMS Agenda','Maintain Award Budget KRMS Agenda','Y');
-Insert into KC_PERM_BOOTSTRAP (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) 
-values ('1163',sys_guid(),1,'1','KC-UNT','Allow Backdoor Login','Permission for Allow Backdoor Login','Y');
+Insert into KC_PERM_BOOTSTRAP (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) values 
+	('1163',sys_guid(),1,'1','KC-UNT','Allow Backdoor Login','Permission for Allow Backdoor Login','Y');
+Insert into KC_PERM_BOOTSTRAP (perm_id, obj_id, ver_nbr, perm_tmpl_id, nmspc_cd, nm, desc_txt, actv_ind) values 
+	('KR1003', sys_guid(), '1', 'KR1004', 'KR-NS', 'Export Any Record', 'Ability to export any record', 'Y');
 commit
 /

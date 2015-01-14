@@ -181,7 +181,7 @@ sys_guid(),
 (select PERM_ID from KC_PERM_BOOTSTRAP where nm = 'Allow Backdoor Login'),
 'Y'
 )
-/*/
+*/
 INSERT INTO KRIM_ROLE_PERM_T(
 					ROLE_PERM_ID,
 					OBJ_ID,
