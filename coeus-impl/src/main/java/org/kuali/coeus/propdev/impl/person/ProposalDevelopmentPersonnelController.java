@@ -227,15 +227,16 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setProposalPerson(person);
         KcNotification notification = getKcNotificationService().createNotificationObject(context);
         NotificationTypeRecipient recipient = new NotificationTypeRecipient();
-        recipient.setPersonId(person.getPersonId());
+        recipient.setPersonId(person.getPersonId());        
         getKcNotificationService().sendNotification(context,notification,Collections.singletonList(recipient));
-        getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-PersonnelPage-Collection", KeyConstants.INFO_NOTIFICATIONS_SENT, person.getFullName());
+        getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-PersonnelPage-Collection", KeyConstants.INFO_NOTIFICATIONS_SENT, person.getFullName()+" "+notification.getCreateTimestamp());
     }
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=sendAllCertificationNotifications")
     public ModelAndView sendAllCertificationNotifications(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
         int index = 0;
         for (ProposalPerson proposalPerson : form.getDevelopmentProposal().getProposalPersons()) {
+        	if(proposalPerson.isSelectedPerson()){
             boolean certificationComplete = true;
             for (AnswerHeader answerHeader : proposalPerson.getQuestionnaireHelper().getAnswerHeaders()) {
                 certificationComplete &= answerHeader.isCompleted();
@@ -245,7 +246,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
             }
 
             index++;
-        }
+        }}
         return getRefreshControllerService().refresh(form);
     }
 

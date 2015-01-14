@@ -42,6 +42,8 @@
         <ref bean="Rolodex-title"/>
         <ref bean="Rolodex-active"/>
         <ref bean="Rolodex-versionNumber"/>
+        <ref bean="Rolodex-updateUser" />
+        <ref bean="Rolodex-updateTimestamp" />
       </list>
     </property>
     <property name="relationships">
@@ -593,6 +595,37 @@
 		<property name="summary" value="Active" />
 		<property name="description" value="Active" />
    </bean>
+   
+   <bean id="Rolodex-updateTimestamp" parent="Rolodex-updateTimestamp-parentBean" />
+	<bean id="Rolodex-updateTimestamp-parentBean" abstract="true" parent="KraAttributeReferenceDummy-updateTimestamp" >
+		<property name="name" value="updateTimestamp" />
+		<property name="label" value="Last Update" />
+		<property name="shortLabel" value="Last Update" />
+	</bean>
+   
+  <bean id="Rolodex-updateUser" parent="Rolodex-updateUser-parentBean"/>
+  
+  <bean id="Rolodex-updateUser-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="updateUser" />
+    <property name="forceUppercase" value="false" />
+    <property name="label" value="Update User" />
+    <property name="shortLabel" value="Update User" />
+    <property name="maxLength" value="60" />
+    <property name="validationPattern" >
+      <bean parent="AnyCharacterValidationPattern" />
+    </property>
+    <property name="validCharactersConstraint">
+      <bean parent="AnyCharacterPatternConstraint"/>
+    </property>
+    <property name="control" >
+      <bean parent="TextControlDefinition" p:size="20"/>
+    </property>
+    <property name="controlField">
+      <bean p:size="20" parent="Uif-TextControl"/>
+    </property>
+    <property name="summary" value="User who uploads the document" />
+    <property name="description" value="User who uploads the document" />
+  </bean>
   
   <bean id="Rolodex-versionNumber" parent="Rolodex-versionNumber-parentBean"/>
   <bean abstract="true" id="Rolodex-versionNumber-parentBean" parent="AttributeReferenceDummy-versionNumber"/>
@@ -634,6 +667,8 @@
               <bean p:attributeName="suffix" parent="FieldDefinition"/>
               <bean p:attributeName="title" parent="FieldDefinition"/>
               <bean p:attributeName="active" parent="FieldDefinition"/>
+              <bean p:attributeName="updateUser" parent="FieldDefinition"/>
+              <bean p:attributeName="updateTimestamp" parent="FieldDefinition"/>
             </list>
           </property>
         </bean>

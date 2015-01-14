@@ -247,12 +247,13 @@ public class NegotiationForm extends KcTransactionalDocumentFormBase implements 
         sb.append(") {").append(newLine);
         
         sb.append("  dateField.disabled = false;").append(newLine);
+        sb.append("  dateFieldPicker.style.display='inline';").append(newLine);
         sb.append("  if (dateField.value == '' && doUpdateDate) {").append(newLine);
         sb.append("    var currentTime = new Date();").append(newLine);
         sb.append("    dateField.value = currentTime.getMonth() + 1 + \"/\" +  currentTime.getDate() + \"/\" + currentTime.getFullYear();").append(newLine);
         sb.append("  dateFieldPicker.style.display='inline';").append(newLine);
         sb.append("  }").append(newLine).append("} else {").append(newLine);
-        sb.append("  dateField.disabled = true;").append(newLine).append("  dateField.value = '';").append(newLine);
+        sb.append("  dateField.disabled = true;").append(newLine);
         sb.append("  dateFieldPicker.style.display='none';").append(newLine);
         sb.append("}").append(newLine).append("}").append(newLine);
         sb.append("manageStatusEndDate(false);");
