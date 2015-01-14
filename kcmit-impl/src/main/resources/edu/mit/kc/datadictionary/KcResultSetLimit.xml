@@ -157,5 +157,13 @@
   <bean id="MIT-InstituteRate-lookupDefinition-parentBean" parent="InstituteRate-lookupDefinition-parentBean">
   <property name="resultSetLimit" value="1000" />
   </bean>
+
+  
+  <bean id="DevelopmentProposal-LookupView" parent="MIT-DevelopmentProposal-LookupView-parentBean" /> 
+  <bean id="MIT-DevelopmentProposal-LookupView-parentBean" abstract="true" parent="DevelopmentProposal-LookupView-parentBean" p:resultSetLimit="500" />
+	
+  <bean id="DevelopmentProposals-LookupViewId" parent="MIT-DevelopmentProposal-LookupView-parentBean"
+   p:viewName="DevelopmentProposals-LookupViewName" p:headerText="Development Proposal Lookup"/>
+  
   
 </beans>
