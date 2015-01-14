@@ -1203,6 +1203,8 @@ public class AwardAction extends BudgetParentActionBase {
        return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
    }
 
+
+   
     /**
      *
      * This method gets called upon navigation to Award Actions tab.
@@ -1901,7 +1903,37 @@ public class AwardAction extends BudgetParentActionBase {
         return forward;
     } 
     
+    public ActionForward contact(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AwardForm awardForm = (AwardForm) form;
+        if (awardForm.getDocument().getDocumentNumber() == null) {
+            //if we are entering this from the search results
+            loadDocumentInForm(request, awardForm);
+        }
+
+        return mapping.findForward(Constants.MAPPING_AWARD_CONTACTS_PAGE);
+    }
     
+    /**
+    *
+    * This method gets called upon navigation to EDS tab.
+    * @param mapping
+    * @param form
+    * @param request
+    * @param response
+    * @return
+    */
+   public ActionForward sharedDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+       AwardForm awardForm = (AwardForm) form;
+       if (awardForm.getDocument().getDocumentNumber() == null) {
+           //if we are entering this from the search results
+           loadDocumentInForm(request, awardForm);
+       }
+       awardForm.getMedusaBean().setMedusaViewRadio("0");
+       awardForm.getMedusaBean().setModuleName("award");
+       awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
+       awardForm.getMedusaBean().generateParentNodes();
+       return mapping.findForward("sharedDoc");
+   }
     @Override
     public ActionForward superUserApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         return superUserActionHelper(SuperUserAction.SUPER_USER_APPROVE, mapping, form, request, response);

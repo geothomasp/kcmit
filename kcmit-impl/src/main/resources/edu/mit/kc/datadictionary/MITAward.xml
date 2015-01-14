@@ -196,7 +196,40 @@
     <property name="summary" value="The CFDA Number for this Award." />
     <property name="description" value="A unique identifier for the sponsor and the funding opportunity announcement.  AKA &quot;Catalogue of Federal Domestic Assistance Number.&quot; The format for this CFDA Number is XX.XXX" />
   </bean> 
+  <bean id="Award-inquiryDefinition" parent="Award-inquiryDefinition-parentBean" />
+  <bean id="Award-InquiryView" parent="Award-InquiryView-parentBean"/>
+  <bean id="Award-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="Award" />
+    <property name="inquirySections" >
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value="Award" />
+          <property name="numberOfColumns" value="1" />
+          <property name="inquiryFields" >
+            <list>
+			  	<bean p:attributeName="awardId" p:forceInquiry="true" parent="FieldDefinition" />
+			    <bean p:attributeName="sponsorAwardNumber" parent="FieldDefinition" />
+			    <bean p:attributeName="awardNumber" parent="FieldDefinition" />
+			    <bean p:attributeName="accountNumber" parent="FieldDefinition" />
+			    <bean p:attributeName="statusCode" parent="FieldDefinition" />
+			    <bean p:attributeName="sponsorCode" parent="FieldDefinition" />
+			    <bean p:attributeName="title" parent="FieldDefinition" />
+			    <bean p:attributeName="projectPersons.fullName" parent="FieldDefinition" />
+			    <bean p:attributeName="unitNumber" parent="FieldDefinition" />
+			    <bean p:attributeName="leadUnit.unitName" parent="FieldDefinition" />
+			    <bean p:attributeName="ospAdministratorName" parent="FieldDefinition" />
+			    <bean p:attributeName="archiveLocation" parent="FieldDefinition" />
+			    <bean p:attributeName="closeoutDate" parent="FieldDefinition" />
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+    <property name="inquirableClass" value="org.kuali.kra.award.AwardInquirable" />
+  </bean>
+	
     <bean id="MIT2-Award-lookupDefinition-parentBean" parent="Award-lookupDefinition-parentBean">
+    <property name="lookupableID" value="mitAwardLookupable" />
     <property name="lookupFields" >
 		  <list>
             <bean p:attributeName="awardNumber" parent="FieldDefinition" />
