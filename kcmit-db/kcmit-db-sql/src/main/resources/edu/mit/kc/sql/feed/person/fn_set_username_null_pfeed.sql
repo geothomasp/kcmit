@@ -101,6 +101,7 @@ BEGIN
 										minus
 								 		select person_id
 								 		from warehouse_person)
+	and prncpl_nm not in ('admin','kr')
 	and prncpl_nm is not null;
 	
 	update krim_prncpl_t
@@ -110,6 +111,7 @@ BEGIN
 										minus
 								 		select person_id
 								 		from warehouse_person)
+	and prncpl_nm not in ('admin','kr')								 		
 	and prncpl_nm is not null;
   
 	return 0;
