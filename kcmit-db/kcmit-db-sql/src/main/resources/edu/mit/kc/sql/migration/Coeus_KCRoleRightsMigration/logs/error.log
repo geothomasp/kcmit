@@ -1,38 +1,23 @@
 
-Started role right migration.07-JAN-15 02.08.23.692979 PM                       
-ALTER TABLE KRIM_ROLE_T DISABLE CONSTRAINT KRIM_ROLE_TP1 
-*
-ERROR at line 1:
-ORA-02297: cannot disable constraint (KCSO.KRIM_ROLE_TP1) - dependencies exist 
+Started role right migration.13-JAN-15 10.42.10.039721 PM                       
 
+ddl_role_rights.sql started 13-JAN-15 10.42.12.854658 PM                        
 
-truncate table KRIM_ROLE_T
-               *
-ERROR at line 1:
-ORA-02266: unique/primary keys in table referenced by enabled foreign keys 
+kc_coeus_role_mapping started 13-JAN-15 10.42.17.863898 PM                      
 
+kc_coeus_right_mapping started 13-JAN-15 10.42.36.351593 PM                     
 
-insert into KRIM_ROLE_T(
-*
-ERROR at line 1:
-ORA-00001: unique constraint (KCSO.KRIM_ROLE_TC0) violated 
+role_bootstrap.sql started 13-JAN-15 10.42.52.215747 PM                         
 
+perm_bootstrap.sql started 13-JAN-15 10.43.24.290129 PM                         
 
-ALTER TABLE KRIM_PERM_ATTR_DATA_T ENABLE CONSTRAINT KRIM_PERM_ATTR_DATA_TR3 
-                                                    *
-ERROR at line 1:
-ORA-02298: cannot validate (KCSO.KRIM_PERM_ATTR_DATA_TR3) - parent keys not 
-found 
+role_perm_bootstrap.sql started 13-JAN-15 10.44.48.600204 PM                    
 
+truncate_and_apply_bootstrap.sql started 13-JAN-15 10.44.55.678424 PM           
 
-ALTER TABLE KRIM_ROLE_PERM_T ENABLE CONSTRAINT KRIM_ROLE_PERM_TR1 
-                                               *
-ERROR at line 1:
-ORA-02298: cannot validate (KCSO.KRIM_ROLE_PERM_TR1) - parent keys not found 
+      4842                                                                      
 
-
-
-      2649                                                                      
+syncing_role_rights.sql started 13-JAN-15 10.45.00.190889 PM                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM IRB Protocol Aggregator. The Error   
 is: ORA-01403: no data found                                                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM IRB Protocol Aggregator. The Error   
@@ -44,12 +29,18 @@ is: ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM IRB Protocol Aggregator. The Error   
 is: ORA-01403: no data found                                                    
 Loading user roles Completed!!                                                  
+
+load_coeus_user_roles.sql started 13-JAN-15 10.51.47.623438 PM                  
+
+add_role_perm_manually.sql started 13-JAN-15 10.51.47.935871 PM                 
 CREATE INDEX OSP$PROTOCOL_USER_ROLES_I ON OSP$PROTOCOL_USER_ROLES(PROTOCOL_NUMBER,SEQUENCE_NUMBER,ROLE_ID,USER_ID)
              *
 ERROR at line 1:
 ORA-00955: name is already used by an existing object 
 
 
+
+document_access_irb.sql started 13-JAN-15 10.51.52.049827 PM                    
 CREATE INDEX OSP$EPS_PROP_USER_ROLES_I ON OSP$EPS_PROP_USER_ROLES(PROPOSAL_NUMBER,ROLE_ID,USER_ID)
              *
 ERROR at line 1:
@@ -118,6 +109,8 @@ PRNCPL_ID is missing for userID pauli and Proposal Number 4653
 PRNCPL_ID is missing for userID pauli and Proposal Number 4631                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4676                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4781                  
+
+ddl_role_rights.sql started 13-JAN-15 10.55.28.979121 PM                        
 CREATE INDEX OSP$AC_PROTOCOL_USER_ROLES_I ON OSP$AC_PROTOCOL_USER_ROLES(PROTOCOL_NUMBER,SEQUENCE_NUMBER,ROLE_ID,USER_ID)
              *
 ERROR at line 1:
@@ -125,4 +118,6 @@ ORA-00955: name is already used by an existing object
 
 
 
-completed role right migration.07-JAN-15 02.18.49.957624 PM                     
+ddl_role_rights.sql started 13-JAN-15 10.55.30.024040 PM                        
+
+completed role right migration.13-JAN-15 10.55.30.202074 PM                     
