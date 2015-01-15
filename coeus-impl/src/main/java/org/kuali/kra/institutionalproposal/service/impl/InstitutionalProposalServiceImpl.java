@@ -103,8 +103,6 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     private static final String TRUE_INDICATOR_VALUE = "1";
 	private static final String FALSE_INDICATOR_VALUE = "0";
 
-    @Autowired
-    
     private FiscalYearMonthService fiscalYearMonthService;
     
     
