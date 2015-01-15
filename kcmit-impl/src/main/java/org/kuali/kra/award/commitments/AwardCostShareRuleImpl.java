@@ -184,7 +184,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
 
     private boolean validatePercentage(ScaleTwoDecimal percentage) {
         boolean isValid = true;
-        if (percentage != null && percentage.isLessThan(ScaleTwoDecimal.ZERO)) {
+        if (percentage != null && percentage.isLessThan(new ScaleTwoDecimal(0))) {
             isValid = false;
             this.reportError(fieldStarter + ".costSharePercentage", KeyConstants.ERROR_COST_SHARE_PERCENTAGE_RANGE);
         }
@@ -215,7 +215,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         if (commitmentAmount == null) {
             isValid = false;
             this.reportError(commitmentAmountField, KeyConstants.ERROR_COST_SHARE_COMMITMENT_AMOUNT_REQUIRED);
-        } else if (commitmentAmount.isLessThan(ScaleTwoDecimal.ZERO)) {
+        } else if (commitmentAmount.isLessThan(new ScaleTwoDecimal(0))) {
             isValid = false;
             this.reportError(commitmentAmountField, KeyConstants.ERROR_COST_SHARE_COMMITMENT_AMOUNT_INVALID, new String[] { commitmentAmount.toString() });
         }
@@ -224,7 +224,7 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
 
     private boolean validateCostShareMet(ScaleTwoDecimal costShareMet) {
         boolean isValid = true;
-        if (costShareMet != null && costShareMet.isLessThan(ScaleTwoDecimal.ZERO)) {
+        if (costShareMet != null && costShareMet.isLessThan(new ScaleTwoDecimal(0))) {
             isValid = false;
             this.reportError(fieldStarter + ".costShareMet", KeyConstants.ERROR_COST_SHARE_MET_INVALID, new String[] { costShareMet.toString() });
         }

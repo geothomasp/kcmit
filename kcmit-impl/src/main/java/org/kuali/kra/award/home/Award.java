@@ -47,6 +47,8 @@ import org.kuali.kra.award.awardhierarchy.sync.AwardSyncStatus;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncableProperty;
 import org.kuali.kra.award.budget.AwardBudgetExt;
 import org.kuali.kra.award.budget.AwardBudgetLimit;
+import org.kuali.kra.award.budget.AwardBudgetService;
+import org.kuali.kra.award.cgb.AwardCgb;
 import org.kuali.kra.award.commitments.AwardCostShare;
 import org.kuali.kra.award.commitments.AwardFandaRate;
 import org.kuali.kra.award.contacts.AwardPerson;
@@ -281,6 +283,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     private VersionHistorySearchBo versionHistory;
     private transient KcPersonService kcPersonService;
     private transient boolean editAward = false;
+    private List<AwardCgb> awardCgbList;
         
     protected final Log LOG = LogFactory.getLog(Award.class);
 	Logger LOGGER;
@@ -2402,6 +2405,10 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         return awardAmountInfos.get(0);
     }
     
+    public AwardAmountInfo getLatestAwardAmountInfo() {
+        return getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(awardAmountInfos);
+    }
+    
     /**
      * Find the lead unit for the award
      * @return
@@ -3446,14 +3453,14 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
      * Needed to convert to KualiDecimal to avoid rounding issues.
      */
     public KualiDecimal getFandATotals() {
-       KualiDecimal total = new KualiDecimal(0);
-        for (AwardFandaRate currentRate : getAwardFandaRate()) {
-            if (currentRate.getUnderrecoveryOfIndirectCost() != null) {
-                total = total.add(new KualiDecimal(currentRate.getUnderrecoveryOfIndirectCost().bigDecimalValue()));
-            }
-        }
-        return total;
-    }
+        KualiDecimal total = new KualiDecimal(0);
+         for (AwardFandaRate currentRate : getAwardFandaRate()) {
+             if (currentRate.getUnderrecoveryOfIndirectCost() != null) {
+                 total = total.add(new KualiDecimal(currentRate.getUnderrecoveryOfIndirectCost().bigDecimalValue()));
+             }
+         }
+         return total;
+     }
 
 	@Override
 	public boolean isProposalBudget() {
@@ -3470,6 +3477,8 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 		return new AwardBudgetExt();
 	}
     private List<AwardBudgetExt> budgets;
+    
+    private List<AwardBudgetExt> allAwardBudgets;
 
     public List<AwardBudgetExt> getBudgetVersionOverviews() {
 		return budgets;
@@ -3485,6 +3494,17 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 		return getAwardDocument().getNextBudgetVersionNumber();
 	}
 
+	public List<AwardBudgetExt> getAllAwardBudgets() {
+		if (allAwardBudgets == null || allAwardBudgets.isEmpty()) {
+			allAwardBudgets = KcServiceLocator.getService(AwardBudgetService.class).getAllBudgetsForAward(this);
+		}
+		return allAwardBudgets;
+	}
+
+	public void setAllAwardBudgets(List<AwardBudgetExt> budgets) {
+		this.allAwardBudgets = budgets;
+	}
+	
 	public List<AwardBudgetExt> getBudgets() {
 		return budgets;
 	}
@@ -3502,5 +3522,34 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 	    public void setEditAward(boolean editAward) {
 	        this.editAward = editAward;
 	    }
-	
+	    public AwardComment getAdditionalFormsDescriptionComment() {
+	        return getAwardCommentByType("CG2", false, true);
+	    }
+
+	    public AwardComment getStopWorkReasonComment() {
+	        return getAwardCommentByType("CG1", false, true);
+	    }
+
+	    public AwardComment getSuspendInvoicingComment() {
+	        return getAwardCommentByType("CG3", false, true);
+	    }
+
+	    public AwardCgb getAwardCgb() {
+	        if (awardCgbList.isEmpty()) {
+	            awardCgbList.add(new AwardCgb(this));
+	        }
+	        return awardCgbList.get(0);
+	    }
+
+	    public void setAwardCgb(AwardCgb awardCgb) {
+	        awardCgbList.set(0, awardCgb);
+	    }
+
+	    public List<AwardCgb> getAwardCgbList() {
+	        return awardCgbList;
+	    }
+
+	    public void setAwardCgbList(List<AwardCgb> awardCgbList) {
+	        this.awardCgbList = awardCgbList;
+	    }
 }
