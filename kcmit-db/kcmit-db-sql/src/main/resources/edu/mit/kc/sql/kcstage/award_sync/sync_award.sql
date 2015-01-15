@@ -8,7 +8,7 @@ select 'insert award: '|| localtimestamp from dual;
 @scripts/fn_document_nextval.sql
 @scripts/insert_temp_krew_create.sql
 @scripts/insert_award.sql
-@scripts/insert_krew_tables.sql
+--@scripts/insert_krew_tables.sql
 --@scripts/insert_award_table_create.sql
 @scripts/insert_award_version_history.sql
 @scripts/insert_kc_mig_conversion.sql

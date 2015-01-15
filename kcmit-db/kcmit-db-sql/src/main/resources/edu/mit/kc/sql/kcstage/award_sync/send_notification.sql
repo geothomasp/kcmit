@@ -3,7 +3,7 @@ ls_msg clob;
 ls_sub varchar2(6000);
 ls_temp_msg clob;
 li_count NUMBER;
-ls_receipt varchar2(100) := 'kc-mit-dev@mit.edu';
+ls_receipt varchar2(100) := 'kc-notifications@mit.edu';
 cursor c_award is
   select t2.mit_award_number ||' - ' ||t1.sequence_number as project_details  
   from award t1
@@ -45,7 +45,7 @@ r_bud  c_bud%rowtype;
 
 begin
   ls_sub := 'Projects are Synced from Coeus on '||sysdate;
-  ls_msg := 'Hello,'||'<br/>'||'<br/>'||'Following projects are synced from Coeus on '||sysdate||'<br/>'|| '<br/>';
+  ls_msg := 'Hello,'||'<br/>'||'<br/>'||'Following projects are synced from Coeus Production on '||sysdate||'<br/>'|| '<br/>';
   
   ls_temp_msg := '<u>Award</u>'||'<br/>';  
   open c_award;
