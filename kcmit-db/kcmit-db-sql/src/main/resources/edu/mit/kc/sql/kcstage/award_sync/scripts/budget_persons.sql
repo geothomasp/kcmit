@@ -97,8 +97,13 @@ select t1.budget_id  INTO li_budget_id from budget t1
 		where t2.proposal_number = ls_proposal_number
 		and t1.version_number = r_bud.VERSION_NUMBER;
 
-
+BEGIN
 li_per_seq_number:=FN_DOCUMENT_NEXTVAL(li_budget_id,'personSequenceNumber');
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line('BUDGET_ID:'||li_budget_id);
+END;
+
 
 select count(*) into li_count FROM BUDGET_PERSONS where BUDGET_ID=r_bud.BUDGET_ID AND PERSON_ID=r_bud.PERSON_ID OR ROLODEX_ID=r_bud.PERSON_ID;
 

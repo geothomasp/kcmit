@@ -54,7 +54,7 @@ select count(OSP_DISTRIBUTION_CODE) into li_count FROM DISTRIBUTION WHERE OSP_DI
 begin
 
        INSERT INTO AWARD_REPORT_TERMS(AWARD_REPORT_TERMS_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,REPORT_CLASS_CODE,REPORT_CODE,FREQUENCY_CODE,FREQUENCY_BASE_CODE,OSP_DISTRIBUTION_CODE,DUE_DATE,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
-	   VALUES(li_award_reports_id,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.REPORT_CLASS_CODE,r_award_comment.REPORT_CODE,r_award_comment.FREQUENCY_CODE,r_award_comment.FREQUENCY_BASE_CODE,r_award_comment.OSP_DISTRIBUTION_CODE,r_award_comment.DUE_DATE,1,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,SYS_GUID());
+	   VALUES(li_award_reports_id,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.REPORT_CLASS_CODE,r_award_comment.REPORT_CODE,r_award_comment.FREQUENCY_CODE,r_award_comment.FREQUENCY_BASE_CODE,ls_distribution_code,r_award_comment.DUE_DATE,1,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,SYS_GUID());
 	   
 	   INSERT INTO AWARD_REP_TERMS_RECNT(AWARD_REP_TERMS_RECNT_ID,CONTACT_ID,AWARD_REPORT_TERMS_ID,CONTACT_TYPE_CODE,ROLODEX_ID,NUMBER_OF_COPIES,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID) 
        VALUES(SEQ_AWARD_REP_TERMS_RECNT_ID.NEXTVAL,null,li_award_reports_id,r_award_comment.CONTACT_TYPE_CODE,r_award_comment.ROLODEX_ID,r_award_comment.NUMBER_OF_COPIES,1,r_award_comment.UPDATE_TIMESTAMP,r_award_comment.UPDATE_USER,SYS_GUID());

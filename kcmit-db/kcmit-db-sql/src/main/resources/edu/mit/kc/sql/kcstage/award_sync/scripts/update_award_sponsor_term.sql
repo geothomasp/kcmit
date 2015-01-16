@@ -53,12 +53,12 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	
 	      DELETE FROM AWARD_SPONSOR_TERM WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and SEQUENCE_NUMBER=r_award_comment.Kuali_sequence_number;
 		  
-          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
        
-	   ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN 
+	   ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN 
 	   
 	      DELETE FROM AWARD_SPONSOR_TERM WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and SEQUENCE_NUMBER=r_award_comment.Kuali_sequence_number;
-          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		  
 	   END IF;
 	   

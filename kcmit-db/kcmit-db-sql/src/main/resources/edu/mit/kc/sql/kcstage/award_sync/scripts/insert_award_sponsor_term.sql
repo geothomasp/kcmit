@@ -57,15 +57,15 @@ begin
 	      SELECT SEQ_AWARD_SPONSOR_TERM.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,SPONSOR_TERM_ID,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_SPONSOR_TERM
           WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_SPONSOR_TERM aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
 		  
-          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
        
-	   ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN 
+	   ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN 
 	   
 	      INSERT INTO AWARD_SPONSOR_TERM(AWARD_SPONSOR_TERM_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,SPONSOR_TERM_ID,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	      SELECT SEQ_AWARD_SPONSOR_TERM.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,SPONSOR_TERM_ID,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_SPONSOR_TERM
           WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_SPONSOR_TERM aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
 		  
-          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+          ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		  
 	   END IF;
 	   

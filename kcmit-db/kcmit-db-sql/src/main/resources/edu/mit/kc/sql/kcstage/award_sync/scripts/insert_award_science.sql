@@ -24,20 +24,21 @@ OPEN c_award_comment;
 LOOP
 FETCH c_award_comment INTO r_award_comment;
 EXIT WHEN c_award_comment%NOTFOUND;
- 
+    IF r_award_comment.sequence_number<>1 THEN
       li_seq:=r_award_comment.sequence_number - 1;
-
+  
         BEGIN
 	     select award_id into li_award_id from award where award_number=r_award_comment.AWARD_NUMBER and sequence_number=li_seq;
         EXCEPTION
 	    WHEN OTHERS THEN
 	     dbms_output.put_line('Error while fetching AWARD_ID using AWARD_NUMBER:'||r_award_comment.AWARD_NUMBER||' and SEQUENCE_NUMBER:'||li_seq||'and error is:'||sqlerrm);
 	    END;
-
+    END IF;
 
     IF r_award_comment.MIT_AWARD_NUMBER IS NULL THEN
 	
 	   IF ls_award_number is null THEN
+	      IF r_award_comment.sequence_number<>1 THEN 
 	         BEGIN
 	        INSERT INTO AWARD_SCIENCE_KEYWORD(AWARD_SCIENCE_KEYWORD_ID,AWARD_ID,VER_NBR,SCIENCE_KEYWORD_CODE,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
 	        SELECT SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,1,SCIENCE_KEYWORD_CODE,UPDATE_TIMESTAMP,UPDATE_USER,SYS_GUID() FROM AWARD_SCIENCE_KEYWORD
@@ -46,9 +47,9 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	         WHEN OTHERS THEN
 	            dbms_output.put_line('Missing data in AWARD,AWARD_NUMBER/SEQUENCE NUMBER - AWARD_ID:'||r_award_comment.MIT_AWARD_NUMBER||' / '||li_seq||'-'||li_award_id||sqlerrm);
             END;
-            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
-		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN
+		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN
 		       BEGIN
           INSERT INTO AWARD_SCIENCE_KEYWORD(AWARD_SCIENCE_KEYWORD_ID,AWARD_ID,VER_NBR,SCIENCE_KEYWORD_CODE,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
 	        SELECT SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,1,SCIENCE_KEYWORD_CODE,UPDATE_TIMESTAMP,UPDATE_USER,SYS_GUID() FROM AWARD_SCIENCE_KEYWORD
@@ -58,7 +59,8 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	            dbms_output.put_line('Missing data in AWARD,AWARD_NUMBER/SEQUENCE NUMBER - AWARD_ID:'||r_award_comment.MIT_AWARD_NUMBER||' / '||li_seq||'-'||li_award_id||sqlerrm);
            END;
     
-            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
+		 END IF;	
 			
 		END IF;
 	
@@ -72,7 +74,7 @@ EXIT WHEN c_award_comment%NOTFOUND;
 	dbms_output.put_line('Missing data in AWARD,AWARD_NUMBER/SEQUENCE NUMBER - AWARD_ID:'||r_award_comment.MIT_AWARD_NUMBER||' / '||li_seq||'-'||li_award_id||sqlerrm);
     END;
 	END IF;	
-	
+
 END LOOP;
 CLOSE c_award_comment;
 END;

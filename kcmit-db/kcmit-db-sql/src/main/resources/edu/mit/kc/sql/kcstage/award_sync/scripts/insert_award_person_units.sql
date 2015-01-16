@@ -46,16 +46,16 @@ begin
 	        SELECT SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,UNIT_NUMBER,LEAD_UNIT_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_PERSON_UNITS
             WHERE AWARD_PERSON_ID=(SELECT MAX(aw.AWARD_PERSON_ID) FROM award_persons aw where aw.AWARD_PERSON_ID<li_award_pers_unit_id);
     
-            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
-		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN
+		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN
 		
 		    INSERT INTO AWARD_PERSON_UNITS(AWARD_PERSON_UNIT_ID,AWARD_PERSON_ID,UNIT_NUMBER,LEAD_UNIT_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	        SELECT SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,UNIT_NUMBER,LEAD_UNIT_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_PERSON_UNITS
             WHERE AWARD_PERSON_ID=(SELECT MAX(aw.AWARD_PERSON_ID) FROM award_persons aw where aw.AWARD_PERSON_ID<li_award_pers_unit_id);
     
     
-            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 			
 		END IF;
 	

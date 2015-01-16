@@ -32,15 +32,15 @@ begin
 	      SELECT SEQ_AWARD_TRANS_SPONSOR_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,SPONSOR_CODE,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_TRANSFERRING_SPONSOR
           WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_TRANSFERRING_SPONSOR aw WHERE aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
 		   
-		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
        
-	   ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN 
+	   ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN 
           
 		  INSERT INTO AWARD_TRANSFERRING_SPONSOR(AWARD_TRANSFERRING_SPONSOR_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,SPONSOR_CODE,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	      SELECT SEQ_AWARD_TRANS_SPONSOR_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,SPONSOR_CODE,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_TRANSFERRING_SPONSOR
           WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_TRANSFERRING_SPONSOR aw WHERE aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
           
-		  ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		  ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		  
 		END IF;  
 	ELSE
@@ -53,7 +53,7 @@ begin
 
 exception
 when others then
-	dbms_output.put_line('ERROR IN AWARD_TRANSFERRING_SPONSOR. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+	dbms_output.put_line('ERROR IN AWARD_TRANSFERRING_SPONSOR. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.Kuali_sequence_number||'-'||sqlerrm);
 end;	
 	
 END LOOP;

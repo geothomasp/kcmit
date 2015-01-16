@@ -30,15 +30,15 @@ begin
 	       SELECT SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.AWARD_ID,APPLICABLE_IDC_RATE,IDC_RATE_TYPE_CODE,FISCAL_YEAR,ON_CAMPUS_FLAG,UNDERRECOVERY_OF_IDC,SOURCE_ACCOUNT,DESTINATION_ACCOUNT,START_DATE,END_DATE,1,UPDATE_TIMESTAMP,UPDATE_USER,SYS_GUID() FROM AWARD_IDC_RATE
            WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_APPROVED_EQUIPMENT aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
 		   
-		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
-		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN   
+		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN   
         
 		   INSERT INTO AWARD_IDC_RATE(AWARD_IDC_RATE_ID,AWARD_NUMBER,SEQUENCE_NUMBER,AWARD_ID,APPLICABLE_IDC_RATE,IDC_RATE_TYPE_CODE,FISCAL_YEAR,ON_CAMPUS_FLAG,UNDERRECOVERY_OF_IDC,SOURCE_ACCOUNT,DESTINATION_ACCOUNT,START_DATE,END_DATE,VER_NBR,UPDATE_TIMESTAMP,UPDATE_USER,OBJ_ID)
 	       SELECT SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,r_award_comment.AWARD_ID,APPLICABLE_IDC_RATE,IDC_RATE_TYPE_CODE,FISCAL_YEAR,ON_CAMPUS_FLAG,UNDERRECOVERY_OF_IDC,SOURCE_ACCOUNT,DESTINATION_ACCOUNT,START_DATE,END_DATE,1,UPDATE_TIMESTAMP,UPDATE_USER,SYS_GUID() FROM AWARD_IDC_RATE
            WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_APPROVED_EQUIPMENT aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
 		   
-		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
 		END IF;
 		
@@ -52,7 +52,7 @@ begin
 	END IF;	
 exception
 when others then
-	dbms_output.put_line('ERROR IN AWARD_IDC_RATE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+	dbms_output.put_line('ERROR IN AWARD_IDC_RATE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.Kuali_sequence_number||'-'||sqlerrm);
 end;		
 	
 END LOOP;

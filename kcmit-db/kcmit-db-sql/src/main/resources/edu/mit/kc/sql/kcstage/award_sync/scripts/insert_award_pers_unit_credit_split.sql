@@ -45,15 +45,15 @@ end;
 	        SELECT SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,INV_CREDIT_TYPE_CODE,CREDIT,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_PERS_UNIT_CRED_SPLITS
             WHERE AWARD_PERSON_UNIT_ID=(SELECT MAX(aw.AWARD_PERSON_UNIT_ID) FROM award_person_units aw where aw.AWARD_PERSON_UNIT_ID<li_award_pers_unit_id);
     
-            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
-		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN
+		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN
 		
 		    INSERT INTO AWARD_PERS_UNIT_CRED_SPLITS(APU_CREDIT_SPLIT_ID,AWARD_PERSON_UNIT_ID,INV_CREDIT_TYPE_CODE,CREDIT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	        SELECT SEQUENCE_AWARD_ID.NEXTVAL,li_award_pers_unit_id,INV_CREDIT_TYPE_CODE,CREDIT,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_PERS_UNIT_CRED_SPLITS
             WHERE AWARD_PERSON_UNIT_ID=(SELECT MAX(aw.AWARD_PERSON_UNIT_ID) FROM award_person_units aw where aw.AWARD_PERSON_UNIT_ID<li_award_pers_unit_id);
     
-            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+            ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 			
 		END IF;
 		

@@ -31,15 +31,15 @@ begin
 	       SELECT SEQ_AWARD_COST_SHARE_ID.NEXTVAL,VERIFICATION_DATE,COST_SHARE_MET,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,PROJECT_PERIOD,COST_SHARE_PERCENTAGE,COST_SHARE_TYPE_CODE,SOURCE,DESTINATION,COMMITMENT_AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_COST_SHARE
            WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_COST_SHARE aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
          
-		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
-		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN 
+		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN 
 		
 	       INSERT INTO AWARD_COST_SHARE(AWARD_COST_SHARE_ID,VERIFICATION_DATE,COST_SHARE_MET,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,PROJECT_PERIOD,COST_SHARE_PERCENTAGE,COST_SHARE_TYPE_CODE,SOURCE,DESTINATION,COMMITMENT_AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	       SELECT SEQ_AWARD_COST_SHARE_ID.NEXTVAL,VERIFICATION_DATE,COST_SHARE_MET,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,PROJECT_PERIOD,COST_SHARE_PERCENTAGE,COST_SHARE_TYPE_CODE,SOURCE,DESTINATION,COMMITMENT_AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_COST_SHARE
            WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_COST_SHARE aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
          
-		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		   ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
 		END IF;   
     ELSE
@@ -51,7 +51,7 @@ begin
 	
 exception
 when others then
-	dbms_output.put_line('ERROR IN AWARD_COST_SHARE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+	dbms_output.put_line('ERROR IN AWARD_COST_SHARE. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.Kuali_sequence_number||'-'||sqlerrm);
 end;	
 	
 END LOOP;

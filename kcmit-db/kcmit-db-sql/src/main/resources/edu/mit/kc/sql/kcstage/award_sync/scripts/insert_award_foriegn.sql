@@ -31,15 +31,15 @@ begin
 	      SELECT SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,PERSON_ID,ROLODEX_ID,TRAVELER_NAME,DESTINATION,START_DATE,END_DATE,AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_APPROVED_FOREIGN_TRAVEL
           WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_APPROVED_EQUIPMENT aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
         
-		  ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		  ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		   
-		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER THEN
+		ELSIF ls_award_number<>r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number THEN
         
 		  INSERT INTO AWARD_APPROVED_FOREIGN_TRAVEL(AWARD_APPR_FORN_TRAVEL_ID,AWARD_ID,AWARD_NUMBER,SEQUENCE_NUMBER,PERSON_ID,ROLODEX_ID,TRAVELER_NAME,DESTINATION,START_DATE,END_DATE,AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,VER_NBR,OBJ_ID)
 	      SELECT SEQUENCE_AWARD_ID.NEXTVAL,r_award_comment.AWARD_ID,r_award_comment.AWARD_NUMBER,r_award_comment.Kuali_sequence_number,PERSON_ID,ROLODEX_ID,TRAVELER_NAME,DESTINATION,START_DATE,END_DATE,AMOUNT,UPDATE_TIMESTAMP,UPDATE_USER,1,SYS_GUID() FROM AWARD_APPROVED_FOREIGN_TRAVEL
           WHERE AWARD_NUMBER=r_award_comment.AWARD_NUMBER and 	SEQUENCE_NUMBER=(SELECT MAX(aw.SEQUENCE_NUMBER) FROM AWARD_APPROVED_EQUIPMENT aw where aw.AWARD_NUMBER=r_award_comment.AWARD_NUMBER AND aw.SEQUENCE_NUMBER<r_award_comment.Kuali_sequence_number);
         
-		  ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.SEQUENCE_NUMBER;
+		  ls_award_number:=r_award_comment.AWARD_NUMBER||r_award_comment.Kuali_sequence_number;
 		  
 		END IF;
 		
@@ -53,7 +53,7 @@ begin
 	
 exception
 when others then
-	dbms_output.put_line('ERROR IN AWARD_APPROVED_FOREIGN_TRAVEL. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.SEQUENCE_NUMBER||'-'||sqlerrm);
+	dbms_output.put_line('ERROR IN AWARD_APPROVED_FOREIGN_TRAVEL. AWARD_NUMBER,SEQUENCE_NUMBER'||r_award_comment.AWARD_NUMBER||','||r_award_comment.Kuali_sequence_number||'-'||sqlerrm);
 end;	
 	
 END LOOP;

@@ -9,6 +9,7 @@ select 'insert development proposal: '|| localtimestamp from dual;
 select 'Completed development proposal: '|| localtimestamp from dual;
 select 'insert budget proposal: '|| localtimestamp from dual;
 @scripts/budget.sql
+@scripts/subaward_data_management.sql
 @scripts/budget_periods.sql
 @scripts/budget_modular.sql
 @scripts/budget_modular_idc.sql
