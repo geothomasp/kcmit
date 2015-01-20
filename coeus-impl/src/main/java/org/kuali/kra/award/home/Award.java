@@ -243,7 +243,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     private String unitNumber;
     
     //To provide lookup tool for investigator
-    private KcPerson investigator;
+    private PersonImpl investigator;
 
     private KcPerson ospAdministrator;
     private String ospAdministratorName;
@@ -347,7 +347,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 
 
     
-    public KcPerson getInvestigator() {
+    public PersonImpl getInvestigator() {
 		return investigator;
 	}
 
