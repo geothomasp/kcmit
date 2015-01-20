@@ -407,9 +407,13 @@ ls_question_max NUMBER(6,0);
 ls_questionnaire_max NUMBER(6,0);
 li_proposal_max number(10);
 ls_query VARCHAR2(400);
+li_num NUMBER;
 begin
+
 select max(to_number(proposal_number)) into ls_proposal_max from eps_proposal;
 SELECT TO_NUMBER(ls_proposal_max) INTO li_proposal_max  FROM DUAL;
+SELECT SEQ_PROPOSAL_NUMBER_KRA.NEXTVAL into li_num FROM DUAL;
+li_proposal_max:=li_proposal_max - li_num;
 ls_query:='alter sequence SEQ_PROPOSAL_NUMBER_KRA increment by '||li_proposal_max;      
 execute immediate(ls_query);  
 

@@ -282,10 +282,14 @@ declare
 li_doc number(10);
 li_proposal_max number(10);
 ls_query VARCHAR2(400);
+li_num NUMBER;
 begin
+
 SELECT MAX(PROPOSAL_NUMBER) INTO li_proposal_max FROM PROPOSAL;
+select SEQ_PROPOSAL_NUMBER.NEXTVAL into li_num from dual;
+li_proposal_max:= li_proposal_max - li_num;
 ls_query:='alter sequence SEQ_PROPOSAL_NUMBER increment by '||li_proposal_max;      
-execute immediate(ls_query); 
+execute immediate(ls_query);  
 
 end;
 /
