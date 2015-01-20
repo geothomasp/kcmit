@@ -91,7 +91,7 @@
 			      <property name="primitiveAttributes">
 				    <list>
 					    <bean parent="PrimitiveAttributeDefinition" p:sourceName="projectPersons.fullName"
-						      p:targetName="name" />
+						      p:targetName="fullName" />
 				     </list>
 			       </property>
 		        </bean>
