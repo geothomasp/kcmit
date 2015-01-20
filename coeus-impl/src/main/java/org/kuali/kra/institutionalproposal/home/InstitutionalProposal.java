@@ -809,7 +809,7 @@ public class InstitutionalProposal extends KcPersistableBusinessObjectBase imple
     }
 
     public String getCostSharingIndicator() {
-        return costSharingIndicator;
+        return costSharingIndicator.trim();
     }
 
     public void setCostSharingIndicator(String costSharingIndicator) {
@@ -817,7 +817,7 @@ public class InstitutionalProposal extends KcPersistableBusinessObjectBase imple
     }
 
     public String getIdcRateIndicator() {
-        return idcRateIndicator;
+        return idcRateIndicator.trim();
     }
 
     public void setIdcRateIndicator(String idcRateIndicator) {
@@ -825,7 +825,7 @@ public class InstitutionalProposal extends KcPersistableBusinessObjectBase imple
     }
 
     public String getSpecialReviewIndicator() {
-        return specialReviewIndicator;
+        return specialReviewIndicator.trim();
     }
 
     public void setSpecialReviewIndicator(String specialReviewIndicator) {
