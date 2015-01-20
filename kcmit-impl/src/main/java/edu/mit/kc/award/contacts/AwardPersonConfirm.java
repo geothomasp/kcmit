@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.kra.award.contacts;
+package edu.mit.kc.award.contacts;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncableProperty;
+import org.kuali.kra.award.contacts.AwardPerson;
 
 /**
  * This class implements an Award Person Confirm

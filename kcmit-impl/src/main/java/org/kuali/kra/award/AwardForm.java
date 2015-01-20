@@ -82,6 +82,8 @@ import org.kuali.rice.kns.web.ui.ExtraButton;
 import org.kuali.rice.kns.web.ui.HeaderField;
 import org.kuali.rice.krad.util.KRADConstants;
 
+import edu.mit.kc.award.contacts.AwardPersonRemove;
+
 import java.text.ParseException;
 import java.util.*;
 

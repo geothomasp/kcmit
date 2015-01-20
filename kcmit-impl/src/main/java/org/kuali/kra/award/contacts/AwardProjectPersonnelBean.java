@@ -32,6 +32,9 @@ import org.kuali.kra.award.home.ContactRole;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.mit.kc.award.contacts.AwardPersonConfirm;
+import edu.mit.kc.award.contacts.AwardPersonRemove;
+
 /**
  * This class provides support for the Award Contacts Project Personnel panel
  */

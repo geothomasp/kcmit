@@ -36,7 +36,6 @@ import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
 import org.kuali.kra.award.contacts.AwardCreditSplitBean;
 import org.kuali.kra.award.contacts.AwardPerson;
-import org.kuali.kra.award.contacts.AwardPersonRemove;
 import org.kuali.kra.award.contacts.AwardPersonUnit;
 import org.kuali.kra.award.contacts.AwardProjectPersonnelBean;
 import org.kuali.kra.award.contacts.AwardSponsorContact;
@@ -46,6 +45,8 @@ import org.kuali.kra.award.home.Award;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.krad.service.BusinessObjectService;
+
+import edu.mit.kc.award.contacts.AwardPersonRemove;
 
 /**
  * 
