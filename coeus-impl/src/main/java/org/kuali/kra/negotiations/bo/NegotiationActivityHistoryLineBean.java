@@ -54,7 +54,12 @@ public class NegotiationActivityHistoryLineBean extends ResultRow implements Com
         this.setLocation(negotiationActivity.getLocation().getDescription());
         this.setStartDate(negotiationActivity.getStartDate());
         this.setEndDate(negotiationActivity.getEndDate());
-        this.setActivityDays(negotiationActivity.getNumberOfDays());
+        if(negotiationActivity.getEndDate()==null){
+        	this.setActivityDays("");
+        }else{
+        	this.setActivityDays(negotiationActivity.getNumberOfDays());
+        }
+        
     }
 
     public String getActivityType() {
