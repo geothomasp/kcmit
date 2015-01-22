@@ -412,11 +412,11 @@ rem Set User_name to null
 rem
 select 'Set user_name as NULL for all incative people.' from dual
 /
-rem  Call the function fn_set_username_null_pfeed to generate emails with list of 
-rem persons whose user_names should be set to NULL
+rem  Call the function fn_inactive_users_pfeed to generate emails with list of 
+rem persons who are now inactive
 rem This function will also update user_name column in osp$person table
 var li_ret number;
-exec :li_ret := fn_set_username_null_pfeed('coeus-dev-team@mit.edu', 'Coeus Person Feed Kerberos ID cleanup ** Production **');
+exec :li_ret := fn_inactive_users_pfeed('coeus-dev-team@mit.edu', 'Coeus Person Feed Kerberos ID cleanup ** Production **');
 commit;
 rem
 rem

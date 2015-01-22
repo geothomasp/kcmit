@@ -18,13 +18,13 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 'New subaward entered',
 'A new subaward has been added to the award listed below.  If you have not already done so, please create an SAP requisition as soon as possible.  Contact the Research Subawards Team at osp-research-subawards@mit.edu with the requisition number, the Final Statement of Work and the Final Budget for the subawardee.
 <br/><br/><br/><br/><br/><b>Subawardee Name:</b>     {SUBCONTRACT_NAME} 
-<br/><b>Subaward Amount:</b>    {AMOUNT} 
-<br/><b>Sponsor Award No.:</b>  {SPONSOR_AWARD_NUMBER}
-<br/><b>Award Type:</b>         {AWARD_TYPE}
-<br/><b>Account No.:</b>        {ACCOUNT_NUMBER}
-<br/><b>Title:</b>              {TITLE}
-<br/><b>PI:</b>                 {PERSON_NAME}
-<br/><b>Lead Unit:</b>          {UNIT_NUMBER}  :  {UNIT_NAME}' ,
+<br/><b>Subaward Amount: </b>    {AMOUNT} 
+<br/><b>Sponsor Award No.: </b>  {SPONSOR_AWARD_NUMBER}
+<br/><b>Award Type: </b>         {AWARD_TYPE}
+<br/><b>Account No.: </b>        {ACCOUNT_NUMBER}
+<br/><b>Title: </b>              {TITLE}
+<br/><b>PI: </b>                 {PERSON_NAME}
+<br/><b>Lead Unit: </b>          {UNIT_NUMBER} - {UNIT_NAME}' ,
 'N',
 'N',
 USER,
@@ -53,13 +53,13 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 'Subaward amount updated',
 'The subaward amount entered on the award listed below has been updated.  Please create an SAP requisition as soon as possible to add the additional funding.  Contact the Research Subawards Team at osp-research-subawards@mit.edu with the requisition number.
 <br/><br/><br/><br/><br/><b>Subawardee Name:</b>     {SUBCONTRACT_NAME} 
-<br/><b>Subaward Amount:</b>    {AMOUNT} 
-<br/><b>Sponsor Award No.:</b>  {SPONSOR_AWARD_NUMBER}
-<br/><b>Award Type:</b>         {AWARD_TYPE}
-<br/><b>Account No.:</b>         {ACCOUNT_NUMBER} 
-<br/><b>Title:</b>               {TITLE}
-<br/><b>PI:</b>                  {PERSON_NAME}
-<br/><b>Lead Unit:</b>       {UNIT_NUMBER} : {UNIT_NAME}',
+<br/><b>Subaward Amount: </b>    {AMOUNT} 
+<br/><b>Sponsor Award No.: </b>  {SPONSOR_AWARD_NUMBER}
+<br/><b>Award Type: </b>         {AWARD_TYPE}
+<br/><b>Account No.: </b>         {ACCOUNT_NUMBER} 
+<br/><b>Title: </b>               {TITLE}
+<br/><b>PI: </b>                  {PERSON_NAME}
+<br/><b>Lead Unit: </b>       {UNIT_NUMBER} - {UNIT_NAME}',
 'N',
 'N',
 USER,
@@ -87,11 +87,11 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 'The End Date of the Subaward listed below indicates it is ending in 30 days',
 'Subaward End Date in 30 days',
 'The End Date of the Subaward listed below indicates it is ending in 30 days.  If this subaward will continue please create an SAP requisition as soon as possible.  Contact the Research Subawards Team at osp-research-subawards@mit.edu with the requisition number.
-<br/><br/<b>Subawardee Name:</b>  {ORGANIZATION_NAME}
+<br/><br/<b>Subawardee Name: </b>  {ORGANIZATION_NAME}
 <br/><b>Subaward End Date: </b> {END_DATE}  
-<br/><b>Subaward No.:</b> {PERCHASE_ORDER_NUM}  
+<br/><b>Subaward No.: </b> {PERCHASE_ORDER_NUM}  
 <br/><b>Sponsor Award No.: </b> {SPONSOR_AWARD_NUMBER}  
-<br/><b>Account No.:</b> {ACCOUNT_NUMBER} 
+<br/><b>Account No.: </b> {ACCOUNT_NUMBER} 
 <br/><br/> If you are waiting for a modification from the sponsor and are not able to create the SAP requisition at this time, please notify the Research Subawards Team at osp-research-subawards@mit.edu  - otherwise the closeout process will commence on the current subaward end date.
 <br/><br/> If this subaward is not continuing please complete the Subawardee Closeout Checklist found here: http://osp.mit.edu/coeus/help-and-training/rst-subaward-checklist-dlc-pi .Follow the instructions and submit.' ,
 'N',
@@ -122,11 +122,11 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 'subcontract end in 30 days with no founding source.',
 'Subaward from MIT Ended---There is no contact eamail address.',
 'The End Date of the Subaward listed below indicates it is ending in 30 days.  If this subaward will continue please create an SAP requisition as soon as possible.  Contact the Research Subawards Team at osp-research-subawards@mit.edu with the requisition number.
-<br/><br/<b>Subawardee Name:</b>  {ORGANIZATION_NAME}  
+<br/><br/<b>Subawardee Name: </b>  {ORGANIZATION_NAME}  
 <br/><b>Subaward End Date: </b> {END_DATE}   
-<br/><b>Subaward No.:</b> {PERCHASE_ORDER_NUM}  
+<br/><b>Subaward No.: </b> {PERCHASE_ORDER_NUM}  
 <br/><b>Sponsor Award No.: </b>    
-<br/><b>Account No.:</b>    
+<br/><b>Account No.: </b>    
 <br/><br/> If you are waiting for a modification from the sponsor and are not able to create the SAP requisition at this time, please notify the Research Subawards Team at osp-research-subawards@mit.edu  - otherwise the closeout process will commence on the current subaward end date.
 <br/><br/> If this subaward is not continuing please complete the Subawardee Closeout Checklist found here: http://osp.mit.edu/coeus/help-and-training/rst-subaward-checklist-dlc-pi .  Follow the instructions and submit.' ,
 'N',
@@ -156,9 +156,9 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 '505',
 'The subaward with MIT listed below has ended.',
 'Subaward End Date in 30 days.',
-'<br/><br/<b>Subaward No.:</b>  {PURCHASE_ORDER_NUM}  
-<br/><b>Period of Performance: </b>    {START_DATE}   - {END_DATE}  
-<br/><b>Total Amount:</b>   {ANTICIPATED_AMOUNT} 
+'<br/><br/<b>Subaward No.: </b>  {PURCHASE_ORDER_NUM}  
+<br/><b>Period of Performance: </b>    {START_DATE} - {END_DATE}  
+<br/><b>Total Amount: </b>   {ANTICIPATED_AMOUNT} 
 <br/><br/> In accordance with the terms of your Subaward with MIT, you are required to remit several closeout documents described below. Federal Regulations require that we obtain certain information from the Subawardee in order to formally close out specific types of Subawards. Please contact Osp-research-subawards-closeout@mit.edu and provide the required documentation listed below as soon as possible so as not to further delay the payment of the final invoice. Thank you.
 <br/><br/>  1.	A Reference of your cumulative invoice which itemizes the cumulative charges under each cost category and verifies the total amount paid under this Subaward, from its inception to completion
 <br/><br/> 2.	Executed Release and Assignment Forms, if applicable. 

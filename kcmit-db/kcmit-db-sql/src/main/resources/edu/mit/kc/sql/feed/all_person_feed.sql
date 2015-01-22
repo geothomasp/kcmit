@@ -1,2 +1,2 @@
 @person/ddl_person_feed.sql
-@person/fn_set_username_null_pfeed.sql
+@person/fn_inactive_users_pfeed.sql

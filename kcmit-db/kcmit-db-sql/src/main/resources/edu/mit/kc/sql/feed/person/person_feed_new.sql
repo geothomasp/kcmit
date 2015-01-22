@@ -1,5 +1,6 @@
 set heading off;
 set echo off;
+set serveroutput on;
 --***********************************************************************
 --   *********      C H A N G E     L O G  ****************** 
 --***********************************************************************
@@ -35,7 +36,7 @@ rem
 rem
 select 'Purging all rows from  warehouse_person ' from dual
 /
-delete from warehouse_person
+--delete from warehouse_person
 /
 commit
 /
@@ -842,12 +843,32 @@ as
 /
 delete from temp where user_name is null
 /
-update KRIM_PRNCPL_T x
-set PRNCPL_NM = (select user_name
-                 from   temp
-                 where  person_id = x.prncpl_id)
-where prncpl_id in (select person_id
-                            from   temp)
+declare
+cursor c_temp is
+select person_id,user_name from temp;
+r_temp c_temp%rowtype;
+begin
+if c_temp%isopen then
+close c_temp;
+end if;
+open c_temp;
+loop
+fetch c_temp into r_temp;
+exit when c_temp%notfound;
+
+begin
+update KRIM_PRNCPL_T 
+set PRNCPL_NM =r_temp.user_name 
+where prncpl_id=r_temp.person_id;
+exception
+when others then
+ dbms_output.put_line('Sync user_name error(KRIM_PRNCPL_T), prncpl id = '||r_temp.prncpl_id||', error is '||SQLERRM); 
+continue;
+end;
+
+end loop;
+close c_temp;
+end;
 /
 commit
 /
@@ -865,13 +886,32 @@ as
 /
 delete from temp where user_name is null
 /
-rem
-update KRIM_PERSON_DOCUMENT_T x
-set PRNCPL_NM = (select user_name
-                 from   temp
-                 where  person_id = x.prncpl_id)
-where prncpl_id in (select person_id
-                            from   temp)
+declare
+cursor c_temp is
+select person_id,user_name from temp;
+r_temp c_temp%rowtype;
+begin
+if c_temp%isopen then
+close c_temp;
+end if;
+open c_temp;
+loop
+fetch c_temp into r_temp;
+exit when c_temp%notfound;
+
+begin
+update KRIM_PERSON_DOCUMENT_T 
+set PRNCPL_NM =r_temp.user_name 
+where prncpl_id=r_temp.person_id;
+exception
+when others then
+ dbms_output.put_line('Sync user_name error(KRIM_PERSON_DOCUMENT_T), prncpl id = '||r_temp.prncpl_id||', error is '||SQLERRM); 
+continue;
+end;
+
+end loop;
+close c_temp;
+end;
 /
 commit
 /
@@ -942,21 +982,47 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id)
 /
---update KRIM_ENTITY_BIO_T x
---set BIRTH_DT = (select date_of_birth
---                 from   temp
---                 where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_BIO_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	BIRTH_DT   = b.date_of_birth       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_ID,OBJ_ID,VER_NBR,BIRTH_DT,GNDR_CD,LAST_UPDT_DT) 
-VALUES(b.entity_id,SYS_GUID(),1,b.date_of_birth ,' ',sysdate)
-/
+declare
+li_count number;
+cursor c_temp is
+select person_id,date_of_birth,entity_id from temp;
+r_temp c_temp%rowtype;
+
+begin
+if c_temp%isopen then
+close c_temp;
+end if;
+open c_temp;
+loop
+fetch c_temp into r_temp;
+exit when c_temp%notfound;
+
+select count(entity_id) into li_count from KRIM_ENTITY_BIO_T where entity_id=r_temp.entity_id;
+if li_count=0 then
+    begin
+    INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,OBJ_ID,VER_NBR,BIRTH_DT,GNDR_CD,LAST_UPDT_DT) 
+    VALUES(r_temp.entity_id,SYS_GUID(),1,r_temp.date_of_birth ,' ',sysdate);
+    exception
+    when others then
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+    continue;
+    end;
+else 
+   begin
+   update KRIM_ENTITY_BIO_T
+   set BIRTH_DT=r_temp.date_of_birth
+   where entity_id=r_temp.entity_id;
+   exception
+    when others then
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+    continue;
+    end;
+
+end if;
+end loop;
+close c_temp;
+end;
+/   
 commit
 /
 rem
@@ -1004,21 +1070,47 @@ as
         e.entity_id
  from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id)
 /
---update KRIM_ENTITY_BIO_T x
---set GNDR_CD = (select gender
---                from   temp
---                 where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_BIO_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	GNDR_CD   = NVL2(b.gender,SUBSTR(b.gender,1,1),' ')       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_ID,OBJ_ID,VER_NBR,GNDR_CD,LAST_UPDT_DT) 
-VALUES(b.entity_id,SYS_GUID(),1,NVL2(b.gender,SUBSTR(b.gender,1,1),' '),sysdate)
-/
+declare
+li_count number;
+cursor c_temp is
+select person_id,gender,entity_id from temp;
+r_temp c_temp%rowtype;
+
+begin
+if c_temp%isopen then
+close c_temp;
+end if;
+open c_temp;
+loop
+fetch c_temp into r_temp;
+exit when c_temp%notfound;
+
+select count(entity_id) into li_count from KRIM_ENTITY_BIO_T where entity_id=r_temp.entity_id;
+if li_count=0 then
+    begin
+    INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,OBJ_ID,VER_NBR,GNDR_CD,LAST_UPDT_DT) 
+    VALUES(r_temp.entity_id,SYS_GUID(),1,NVL2(r_temp.gender,SUBSTR(r_temp.gender,1,1),' '),sysdate);
+    exception
+    when others then
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+    continue;
+    end;
+else 
+   begin
+   update KRIM_ENTITY_BIO_T
+   set GNDR_CD   = NVL2(r_temp.gender,SUBSTR(r_temp.gender,1,1),' ')
+   where entity_id=r_temp.entity_id;
+   exception
+    when others then
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+    continue;
+    end;
+
+end if;
+end loop;
+close c_temp;
+end;
+/   
 commit
 /
 rem
