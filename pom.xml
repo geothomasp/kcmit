@@ -1749,25 +1749,6 @@
                 <version>${rice.version}</version>
             </dependency>
             <dependency>
-				<groupId>org.eclipse.persistence</groupId>
-				<artifactId>org.eclipse.persistence.oracle</artifactId>
-				<version>${org.eclipse.persistence.oracle.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.eclipse.persistence</groupId>
-                        <artifactId>javax.persistence</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.persistence</groupId>
-                        <artifactId>org.eclipse.persistence.asm</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.persistence</groupId>
-                        <artifactId>org.eclipse.persistence.core</artifactId>
-                    </exclusion>
-                </exclusions>
-			</dependency>
-            <dependency>
                 <groupId>org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
                 <version>${opensaml.version}</version>
