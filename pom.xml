@@ -85,7 +85,8 @@
         <opensaml.version>2.6.1</opensaml.version>
         <oracle.groupId>com.oracle</oracle.groupId>
         <oracle.artifactId>ojdbc6</oracle.artifactId>
-        <oracle.version>10.2.0.3.0</oracle.version>
+        <oracle.version>11.2.0.4.0</oracle.version>
+        <org.eclipse.persistence.oracle.version>2.6.0-M3</org.eclipse.persistence.oracle.version>
         <org.eclipse.birt.runtime.version>4.4.0</org.eclipse.birt.runtime.version>
         <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
         <pdfbox.version>1.8.6</pdfbox.version>
@@ -1747,7 +1748,25 @@
                 <artifactId>rice-legacy-web</artifactId>
                 <version>${rice.version}</version>
             </dependency>
-
+            <dependency>
+				<groupId>org.eclipse.persistence</groupId>
+				<artifactId>org.eclipse.persistence.oracle</artifactId>
+				<version>${org.eclipse.persistence.oracle.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>javax.persistence</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>org.eclipse.persistence.asm</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>org.eclipse.persistence.core</artifactId>
+                    </exclusion>
+                </exclusions>
+			</dependency>
             <dependency>
                 <groupId>org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
@@ -1874,7 +1893,6 @@
                 <artifactId>spring-webmvc</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springmodules</groupId>
                 <artifactId>spring-modules-ojb</artifactId>
