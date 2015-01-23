@@ -1,8 +1,9 @@
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Aggregator','Aggregator');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Aggregator','Aggregator Document Level');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Approver','approver Document Level');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Application Administrator','Application Administrator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Award Budget Administrator','Award Budget Administrator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Award Budget Aggregator','Award Budget Aggregator');
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Budget Creator','Budget Creator');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Budget Creator','Budget Creator Document Level');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Create Temporary Proposal Log','Create Temporary Proposal Log');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('IACUC Administrator','IACUC Administrator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('IACUC Protocol Aggregator','IACUC Protocol Aggregator');
@@ -39,7 +40,7 @@ Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Sponsor Mainta
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View All Dev Proposals','View All Dev Proposals');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View all IACUC Protocols','View all IACUC Protocols');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View Proposal Log','View Proposal Log');
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Viewer','Viewer');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Viewer','Viewer Document Level');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Delete Any Protocol','Protocol Deleter');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('IACUC Protocol Approver','IACUC ProtocolApprover');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('IP Review Maintainer','Institutional Proposal Maintainer');
