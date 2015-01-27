@@ -304,7 +304,7 @@
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-PrimaryActionButton-Mini" p:actionLabel="Notify @{#lp.fullName}" p:methodToCall="sendCertificationNotification"
-                                              p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}] and !#empty(#lp.versionNumber) and #lp.questionnairesCompleted ne true and #ViewHelper.renderQuestionnaire(#line) and !#parent.readOnly}"
+                                              p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}] and !#empty(#lp.versionNumber) and #lp.questionnairesCompleted ne true and #ViewHelper.canCertifyRequired(#line) and !#parent.readOnly}"
                                               p:order="10"/>
                                         <bean parent="Uif-ActionLink" p:iconClass="icon-arrow-up" p:render="@{#line.moveUpAllowed}"
                                               p:actionLabel="" p:methodToCall="movePersonUp" p:order="20"/>
@@ -337,7 +337,7 @@
                 <bean parent="PropDev-PersonnelPage-Degrees" p:order="50" p:retrieveViaAjax="true" />
                 <bean parent="PropDev-PersonnelPage-UnitDetails" p:order="60" p:retrieveViaAjax="true" />
                 <bean parent="PropDev-PersonnelPage-TrainingDetails" p:order="70" p:retrieveViaAjax="true" />
-                <bean parent="PropDev-PersonnelPage-Questionnaire" p:order="80" p:render= "@{#ViewHelper.renderQuestionnaire(#line)}" />    
+                <bean parent="PropDev-PersonnelPage-Questionnaire" p:order="80"/>    
             </list>
         </property>
     </bean>
@@ -576,7 +576,7 @@
     <bean id="PropDev-PersonnelPage-Questionnaire" parent="PropDev-PersonnelPage-Questionnaire-parentBean" />
     <bean id="PropDev-PersonnelPage-Questionnaire-parentBean"
           abstract="true" parent="Uif-CssGridSection" p:id="personnelQuestionnaire"
-          p:render="@{#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0}"
+          p:render="@{#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #ViewHelper.canCertifyRequired(#line)}"
           p:refreshWhenChangedPropertyNames="document.developmentProposal.proposalPersons[@{#index}].proposalPersonRoleId"
           p:progressiveRenderAndRefresh="true"
           p:headerText="@{(#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #line.questionnaireHelper.answerHeaders[0].label != null) ? #line.questionnaireHelper.answerHeaders[0].label : 'None'}">
