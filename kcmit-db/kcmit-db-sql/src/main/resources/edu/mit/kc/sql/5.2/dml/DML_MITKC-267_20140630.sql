@@ -1,6 +1,7 @@
-insert into KRMS_TYP_T(TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR) 
-	values ('KCMIT1001','MIT Custom Propdev Java Function Term Service','KC-PD','mitPropDevJavaFunctionKrmsTermService','Y',1)
-/
+-- commented because already inserting in different file "DML_MITKC-199_B000.sql"
+--insert into KRMS_TYP_T(TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR) 
+--	values ('KCMIT1001','MIT Custom Propdev Java Function Term Service','KC-PD','mitPropDevJavaFunctionKrmsTermService','Y',1)
+--/
 insert into KRMS_FUNC_T (FUNC_ID,NM,DESC_TXT,RTRN_TYP,VER_NBR,ACTV,TYP_ID,NMSPC_CD) 
 	values (CONCAT('KCMIT', KRMS_FUNC_S.NEXTVAL),'budgetPeriodAmountRule','Check if the total cost in any budget period is over 2 Million','java.lang.String',1,'Y',
 		(select TYP_ID from KRMS_TYP_T where NMSPC_CD = 'KC-PD' and NM = 'MIT Custom Propdev Java Function Term Service'),'KC-PD')

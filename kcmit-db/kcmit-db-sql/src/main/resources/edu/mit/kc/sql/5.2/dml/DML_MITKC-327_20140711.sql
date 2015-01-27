@@ -38,11 +38,11 @@ insert into KRMS_FUNC_PARM_T (FUNC_PARM_ID,FUNC_ID,NM,DESC_TXT,TYP,SEQ_NO)
 			'sponsorGroup','Sponsor Group New','java.lang.String',2)
 /
 insert into KRMS_TERM_SPEC_T (TERM_SPEC_ID, NMSPC_CD, NM, DESC_TXT, TYP, ACTV, VER_NBR) 
-	values (CONCAT('KC', KRMS_FUNC_PARM_S.NEXTVAL),'KC-PD',(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'),
+	values (CONCAT('KC', KRMS_TERM_SPEC_S.NEXTVAL),'KC-PD',(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD'),
 			'Sponsor Group Rule New','java.lang.String','Y',1)
 /
 insert into KRMS_CNTXT_VLD_TERM_SPEC_T (CNTXT_TERM_SPEC_PREREQ_ID, CNTXT_ID, TERM_SPEC_ID, PREREQ) 
-	values (CONCAT('KC', KRMS_FUNC_PARM_S.NEXTVAL),'KC-PD-CONTEXT',(select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
+	values (CONCAT('KC', KRMS_CNTXT_VLD_TERM_SPEC_S.NEXTVAL),'KC-PD-CONTEXT',(select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
 					NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')),'Y')
 /
 insert into KRMS_TERM_SPEC_CTGRY_T (TERM_SPEC_ID, CTGRY_ID) 
@@ -51,7 +51,7 @@ insert into KRMS_TERM_SPEC_CTGRY_T (TERM_SPEC_ID, CTGRY_ID)
 			(select CTGRY_ID from KRMS_CTGRY_T where NMSPC_CD='KC-PD' and NM='Function'))
 /
 insert into KRMS_TERM_RSLVR_T (TERM_RSLVR_ID, NMSPC_CD, NM, TYP_ID, OUTPUT_TERM_SPEC_ID, ACTV, VER_NBR) 
-	values (CONCAT('KC', KRMS_FUNC_PARM_S.NEXTVAL),'KC-PD','Sponsor Group Rule Check Resolver',
+	values (CONCAT('KC', KRMS_TERM_RSLVR_S.NEXTVAL),'KC-PD','Sponsor Group Rule Check Resolver',
 			(select TYP_ID from KRMS_TYP_T where NM='Function Term Resolver Type Service' and NMSPC_CD='KC-KRMS'),
 			(select TERM_SPEC_ID from KRMS_TERM_SPEC_T where NMSPC_CD='KC-PD' and 
 					NM=(select FUNC_ID from KRMS_FUNC_T where  NM='sponsorGroupRule' and NMSPC_CD='KC-PD')),'Y',1)     
