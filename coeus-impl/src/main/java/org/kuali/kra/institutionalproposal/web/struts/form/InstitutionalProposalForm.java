@@ -25,6 +25,8 @@ import org.kuali.kra.authorization.KraAuthorizationConstants;
 import org.kuali.kra.common.web.struts.form.ReportHelperBean;
 import org.kuali.kra.common.web.struts.form.ReportHelperBeanContainer;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalCentralAdminContactsBean;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalCreditSplitBean;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalProjectPersonnelBean;
@@ -77,6 +79,7 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
     private InstitutionalProposalCreditSplitBean institutionalProposalCreditSplitBean;
     private InstitutionalProposalUnitContactsBean unitContactsBean;
     private InstitutionalProposalCentralAdminContactsBean centralAdminContactsBean;
+    private InstitutionalProposalAttachmentFormBean institutionalProposalAttachmentBean;
     private boolean cfdaLookupRequired;
     private MedusaBean medusaBean;
     private ReportHelperBean reportHelperBean;
@@ -121,6 +124,7 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
         reportHelperBean = new ReportHelperBean(this);
         unitContactsBean = new InstitutionalProposalUnitContactsBean(this);
         centralAdminContactsBean = new InstitutionalProposalCentralAdminContactsBean(this);
+        institutionalProposalAttachmentBean = new InstitutionalProposalAttachmentFormBean(this);
         docOpenedFromIPSearch = false;
     }
     
@@ -290,6 +294,14 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
     public void setInstitutionalProposalUnrecoveredFandABean(
             InstitutionalProposalUnrecoveredFandABean institutionalProposalUnrecoveredFandABean) {
         this.institutionalProposalUnrecoveredFandABean = institutionalProposalUnrecoveredFandABean;
+    }
+    
+    public InstitutionalProposalAttachmentFormBean getInstitutionalProposalAttachmentBean() {
+        return institutionalProposalAttachmentBean;
+    }
+    
+    public void setInstitutionalProposalAttachmentBean(InstitutionalProposalAttachmentFormBean institutionalProposalAttachmentFormBean) {
+        this.institutionalProposalAttachmentBean=institutionalProposalAttachmentFormBean;
     }
 
     @Override
