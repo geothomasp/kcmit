@@ -71,6 +71,19 @@
         <ref bean="Award-awardAmountInfo.finalExpirationDate" />
       </list>
     </property>
+     <property name="relationships">
+	      <list>
+		     <bean parent="RelationshipDefinition">
+			    <property name="objectAttributeName" value="investigator" />
+			      <property name="primitiveAttributes">
+				    <list>
+					    <bean parent="PrimitiveAttributeDefinition" p:sourceName="projectPersons.fullName"
+						      p:targetName="fullName" />
+				     </list>
+			       </property>
+		        </bean>
+	        </list>
+        </property>
   </bean> 
   <bean id="Award-awardAmountInfo.amountObligatedToDate" parent="MIT-Award-awardAmountInfo.amountObligatedToDate-parentBean" />
     <bean id="MIT-Award-awardAmountInfo.amountObligatedToDate-parentBean" abstract="true" parent="Award-awardAmountInfo.amountObligatedToDate-parentBean">
