@@ -862,7 +862,7 @@
      </class-descriptor> 
        
 	<class-descriptor class="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData" table="PROPOSAL_ATTACHMENTS_DATA">
-		<field-descriptor name="proposalAttachmentsDataId" column="PROPOSAL_ATTACHMENTS_DATA_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEQ_PROPOSAL_ATTACHMENT_DATA_ID" autoincrement="true"/>
+		<field-descriptor name="proposalAttachmentsDataId" column="PROPOSAL_ATTACHMENTS_DATA_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEQ_PROPOSAL_ATTACHMNT_DATA_ID" autoincrement="true"/>
 		<field-descriptor name="proposalId" column="PROPOSAL_ID" jdbc-type="BIGINT"  />
 		<field-descriptor name="proposalNumber" column="PROPOSAL_NUMBER" jdbc-type="VARCHAR"  />
 		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER"/>
