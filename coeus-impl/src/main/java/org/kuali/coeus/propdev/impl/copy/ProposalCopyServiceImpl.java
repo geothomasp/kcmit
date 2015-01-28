@@ -191,7 +191,10 @@ public class ProposalCopyServiceImpl implements ProposalCopyService {
 
 
                 copyProposal(doc, newDoc);
-
+               
+                // clear old proposal Ynqs from new PD
+                newDoc.getDevelopmentProposal().getProposalYnqs().clear();
+               
                 // add the lead unit specified by user
                 setLeadUnit(newDoc, criteria.getLeadUnitNumber());
 

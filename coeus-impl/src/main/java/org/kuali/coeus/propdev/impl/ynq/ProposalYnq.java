@@ -171,10 +171,11 @@ public class ProposalYnq extends KraSortablePersistableBusinessObjectBase implem
     }
 
     public int compareTo(ProposalYnq proposalYnq) {
-        int comparator;
+        int comparator = 0;
+       
         if (getSortId() != null && proposalYnq.getSortId() != null) {
             comparator = getSortId().compareTo(proposalYnq.getSortId());
-        } else {
+        } else if(getQuestionId() != null && proposalYnq.getQuestionId() != null)   {
             comparator = getQuestionId().compareTo(proposalYnq.getQuestionId());
         }
         return comparator;

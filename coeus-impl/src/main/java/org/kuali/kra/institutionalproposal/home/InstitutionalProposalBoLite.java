@@ -154,7 +154,7 @@ public class InstitutionalProposalBoLite extends KcPersistableBusinessObjectBase
 	}
 	
 	public ScaleTwoDecimal getTotalDirectCostInitial() {
-		return totalDirectCostInitial;
+		return ScaleTwoDecimal.returnZeroIfNull(totalDirectCostInitial);
 	}
 
 	public void setTotalDirectCostInitial(ScaleTwoDecimal totalDirectCostInitial) {
@@ -162,7 +162,7 @@ public class InstitutionalProposalBoLite extends KcPersistableBusinessObjectBase
 	}
 
 	public ScaleTwoDecimal getTotalDirectCostTotal() {
-		return totalDirectCostTotal;
+        return ScaleTwoDecimal.returnZeroIfNull(totalDirectCostTotal);
 	}
 
 	public void setTotalDirectCostTotal(ScaleTwoDecimal totalDirectCostTotal) {
@@ -170,7 +170,7 @@ public class InstitutionalProposalBoLite extends KcPersistableBusinessObjectBase
 	}
 
 	public ScaleTwoDecimal getTotalIndirectCostInitial() {
-		return totalIndirectCostInitial;
+		return ScaleTwoDecimal.returnZeroIfNull(totalIndirectCostInitial);
 	}
 
 	public void setTotalIndirectCostInitial(ScaleTwoDecimal totalIndirectCostInitial) {
@@ -178,7 +178,7 @@ public class InstitutionalProposalBoLite extends KcPersistableBusinessObjectBase
 	}
 
 	public ScaleTwoDecimal getTotalIndirectCostTotal() {
-		return totalIndirectCostTotal;
+		return ScaleTwoDecimal.returnZeroIfNull(totalIndirectCostTotal);
 	}
 
 	public void setTotalIndirectCostTotal(ScaleTwoDecimal totalIndirectCostTotal) {
@@ -195,15 +195,15 @@ public class InstitutionalProposalBoLite extends KcPersistableBusinessObjectBase
 
 	public ScaleTwoDecimal getTotalInitialCost() {
         ScaleTwoDecimal returnValue = new ScaleTwoDecimal(0);
-        returnValue = returnValue.add(totalDirectCostInitial);
-        returnValue = returnValue.add(totalIndirectCostInitial);
+        returnValue = returnValue.add(getTotalDirectCostInitial());
+        returnValue = returnValue.add(getTotalIndirectCostInitial());
         return returnValue;
     }
 	
 	public ScaleTwoDecimal getTotalCost() {
         ScaleTwoDecimal returnValue = new ScaleTwoDecimal(0);
-        returnValue = returnValue.add(totalDirectCostTotal);
-        returnValue = returnValue.add(totalIndirectCostTotal);
+        returnValue = returnValue.add(getTotalDirectCostTotal());
+        returnValue = returnValue.add(getTotalIndirectCostTotal());
         return returnValue;
     }
 

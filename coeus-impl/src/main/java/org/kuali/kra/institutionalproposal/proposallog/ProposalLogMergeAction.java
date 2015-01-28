@@ -35,7 +35,7 @@ public class ProposalLogMergeAction extends KualiAction {
         ProposalLogMergeForm proposalLogMergeForm = (ProposalLogMergeForm) form;
         String applicationUrl = getKualiConfigurationService().getPropertyValueAsString(KRADConstants.APPLICATION_URL_KEY);
         request.getSession().setAttribute("proposalLogNumber", proposalLogMergeForm.getProposalLogNumber());
-        response.sendRedirect("kr/lookup.do?methodToCall=start&businessObjectClassName=" + InstitutionalProposal.class + "&docFormKey=88888888&includeCustomActionUrls=true&returnLocation="
+        response.sendRedirect("kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kra.institutionalproposal.home.InstitutionalProposal&docFormKey=88888888&includeCustomActionUrls=true&returnLocation="
                 + applicationUrl + "/mergeProposalLog.do&hideReturnLink=true");
         return null;
     }

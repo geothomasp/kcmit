@@ -1049,7 +1049,12 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
 
     @Override
     public List<ProposalSite> getOtherOrganizations() {
-        return getProposalSitesForType(ProposalSite.PROPOSAL_SITE_OTHER_ORGANIZATION);
+		List<ProposalSite> otherOrganizations = getProposalSitesForType(ProposalSite.PROPOSAL_SITE_OTHER_ORGANIZATION);
+		for (ProposalSite proposalSite : otherOrganizations) {
+			if(proposalSite.getOrganization().getCongressionalDistrict() != null)
+			proposalSite.initializeDefaultCongressionalDistrict();
+		}
+		return otherOrganizations;
     }
 
     public void addOtherOrganization(ProposalSite otherOrganization) {
@@ -2159,7 +2164,9 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
         for (ProposalPerson proposalPerson : proposalPersons) {
             List<ProposalPersonUnit> proposalPersonUnits = proposalPerson.getUnits();
             for (ProposalPersonUnit proposalPersonUnit : proposalPersonUnits) {
-                unitNumbers.add(proposalPersonUnit.getUnitNumber());
+            	 if(!unitNumbers.contains(proposalPersonUnit.getUnitNumber())){
+                     unitNumbers.add(proposalPersonUnit.getUnitNumber());
+                 }
             }
         }
         return StringUtils.join(unitNumbers,',');

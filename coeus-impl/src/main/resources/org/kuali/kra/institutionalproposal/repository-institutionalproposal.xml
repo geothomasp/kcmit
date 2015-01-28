@@ -241,6 +241,10 @@
 		<collection-descriptor name="proposalComments" proxy="true" element-class-ref="org.kuali.kra.institutionalproposal.home.InstitutionalProposalComment" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none">
 			<inverse-foreignkey field-ref="proposalId"/>
 		</collection-descriptor>
+		<collection-descriptor name="instProposalAttachments" proxy="true" element-class-ref="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="true">
+			<inverse-foreignkey field-ref="proposalId"/>
+			<orderby name="proposalAttachmentId" sort="ASC" />
+		</collection-descriptor>
 	</class-descriptor>
 	<class-descriptor class="org.kuali.kra.institutionalproposal.home.InstitutionalProposalBoLite" table="PROPOSAL">
 		<field-descriptor name="proposalId" column="PROPOSAL_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_PROPOSAL_PROPOSAL_ID"/>
@@ -816,5 +820,61 @@
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
     </class-descriptor>
+    
+     <class-descriptor class="org.kuali.kra.institutionalproposal.home.InstitutionalProposalAttachmentType" table="PROPOSAL_ATTACHMENT_TYPE">
+        <field-descriptor name="attachmentTypeCode" column="ATTACHMENT_TYPE_CODE" jdbc-type="INTEGER" primarykey="true" />
+        <field-descriptor name="description" column="DESCRIPTION" jdbc-type="VARCHAR" />
+        <field-descriptor name="allowMultiple" column="ALLOW_MULTIPLE" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" /> 
+    </class-descriptor>
+    
+    <class-descriptor class="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments" table="PROPOSAL_ATTACHMENTS">
+		<field-descriptor name="proposalAttachmentId" column="PROPOSAL_ATTACHMENTS_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEQ_PROPOSAL_ATTACHMENT_ID" autoincrement="true"/>
+		<field-descriptor name="proposalId" column="PROPOSAL_ID" jdbc-type="BIGINT"  />
+		<field-descriptor name="proposalNumber" column="PROPOSAL_NUMBER" jdbc-type="VARCHAR"  />
+		<field-descriptor name="proposalAttachmentsDataId" column="PROPOSAL_ATTACHMENTS_DATA_ID" jdbc-type="BIGINT"/>
+		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER"/>
+		<field-descriptor name="attachmentNumber" column="ATTACHMENT_NUMBER" jdbc-type="INTEGER"/>
+		<field-descriptor name="attachmentTitle" column="ATTACHMENT_TITLE" jdbc-type="VARCHAR"/>
+		<field-descriptor name="attachmentTypeCode" column="ATTACHMENT_TYPE_CODE" jdbc-type="INTEGER"/>
+		<field-descriptor name="fileName" column="FILE_NAME" jdbc-type="VARCHAR"/>
+		<field-descriptor name="contactName" column="CONTACT_NAME" jdbc-type="VARCHAR"/>
+		<field-descriptor name="phoneNumber" column="PHONE_NUMBER" jdbc-type="VARCHAR"/>
+		<field-descriptor name="emailAddress" column="EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+		<field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
+		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+        <field-descriptor name="docUpdateTimestamp" column="DOC_UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="docUpdateUser" column="DOC_UPDATE_USER" jdbc-type="VARCHAR" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+        
+        <reference-descriptor name="type" class-ref="org.kuali.kra.institutionalproposal.home.InstitutionalProposalAttachmentType" auto-retrieve="true" auto-update="none" auto-delete="none"> 
+			<foreignkey field-ref="attachmentTypeCode"/>
+		</reference-descriptor>
+		
+        <reference-descriptor name="file" proxy="true" class-ref="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData" auto-retrieve="true" auto-update="object" auto-delete="true"> 
+			<foreignkey field-ref="proposalAttachmentsDataId"/>
+		</reference-descriptor> 
+     </class-descriptor> 
+       
+	<class-descriptor class="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData" table="PROPOSAL_ATTACHMENTS_DATA">
+		<field-descriptor name="proposalAttachmentsDataId" column="PROPOSAL_ATTACHMENTS_DATA_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEQ_PROPOSAL_ATTACHMNT_DATA_ID" autoincrement="true"/>
+		<field-descriptor name="proposalId" column="PROPOSAL_ID" jdbc-type="BIGINT"  />
+		<field-descriptor name="proposalNumber" column="PROPOSAL_NUMBER" jdbc-type="VARCHAR"  />
+		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER"/>
+		<field-descriptor name="attachmentNumber" column="ATTACHMENT_NUMBER" jdbc-type="INTEGER"/>
+		<field-descriptor name="name" column="FILE_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="type" column="CONTENT_TYPE" jdbc-type="VARCHAR" />
+		<field-descriptor name="data" column="DOCUMENT" jdbc-type="BLOB" />
+		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+	</class-descriptor>
+    
     
 </descriptor-repository>

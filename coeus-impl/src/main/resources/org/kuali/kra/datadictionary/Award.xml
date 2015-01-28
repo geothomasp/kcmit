@@ -84,6 +84,19 @@
         <ref bean="Award-latestAwardAmountInfo.amountObligatedToDate" />
       </list>
     </property>
+    <property name="relationships">
+	      <list>
+		     <bean parent="RelationshipDefinition">
+			    <property name="objectAttributeName" value="investigator" />
+			      <property name="primitiveAttributes">
+				    <list>
+					    <bean parent="PrimitiveAttributeDefinition" p:sourceName="projectPersons.fullName"
+						      p:targetName="name" />
+				     </list>
+			       </property>
+		        </bean>
+	        </list>
+        </property>
         <property name="collections">
         	<list>
 				<bean parent="CollectionDefinition" p:name="awardUnitContacts" p:label="Unit Contacts" p:shortLabel="Unit Contacts" p:elementLabel="Unit Contact" />
@@ -1356,7 +1369,7 @@
 		    <bean p:attributeName="statusCode" parent="FieldDefinition" />
 		    <bean p:attributeName="sponsorCode" parent="FieldDefinition" />
 		    <bean p:attributeName="title" parent="FieldDefinition" />
-			<bean p:attributeName="projectPersons.fullName" parent="FieldDefinition" />
+			<bean p:attributeName="projectPersons.fullName" p:noDirectInquiry="true" parent="FieldDefinition" />
 		    <bean p:attributeName="unitNumber" parent="FieldDefinition" />
 		    <bean p:attributeName="leadUnit.unitName" parent="FieldDefinition" />
 		    <bean p:attributeName="lookupOspAdministratorName" parent="FieldDefinition" />

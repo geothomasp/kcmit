@@ -1125,6 +1125,7 @@
 	<bean id="InstitutionalProposal-updateTimestamp-parentBean" abstract="true" parent="KraAttributeReferenceDummy-updateTimestamp" >
 		<property name="name" value="updateTimestamp" />
 		<property name="label" value="Last Update" />
+		<property name="shortLabel" value="Last Update" />
 	</bean>
 	
 	<!-- Lookup Fields -->

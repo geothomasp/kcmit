@@ -87,6 +87,7 @@ import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.util.AutoPopulatingList;
 
@@ -240,6 +241,9 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     // Additional fields for lookup
     private Unit leadUnit;
     private String unitNumber;
+    
+    //To provide lookup tool for investigator
+    private PersonImpl investigator;
 
     private KcPerson ospAdministrator;
     private String ospAdministratorName;
@@ -342,6 +346,12 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     }
 
 
+    
+    public PersonImpl getInvestigator() {
+		return investigator;
+	}
+
+	
     public Long getAwardId() {
         return awardId;
     }
@@ -532,6 +542,8 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         return accountNumber;
     }
 
+    
+    
     /**
      * 
      * @param accountNumber

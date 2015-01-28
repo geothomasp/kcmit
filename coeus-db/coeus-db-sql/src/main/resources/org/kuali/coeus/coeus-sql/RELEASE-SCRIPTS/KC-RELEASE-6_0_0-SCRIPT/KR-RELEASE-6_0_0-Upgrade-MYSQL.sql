@@ -24,5 +24,9 @@
 \. ./../../current_mysql/6.0.0/dml/KR_DML_03_KRACOEUS-7014_B000.sql
 \. ./../../current_mysql/6.0.0/dml/KR_DML_03_KRACOEUS-8105_B000.sql
 \. ./../../current_mysql/6.0.0/dml/KR_DML_04_KRACOEUS-8105_B000.sql
+=======
+\. ./../../current_mysql/6.0.0/dml/KR_DML_01_KRACOEUS-7512_B000.sql
+\. ./../../current_mysql/6.0.0/dml/KR_DML_01_KRACOEUS-7856_B000.sql
+>>>>>>> coeus-6.0.0-s13-n
 commit;
 exit

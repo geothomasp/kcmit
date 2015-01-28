@@ -30,6 +30,7 @@ import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.workflow.KcDocumentRejectionService;
 import org.kuali.kra.award.budget.AwardBudgetExt;
+import org.kuali.kra.award.budget.AwardBudgetPeriodExt;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
@@ -207,7 +208,11 @@ public class BudgetAction extends BudgetActionBase {
         budgetForm.getDocument().prepareForSave();
         
         Budget budget = budgetDoc.getBudget();
-        getBudgetCommonService(budget.getBudgetParent()).calculateBudgetOnSave(budget);
+        if (budgetForm.getActionName().equals("BudgetSummaryTotalsAction")) {
+        	getBudgetCommonService(budget.getBudgetParent()).calculateBudgetOnSave(budget);
+        }else{
+        	getBudgetCalculationService().calculateBudget(budget);
+        }
         ActionForward forward = super.save(mapping, form, request, response);
         BudgetForm savedBudgetForm = (BudgetForm) form;
         AwardBudgetDocument savedBudgetDoc = savedBudgetForm.getBudgetDocument();
@@ -219,7 +224,11 @@ public class BudgetAction extends BudgetActionBase {
         return forward;
     }
 
-    protected BudgetSummaryService getBudgetSummaryService() {
+    private BudgetCalculationService getBudgetCalculationService() {
+		return KcServiceLocator.getService(BudgetCalculationService.class);
+	}
+
+	protected BudgetSummaryService getBudgetSummaryService() {
         return KcServiceLocator.getService(BudgetSummaryService.class);
     }
 
@@ -402,12 +411,24 @@ public class BudgetAction extends BudgetActionBase {
         BudgetForm budgetForm = (BudgetForm) form;
         Budget budget = budgetForm.getBudget();
         populatePersonnelRoles(budget);
+        List<BudgetPeriod> awardBudgetPeriods = new ArrayList<BudgetPeriod>();
+        if(isAwardBudget(budget)){
+        	for(BudgetPeriod period : budget.getBudgetPeriods()) {
+
+        		AwardBudgetPeriodExt awardBudgetPeriod = (AwardBudgetPeriodExt)period;
+        		awardBudgetPeriod.setPrevTotalFringeAmount(awardBudgetPeriod.getTotalFringeAmount());
+        		awardBudgetPeriods.add(awardBudgetPeriod);
+
+        	}
+        	budget.setBudgetPeriods(awardBudgetPeriods);
+        }
         for(BudgetPeriod period : budget.getBudgetPeriods()) {
-            for(BudgetLineItem lineItem : period.getBudgetLineItems()) {
-                for(BudgetPersonnelDetails budgetPersonnelDetails : lineItem.getBudgetPersonnelDetailsList()) {
-                    budgetPersonnelDetails.refreshReferenceObject("budgetPerson");
-                }
-            }
+        	
+        	for(BudgetLineItem lineItem : period.getBudgetLineItems()) {
+        		for(BudgetPersonnelDetails budgetPersonnelDetails : lineItem.getBudgetPersonnelDetailsList()) {
+        			budgetPersonnelDetails.refreshReferenceObject("budgetPerson");
+        		}
+        	}
         }
         
         budget.getBudgetTotals();

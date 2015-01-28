@@ -14,6 +14,7 @@
  limitations under the License.
 --%>
 <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -94,7 +95,7 @@ body {
 <html:image property="methodToCall.collapseAllUnitHierarchy" src='${ConfigProperties.kr.externalizable.images.url}tinybutton-collapseall.gif' styleClass="tinybutton" alt="Collapse All"/>
 
 <!--  initial data here -->
-<input type="hidden" id = "units" name="units"   value="${UnitHierarchyForm.units}"/>
+<input type="hidden" id = "units" name="units"   value="${fn:escapeXml(UnitHierarchyForm.units)}"/>
 <input type="hidden" id = "selectedUnitNumber" name="selectedUnitNumber"  />
 <c:set var="dept" value="${UnitHierarchyForm.initialUnitDepth}"/>
 
