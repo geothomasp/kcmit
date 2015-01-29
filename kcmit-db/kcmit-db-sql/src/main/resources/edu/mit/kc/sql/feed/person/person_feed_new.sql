@@ -496,7 +496,7 @@ BEGIN
 		
     EXCEPTION
     WHEN OTHERS THEN 
-    dbms_output.put_line('Error occoured for KRIM_ENTITY_AFLTN_T  for the person '||r_pers.person_id);
+    dbms_output.put_line('Error occoured for KRIM_ENTITY_AFLTN_T  for the person '||r_pers.person_id||' '||sqlerrm);
     END;
 
 
@@ -523,7 +523,7 @@ BEGIN
            VALUES(li_seq_entity_addr_id,li_country_cd,'Y',ls_actv_ind,SYS_GUID(),li_ver_nbr,li_seq_entity_id,ls_ent_typ_cd,'WRK',SUBSTRB(r_pers.ADDRESS_LINE_1,1,45),SUBSTRB(r_pers.ADDRESS_LINE_2,1,45),SUBSTRB(r_pers.ADDRESS_LINE_3,1,45),r_pers.CITY,r_pers.STATE,r_pers.POSTAL_CODE,r_pers.UPDATE_TIMESTAMP,NULL,NULL,r_pers.UPDATE_TIMESTAMP,NULL,NULL,NULL);
         EXCEPTION
         WHEN OTHERS THEN 
-          dbms_output.put_line('Error occoured for KRIM_ENTITY_ADDR_T  for the person '||r_pers.person_id); 
+          dbms_output.put_line('Error occoured for KRIM_ENTITY_ADDR_T  for the person '||r_pers.person_id||' '||sqlerrm); 
         END;      
 
      END IF; 
@@ -581,7 +581,7 @@ BEGIN
 
           EXCEPTION
           WHEN OTHERS THEN 
-          dbms_output.put_line('Error occoured for KRIM_ENTITY_PHONE_T OR KRIM_PHONE_TYP_T  for the person '||r_pers.person_id); 
+          dbms_output.put_line('Error occoured for KRIM_ENTITY_PHONE_T OR KRIM_PHONE_TYP_T  for the person '||r_pers.person_id||' '||sqlerrm); 
           END;  
 
           IF r_pers.EMAIL_ADDRESS IS NOT NULL THEN
@@ -593,7 +593,7 @@ BEGIN
                   VALUES(li_seq_entity_email_id,SYS_GUID(),li_ver_nbr,li_seq_entity_id,ls_ent_typ_cd,'WRK',r_pers.EMAIL_ADDRESS,'Y',ls_actv_ind,r_pers.UPDATE_TIMESTAMP);
               EXCEPTION
               WHEN OTHERS THEN 
-                  dbms_output.put_line('Error occoured for KRIM_ENTITY_EMAIL_T  for the person '||r_pers.person_id); 
+                  dbms_output.put_line('Error occoured for KRIM_ENTITY_EMAIL_T  for the person '||r_pers.person_id||' '||sqlerrm); 
               END;   
 
            END IF;  
@@ -604,7 +604,7 @@ BEGIN
 
            EXCEPTION
            WHEN OTHERS THEN 
-           dbms_output.put_line('Error occoured for KRIM_ENTITY_NM_T  for the person '||r_pers.person_id); 
+           dbms_output.put_line('Error occoured for KRIM_ENTITY_NM_T  for the person '||r_pers.person_id||' '||sqlerrm); 
            END;     
 
             ls_person_id:=r_pers.person_id;
@@ -615,7 +615,7 @@ BEGIN
 -- END IF;
             EXCEPTION
             WHEN OTHERS THEN 
-            dbms_output.put_line('Error occoured for KRIM_ENTITY_EMP_INFO_T  for the person '||r_pers.person_id); 
+            dbms_output.put_line('Error occoured for KRIM_ENTITY_EMP_INFO_T  for the person '||r_pers.person_id||' '||sqlerrm); 
             END;
 
             BEGIN
@@ -642,7 +642,7 @@ when others then
                VALUES(li_seq_entity_id,NULL,NULL,NULL,NULL,NULL,r_pers.STATE,r_pers.CITY,NULL,SYS_GUID(),li_ver_nbr,r_pers.DATE_OF_BIRTH,NVL2(r_pers.GENDER,SUBSTRB(r_pers.GENDER,1,1),' '),r_pers.UPDATE_TIMESTAMP,NULL,NULL);
              EXCEPTION
              WHEN OTHERS THEN 
-                  dbms_output.put_line('Error occoured for KRIM_ENTITY_BIO_T  for the person '||r_pers.person_id);        
+                  dbms_output.put_line('Error occoured for KRIM_ENTITY_BIO_T  for the person '||r_pers.person_id||' '||sqlerrm);        
              END; 
 
              BEGIN
@@ -651,7 +651,7 @@ when others then
 
              EXCEPTION
              WHEN OTHERS THEN 
-                 dbms_output.put_line('Error occoured for KRIM_ENTITY_PRIV_PREF_T for the person '||r_pers.person_id);        
+                 dbms_output.put_line('Error occoured for KRIM_ENTITY_PRIV_PREF_T for the person '||r_pers.person_id||' '||sqlerrm);        
              END;
 
              BEGIN
@@ -862,7 +862,7 @@ set PRNCPL_NM =r_temp.user_name
 where prncpl_id=r_temp.person_id;
 exception
 when others then
- dbms_output.put_line('Sync user_name error(KRIM_PRNCPL_T), prncpl id = '||r_temp.prncpl_id||', error is '||SQLERRM); 
+ dbms_output.put_line('Sync user_name error(KRIM_PRNCPL_T), prncpl id = '||r_temp.person_id||', error is '||SQLERRM); 
 continue;
 end;
 
@@ -905,7 +905,7 @@ set PRNCPL_NM =r_temp.user_name
 where prncpl_id=r_temp.person_id;
 exception
 when others then
- dbms_output.put_line('Sync user_name error(KRIM_PERSON_DOCUMENT_T), prncpl id = '||r_temp.prncpl_id||', error is '||SQLERRM); 
+ dbms_output.put_line('Sync user_name error(KRIM_PERSON_DOCUMENT_T), prncpl id = '||r_temp.person_id||', error is '||SQLERRM); 
 continue;
 end;
 
@@ -1004,7 +1004,7 @@ if li_count=0 then
     VALUES(r_temp.entity_id,SYS_GUID(),1,r_temp.date_of_birth ,' ',sysdate);
     exception
     when others then
-	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id||' '||sqlerrm);
     continue;
     end;
 else 
@@ -1014,7 +1014,7 @@ else
    where entity_id=r_temp.entity_id;
    exception
     when others then
-	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id||' '||sqlerrm);
     continue;
     end;
 
@@ -1092,7 +1092,7 @@ if li_count=0 then
     VALUES(r_temp.entity_id,SYS_GUID(),1,NVL2(r_temp.gender,SUBSTR(r_temp.gender,1,1),' '),sysdate);
     exception
     when others then
-	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id||' '||sqlerrm);
     continue;
     end;
 else 
@@ -1102,7 +1102,7 @@ else
    where entity_id=r_temp.entity_id;
    exception
     when others then
-	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id);
+	dbms_output.put_line('person_id:'||r_temp.person_id||'entity_id:'||r_temp.entity_id||' '||sqlerrm);
     continue;
     end;
 
