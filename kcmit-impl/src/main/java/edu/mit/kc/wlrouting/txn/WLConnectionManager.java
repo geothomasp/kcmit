@@ -17,7 +17,7 @@ public class WLConnectionManager {
 	private static Connection connection;
 	static private DataSource ds ;
 	private static final String dbString = "jdbc:oracle:thin:@(description=(address=(host=coeus-traindb.mit.edu)(protocol=tcp)(port=1521))(connect_data=( SERVICE_NAME = COEUSQA.Coeus-TrainDB.mit.edu)(server=DEDICATED)))";
-	private static final String userid = "youssefn";
+	private static final String userid = "ergfdhfgdh";
 	private static final String pwd = "nataly";
 //	private static final String dbString = "jdbc:oracle:thin:@(description=(address=(host=osp-award.mit.edu)(protocol=tcp)(port=1521))(connect_data=(SID=OSPA)(server=DEDICATED)))";
 //	private static final String userid = "ospa";
