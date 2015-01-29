@@ -416,36 +416,27 @@ public class AwardDeltaXmlStream extends AwardBaseStream {
 	 * returns AwardOtherDatas Xml object
 	 */	
 	private AwardOtherDatas getAwardOtherDatas() {
-        AwardOtherDatas awardOtherDatas = AwardOtherDatas.Factory.newInstance();
-        List<AwardCustomData> awardCustomDataList = award.getAwardCustomDataList();
-        OtherData otherData = null;
-        String prevGroupName = null;
-        OtherGroupType otherGroupType = null;
-        for (AwardCustomData awardCustomData : awardCustomDataList) {
-            awardCustomData.refreshReferenceObject("customAttribute");
-            CustomAttribute customAttribute = awardCustomData.getCustomAttribute();
-            if (customAttribute != null) {
-                otherData = awardOtherDatas.addNewOtherData();
-                String groupName = customAttribute.getGroupName();
-                String attributeLabel = customAttribute.getLabel();
-                String attributeValue = awardCustomData.getValue();
-                if(attributeValue!=null){
-                    if(groupName!=null && !groupName.equals(prevGroupName)){
-                        otherGroupType = otherData.addNewOtherDetails();
-                        otherGroupType.setDescription(groupName);
-                    }
-                    prevGroupName = groupName;
-                    if(otherGroupType!=null){
-                        OtherGroupDetailsType otherGroupDetailsType = otherGroupType.addNewOtherGroupDetails();
-                        otherGroupDetailsType.setColumnName(attributeLabel);
-                        otherGroupDetailsType.setColumnValue(attributeValue);
-                    }
-                }
-                    
-            }
-        }
-        return awardOtherDatas;
-    }
+		AwardOtherDatas awardOtherDatas = AwardOtherDatas.Factory.newInstance();
+		List<AwardCustomData> awardCustomDataList = award
+				.getAwardCustomDataList();
+		List<OtherData> otherDatas = new ArrayList<OtherData>();
+		OtherData otherData = null;
+		for (AwardCustomData awardCustomData : awardCustomDataList) {
+			otherData = OtherData.Factory.newInstance();
+			String columnValue = awardCustomData.getValue();
+			if (awardCustomData.getCustomAttribute() != null
+					&& awardCustomData.getCustomAttribute().getName() != null) {
+				otherData.setColumnName(awardCustomData.getCustomAttribute()
+						.getName());
+			}
+			if (columnValue != null) {
+				otherData.setColumnValue(columnValue);
+			}
+			otherDatas.add(otherData);
+		}
+		awardOtherDatas.setOtherDataArray(otherDatas.toArray(new OtherData[0]));
+		return awardOtherDatas;
+	}
 	
 	
 	/*

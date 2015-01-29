@@ -3459,15 +3459,15 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
      * This method is used by the tag file to display the F&A rate totals.
      * Needed to convert to KualiDecimal to avoid rounding issues.
      */
-    public KualiDecimal getFandATotals() {
-        KualiDecimal total = new KualiDecimal(0);
-         for (AwardFandaRate currentRate : getAwardFandaRate()) {
-             if (currentRate.getUnderrecoveryOfIndirectCost() != null) {
-                 total = total.add(new KualiDecimal(currentRate.getUnderrecoveryOfIndirectCost().bigDecimalValue()));
-             }
-         }
-         return total;
-     }
+    public ScaleTwoDecimal getFandATotals() {
+        ScaleTwoDecimal total = new ScaleTwoDecimal(0);
+        for (AwardFandaRate currentRate : getAwardFandaRate()) {
+            if (currentRate.getUnderrecoveryOfIndirectCost() != null) {
+                total = total.add(new ScaleTwoDecimal(currentRate.getUnderrecoveryOfIndirectCost().bigDecimalValue()));
+            }
+        }
+        return total;
+    }
 
 	@Override
 	public boolean isProposalBudget() {
