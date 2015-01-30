@@ -15,8 +15,8 @@ public class MitProposalDevelopmentDocumentRule extends ProposalDevelopmentDocum
 	    public boolean processSaveDocument(Document document) {
 	        boolean isValid = true;
 	        ProposalDevelopmentDocument proposalDevelopmentDocument = (ProposalDevelopmentDocument)document;
-	        if(proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) ||
-	        		proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)){
+	        if(proposalDevelopmentDocument.getDevelopmentProposal()!=null && (proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) ||
+	        		proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED))){
 	        	isValid = isDocumentOverviewValid(document);
 
 	        	GlobalVariables.getMessageMap().addToErrorPath(KRADConstants.DOCUMENT_PROPERTY_NAME);
