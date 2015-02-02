@@ -29,7 +29,7 @@ cursor c_eps is
 r_eps  c_eps%rowtype;
 
 cursor c_bud is
-  select  t3.proposal_number||' - ' ||t3.version_number as project_details  
+  select distinct t3.proposal_number||' - ' ||t3.version_number as project_details  
   into ls_temp_msg
   from eps_proposal t1 
   inner join budget_document t2 on t1.document_number = t2.parent_document_key
