@@ -480,7 +480,14 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
                 if (displayTab) {
                     resultList.add(nav);
                 }
-            } else {
+            } 
+            else if(nav.getHeaderTabNavigateTo().equals(Constants.MAPPING_INSTITUTIONAL_PROPOSAL_ATTACHMENTS_PAGE)){
+            	String attachmentParameterValue = getParameterService().getParameterValueAsString(InstitutionalProposalDocument.class, "institutionalProposalAttachmentTab");
+            	if(attachmentParameterValue != null && attachmentParameterValue.equalsIgnoreCase("Y")) {
+            		  resultList.add(nav);	
+                }
+            }
+            else {
                 resultList.add(nav);
             }
         }
