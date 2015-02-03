@@ -36,7 +36,7 @@ rem
 rem
 select 'Purging all rows from  warehouse_person.' from dual
 /
---delete from warehouse_person
+truncate table warehouse_person
 /
 commit
 /
@@ -921,6 +921,14 @@ CLOSE c_update;
 END;
 /
 select 'Updation of changed user_name ends.'  from dual
+/
+select 'Setting person as inactive for user_name as NULL from warehouse person.' from dual
+/
+DECLARE
+li_ret number;
+BEGIN
+li_ret:=fn_inactive_users_pfeed('kc-mit-dev@mit.edu', 'KC Person Feed Prncpl ID cleanup');
+END;
 /
 select 'Updation of changed email_address begins.'  from dual
 /
