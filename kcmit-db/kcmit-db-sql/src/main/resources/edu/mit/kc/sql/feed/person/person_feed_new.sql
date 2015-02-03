@@ -36,7 +36,7 @@ rem
 rem
 select 'Purging all rows from  warehouse_person.' from dual
 /
---delete from warehouse_person
+truncate table warehouse_person
 /
 commit
 /
