@@ -1103,6 +1103,9 @@ public final class KeyConstants {
     public static final String INVALID_BIRT_REPORT = "error.invalid.report";
     
     public static final String REPORT_INPUT_PARAMETER_MISSING = "error.missing.report.inputparameters";
+    
+    public static final String ERROR_INVALID_COST_SHARE_UNIT = "error.invalid.cost.share.unit";
+    public static final String ERROR_REQUIRED_COST_SHARE_UNIT = "error.required.cost.share.unit";
 
     public static final String ERROR_SEARCH_INVALID_DATE = "error.search.invalid.date";
     public static final String S2S_DUPLICATE_USER_ATTACHED_FORM = "error.s2s.userattachedform.namespace.duplicate";

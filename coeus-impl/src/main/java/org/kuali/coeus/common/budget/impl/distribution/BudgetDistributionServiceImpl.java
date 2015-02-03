@@ -146,11 +146,11 @@ public class BudgetDistributionServiceImpl implements BudgetDistributionService 
      * @return A BudgetCostShare
      */
     protected BudgetCostShare createBudgetCostShare(FiscalYearSummary fiscalYearSummary) {
-        return new BudgetCostShare(fiscalYearSummary.getFiscalYear(), fiscalYearSummary.getCostShare(), new ScaleTwoDecimal(0.00), null);
+        return new BudgetCostShare(fiscalYearSummary.getFiscalYear(), fiscalYearSummary.getCostShare(), new ScaleTwoDecimal(0.00), null, null);
     }
     
     protected BudgetCostShare createBudgetCostShare(int projectPeriod, ScaleTwoDecimal costShare) {
-        return new BudgetCostShare(projectPeriod, costShare, new ScaleTwoDecimal(0.00), null);
+        return new BudgetCostShare(projectPeriod, costShare, new ScaleTwoDecimal(0.00), null, null);
     }
     
     /**

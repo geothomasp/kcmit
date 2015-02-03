@@ -38,7 +38,7 @@
 					* ${KualiForm.costShareFormHelper.projectPeriodLabel }
 					<%--<kul:htmlAttributeLabel attributeEntry="${awardCostShareAttributes.projectPeriod}" useShortLabel="true" noColon="true"/>--%>
 				</th>
-				
+				<th><kul:htmlAttributeLabel attributeEntry="${awardCostShareAttributes.unitNumber}" useShortLabel="true" noColon="true"/></th>
 				<th><kul:htmlAttributeLabel attributeEntry="${awardCostShareAttributes.source}" useShortLabel="true" noColon="true"/></th>
 				<th><kul:htmlAttributeLabel attributeEntry="${awardCostShareAttributes.destination}" useShortLabel="true" noColon="true"/></th>
 				<th><kul:htmlAttributeLabel attributeEntry="${awardCostShareAttributes.commitmentAmount}" useShortLabel="true" noColon="true"/></th>
@@ -66,6 +66,13 @@
             	    	<kul:htmlControlAttribute property="costShareFormHelper.newAwardCostShare.projectPeriod" attributeEntry="${awardCostShareAttributes.projectPeriod}"/>
             	  	</div>
 	            </td>
+	            <td class="infoline">
+                    <div align="center">
+                        <kul:htmlControlAttribute property="costShareFormHelper.newAwardCostShare.unitNumber" attributeEntry="${awardCostShareAttributes.unitNumber}"/>
+                        <kul:lookup boClassName="org.kuali.coeus.common.framework.unit.Unit" fieldConversions="unitNumber:costShareFormHelper.newAwardCostShare.unitNumber" anchor="${tabKey}" />
+                        <kul:directInquiry boClassName="org.kuali.coeus.common.framework.unit.Unit" inquiryParameters="costShareFormHelper.newAwardCostShare.unitNumber:unitNumber" anchor="${tabKey}" />
+                   </div>
+                </td>
 	            <td class="infoline">
 	            	<div align="center">
             	    	<kul:htmlControlAttribute property="costShareFormHelper.newAwardCostShare.source" attributeEntry="${awardCostShareAttributes.source}"/>
@@ -121,6 +128,13 @@
                   		<kul:htmlControlAttribute property="document.awardList[0].awardCostShares[${status.index}].projectPeriod" attributeEntry="${awardCostShareAttributes.projectPeriod}"/> 
 					</div>
 					</td>
+					<td width="10%" valign="middle">
+                    <div align="center">
+                        <kul:htmlControlAttribute property="document.awardList[0].awardCostShares[${status.index}].unitNumber" attributeEntry="${awardCostShareAttributes.unitNumber}"/>
+                        <kul:lookup boClassName="org.kuali.coeus.common.framework.unit.Unit" fieldConversions="unitNumber:document.awardList[0].awardCostShares[${status.index}].unitNumber" anchor="${tabKey}" />
+                        <kul:directInquiry boClassName="org.kuali.coeus.common.framework.unit.Unit" inquiryParameters="document.awardList[0].awardCostShares[${status.index}].unitNumber:unitNumber" anchor="${tabKey}" />
+                    </div>
+                    </td>
 	                <td width="15%" valign="middle">                	
 					<div align="center">
                   		<kul:htmlControlAttribute property="document.awardList[0].awardCostShares[${status.index}].source" attributeEntry="${awardCostShareAttributes.source}"/> 
@@ -174,7 +188,7 @@
     	         	    <html:image property="methodToCall.recalculateCostShareTotal.anchor${tabKey}"
                         src='${ConfigProperties.kra.externalizable.images.url}tinybutton-recalculate.gif' styleClass="tinybutton"/>
                    </c:if>
-	         	</th>
+	         	</th><th></th>
           	</tr>
           	
         	<th width="100" align="right" scope="row"><div align="center">Comments:</div></th>
@@ -182,7 +196,7 @@
             	 <div align="left">
             	  	 <kul:htmlControlAttribute property="document.awardList[0].awardCostShareComment.comments" attributeEntry="${awardCostShareCommentAttributes.comments}"/>
             	 </div>
-            </td>
+            </td><th></th>
         </table>
 		<div align="center">
 		</br>

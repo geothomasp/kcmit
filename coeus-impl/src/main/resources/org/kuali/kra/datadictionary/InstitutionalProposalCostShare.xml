@@ -34,7 +34,8 @@
                 <ref bean="InstitutionalProposalCostShare-projectPeriod" />
                 <ref bean="InstitutionalProposalCostShare-costSharePercentage" />
                 <ref bean="InstitutionalProposalCostShare-costShareTypeCode" />
-                <ref bean="InstitutionalProposalCostShare-sourceAccount" />
+                <ref bean="InstitutionalProposalCostShare-sourceAccount" /> 
+                <ref bean="InstitutionalProposalCostShare-unit" />
                 <ref bean="InstitutionalProposalCostShare-amount" />
                 <ref bean="InstitutionalProposalCostShare-versionNumber" />
             </list>
@@ -215,6 +216,21 @@
 
     <bean id="InstitutionalProposalCostShare-sourceAccount" parent="KraAttributeReferenceDummy-sourceAccount" >
     	<property name="required" value="true" />
+    </bean> 
+    
+    <bean id="InstitutionalProposalCostShare-unit" parent="InstitutionalProposalCostShare-unit-parentBean" />
+    <bean id="InstitutionalProposalCostShare-unit-parentBean" abstract="true" parent="AttributeDefinition" >
+        <property name="name" value="unit" />
+        <property name="forceUppercase" value="false" />
+        <property name="label" value="Unit" />
+        <property name="shortLabel" value="Unit" />
+        <property name="maxLength" value="10" />
+        <property name="control" >
+            <bean parent="TextControlDefinition"
+                p:size="10" />
+        </property>
+        <property name="summary" value="Unit" />
+        <property name="description" value="Unit" />
     </bean>
 
     <bean id="InstitutionalProposalCostShare-amount" parent="InstitutionalProposalCostShare-amount-parentBean" />
@@ -262,9 +278,10 @@
               <bean parent="FieldDefinition" p:attributeName="proposalNumber"/>
               <bean parent="FieldDefinition" p:attributeName="sequenceNumber"/>
               <bean parent="FieldDefinition" p:attributeName="projectPeriod"/>
+              <bean parent="FieldDefinition" p:attributeName="unit" />
               <bean parent="FieldDefinition" p:attributeName="costSharePercentage"/>
               <bean parent="FieldDefinition" p:attributeName="costShareTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="sourceAccount"/>
+              <bean parent="FieldDefinition" p:attributeName="sourceAccount"/> 
               <bean parent="FieldDefinition" p:attributeName="amount"/>
             </list>
           </property>
@@ -311,6 +328,7 @@
         <bean parent="FieldDefinition" p:attributeName="proposalNumber"/>
         <bean parent="FieldDefinition" p:attributeName="sequenceNumber"/>
         <bean parent="FieldDefinition" p:attributeName="projectPeriod"/>
+        <bean parent="FieldDefinition" p:attributeName="unit" />
         <bean parent="FieldDefinition" p:attributeName="costSharePercentage"/>
         <bean parent="FieldDefinition" p:attributeName="costShareTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="sourceAccount"/>
@@ -323,6 +341,7 @@
         <bean parent="FieldDefinition" p:attributeName="proposalNumber"/>
         <bean parent="FieldDefinition" p:attributeName="sequenceNumber"/>
         <bean parent="FieldDefinition" p:attributeName="projectPeriod"/>
+        <bean parent="FieldDefinition" p:attributeName="unit" />
         <bean parent="FieldDefinition" p:attributeName="costSharePercentage"/>
         <bean parent="FieldDefinition" p:attributeName="costShareTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="sourceAccount"/>

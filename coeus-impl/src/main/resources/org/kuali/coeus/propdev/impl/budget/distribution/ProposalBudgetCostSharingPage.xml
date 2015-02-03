@@ -83,11 +83,17 @@
                         <bean class="org.kuali.coeus.common.budget.impl.core.BudgetPeriodValuesFinder" p:addBlankOption="false"/>
                     </property>
                 </bean>
-                <bean parent="Kc-InlineEdit-InputField" p:propertyName="sharePercentage" p:skipInTabOrder="false" p:order="20" p:label="Percentage" >
+                <bean parent="Kc-InlineEdit-InputField" p:propertyName="unit" p:skipInTabOrder="false" p:order="20" p:label="Unit Number" >
+                  <property name="quickfinder">
+            		<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.coeus.common.framework.unit.Unit"
+            		p:fieldConversions="unitNumber:unit" p:returnByScript="true" p:hideCriteriaOnSearch="true" />
+                  </property>
+                </bean>
+                <bean parent="Kc-InlineEdit-InputField" p:propertyName="sharePercentage" p:skipInTabOrder="false" p:order="30" p:label="Percentage" >
                     <property name="propertyEditor"><ref bean="Kc-ScaleTwoPercentageEditor"/></property>
                 </bean>
-                <bean parent="Kc-InlineEdit-InputField" p:propertyName="sourceAccount" p:skipInTabOrder="false" p:order="30" />
-                <bean parent="Kc-InlineEdit-InputField" p:propertyName="shareAmount" p:skipInTabOrder="false" p:order="40" p:label="Amount" />
+                <bean parent="Kc-InlineEdit-InputField" p:propertyName="sourceAccount" p:skipInTabOrder="false" p:order="40" />
+                <bean parent="Kc-InlineEdit-InputField" p:propertyName="shareAmount" p:skipInTabOrder="false" p:order="50" p:label="Amount" />
             </list>
 		</property>
 

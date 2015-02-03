@@ -41,7 +41,7 @@
 					* ${KualiForm.institutionalProposalCostShareBean.projectPeriodLabel }
 					<%--<kul:htmlAttributeLabel attributeEntry="${institutionalProposalCostShareAttributes.projectPeriod}" useShortLabel="true" noColon="true" />--%>
 				</th>
-				
+				<th><kul:htmlAttributeLabel attributeEntry="${institutionalProposalCostShareAttributes.unit}" useShortLabel="true" noColon="true" /></th>
 				<th><kul:htmlAttributeLabel attributeEntry="${institutionalProposalCostShareAttributes.costShareTypeCode}" useShortLabel="true" noColon="true" /></th>
 				<th><kul:htmlAttributeLabel attributeEntry="${institutionalProposalCostShareAttributes.costSharePercentage}" useShortLabel="true" noColon="true"/></th>
 				<th><kul:htmlAttributeLabel attributeEntry="${institutionalProposalCostShareAttributes.sourceAccount}" useShortLabel="true" noColon="true"/></th>
@@ -56,6 +56,13 @@
             	  	 	<kul:htmlControlAttribute property="institutionalProposalCostShareBean.newInstitutionalProposalCostShare.projectPeriod" attributeEntry="${institutionalProposalCostShareAttributes.projectPeriod}"/>
             	 	</div>
             	</td>
+            	<td class="infoline">
+                    <div align="center">
+                        <kul:htmlControlAttribute property="institutionalProposalCostShareBean.newInstitutionalProposalCostShare.unit" attributeEntry="${institutionalProposalCostShareAttributes.unit}"/>
+                        <kul:lookup boClassName="org.kuali.coeus.common.framework.unit.Unit" fieldConversions="unitNumber:institutionalProposalCostShareBean.newInstitutionalProposalCostShare.unit" anchor="${tabKey}" />
+                        <kul:directInquiry boClassName="org.kuali.coeus.common.framework.unit.Unit" inquiryParameters="institutionalProposalCostShareBean.newInstitutionalProposalCostShare.unit:unitNumber" anchor="${tabKey}" />
+                    </div>
+                </td>
 	            <td class="infoline">
 	              	<div width="75" align="center">
 	            		<kul:htmlControlAttribute property="institutionalProposalCostShareBean.newInstitutionalProposalCostShare.costShareTypeCode" attributeEntry="${institutionalProposalCostShareAttributes.costShareTypeCode}" />
@@ -96,6 +103,13 @@
                 		<kul:htmlControlAttribute property="document.institutionalProposalList[0].institutionalProposalCostShares[${status.index}].projectPeriod" attributeEntry="${institutionalProposalCostShareAttributes.projectPeriod}"/>
 					</div>
 					</td>
+					<td width="15%" valign="middle">
+                    <div align="center">
+                        <kul:htmlControlAttribute property="document.institutionalProposalList[0].institutionalProposalCostShares[${status.index}].unit" attributeEntry="${institutionalProposalCostShareAttributes.unit}"/>
+                        <kul:lookup boClassName="org.kuali.coeus.common.framework.unit.Unit" fieldConversions="unitNumber:document.institutionalProposalList[0].institutionalProposalCostShares[${status.index}].unit" anchor="${tabKey}" />
+                        <kul:directInquiry boClassName="org.kuali.coeus.common.framework.unit.Unit" inquiryParameters="document.institutionalProposalList[0].institutionalProposalCostShares[${status.index}].unit:unitNumber" anchor="${tabKey}" />
+                    </div>
+                    </td>
 	                <td width="20%" valign="middle">
 					<div align="center">
                 		<kul:htmlControlAttribute property="document.institutionalProposalList[0].institutionalProposalCostShares[${status.index}].costShareTypeCode" attributeEntry="${institutionalProposalCostShareAttributes.costShareTypeCode}"/>
@@ -133,7 +147,7 @@
 	                	$<fmt:formatNumber value="${KualiForm.document.institutionalProposal.totalCostShareAmount}" type="currency" currencySymbol="" maxFractionDigits="2" />
 	                </div>
 	         	</th>
-	         	<c:if test="${!readOnly}"><th scope="row">&nbsp;</th></c:if>
+	         	<c:if test="${!readOnly}"><th scope="row">&nbsp;</th></c:if><th></th>
           	</tr>
           	
         </table>

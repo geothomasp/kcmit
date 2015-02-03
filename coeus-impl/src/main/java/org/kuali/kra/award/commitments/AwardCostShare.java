@@ -51,6 +51,8 @@ public class AwardCostShare extends AwardAssociate implements ValuableItem {
     private ScaleTwoDecimal commitmentAmount;
 
     private CostShareType costShareType;
+    
+    private String unitNumber;
 
 
     public AwardCostShare() {
@@ -235,4 +237,12 @@ public class AwardCostShare extends AwardAssociate implements ValuableItem {
     public void resetPersistenceState() {
         this.awardCostShareId = null;
     }
+    
+    public String getUnitNumber() {
+		return unitNumber;
+    }
+	
+   public void setUnitNumber(String unitNumber) {
+		this.unitNumber = unitNumber;
+   }
 }
