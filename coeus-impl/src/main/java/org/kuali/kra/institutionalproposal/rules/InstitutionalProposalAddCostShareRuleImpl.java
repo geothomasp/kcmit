@@ -19,10 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.bo.CostShareType;
 import org.kuali.coeus.common.framework.costshare.CostShareRuleResearchDocumentBase;
+import org.kuali.coeus.common.framework.unit.UnitService;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposalCostShare;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +66,8 @@ public class InstitutionalProposalAddCostShareRuleImpl extends CostShareRuleRese
         isValid &= validateAmount(institutionalProposalCostShare.getAmount());
         
         isValid &= validateSourceAccount(institutionalProposalCostShare.getSourceAccount());
+        
+        isValid &=validateCostShareUnit(institutionalProposalCostShare.getUnit());
         
         return isValid;
     }
@@ -152,4 +157,31 @@ public class InstitutionalProposalAddCostShareRuleImpl extends CostShareRuleRese
         
         return isValid;
     }
+    
+    private boolean validateCostShareUnit(String unitNumber) {
+        boolean valid = true;
+           
+            //check if the unit is valid
+        MessageMap errorMap = GlobalVariables.getMessageMap();
+           
+           
+            if (StringUtils.isNotEmpty(unitNumber)) {
+            	UnitService unitService = KcServiceLocator.getService(UnitService.class);
+           	
+            	if (unitService.getUnit(unitNumber) == null) {
+                	valid = false;
+                //	errorMap.putError("unitNumber", IUKeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+                    this.reportError(fieldStarter + ".unit", KeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+            	}       
+            } else {
+                if (displayNullFieldErrors) {
+            	  valid = false;
+                  this.reportError(fieldStarter + ".unit", KeyConstants.ERROR_REQUIRED_COST_SHARE_UNIT, unitNumber);
+                }
+           }
+            /* IU Customization Ends */
+            
+        
+        return valid;
+   }
 }

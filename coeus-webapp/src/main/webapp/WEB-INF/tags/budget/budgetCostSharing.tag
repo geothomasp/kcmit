@@ -39,7 +39,7 @@
 						<tr>
 							<th width="5%"><div align="left">&nbsp;</div></th>
 							<th width="17%"><div align="center">${KualiForm.projectPeriodLabel}</div></th>
-							<th width="17%"><div align="center">Percentage</div></th>
+							<th width="17%"><div align="center">Unit</div></th>
 							<th width="29%"><div align="center">Source Account</div></th>
 							<th width="17%"><div align="center">Amount</div></th>					
 							<th width="15%"><div align="center">Actions</div></th>	
@@ -52,8 +52,10 @@
 			        			<kul:htmlControlAttribute property="newBudgetCostShare.projectPeriod" attributeEntry="${budgetCostShareAttributes.projectPeriod}" />
 			        		</div></td>
 			        		<td class="infoline"><div align="center">
-								<kul:htmlControlAttribute property="newBudgetCostShare.sharePercentage" attributeEntry="${budgetCostShareAttributes.sharePercentage}" styleClass="amount" />						
-			    			</div></td>
+								<kul:htmlControlAttribute property="newBudgetCostShare.sourceUnit" attributeEntry="${budgetCostShareAttributes.sourceUnit}" />
+                                <kul:lookup boClassName="org.kuali.coeus.common.framework.unit.Unit" fieldConversions="unitNumber:newBudgetCostShare.sourceUnit" anchor="${tabKey}" />
+                                <kul:directInquiry boClassName="org.kuali.coeus.common.framework.unit.Unit" inquiryParameters="newBudgetCostShare.sourceUnit:unitNumber" anchor="${tabKey}" />
+						   </div></td>
 			    			<td class="infoline"><div align="center">
 			        			<kul:htmlControlAttribute property="newBudgetCostShare.sourceAccount" attributeEntry="${budgetCostShareAttributes.sourceAccount}" />
 			        		</div></td>
@@ -76,8 +78,10 @@
 			        			</div></td>
 			        			
 			            		<td><div align="center">
-			            			<kul:htmlControlAttribute property="document.budget.budgetCostShare[${status.index}].sharePercentage" attributeEntry="${budgetCostShareAttributes.sharePercentage}" styleClass="amount" />
-			    				</div></td>
+			            		<kul:htmlControlAttribute property="document.budget.budgetCostShare[${status.index}].sourceUnit" attributeEntry="${budgetCostShareAttributes.sourceUnit}" />
+                                <kul:lookup boClassName="org.kuali.coeus.common.framework.unit.Unit" fieldConversions="unitNumber:document.budget.budgetCostShare[${status.index}].sourceUnit" anchor="${tabKey}" />
+                                <kul:directInquiry boClassName="org.kuali.coeus.common.framework.unit.Unit" inquiryParameters="document.budget.budgetCostShare[${status.index}].sourceUnit:unitNumber" anchor="${tabKey}" />
+                                </div></td>
 			            		
 			            		<td><div align="center">
 			        				<kul:htmlControlAttribute property="document.budget.budgetCostShare[${status.index}].sourceAccount" attributeEntry="${budgetCostShareAttributes.sourceAccount}" />

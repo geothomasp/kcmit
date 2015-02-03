@@ -65,6 +65,9 @@ public class BudgetCostShare extends KcPersistableBusinessObjectBase implements 
 
     @Column(name = "SOURCE_ACCOUNT")
     private String sourceAccount;
+    
+    @Column(name = "UNIT_NUMBER")
+    private String unit;
 
     @Transient
     private String sourceUnit;
@@ -80,12 +83,13 @@ public class BudgetCostShare extends KcPersistableBusinessObjectBase implements 
         super();
     }
 
-    public BudgetCostShare(Integer projectPeriod, ScaleTwoDecimal shareAmount, ScaleTwoDecimal sharePercentage, String sourceAccount) {
+    public BudgetCostShare(Integer projectPeriod, ScaleTwoDecimal shareAmount, ScaleTwoDecimal sharePercentage, String sourceAccount,String unit) {
         this();
         this.projectPeriod = projectPeriod;
         this.sharePercentage = sharePercentage;
         this.shareAmount = shareAmount;
         this.sourceAccount = sourceAccount;
+        this.unit = unit;
     }
     @Override
     public Integer getDocumentComponentId() {
@@ -181,6 +185,20 @@ public class BudgetCostShare extends KcPersistableBusinessObjectBase implements 
     public void setSourceAccount(String sourceAcocunt) {
         this.sourceAccount = sourceAcocunt;
     }
+    
+    /**
+	 * @return the unit
+	 */
+	public String getUnit() {
+		return unit;
+	}
+
+	/**
+	 * @param unit the unit to set
+	 */
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
 
     public String getSourceUnit() {
         return sourceUnit;

@@ -33,6 +33,7 @@ import org.kuali.coeus.common.framework.costshare.CostShareRuleResearchDocumentB
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRule;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.common.framework.ruleengine.KcEventMethod;
+import org.kuali.coeus.common.framework.unit.UnitService;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -97,14 +98,30 @@ public class BudgetDocumentRule extends CostShareRuleResearchDocumentBase implem
                     int thisFiscalYear = budgetCostShare.getProjectPeriod() == null ? Integer.MIN_VALUE : budgetCostShare.getProjectPeriod();
                     int otherFiscalYear = tmpCostShare.getProjectPeriod() == null ? Integer.MIN_VALUE : tmpCostShare.getProjectPeriod();
                     if (thisFiscalYear == otherFiscalYear
-                            && StringUtils.equalsIgnoreCase(budgetCostShare.getSourceAccount(), tmpCostShare.getSourceAccount())) {
+                            && StringUtils.equalsIgnoreCase(budgetCostShare.getSourceAccount(), tmpCostShare.getSourceAccount()) 
+                    	    && StringUtils.equalsIgnoreCase(budgetCostShare.getSourceUnit(), tmpCostShare.getSourceUnit())) {
                         errorMap.putError("fiscalYear", KeyConstants.ERROR_COST_SHARE_DUPLICATE, 
                                 thisFiscalYear == Integer.MIN_VALUE ? "" : thisFiscalYear+"", 
                                 budgetCostShare.getSourceAccount()==null?"\"\"":budgetCostShare.getSourceAccount());
                         valid = false;
                     }
                 }
-            }        
+            } 
+          //check if the unit is valid
+            
+            String unitNumber = budgetCostShare.getSourceUnit();
+            
+           if (unitNumber != null) {
+            	valid = false;
+            	UnitService unitService = KcServiceLocator.getService(UnitService.class);
+           	
+            	if (unitService.getUnit(unitNumber) != null) {
+            		valid = true;
+           	} else {
+            		errorMap.putError("sourceUnit", KeyConstants.ERROR_INVALID_COST_SHARE_UNIT, budgetCostShare.getSourceUnit());
+            	}       
+            } 
+            /* IU Customization Ends */
             
             //validate project period stuff            
             String currentField = "document.budget.budgetCostShare[" + i + "].projectPeriod";
