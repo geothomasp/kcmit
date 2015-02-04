@@ -279,6 +279,7 @@ ls_prncpl_nm	VARCHAR2(100);
 li_country_cd varchar2(2);
 li_us_count number;
 ls_new_user_flag char(1);
+ls_user_name VARCHAR2(100);
 ls_phone_number varchar2(20);
 CURSOR c_pers IS
 select PERSON_ID,                      
@@ -367,6 +368,15 @@ BEGIN
     LOOP
     FETCH c_pers INTO r_pers;
     EXIT WHEN c_pers%NOTFOUND;
+	
+	
+	IF r_pers.USER_NAME IS NULL THEN	  
+	  ls_user_name := substr(lower(r_pers.first_name),1,1)||lower(r_pers.last_name)||r_pers.person_id;
+	  
+	ELSE
+      ls_user_name:= lower(r_pers.USER_NAME);
+		
+    END IF;
     
     select KRIM_ENTITY_ID_S.NEXTVAL into li_seq_entity_id from dual;          
     select KRIM_ENTITY_EMP_ID_S.NEXTVAL into li_seq_entity_emp_id from dual; 
@@ -380,10 +390,10 @@ BEGIN
             select KREW_DOC_HDR_S.NEXTVAL into li_seq_fdoc_nbr from dual;
 
             INSERT INTO KRIM_PERSON_DOCUMENT_T(FDOC_NBR,ENTITY_ID,OBJ_ID,VER_NBR,PRNCPL_ID,PRNCPL_NM,PRNCPL_PSWD,UNIV_ID,ACTV_IND)
-            VALUES(li_seq_fdoc_nbr,li_seq_entity_id,SYS_GUID(),li_ver_nbr,r_pers.person_id,lower(r_pers.USER_NAME),NULL,NULL,decode(r_pers.status,'A','Y','N'));
+            VALUES(li_seq_fdoc_nbr,li_seq_entity_id,SYS_GUID(),li_ver_nbr,r_pers.person_id,ls_user_name,NULL,NULL,decode(r_pers.status,'A','Y','N'));
 
             INSERT INTO KRIM_PRNCPL_T(PRNCPL_ID,OBJ_ID,VER_NBR,PRNCPL_NM,ENTITY_ID,PRNCPL_PSWD,ACTV_IND,LAST_UPDT_DT)
-            VALUES(r_pers.person_id,SYS_GUID(),li_ver_nbr,lower(r_pers.USER_NAME),li_seq_entity_id,NULL,decode(r_pers.status,'A','Y','N'),r_pers.UPDATE_TIMESTAMP);
+            VALUES(r_pers.person_id,SYS_GUID(),li_ver_nbr,ls_user_name,li_seq_entity_id,NULL,decode(r_pers.status,'A','Y','N'),r_pers.UPDATE_TIMESTAMP);
 
     exception
     when others then    
@@ -922,7 +932,7 @@ END;
 /
 select 'Updation of changed user_name ends.'  from dual
 /
-select 'Setting person as inactive for user_name as NULL from warehouse person.' from dual
+select 'Set user_name as NULL for all incative people.' from dual
 /
 DECLARE
 li_ret number;

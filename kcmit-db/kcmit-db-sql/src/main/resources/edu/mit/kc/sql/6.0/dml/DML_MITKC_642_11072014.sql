@@ -11,3 +11,4 @@ update KRCR_PARM_T set VAL = 'Y' where PARM_NM= 'iacuc.protocol.proposal.develop
 update KRCR_PARM_T set VAL = 'Y' where PARM_NM= 'irb.protocol.development.proposal.linking.enabled';
 /  
 commit
+/
