@@ -14,6 +14,11 @@
  limitations under the License.
 --%>
  <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
+ <style type="text/css">
+td.infoline select {
+    width:100%;
+}
+</style>
 
 <c:set var="attachments" value="${KualiForm.document.institutionalProposalList[0].instProposalAttachments}"/>
 <c:set var="instproposalAttachmentAttributes" value="${DataDictionary.InstitutionalProposalAttachments.attributes}" />
