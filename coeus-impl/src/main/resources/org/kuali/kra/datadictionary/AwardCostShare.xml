@@ -245,7 +245,8 @@
     <property name="description" value="Verification Date" />
   </bean>
   
-  <bean id="AwardCostShare-unitNumber" parent="AttributeDefinition" >
+  <bean id="AwardCostShare-unitNumber" parent="AwardCostShare-unitNumber-parentBean" />
+  <bean id="AwardCostShare-unitNumber-parentBean" abstract="true" parent="AttributeDefinition" >
         <property name="name" value="unitNumber" />
         <property name="forceUppercase" value="false" />
         <property name="label" value="Unit" />
