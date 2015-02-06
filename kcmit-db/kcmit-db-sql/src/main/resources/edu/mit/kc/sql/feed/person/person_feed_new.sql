@@ -281,6 +281,9 @@ li_us_count number;
 ls_new_user_flag char(1);
 ls_user_name VARCHAR2(100);
 ls_phone_number varchar2(20);
+v_code  NUMBER;
+v_errm  VARCHAR2(64);
+
 CURSOR c_pers IS
 select PERSON_ID,                      
  SSN,                            
@@ -357,7 +360,7 @@ r_pers c_pers%ROWTYPE;
 
 CURSOR c1_data(para_personID VARCHAR2) is
 SELECT  TRAINING_NUMBER,TRAINING_CODE,DATE_REQUESTED,DATE_SUBMITTED,DATE_ACKNOWLEDGED,
-FOLLOWUP_DATE,SCORE,COMMENTS,UPDATE_TIMESTAMP,UPDATE_USER  from  OSP$PERSON_TRAINING@coeus.kuali where PERSON_ID=para_personID;   
+FOLLOWUP_DATE,SCORE,COMMENTS,UPDATE_TIMESTAMP,UPDATE_USER  from  PERSON_TRAINING where PERSON_ID=para_personID;   
 r_perT c1_data%ROWTYPE;
 
 BEGIN
@@ -371,7 +374,7 @@ BEGIN
 	
 	
 	IF r_pers.USER_NAME IS NULL THEN	  
-	  ls_user_name := substr(lower(r_pers.first_name),1,1)||lower(r_pers.last_name)||r_pers.person_id;
+	  ls_user_name := r_pers.person_id;
 	  
 	ELSE
       ls_user_name:= lower(r_pers.USER_NAME);
@@ -482,6 +485,9 @@ BEGIN
 		
     EXCEPTION
     WHEN OTHERS THEN 
+ 	v_code := SQLCODE;
+	v_errm := SUBSTR(SQLERRM, 1, 64);
+	DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
     dbms_output.put_line('Error occoured for KRIM_ENTITY_AFLTN_T  for the person '||r_pers.person_id);
     END;
 
@@ -491,6 +497,10 @@ BEGIN
       VALUES(ls_ent_typ_cd,li_seq_entity_id,ls_actv_ind,SYS_GUID(),li_ver_nbr,r_pers.UPDATE_TIMESTAMP);   
     EXCEPTION
     WHEN OTHERS THEN 
+ 	v_code := SQLCODE;
+	v_errm := SUBSTR(SQLERRM, 1, 64);
+	DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
+    
     dbms_output.put_line('Error occoured for KRIM_ENTITY_ENT_TYP_T  for the person '||r_pers.person_id); 
     END; 
 
@@ -509,6 +519,9 @@ BEGIN
            VALUES(li_seq_entity_addr_id,li_country_cd,'Y',ls_actv_ind,SYS_GUID(),li_ver_nbr,li_seq_entity_id,ls_ent_typ_cd,'WRK',SUBSTRB(r_pers.ADDRESS_LINE_1,1,45),SUBSTRB(r_pers.ADDRESS_LINE_2,1,45),SUBSTRB(r_pers.ADDRESS_LINE_3,1,45),r_pers.CITY,r_pers.STATE,r_pers.POSTAL_CODE,r_pers.UPDATE_TIMESTAMP,NULL,NULL,r_pers.UPDATE_TIMESTAMP,NULL,NULL,NULL);
         EXCEPTION
         WHEN OTHERS THEN 
+     	v_code := SQLCODE;
+		v_errm := SUBSTR(SQLERRM, 1, 64);
+		DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
           dbms_output.put_line('Error occoured for KRIM_ENTITY_ADDR_T  for the person '||r_pers.person_id); 
         END;      
 
@@ -567,6 +580,9 @@ BEGIN
 
           EXCEPTION
           WHEN OTHERS THEN 
+	     	v_code := SQLCODE;
+			v_errm := SUBSTR(SQLERRM, 1, 64);
+			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
           dbms_output.put_line('Error occoured for KRIM_ENTITY_PHONE_T OR KRIM_PHONE_TYP_T  for the person '||r_pers.person_id); 
           END;  
 
@@ -579,6 +595,9 @@ BEGIN
                   VALUES(li_seq_entity_email_id,SYS_GUID(),li_ver_nbr,li_seq_entity_id,ls_ent_typ_cd,'WRK',r_pers.EMAIL_ADDRESS,'Y',ls_actv_ind,r_pers.UPDATE_TIMESTAMP);
               EXCEPTION
               WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                   dbms_output.put_line('Error occoured for KRIM_ENTITY_EMAIL_T  for the person '||r_pers.person_id); 
               END;   
 
@@ -590,6 +609,9 @@ BEGIN
 
            EXCEPTION
            WHEN OTHERS THEN 
+         	v_code := SQLCODE;
+			v_errm := SUBSTR(SQLERRM, 1, 64);
+			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
            dbms_output.put_line('Error occoured for KRIM_ENTITY_NM_T  for the person '||r_pers.person_id); 
            END;     
 
@@ -601,6 +623,9 @@ BEGIN
 -- END IF;
             EXCEPTION
             WHEN OTHERS THEN 
+         	v_code := SQLCODE;
+			v_errm := SUBSTR(SQLERRM, 1, 64);
+			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
             dbms_output.put_line('Error occoured for KRIM_ENTITY_EMP_INFO_T  for the person '||r_pers.person_id); 
             END;
 
@@ -620,6 +645,9 @@ when others then
                  VALUES(ls_person_id,li_ver_nbr,r_pers.AGE_BY_FISCAL_YEAR,r_pers.RACE,r_pers.EDUCATION_LEVEL,r_pers.DEGREE,r_pers.MAJOR,r_pers.IS_HANDICAPPED,r_pers.HANDICAP_TYPE,r_pers.IS_VETERAN,r_pers.VETERAN_TYPE,r_pers.VISA_CODE,r_pers.VISA_TYPE,r_pers.VISA_RENEWAL_DATE,r_pers.HAS_VISA,r_pers.OFFICE_LOCATION,r_pers.SECONDRY_OFFICE_LOCATION,r_pers.SCHOOL,r_pers.YEAR_GRADUATED,r_pers.DIRECTORY_DEPARTMENT,r_pers.PRIMARY_TITLE,r_pers.DIRECTORY_TITLE,r_pers.IS_RESEARCH_STAFF,r_pers.VACATION_ACCURAL,r_pers.IS_ON_SABBATICAL,r_pers.ID_PROVIDED,r_pers.ID_VERIFIED,r_pers.UPDATE_TIMESTAMP,r_pers.UPDATE_USER,r_pers.COUNTY,SYS_GUID(),1,r_pers.SALARY_ANNIVERSARY_DATE,r_pers.ERA_COMMONS_USER_NAME);
              EXCEPTION
              WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                  dbms_output.put_line('Error occoured for PERSON_EXT_T  for the person '||r_pers.person_id);        
              END; 
 
@@ -628,6 +656,9 @@ when others then
                VALUES(li_seq_entity_id,NULL,NULL,NULL,NULL,NULL,r_pers.STATE,r_pers.CITY,NULL,SYS_GUID(),li_ver_nbr,r_pers.DATE_OF_BIRTH,NVL2(r_pers.GENDER,SUBSTRB(r_pers.GENDER,1,1),' '),r_pers.UPDATE_TIMESTAMP,NULL,NULL);
              EXCEPTION
              WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                   dbms_output.put_line('Error occoured for KRIM_ENTITY_BIO_T  for the person '||r_pers.person_id);        
              END; 
 
@@ -637,6 +668,9 @@ when others then
 
              EXCEPTION
              WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                  dbms_output.put_line('Error occoured for KRIM_ENTITY_PRIV_PREF_T for the person '||r_pers.person_id);        
              END;
 

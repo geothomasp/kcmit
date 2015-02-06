@@ -59,7 +59,9 @@
 			</routePaths>
 			<routeNodes>
 				<start name="Initiated">
-					<activationType>S</activationType>
+					<activationType>P</activationType>
+					<mandatoryRoute>false</mandatoryRoute>
+					<finalApproval>false</finalApproval>
 				</start><!--
 				<role name="AwardBudgetInitialApproval">
 					<qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
