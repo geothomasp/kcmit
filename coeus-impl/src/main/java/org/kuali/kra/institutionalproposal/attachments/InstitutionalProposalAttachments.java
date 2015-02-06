@@ -67,10 +67,6 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
     
     private Long proposalAttachmentsDataId;
     
-	private String docUpdateUser;
-	
-    private Timestamp docUpdateTimestamp;
-    
     private transient FormFile newFile;
     
     private InstitutionalProposalAttachmentType type;
@@ -281,34 +277,6 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
 	 */
 	public void setProposalAttachmentsDataId(Long proposalAttachmentsDataId) {
 		this.proposalAttachmentsDataId = proposalAttachmentsDataId;
-	}
-
-	/**
-	 * @return the docUpdateUser
-	 */
-	public String getDocUpdateUser() {
-		return docUpdateUser;
-	}
-
-	/**
-	 * @param docUpdateUser the docUpdateUser to set
-	 */
-	public void setDocUpdateUser(String docUpdateUser) {
-		this.docUpdateUser = docUpdateUser;
-	}
-
-	/**
-	 * @return the docUpdateTimestamp
-	 */
-	public Timestamp getDocUpdateTimestamp() {
-		return docUpdateTimestamp;
-	}
-
-	/**
-	 * @param docUpdateTimestamp the docUpdateTimestamp to set
-	 */
-	public void setDocUpdateTimestamp(Timestamp docUpdateTimestamp) {
-		this.docUpdateTimestamp = docUpdateTimestamp;
 	}
 
 	/**
