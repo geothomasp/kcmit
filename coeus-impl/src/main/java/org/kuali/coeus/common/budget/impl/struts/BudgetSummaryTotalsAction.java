@@ -44,8 +44,8 @@ public class BudgetSummaryTotalsAction extends BudgetAction {
     @Override
     public ActionForward reload(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+    	Budget budget = getBudget(form);
         ActionForward actionForward = super.reload(mapping, form, request, response);
-        Budget budget = getBudget(form);
         getBudgetCommonService(budget.getBudgetParent()).calculateBudgetOnSave(budget);
         return actionForward;
     }
