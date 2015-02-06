@@ -283,6 +283,7 @@ ls_user_name VARCHAR2(100);
 ls_phone_number varchar2(20);
 v_code  NUMBER;
 v_errm  VARCHAR2(64);
+ls_prncpl_id   VARCHAR2(40);
 
 CURSOR c_pers IS
 select PERSON_ID,                      
@@ -378,6 +379,28 @@ BEGIN
 	  
 	ELSE
       ls_user_name:= lower(r_pers.USER_NAME);
+	  
+	      begin
+	          select prncpl_id into ls_prncpl_id from krim_prncpl_t where prncpl_nm = ls_user_name;
+		  exception
+		  when others then
+		    ls_prncpl_id := null;
+			
+		  end;
+		  
+		     if ls_prncpl_id is not null then
+			 
+			    update KRIM_PRNCPL_T
+				set ACTV_IND = 'N',
+				    PRNCPL_NM = ls_prncpl_id
+				where PRNCPL_ID = ls_prncpl_id;
+				
+				update KRIM_PERSON_DOCUMENT_T
+				set ACTV_IND = 'N',
+				    PRNCPL_NM = ls_prncpl_id
+				where PRNCPL_ID = ls_prncpl_id;
+				
+			  end if;
 		
     END IF;
     
@@ -387,6 +410,8 @@ BEGIN
     
     INSERT INTO KRIM_ENTITY_T(ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) 
     VALUES( li_seq_entity_id,SYS_GUID(),li_ver_nbr,ls_actv_ind,r_pers.UPDATE_TIMESTAMP);
+	
+	     
 
 
     begin
@@ -910,8 +935,13 @@ LOOP
 FETCH c_update INTO r_update;
 EXIT WHEN c_update%NOTFOUND;
 
+
+
+
 IF r_update.user_name IS NOT NULL THEN
 
+SELECT COUNT(PRNCPL_ID) into li_count FROM KRIM_PRNCPL_T WHERE PRNCPL_NM=r_update.user_name;
+  IF li_count=0 THEN
     IF r_update.ENTITY_ID IS NOT NULL THEN
        
 	     UPDATE KRIM_PRNCPL_T
@@ -919,6 +949,7 @@ IF r_update.user_name IS NOT NULL THEN
        WHERE ENTITY_ID=r_update.ENTITY_ID;
        
     END IF;
+  END IF;  
 END IF;
 
 
@@ -950,14 +981,16 @@ EXIT WHEN c_update%NOTFOUND;
 
 IF r_update.user_name IS NOT NULL THEN
 
+ SELECT COUNT(PRNCPL_ID) into li_count FROM KRIM_PRNCPL_T WHERE PRNCPL_NM=r_update.user_name;
+ IF li_count=0 THEN
   IF r_update.ENTITY_ID IS NOT NULL THEN
        
 	     UPDATE KRIM_PERSON_DOCUMENT_T
        SET PRNCPL_NM=r_update.user_name
        WHERE ENTITY_ID=r_update.ENTITY_ID;
        
-  END IF;
-
+   END IF;
+ END IF;
 END IF;
 
 END LOOP;
