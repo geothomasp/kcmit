@@ -1,3 +1,3 @@
 set define off;
-@citi/kc_package_citi.sql
+@subaward/kc_sub_notifications_pkg.sql
 /

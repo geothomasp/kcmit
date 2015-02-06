@@ -108,6 +108,22 @@ and uaa.unit_administrator_type_code=5;
 EXCEPTION
 WHEN OTHERS THEN
 ls_recipients := 'coeus-mit@mit.edu';
+ls_cc := 'osp-research-subawards@mit.edu';
+select au.unit_number,u.unit_name,ap.full_name 
+into 
+ls_unit_num , 
+ls_unit_name ,
+ls_PI_name
+from award_person_units au 
+inner join award_persons ap
+on au.award_person_id= ap.award_person_id
+left outer join unit u
+on au.unit_number=u.unit_number
+where ap.award_number=as_AwardNUmber
+and ap.sequence_number=(select max(sequence_number)
+from award_persons where award_number=as_AwardNUmber)
+and ap.CONTACT_ROLE_CODE='PI'
+and au.lead_unit_flag='Y';
 END;
 
 BEGIN
@@ -129,6 +145,16 @@ END;
         end if;
     else
         ls_recipients := ls_other_email;
+   end if;
+   
+   if (ls_other_email is NULL) or (length(trim(ls_other_email)) = 0 ) then
+        if (ls_admin_email is NULL) or (length(trim(ls_admin_email)) = 0 ) then
+           ls_cc := 'osp-research-subawards@mit.edu';
+        else
+            ls_cc :=  ls_admin_email;
+        end if;
+    else
+        ls_cc := ls_other_email;
    end if;
 
   select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=501;
