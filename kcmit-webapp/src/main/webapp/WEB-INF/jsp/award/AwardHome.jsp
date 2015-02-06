@@ -28,7 +28,6 @@
   	
 <c:set var="displayKeywordPanel" value="true" />
 <c:set var="readOnly" value="${not KualiForm.editingMode['fullEntry']}" scope="request" />
-<c:set var="isValid" value="${KualiForm.validPrompt}" scope="request" />
 <div align="right"><kul:help documentTypeName="AwardDocument" pageName="Award" /></div>
 <kul:documentOverview editingMode="${KualiForm.editingMode}" />
 <kra-a:awardFundingProposals />
@@ -43,13 +42,7 @@
 <kul:panelFooter />
 
 <SCRIPT type="text/javascript">
-var kualiForm = document.forms['KualiForm']; 
-var nameof = "${isValid}"; 
-/* alert(nameof); */
-if(nameof!="" && nameof!="false")
-confirm("The Award Status should be Hold based on the validation/s listed below");
-alert("test" +document.KualiForm.isValid.value);
-var kualiElements = kualiForm.elements;
+ var kualiElements = kualiForm.elements;
 </SCRIPT>
 <script language="javascript" src="scripts/kuali_application.js"></script>
 <script>

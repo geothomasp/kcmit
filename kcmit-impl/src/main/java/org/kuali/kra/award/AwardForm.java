@@ -161,6 +161,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     private String deletedRas;
     private String rootAwardNumber;
     private boolean validPrompt;
+    private boolean statusHold;
 
     private AwardHierarchyBean awardHierarchyBean;
     private AwardPrintNotice awardPrintNotice;
@@ -1498,5 +1499,13 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
 
 	public void setValidPrompt(boolean validPrompt) {
 		this.validPrompt = validPrompt;
+	}
+
+	public boolean isStatusHold() {
+		return statusHold;
+	}
+
+	public void setStatusHold(boolean statusHold) {
+		this.statusHold = statusHold;
 	}
 }

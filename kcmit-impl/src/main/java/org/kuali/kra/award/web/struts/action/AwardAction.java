@@ -18,12 +18,16 @@ package org.kuali.kra.award.web.struts.action;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.kuali.rice.krad.util.KRADConstants.CONFIRMATION_QUESTION;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.HeaderTokenizer;
+import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +41,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.budget.framework.core.BudgetParentActionBase;
+import org.kuali.coeus.common.framework.attachment.AttachmentFile;
 import org.kuali.coeus.common.framework.auth.SystemAuthorizationService;
 import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
@@ -74,9 +79,11 @@ import org.kuali.kra.award.home.AwardAmountInfo;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.home.AwardService;
 import org.kuali.kra.award.home.AwardSponsorTerm;
+import org.kuali.kra.award.home.AwardStatus;
 import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubaward;
 import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
 import org.kuali.kra.award.infrastructure.AwardRoleConstants;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.award.paymentreports.ReportClass;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTermRecipient;
@@ -88,6 +95,9 @@ import org.kuali.kra.award.service.AwardSponsorTermService;
 import org.kuali.kra.award.version.service.AwardVersionService;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
+import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
 import org.kuali.kra.subaward.service.SubAwardService;
 import org.kuali.kra.timeandmoney.AwardHierarchyNode;
 import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
@@ -108,6 +118,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.kns.util.WebUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.web.struts.form.KualiForm;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
@@ -174,6 +185,7 @@ public class AwardAction extends BudgetParentActionBase {
 
     private static final int NINE = 9;
     private static final String DOCUMENT_ROUTE_QUESTION="DocRoute";
+    private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
     
     private static final String ADD_SYNC_CHANGE_QUESTION = "document.question.awardhierarchy.sync";
     private static final String DEL_SYNC_CHANGE_QUESTION = "document.question.awardhierarchy.sync";    
@@ -236,9 +248,8 @@ public class AwardAction extends BudgetParentActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm)form;
-        
-        ActionForward actionForward = super.execute(mapping, form, request, response);
-        
+        boolean awardNewStatus=awardForm.isStatusHold();     
+        ActionForward actionForward = super.execute(mapping, form, request, response);        
         if (awardForm.isAuditActivated()){
             awardForm.setUnitRulesMessages(getUnitRulesMessages(awardForm.getAwardDocument()));
         }
@@ -248,6 +259,9 @@ public class AwardAction extends BudgetParentActionBase {
         if (awardForm.isAlertMessage()) {
              KNSGlobalVariables.getMessageList().add("error.award.awardhdata.save.pending");
              awardForm.setViewOnly(true);
+        }
+       if(awardNewStatus){
+        	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
         }
         return actionForward;
     }
@@ -354,6 +368,10 @@ public class AwardAction extends BudgetParentActionBase {
         	/*request.getSession().setAttribute("isWarning", false);*/
         	awardForm.setValidPrompt(false);
         }
+        boolean awardNewStatus=awardForm.isStatusHold();
+        if(awardNewStatus){
+        	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
+        }
         if (status == ValidationState.WARNING) {
             if(question == null){
                 return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Validation Warning Exists. Are you sure want to submit to workflow routing.", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
@@ -371,6 +389,11 @@ public class AwardAction extends BudgetParentActionBase {
             GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
             return forward;
          }
+  
+        /*if(awardForm.isStatusHold()){
+        	Award award=awardForm.getAwardDocument().getAward();
+        	
+        }*/
     }
     
     @Override
@@ -1912,6 +1935,37 @@ public class AwardAction extends BudgetParentActionBase {
 
         return mapping.findForward(Constants.MAPPING_AWARD_CONTACTS_PAGE);
     }
+    
+    public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {  
+        InstitutionalProposalForm InstitutionalProposalForm = (InstitutionalProposalForm) form;
+        final int selection = this.getSelectedLine(request);
+        final InstitutionalProposalAttachments attachment = InstitutionalProposalForm.getInstitutionalProposalAttachmentBean().retrieveExistingAttachment(selection);
+        
+        if (attachment == null) {
+            return mapping.findForward(Constants.MAPPING_BASIC);
+        }
+        
+        final InstitutionalProposalAttachmentsData file = attachment.getFile();
+        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
+        return RESPONSE_ALREADY_HANDLED;
+    }
+    public ActionForward viewAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {  
+        AwardForm awardForm = (AwardForm) form;
+        final int selection = this.getSelectedLine(request);
+        final AwardAttachment attachment = awardForm.getAwardAttachmentFormBean().retrieveExistingAttachment(selection);
+        
+        if (attachment == null) {
+            return mapping.findForward(Constants.MAPPING_BASIC);
+        }
+        
+        final AttachmentFile file = attachment.getFile();
+        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
+        
+        return RESPONSE_ALREADY_HANDLED;
+    }
+   
     
     /**
     *
