@@ -1,5 +1,6 @@
 set heading off;
 set echo off;
+set serveroutput on;
 --***********************************************************************
 --   *********      C H A N G E     L O G  ****************** 
 --***********************************************************************
@@ -33,15 +34,16 @@ rem  refresh warehouse_person from the current Production
 rem  warehouse data
 rem
 rem
-select 'Purging all rows from  warehouse_person ' from dual
+select 'Purging all rows from  warehouse_person.' from dual
 /
-delete from warehouse_person
+truncate table warehouse_person
 /
 commit
 /
 rem
-select 'Populating warehouse_person from warehouse ' from dual
+select 'Populating warehouse_person from warehouse.' from dual
 /
+
 insert into warehouse_person
 ( PERSON_ID,                      
  SSN,                            
@@ -154,35 +156,10 @@ FROM WAREUSER.COEUS_PERSON@WAREHOUSE_COEUS.MIT.EDU cp,
      WAREUSER.KRB_PERSON@WAREHOUSE_COEUS.MIT.EDU kp
  WHERE CP.MIT_ID = KP.MIT_ID (+)            
 /
+
 commit
 /
-rem
-rem ** Dont have to worry about duplicates any more
-rem ** new view in warehouse have taken care of duplicates
-rem
---select 'Deleting Duplicates from warehouse_person ' from dual
---/
-rem
-rem Delete Duplicates from warehouse_person
-rem
-rem
---delete
---from warehouse_person
---where person_id in (
---select person_id
---from warehouse_person
---group by person_id 
---having count(person_id) > 1) and
---rowid not in (select  rowid from warehouse_person p
---where p.person_id = warehouse_person.person_id and 
---rownum = 1)
---/
-rem
-rem
-rem  insert into person tables in kc if there is any new rows
-rem
-rem
-select 'Inserting new rows into kcperson tables'  from dual
+select 'Inserting new rows into kcperson tables.'  from dual
 /
 DECLARE
 li_seq_entity_id NUMBER(8);
@@ -302,7 +279,12 @@ ls_prncpl_nm	VARCHAR2(100);
 li_country_cd varchar2(2);
 li_us_count number;
 ls_new_user_flag char(1);
+ls_user_name VARCHAR2(100);
 ls_phone_number varchar2(20);
+v_code  NUMBER;
+v_errm  VARCHAR2(64);
+ls_prncpl_id   VARCHAR2(40);
+
 CURSOR c_pers IS
 select PERSON_ID,                      
  SSN,                            
@@ -379,7 +361,7 @@ r_pers c_pers%ROWTYPE;
 
 CURSOR c1_data(para_personID VARCHAR2) is
 SELECT  TRAINING_NUMBER,TRAINING_CODE,DATE_REQUESTED,DATE_SUBMITTED,DATE_ACKNOWLEDGED,
-FOLLOWUP_DATE,SCORE,COMMENTS,UPDATE_TIMESTAMP,UPDATE_USER  from  OSP$PERSON_TRAINING@coeus.kuali where PERSON_ID=para_personID;   
+FOLLOWUP_DATE,SCORE,COMMENTS,UPDATE_TIMESTAMP,UPDATE_USER  from  PERSON_TRAINING where PERSON_ID=para_personID;   
 r_perT c1_data%ROWTYPE;
 
 BEGIN
@@ -390,6 +372,37 @@ BEGIN
     LOOP
     FETCH c_pers INTO r_pers;
     EXIT WHEN c_pers%NOTFOUND;
+	
+	
+	IF r_pers.USER_NAME IS NULL THEN	  
+	  ls_user_name := r_pers.person_id;
+	  
+	ELSE
+      ls_user_name:= lower(r_pers.USER_NAME);
+	  
+	      begin
+	          select prncpl_id into ls_prncpl_id from krim_prncpl_t where prncpl_nm = ls_user_name;
+		  exception
+		  when others then
+		    ls_prncpl_id := null;
+			
+		  end;
+		  
+		     if ls_prncpl_id is not null then
+			 
+			    update KRIM_PRNCPL_T
+				set ACTV_IND = 'N',
+				    PRNCPL_NM = ls_prncpl_id
+				where PRNCPL_ID = ls_prncpl_id;
+				
+				update KRIM_PERSON_DOCUMENT_T
+				set ACTV_IND = 'N',
+				    PRNCPL_NM = ls_prncpl_id
+				where PRNCPL_ID = ls_prncpl_id;
+				
+			  end if;
+		
+    END IF;
     
     select KRIM_ENTITY_ID_S.NEXTVAL into li_seq_entity_id from dual;          
     select KRIM_ENTITY_EMP_ID_S.NEXTVAL into li_seq_entity_emp_id from dual; 
@@ -397,16 +410,18 @@ BEGIN
     
     INSERT INTO KRIM_ENTITY_T(ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) 
     VALUES( li_seq_entity_id,SYS_GUID(),li_ver_nbr,ls_actv_ind,r_pers.UPDATE_TIMESTAMP);
+	
+	     
 
 
     begin
             select KREW_DOC_HDR_S.NEXTVAL into li_seq_fdoc_nbr from dual;
 
             INSERT INTO KRIM_PERSON_DOCUMENT_T(FDOC_NBR,ENTITY_ID,OBJ_ID,VER_NBR,PRNCPL_ID,PRNCPL_NM,PRNCPL_PSWD,UNIV_ID,ACTV_IND)
-            VALUES(li_seq_fdoc_nbr,li_seq_entity_id,SYS_GUID(),li_ver_nbr,r_pers.person_id,lower(r_pers.USER_NAME),NULL,NULL,decode(r_pers.status,'A','Y','N'));
+            VALUES(li_seq_fdoc_nbr,li_seq_entity_id,SYS_GUID(),li_ver_nbr,r_pers.person_id,ls_user_name,NULL,NULL,decode(r_pers.status,'A','Y','N'));
 
             INSERT INTO KRIM_PRNCPL_T(PRNCPL_ID,OBJ_ID,VER_NBR,PRNCPL_NM,ENTITY_ID,PRNCPL_PSWD,ACTV_IND,LAST_UPDT_DT)
-            VALUES(r_pers.person_id,SYS_GUID(),li_ver_nbr,lower(r_pers.USER_NAME),li_seq_entity_id,NULL,decode(r_pers.status,'A','Y','N'),r_pers.UPDATE_TIMESTAMP);
+            VALUES(r_pers.person_id,SYS_GUID(),li_ver_nbr,ls_user_name,li_seq_entity_id,NULL,decode(r_pers.status,'A','Y','N'),r_pers.UPDATE_TIMESTAMP);
 
     exception
     when others then    
@@ -495,6 +510,9 @@ BEGIN
 		
     EXCEPTION
     WHEN OTHERS THEN 
+ 	v_code := SQLCODE;
+	v_errm := SUBSTR(SQLERRM, 1, 64);
+	DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
     dbms_output.put_line('Error occoured for KRIM_ENTITY_AFLTN_T  for the person '||r_pers.person_id);
     END;
 
@@ -504,6 +522,10 @@ BEGIN
       VALUES(ls_ent_typ_cd,li_seq_entity_id,ls_actv_ind,SYS_GUID(),li_ver_nbr,r_pers.UPDATE_TIMESTAMP);   
     EXCEPTION
     WHEN OTHERS THEN 
+ 	v_code := SQLCODE;
+	v_errm := SUBSTR(SQLERRM, 1, 64);
+	DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
+    
     dbms_output.put_line('Error occoured for KRIM_ENTITY_ENT_TYP_T  for the person '||r_pers.person_id); 
     END; 
 
@@ -522,6 +544,9 @@ BEGIN
            VALUES(li_seq_entity_addr_id,li_country_cd,'Y',ls_actv_ind,SYS_GUID(),li_ver_nbr,li_seq_entity_id,ls_ent_typ_cd,'WRK',SUBSTRB(r_pers.ADDRESS_LINE_1,1,45),SUBSTRB(r_pers.ADDRESS_LINE_2,1,45),SUBSTRB(r_pers.ADDRESS_LINE_3,1,45),r_pers.CITY,r_pers.STATE,r_pers.POSTAL_CODE,r_pers.UPDATE_TIMESTAMP,NULL,NULL,r_pers.UPDATE_TIMESTAMP,NULL,NULL,NULL);
         EXCEPTION
         WHEN OTHERS THEN 
+     	v_code := SQLCODE;
+		v_errm := SUBSTR(SQLERRM, 1, 64);
+		DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
           dbms_output.put_line('Error occoured for KRIM_ENTITY_ADDR_T  for the person '||r_pers.person_id); 
         END;      
 
@@ -580,6 +605,9 @@ BEGIN
 
           EXCEPTION
           WHEN OTHERS THEN 
+	     	v_code := SQLCODE;
+			v_errm := SUBSTR(SQLERRM, 1, 64);
+			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
           dbms_output.put_line('Error occoured for KRIM_ENTITY_PHONE_T OR KRIM_PHONE_TYP_T  for the person '||r_pers.person_id); 
           END;  
 
@@ -592,6 +620,9 @@ BEGIN
                   VALUES(li_seq_entity_email_id,SYS_GUID(),li_ver_nbr,li_seq_entity_id,ls_ent_typ_cd,'WRK',r_pers.EMAIL_ADDRESS,'Y',ls_actv_ind,r_pers.UPDATE_TIMESTAMP);
               EXCEPTION
               WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                   dbms_output.put_line('Error occoured for KRIM_ENTITY_EMAIL_T  for the person '||r_pers.person_id); 
               END;   
 
@@ -603,6 +634,9 @@ BEGIN
 
            EXCEPTION
            WHEN OTHERS THEN 
+         	v_code := SQLCODE;
+			v_errm := SUBSTR(SQLERRM, 1, 64);
+			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
            dbms_output.put_line('Error occoured for KRIM_ENTITY_NM_T  for the person '||r_pers.person_id); 
            END;     
 
@@ -614,6 +648,9 @@ BEGIN
 -- END IF;
             EXCEPTION
             WHEN OTHERS THEN 
+         	v_code := SQLCODE;
+			v_errm := SUBSTR(SQLERRM, 1, 64);
+			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
             dbms_output.put_line('Error occoured for KRIM_ENTITY_EMP_INFO_T  for the person '||r_pers.person_id); 
             END;
 
@@ -633,6 +670,9 @@ when others then
                  VALUES(ls_person_id,li_ver_nbr,r_pers.AGE_BY_FISCAL_YEAR,r_pers.RACE,r_pers.EDUCATION_LEVEL,r_pers.DEGREE,r_pers.MAJOR,r_pers.IS_HANDICAPPED,r_pers.HANDICAP_TYPE,r_pers.IS_VETERAN,r_pers.VETERAN_TYPE,r_pers.VISA_CODE,r_pers.VISA_TYPE,r_pers.VISA_RENEWAL_DATE,r_pers.HAS_VISA,r_pers.OFFICE_LOCATION,r_pers.SECONDRY_OFFICE_LOCATION,r_pers.SCHOOL,r_pers.YEAR_GRADUATED,r_pers.DIRECTORY_DEPARTMENT,r_pers.PRIMARY_TITLE,r_pers.DIRECTORY_TITLE,r_pers.IS_RESEARCH_STAFF,r_pers.VACATION_ACCURAL,r_pers.IS_ON_SABBATICAL,r_pers.ID_PROVIDED,r_pers.ID_VERIFIED,r_pers.UPDATE_TIMESTAMP,r_pers.UPDATE_USER,r_pers.COUNTY,SYS_GUID(),1,r_pers.SALARY_ANNIVERSARY_DATE,r_pers.ERA_COMMONS_USER_NAME);
              EXCEPTION
              WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                  dbms_output.put_line('Error occoured for PERSON_EXT_T  for the person '||r_pers.person_id);        
              END; 
 
@@ -641,6 +681,9 @@ when others then
                VALUES(li_seq_entity_id,NULL,NULL,NULL,NULL,NULL,r_pers.STATE,r_pers.CITY,NULL,SYS_GUID(),li_ver_nbr,r_pers.DATE_OF_BIRTH,NVL2(r_pers.GENDER,SUBSTRB(r_pers.GENDER,1,1),' '),r_pers.UPDATE_TIMESTAMP,NULL,NULL);
              EXCEPTION
              WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                   dbms_output.put_line('Error occoured for KRIM_ENTITY_BIO_T  for the person '||r_pers.person_id);        
              END; 
 
@@ -650,6 +693,9 @@ when others then
 
              EXCEPTION
              WHEN OTHERS THEN 
+             	v_code := SQLCODE;
+    			v_errm := SUBSTR(SQLERRM, 1, 64);
+    			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                  dbms_output.put_line('Error occoured for KRIM_ENTITY_PRIV_PREF_T for the person '||r_pers.person_id);        
              END;
 
@@ -707,1297 +753,1841 @@ END;
 
 commit
 /
-rem
-rem
-rem  update any data that may have changed for rows of
-rem  data already included in kcperson tables
-rem
-rem  for performance, a temporary table is created and
-rem  dropped at each comparison
-rem
-rem	 Sync last_name
-rem
-select 'Sync last_name.' from dual
+select 'Completed Inserting new rows into kcperson tables.'  from dual
 /
-drop table temp
+select 'Updation of changed last_name begins.'  from dual
 /
-create table temp
-as
-(select person_id,
-        last_name,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+ t1.last_name, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.last_nm as last_name,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id)
+ from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.last_name <> nvl(t2.last_name,'-888');
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+
+    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_NM_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+	   
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,LAST_NM,OBJ_ID,VER_NBR)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.last_name,sys_guid(),1);
+	   
+       
+    ELSE
+    
+       UPDATE KRIM_ENTITY_NM_T
+       SET LAST_NM=r_update.last_name
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
---update KRIM_ENTITY_NM_T x
---set last_nm = (select last_name
- --                from   temp
- --                where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_NM_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-UPDATE SET
-	last_nm   = b.last_name       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_NM_ID,OBJ_ID,VER_NBR,ENTITY_ID,NM_TYP_CD,LAST_NM,DFLT_IND,ACTV_IND,LAST_UPDT_DT)  
-VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,SYS_GUID(),1,b.entity_id,'PRFR',b.last_name,'Y','Y',sysdate)
+select 'Updation of changed last_name ends.'  from dual
 /
-commit
+select 'Updation of changed first_name begins.'  from dual
 /
-rem
-rem	 Sync first_name
-rem
-select 'Sync first_name.' from dual
-/
-drop table temp
-/
-create table temp
-as
-(select person_id,
-        first_name,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+ t1.first_name, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.first_nm as first_name,
         e.entity_id
- from    KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id)
+ from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.first_name <> nvl(t2.first_name,'-888');
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+
+    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_NM_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+	   
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,FIRST_NM,OBJ_ID,VER_NBR)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.first_name,sys_guid(),1);
+	   
+       
+    ELSE
+    
+       UPDATE KRIM_ENTITY_NM_T
+       SET FIRST_NM=r_update.first_name
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
---update KRIM_ENTITY_NM_T x
---set first_nm = (select first_name
---                 from   temp
---                  where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_NM_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	first_nm   = b.first_name       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_NM_ID,OBJ_ID,VER_NBR,ENTITY_ID,NM_TYP_CD,first_nm,DFLT_IND,ACTV_IND,LAST_UPDT_DT)  
-VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,SYS_GUID(),1,b.entity_id,'PRFR',b.first_name,'Y','Y',sysdate)
+select 'Updation of changed first_name ends.'  from dual
 /
-commit
+select 'Updation of changed middle_name begins.'  from dual
 /
-rem
-rem	 Sync middle_name
-rem
-select 'Sync middle_name.' from dual
-/
-drop table temp 
-/
-create table temp 
-as
-(select person_id,
-        middle_name,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+ t1.middle_name, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.middle_nm as middle_name,
         e.entity_id
- from    KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id)
+ from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_NM_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.middle_name <> nvl(t2.middle_name,'-888');
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+
+    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_NM_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+	  
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,MIDDLE_NM,OBJ_ID,VER_NBR)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.middle_name,sys_guid(),1);
+	   
+       
+    ELSE
+    
+       UPDATE KRIM_ENTITY_NM_T
+       SET MIDDLE_NM=r_update.middle_name
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
---update KRIM_ENTITY_NM_T x
---set middle_nm = (select middle_name
---                 from   temp
- --                where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_NM_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	middle_nm   = b.middle_name       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_NM_ID,OBJ_ID,VER_NBR,ENTITY_ID,NM_TYP_CD,middle_nm,DFLT_IND,ACTV_IND,LAST_UPDT_DT)  
-VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,SYS_GUID(),1,b.entity_id,'PRFR',b.middle_name,'Y','Y',sysdate)
+select 'Updation of changed middle_name ends.'  from dual
 /
-commit
+select 'Updation of changed user_name begins.'  from dual
 /
-rem
-rem	 Sync user_name
-rem
-select 'Sync user_name.' from dual
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.user_name, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select prncpl_id as person_id,
+        prncpl_nm as user_name
+        from   KRIM_PRNCPL_T ) t2 on t1.person_id = t2.person_id
+ where t1.user_name <> nvl(t2.user_name,'-888');
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+
+
+IF r_update.user_name IS NOT NULL THEN
+
+SELECT COUNT(PRNCPL_ID) into li_count FROM KRIM_PRNCPL_T WHERE PRNCPL_NM=r_update.user_name;
+  IF li_count=0 THEN
+    IF r_update.ENTITY_ID IS NOT NULL THEN
+       
+	     UPDATE KRIM_PRNCPL_T
+       SET PRNCPL_NM=r_update.user_name
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+  END IF;  
+END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-drop   table temp
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.user_name, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select prncpl_id as person_id,
+        prncpl_nm as user_name
+        from   KRIM_PERSON_DOCUMENT_T ) t2 on t1.person_id = t2.person_id
+ where t1.user_name <> nvl(t2.user_name,'-888');
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+IF r_update.user_name IS NOT NULL THEN
+
+ SELECT COUNT(PRNCPL_ID) into li_count FROM KRIM_PRNCPL_T WHERE PRNCPL_NM=r_update.user_name;
+ IF li_count=0 THEN
+  IF r_update.ENTITY_ID IS NOT NULL THEN
+       
+	     UPDATE KRIM_PERSON_DOCUMENT_T
+       SET PRNCPL_NM=r_update.user_name
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+   END IF;
+ END IF;
+END IF;
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-rem
-create table temp
-as
-(select person_id,
-        user_name
- from   warehouse_person
- minus
- select PRNCPL_ID as person_id,
-        PRNCPL_NM as user_name
- from   KRIM_PRNCPL_T)
+select 'Updation of changed user_name ends.'  from dual
 /
-delete from temp where user_name is null
-/
-update KRIM_PRNCPL_T x
-set PRNCPL_NM = (select user_name
-                 from   temp
-                 where  person_id = x.prncpl_id)
-where prncpl_id in (select person_id
-                            from   temp)
-/
-commit
-/
-drop   table temp
-/
-create table temp
-as
-(select  person_id,
-        user_name
- from   warehouse_person
- minus
- select PRNCPL_ID as person_id,
-        PRNCPL_NM as user_name
- from   KRIM_PERSON_DOCUMENT_T)
-/
-delete from temp where user_name is null
-/
-rem
-update KRIM_PERSON_DOCUMENT_T x
-set PRNCPL_NM = (select user_name
-                 from   temp
-                 where  person_id = x.prncpl_id)
-where prncpl_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem Set User_name to null
-rem
 select 'Set user_name as NULL for all incative people.' from dual
 /
-rem  Call the function fn_inactive_users_pfeed to generate emails with list of 
-rem persons who are now inactive
-rem This function will also update user_name column in osp$person table
-var li_ret number;
-exec :li_ret := fn_inactive_users_pfeed('kc-mit-dev@mit.edu', 'KC Person Feed Prncpl ID cleanup');
-commit;
-rem
-rem
-rem
-rem
-rem	 Sync email_address
-rem
-select 'Sync email_address.' from dual
+DECLARE
+li_ret number;
+BEGIN
+li_ret:=fn_inactive_users_pfeed('kc-mit-dev@mit.edu', 'KC Person Feed Prncpl ID cleanup');
+END;
 /
-drop   table temp
+select 'Updation of changed email_address begins.'  from dual
 /
-rem
-create table temp
-as
-(select person_id,
-        email_address,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
-        EMAIL_ADDR as email_address,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+ t1.email_address, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        e.email_addr as email_address,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_EMAIL_T e ON p.entity_id=e.entity_id)
+ from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_EMAIL_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.email_address <> nvl(t2.email_address,'-888');
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+IF r_update.email_address IS NOT NULL  THEN
+
+       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_EMAIL_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+       IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+	  
+             INSERT INTO KRIM_ENTITY_EMAIL_T(ENTITY_EMAIL_ID,ENTITY_ID,EMAIL_ADDR,OBJ_ID,VER_NBR)
+             VALUES(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.email_address,sys_guid(),1);
+	   
+       
+       ELSE
+    
+              UPDATE KRIM_ENTITY_EMAIL_T
+              SET EMAIL_ADDR=r_update.email_address
+              WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+       END IF;
+
+END IF;
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-rem
-MERGE INTO KRIM_ENTITY_EMAIL_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	EMAIL_ADDR   = b.email_address       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_EMAIL_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,EMAIL_TYP_CD,EMAIL_ADDR,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
-VALUES(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL,SYS_GUID(),1,b.entity_id,'PERSON','WRK',b.email_address,'Y','Y',sysdate)
+select 'Updation of changed email_address ends.'  from dual
 /
-commit
+select 'Updation of changed date_of_birth begins.'  from dual
 /
-rem
-rem	 Sync date_of_birth
-rem
-select 'Sync date_of_birth.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        date_of_birth,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as  person_id,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+ t1.date_of_birth, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.BIRTH_DT as date_of_birth,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id)
+ from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t2.date_of_birth IS NOT NULL;
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+
+
+      SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_BIO_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+      IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+	       IF r_update.date_of_birth IS NOT NULL  THEN
+               INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,BIRTH_DT,OBJ_ID,VER_NBR)
+               VALUES(r_update.ENTITY_ID,r_update.date_of_birth,sys_guid(),1);
+	       END IF;
+       
+      ELSE
+    
+           UPDATE KRIM_ENTITY_BIO_T
+           SET BIRTH_DT=r_update.date_of_birth
+           WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+      END IF;
+
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
---update KRIM_ENTITY_BIO_T x
---set BIRTH_DT = (select date_of_birth
---                 from   temp
---                 where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_BIO_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	BIRTH_DT   = b.date_of_birth       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_ID,OBJ_ID,VER_NBR,BIRTH_DT,GNDR_CD,LAST_UPDT_DT) 
-VALUES(b.entity_id,SYS_GUID(),1,b.date_of_birth ,' ',sysdate)
+select 'Updation of changed date_of_birth ends.'  from dual
 /
-commit
+select 'Updation of changed age_by_fiscal_year begins.'  from dual
 /
-rem
-rem	 Sync age
-rem
-rem	 Sync age_by_fiscal_year
-rem
-select 'Sync age_by_fiscal_year.' from dual
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.age_by_fiscal_year 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          age_by_fiscal_year
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.age_by_fiscal_year <>t2.age_by_fiscal_year;
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET age_by_fiscal_year=r_update.age_by_fiscal_year
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-drop   table temp
+select 'Updation of changed age_by_fiscal_year ends.'  from dual
 /
-create table temp
-as
-(select person_id,
-        age_by_fiscal_year
- from   warehouse_person
- minus
- select person_id,
-        age_by_fiscal_year
- from   PERSON_EXT_T)
+select 'Updation of changed gender_cd begins.'  from dual
 /
-update PERSON_EXT_T x
-set age_by_fiscal_year = (select age_by_fiscal_year
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem	 Sync gender
-select 'Sync gender.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        gender,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
-        GNDR_CD as gender,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+ t1.gender, 
+ (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        e.GNDR_CD as gender,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id)
-/
---update KRIM_ENTITY_BIO_T x
---set GNDR_CD = (select gender
---                from   temp
---                 where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_BIO_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	GNDR_CD   = NVL2(b.gender,SUBSTR(b.gender,1,1),' ')       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_ID,OBJ_ID,VER_NBR,GNDR_CD,LAST_UPDT_DT) 
-VALUES(b.entity_id,SYS_GUID(),1,NVL2(b.gender,SUBSTR(b.gender,1,1),' '),sysdate)
-/
-commit
-/
-rem
-rem	 Sync race
-rem
-select 'Sync race.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        race
- from   warehouse_person
- minus
- select person_id,
-        race
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set race = (select race
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync education_level
-rem
-select 'Sync education_level.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        education_level
- from   warehouse_person
- minus
- select person_id,
-        education_level
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set education_level = (select education_level
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync degree
-rem
-rem Degree sync is commented on 10/1/03 this shouyld be uncommented
---select 'Sync degree.' from dual
---/
---drop   table temp
---/
---rem
---create table temp
---as
---(select to_number(person_id) person_id,
---        degree
--- from   warehouse_person
--- minus
--- select to_number(person_id) person_id,
---        degree
--- from   osp$person)
---/
---rem
---update osp$person x
---set degree = (select degree
---                 from   temp
---                 where  to_number(person_id) = to_number(x.person_id))
---where to_number(person_id) in (select to_number(person_id)
---                            from   temp)
---/
-rem
-rem	 Sync major
-rem
-select 'Sync major.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        major
- from   warehouse_person
- minus
- select person_id,
-        major
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set major = (select major
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync is_handicapped
-rem
-select 'Sync is_handicapped.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        is_handicapped
- from   warehouse_person
- minus
- select person_id,
-        is_handicapped
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set is_handicapped = (select is_handicapped
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync handicap_type
-rem
-select 'Sync handicap_type.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        handicap_type
- from   warehouse_person
- minus
- select person_id,
-        handicap_type
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set handicap_type = (select handicap_type
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync is_veteran
-rem
-select 'Sync is_veteran.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        is_veteran
- from   warehouse_person
- minus
- select person_id,
-        is_veteran
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set is_veteran = (select is_veteran
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync veteran_type
-rem
-select 'Sync veteran_type.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        veteran_type
- from   warehouse_person
- minus
- select person_id,
-        veteran_type
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set veteran_type = (select veteran_type
-                 from   temp
-                 where  person_id= x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync visa_code
-rem
-select 'Sync visa_code.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        visa_code
- from   warehouse_person
- minus
- select person_id,
-        visa_code
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set visa_code = (select visa_code
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync visa_type
-rem
-select 'Sync visa_type.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        visa_type
- from   warehouse_person
- minus
- select person_id,
-        visa_type
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set visa_type = (select visa_type
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync visa_renewal_date
-rem
-select 'Sync visa_renewal_date.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        visa_renewal_date
- from   warehouse_person
- minus
- select person_id,
-        visa_renewal_date
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set visa_renewal_date = (select visa_renewal_date
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync has_visa
-rem
-select 'Sync has_visa.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        has_visa
- from   warehouse_person
- minus
- select person_id,
-        has_visa
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set has_visa = (select has_visa
-                 from   temp
-                 where  person_id= x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync office_location
-rem
-select 'Sync office_location.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        office_location
- from   warehouse_person
- minus
- select person_id,
-        office_location
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set office_location = (select office_location
-                 from   temp
-                 where  person_id= x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync office_phone
-rem
-select 'Sync office_phone.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        office_phone,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
+ from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_BIO_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.gender<>nvl(t2.gender,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+IF r_update.gender IS NOT NULL THEN
+
+       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_BIO_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+       IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+	  
+              INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,GNDR_CD,OBJ_ID,VER_NBR)
+              VALUES(r_update.ENTITY_ID,r_update.gender,sys_guid(),1);
+	   
+       
+       ELSE
+    
+              UPDATE KRIM_ENTITY_BIO_T
+              SET GNDR_CD=r_update.gender
+              WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+       END IF;
+	   
+END IF;	   
+
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed gender_cd ends.'  from dual
+/
+select 'Updation of changed race begins.'  from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.race 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          race
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.race <>nvl(t2.race,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET race=r_update.race
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed race ends.'  from dual
+/
+select 'Updation of changed education level begins.'  from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.education_level 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          education_level
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.education_level <>nvl(t2.education_level,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET education_level=r_update.education_level
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed education level ends.'  from dual
+/
+select 'Updation of changed major begins.'  from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.major 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          major
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.major <>nvl(t2.major,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET major=r_update.major
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed major ends.'  from dual
+/
+select 'Updation of changed is_handicapped begins.'  from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.is_handicapped 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          is_handicapped
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.is_handicapped <>nvl(t2.is_handicapped,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET is_handicapped=r_update.is_handicapped
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_handicapped ends.'  from dual
+/
+select 'Updation of changed handicap_type begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.handicap_type 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          handicap_type
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.handicap_type <>nvl(t2.handicap_type,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET handicap_type=r_update.handicap_type
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed handicap_type ends.' from dual
+/
+select 'Updation of changed is_veteran begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.is_veteran 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          is_veteran
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.is_veteran <>nvl(t2.is_veteran,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET is_veteran=r_update.is_veteran
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_veteran ends.' from dual
+/
+select 'Updation of changed veteran_type begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.veteran_type 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          veteran_type
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.veteran_type <>nvl(t2.veteran_type,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET veteran_type=r_update.veteran_type
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed veteran_type ends.' from dual
+/
+select 'Updation of changed visa_code begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.visa_code 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          visa_code
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.visa_code <>nvl(t2.visa_code,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET visa_code=r_update.visa_code
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed visa_code ends.' from dual
+/
+select 'Updation of changed visa_type begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.visa_type 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          visa_type
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.visa_type <>nvl(t2.visa_type,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET visa_type=r_update.visa_type
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed visa_type ends.' from dual
+/
+select 'Updation of changed visa_renewal_date begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.visa_renewal_date 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          visa_renewal_date
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.visa_renewal_date <>t2.visa_renewal_date;
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET visa_renewal_date=r_update.visa_renewal_date
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed visa_renewal_date ends.' from dual
+/
+select 'Updation of changed  has_visa begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.has_visa 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          has_visa
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.has_visa <>nvl(t2.has_visa,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET has_visa=r_update.has_visa
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed  has_visa ends.' from dual
+/
+select 'Updation of changed office_location begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.office_location 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          office_location
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.office_location <>nvl(t2.office_location,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET office_location=r_update.office_location
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed office_location ends.' from dual
+/
+select 'Updation of changed office_phone begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.office_phone,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.PHONE_NBR as office_phone,
         e.entity_id
- from    KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_PHONE_T e ON p.entity_id=e.entity_id)
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_PHONE_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.office_phone <>nvl(t2.office_phone,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+IF r_update.office_phone IS NOT NULL THEN
+
+       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+          IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+               INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
+               VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'WRK',r_update.office_phone);
+	   
+       
+          ELSE
+    
+                UPDATE KRIM_ENTITY_PHONE_T
+                SET PHONE_NBR=r_update.office_phone
+                WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+          END IF;
+
+END IF;       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
---update KRIM_ENTITY_PHONE_T x
---set PHONE_NBR = (select office_phone
---                 from   temp
---                 where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_PHONE_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	PHONE_NBR   = b.office_phone       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
-VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,b.entity_id,'PERSON' ,'WRK',b.office_phone)
+select 'Updation of changed office_phone ends.' from dual
 /
-commit
+select 'Updation of changed secondry_office_location begins.' from dual
 /
-rem
-rem	 Sync secondry_office_location
-rem
-select 'Sync secondry_office_location.' from dual
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.secondry_office_location 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          secondry_office_location
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.secondry_office_location <>nvl(t2.secondry_office_location,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET secondry_office_location=r_update.secondry_office_location
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-drop   table temp
+select 'Updation of changed secondry_office_location ends.' from dual
 /
-create table temp
-as
-(select person_id,
-        secondry_office_location
- from   warehouse_person
- minus
- select person_id,
-        secondry_office_location
- from   PERSON_EXT_T)
+select 'Updation of changed secondry_office_phone begins.' from dual
 /
-update PERSON_EXT_T x
-set secondry_office_location = (select secondry_office_location
-                 from   temp
-                 where person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync secondry_office_phone
-rem
-select 'Sync secondry_office_phone.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        secondry_office_phone,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.secondry_office_phone,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.PHONE_NBR as secondry_office_phone,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_PHONE_T e ON p.entity_id=e.entity_id)
-/
---update KRIM_ENTITY_PHONE_T x
---set PHONE_NBR = (select secondry_office_phone
---                 from   temp
---                 where  entity_id =x.entity_id)
---where entity_id in (select entity_id from temp)
-MERGE INTO KRIM_ENTITY_PHONE_T a
-USING temp b
-ON (a.entity_id = b.entity_id)
-WHEN MATCHED THEN
-  UPDATE SET
-	PHONE_NBR   = b.secondry_office_phone       
-WHEN NOT MATCHED THEN  
-INSERT (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
-VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,b.entity_id,'PERSON' ,'WRK',b.secondry_office_phone)
-/
-commit
-/
-rem
-rem	 Sync school
-rem
-select 'Sync school.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        school
- from   warehouse_person
- minus
- select person_id,
-        school
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set school = (select school
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync year_graduated
-rem
-select 'Sync year_graduated.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        year_graduated
- from   warehouse_person
- minus
- select person_id,
-        year_graduated
- from   PERSON_EXT_T)
-/
-update PERSON_EXT_T x
-set year_graduated = (select year_graduated
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync directory_department
-rem
-rem DIRECTORY_DEPARTMENT sync is commented out on 10/1/03
---select 'Sync directory_department.' from dual
---/
---drop   table temp
---/
---rem
---create table temp
---as
---(select to_number(person_id) person_id,
---        directory_department
--- from   warehouse_person
--- minus
--- select to_number(person_id) person_id,
---        directory_department
--- from   osp$person)
---/
---rem
---update osp$person x
---set directory_department = (select directory_department
---                 from   temp
---                 where  to_number(person_id) = to_number(x.person_id))
---where to_number(person_id) in (select to_number(person_id)
---                            from   temp)
---/
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_PHONE_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.secondry_office_phone <>nvl(t2.secondry_office_phone,0);
+r_update c_update%ROWTYPE;
 
-rem
-rem	 Sync primary_title
-rem
-select 'Sync primary_title.' from dual
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+IF r_update.secondry_office_phone IS NOT NULL THEN
+
+    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+      IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+       
+           INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
+           VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'WRK',r_update.secondry_office_phone);
+	   
+       
+    ELSE
+    
+           UPDATE KRIM_ENTITY_PHONE_T
+           SET PHONE_NBR=r_update.secondry_office_phone
+           WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+
+END IF;       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-drop   table temp
+select 'Updation of changed secondry_office_phone ends.' from dual
 /
-create table temp
-as
-(select person_id,
-        primary_title
- from   warehouse_person
- minus
- select person_id,
-        primary_title
- from   PERSON_EXT_T)
+select 'Updation of changed school begins.' from dual
 /
-update PERSON_EXT_T x
-set primary_title = (select primary_title
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.school 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          school
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.school <>nvl(t2.school,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET school=r_update.school
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-commit
+select 'Updation of changed school ends.' from dual
 /
-rem
-rem	 Sync directory_title
-rem
-select 'Sync directory_title.' from dual
+select 'Updation of changed year_graduated begins.' from dual
 /
-drop   table temp
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.year_graduated 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          year_graduated
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.year_graduated <>nvl(t2.year_graduated,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET year_graduated=r_update.year_graduated
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-create table temp
-as
-(select person_id,
-        directory_title
- from   warehouse_person
- minus
- select person_id,
-        directory_title
- from   PERSON_EXT_T)
+select 'Updation of changed year_graduated ends.' from dual
 /
-update PERSON_EXT_T x
-set directory_title = (select directory_title
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
+select 'Updation of changed primary_title begins.' from dual
 /
-commit
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.primary_title 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          primary_title
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.primary_title <>nvl(t2.primary_title,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET primary_title=r_update.primary_title
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-rem
-rem	 Sync home_unit
-rem
-select 'Sync home_unit.' from dual
+select 'Updation of changed primary_title ends.' from dual
 /
-drop   table temp
+select 'Updation of changed directory_title begins.' from dual
 /
-create table temp
-as
-(select person_id,
-        home_unit,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
-        e.PRMRY_DEPT_CD as home_unit,
-        e. entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_EMP_INFO_T e ON p.entity_id=e.entity_id)
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.directory_title 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          directory_title
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.directory_title <>nvl(t2.directory_title,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET directory_title=r_update.directory_title
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
-update KRIM_ENTITY_EMP_INFO_T x
-set PRMRY_DEPT_CD = (select home_unit
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
+select 'Updation of changed directory_title ends.' from dual
 /
-commit
+select 'Updation of changed is_faculty begins.' from dual
 /
-rem
-rem	 Sync is_faculty
-rem
-select 'Sync home_unit.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        is_faculty,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
-        DECODE(AFLTN_TYP_CD,'FCLTY','Y','STAFF','N') as is_faculty,
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.is_faculty,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(e.AFLTN_TYP_CD,'FCLTY','Y','STAFF','N') as is_faculty,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-update KRIM_ENTITY_AFLTN_T x
-set AFLTN_TYP_CD = (select DECODE(is_faculty,'Y','FCLTY','N','STAFF') is_faculty
-                 from   temp
-                  where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
-/
-commit
-/
-rem
-rem	 Sync is_graduate_student_staff
-rem
-select 'Sync is_graduate_student_staff.' from dual
-/
-drop   table temp
-/
-create table temp
-as
-(select person_id,
-        is_graduate_student_staff,
-		(select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id,
-        DECODE(AFLTN_TYP_CD,'GRD_STDNT_STAFF','Y') is_graduate_student_staff,
-		e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-update KRIM_ENTITY_AFLTN_T x
-set ACTV_IND = 'N'
-where entity_id in (select entity_id
-                            from   temp)
- and AFLTN_TYP_CD='GRD_STDNT_STAFF'                           
-/
-commit
-/
-rem
-rem	 Sync is_research_staff
-rem
-select 'Sync is_research_staff.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        is_research_staff
- from   warehouse_person
- minus
- select person_id,
-        is_research_staff
- from   PERSON_EXT_T)
-/
-rem
-update PERSON_EXT_T x
-set is_research_staff = (select is_research_staff
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        is_research_staff,
-		(select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id,
-        DECODE(AFLTN_TYP_CD,'RSRCH_STAFF','Y') is_research_staff,
-		e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-rem
-update KRIM_ENTITY_AFLTN_T x
-set ACTV_IND = 'N'
-where entity_id in (select entity_id
-                            from   temp)
-and AFLTN_TYP_CD='RSRCH_STAFF'                           
-/
-commit
-/
-rem
-rem	 Sync is_service_staff
-rem
-select 'Sync is_service_staff.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        is_service_staff,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id,
-       DECODE(AFLTN_TYP_CD,'SRVC_STAFF','Y') is_service_staff,
-		e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-rem
-update KRIM_ENTITY_AFLTN_T x
-set ACTV_IND = 'N'
-where entity_id in (select entity_id
-                            from   temp)
-and AFLTN_TYP_CD='SRVC_STAFF'
-/
-commit
-/
-rem
-rem	 Sync is_support_staff
-rem
-select 'Sync is_support_staff.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        is_support_staff,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id,
-       DECODE(AFLTN_TYP_CD,'SUPPRT_STAFF','Y') is_support_staff,
-		e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-rem
-update KRIM_ENTITY_AFLTN_T x
-set ACTV_IND = 'N'
-where entity_id in (select entity_id
-                            from   temp)
-and AFLTN_TYP_CD='SUPPRT_STAFF'
-/
-commit
-/
-rem
-rem	 Sync IS_OTHER_ACCADEMIC_GROUP
-rem
-select 'Sync IS_OTHER_ACCADEMIC_GROUP.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        IS_OTHER_ACCADEMIC_GROUP,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id,
-       DECODE(AFLTN_TYP_CD,'OTH_ACADMC_GRP','Y') IS_OTHER_ACCADEMIC_GROUP,
-		e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-rem
-update KRIM_ENTITY_AFLTN_T x
-set ACTV_IND = 'N'
-where entity_id in (select entity_id
-                            from   temp)
-and AFLTN_TYP_CD='OTH_ACADMC_GRP'
-/
-commit
-/
-rem
-rem	 Sync is_medical_staff
-rem
-select 'Sync is_medical_staff.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        is_medical_staff,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id,
-       DECODE(AFLTN_TYP_CD,'MED_STAFF','Y') IS_OTHER_ACCADEMIC_GROUP,
-		e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id)
-/
-rem
-update KRIM_ENTITY_AFLTN_T x
-set ACTV_IND = 'N'
-where entity_id in (select entity_id
-                            from   temp)
-and AFLTN_TYP_CD='MED_STAFF'
-/
-commit
-/
-rem
-rem	 Sync vacation_accural
-rem
-select 'Sync vacation_accural.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        vacation_accural
- from   warehouse_person
- minus
- select person_id,
-        vacation_accural
- from   PERSON_EXT_T)
-/
-rem
-update PERSON_EXT_T x
-set vacation_accural = (select vacation_accural
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync is_on_sabbatical
-rem
-select 'Sync is_on_sabbatical.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        is_on_sabbatical
- from   warehouse_person
- minus
- select person_id,
-        is_on_sabbatical
- from   PERSON_EXT_T)
-/
-rem
-update PERSON_EXT_T x
-set is_on_sabbatical = (select is_on_sabbatical
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync id_provided
-rem
-select 'Sync id_provided.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        id_provided
- from   warehouse_person
- minus
- select person_id,
-        id_provided
- from   PERSON_EXT_T)
-/
-rem
-update PERSON_EXT_T x
-set id_provided = (select id_provided
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem	 Sync id_verified
-rem
-select 'Sync id_verified.' from dual
-/
-drop   table temp
-/
-rem
-create table temp
-as
-(select person_id,
-        id_verified
- from   warehouse_person
- minus
- select person_id,
-        id_verified
- from   PERSON_EXT_T)
-/
-rem
-update PERSON_EXT_T x
-set id_verified = (select id_verified
-                 from   temp
-                 where  person_id = x.person_id)
-where person_id in (select person_id
-                            from   temp)
-/
-commit
-/
-rem
-rem     Sync address_line2
-rem
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.is_faculty <>nvl(t2.is_faculty,0);
+r_update c_update%ROWTYPE;
 
-select 'Sync address_line2.' from dual
-/
-drop   table temp
-/
-rem
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
 
-create table temp
-as
-(select person_id,
-        OFFICE_LOCATION as ADDRESS_LINE_2,
-        (select p.entity_id from krim_prncpl_t p where p.prncpl_id=person_id) as entity_id
- from   warehouse_person
- minus
- select p.prncpl_id as person_id,
+
+SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+	   VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,DECODE(r_update.is_faculty,'Y','FCLTY','N','STAFF'),'UN','Y','Y');
+
+	   
+       
+    ELSE
+    
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET AFLTN_TYP_CD=DECODE(r_update.is_faculty,'Y','FCLTY','N','STAFF'),
+	   ACTV_IND=r_update.is_faculty
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_faculty ends.' from dual
+/
+select 'Updation of changed is_graduate_student_staff begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.is_graduate_student_staff,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(AFLTN_TYP_CD,'GRD_STDNT_STAFF','Y','N') is_graduate_student_staff,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.is_graduate_student_staff <>nvl(t2.is_graduate_student_staff,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID AND AFLTN_TYP_CD='GRD_STDNT_STAFF';
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+      IF r_update.is_graduate_student_staff='Y' THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'GRD_STDNT_STAFF','UN','Y','Y');
+       
+      END IF;
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET ACTV_IND=r_update.is_graduate_student_staff
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+       AND AFLTN_TYP_CD='GRD_STDNT_STAFF';
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_graduate_student_staff ends.' from dual
+/
+select 'Updation of changed is_research_staff begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.is_research_staff,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(AFLTN_TYP_CD,'RSRCH_STAFF','Y','N') is_research_staff,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.is_research_staff <>nvl(t2.is_research_staff,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID AND AFLTN_TYP_CD='RSRCH_STAFF';
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+      IF r_update.is_research_staff='Y' THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'RSRCH_STAFF','UN','Y','Y');
+       
+      END IF;
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET ACTV_IND=r_update.is_research_staff
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+       AND AFLTN_TYP_CD='RSRCH_STAFF';
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_research_staff ends.' from dual
+/
+select 'Updation of changed is_service_staff begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.is_service_staff,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(AFLTN_TYP_CD,'SRVC_STAFF','Y','N') is_service_staff,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.is_service_staff <>nvl(t2.is_service_staff,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID AND AFLTN_TYP_CD='SRVC_STAFF';
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+      IF r_update.is_service_staff='Y' THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+	   VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'SRVC_STAFF','UN','Y','Y');
+       
+      END IF;
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET ACTV_IND=r_update.is_service_staff
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+       AND AFLTN_TYP_CD='SRVC_STAFF';
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_service_staff ends.' from dual
+/
+select 'Updation of changed is_support_staff begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.is_support_staff,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(AFLTN_TYP_CD,'SUPPRT_STAFF','Y','N') is_support_staff,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.is_support_staff <>nvl(t2.is_support_staff,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID AND AFLTN_TYP_CD='SUPPRT_STAFF';
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+      IF r_update.is_support_staff='Y' THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'SUPPRT_STAFF','UN','Y','Y');
+       
+      END IF;
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET ACTV_IND=r_update.is_support_staff
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+       AND AFLTN_TYP_CD='SUPPRT_STAFF';
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_support_staff ends.' from dual
+/
+select 'Updation of changed IS_OTHER_ACCADEMIC_GROUP begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.IS_OTHER_ACCADEMIC_GROUP,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(AFLTN_TYP_CD,'OTH_ACADMC_GRP','Y','N') IS_OTHER_ACCADEMIC_GROUP,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.IS_OTHER_ACCADEMIC_GROUP <>nvl(t2.IS_OTHER_ACCADEMIC_GROUP,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID AND AFLTN_TYP_CD='OTH_ACADMC_GRP';
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+      IF r_update.IS_OTHER_ACCADEMIC_GROUP='Y' THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'OTH_ACADMC_GRP','UN','Y','Y');
+       
+      END IF;
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET ACTV_IND=r_update.IS_OTHER_ACCADEMIC_GROUP
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+       AND AFLTN_TYP_CD='OTH_ACADMC_GRP';
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed IS_OTHER_ACCADEMIC_GROUP ends.' from dual
+/
+select 'Updation of changed is_medical_staff begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.is_medical_staff,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        DECODE(AFLTN_TYP_CD,'MED_STAFF','Y','N') is_medical_staff,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_AFLTN_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.is_medical_staff <>nvl(t2.is_medical_staff,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID AND AFLTN_TYP_CD='MED_STAFF';
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+      IF r_update.is_medical_staff='Y' THEN
+    
+       
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'MED_STAFF','UN','Y','Y');
+       
+      END IF;
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_AFLTN_T
+       SET ACTV_IND=r_update.is_medical_staff
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+       AND AFLTN_TYP_CD='MED_STAFF';
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_medical_staff ends.' from dual
+/
+select 'Updation of changed home_unit begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.home_unit,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
+        e.PRMRY_DEPT_CD as home_unit,
+        e.entity_id
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_EMP_INFO_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.home_unit <>nvl(t2.home_unit,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+IF r_update.home_unit IS NOT NULL THEN
+    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_EMP_INFO_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+       SELECT ENTITY_AFLTN_ID INTO li_seq_entity_afltn_id FROM KRIM_ENTITY_EMP_INFO_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+       INSERT INTO KRIM_ENTITY_EMP_INFO_T(ENTITY_EMP_ID,OBJ_ID,VER_NBR,ENTITY_ID,PRMRY_DEPT_CD,ENTITY_AFLTN_ID) 
+       VALUES(KRIM_ENTITY_EMP_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,r_update.home_unit,li_seq_entity_afltn_id);
+
+	   
+       
+    ELSE
+    
+       UPDATE KRIM_ENTITY_EMP_INFO_T
+       SET PRMRY_DEPT_CD=r_update.home_unit
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+END IF;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed home_unit ends.' from dual
+/
+select 'Updation of changed vacation_accural begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.vacation_accural 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          vacation_accural
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.vacation_accural <>nvl(t2.vacation_accural,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET school=r_update.vacation_accural
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed vacation_accural ends.' from dual
+/
+select 'Updation of changed is_on_sabbatical begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.is_on_sabbatical 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          is_on_sabbatical
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.is_on_sabbatical <>nvl(t2.is_on_sabbatical,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET school=r_update.is_on_sabbatical
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed is_on_sabbatical ends.' from dual
+/
+select 'Updation of changed id_provided begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.id_provided 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          id_provided
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.id_provided <>nvl(t2.id_provided,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET school=r_update.id_provided
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed id_provided ends.' from dual
+/
+select 'Updation of changed id_verified begins.' from dual
+/
+DECLARE
+li_count number;
+cursor c_update is
+select t1.person_id,
+t1.id_verified 
+from warehouse_person t1 left outer join 
+ ( select person_id,
+          id_verified
+        from   PERSON_EXT_T ) t2 on t1.person_id = t2.person_id
+ where t1.id_verified <>nvl(t2.id_verified,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+       
+	     UPDATE PERSON_EXT_T
+       SET school=r_update.id_verified
+       WHERE person_id=r_update.person_id;
+       
+
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+select 'Updation of changed id_verified ends.' from dual
+/
+select 'Updation of changed address_line2 begins.' from dual
+/
+DECLARE
+li_count number;
+li_seq_entity_afltn_id NUMBER(12,0);
+cursor c_update is
+select t1.person_id,
+t1.OFFICE_LOCATION as ADDRESS_LINE_2,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+from warehouse_person t1 left outer join 
+ ( select p.prncpl_id as person_id,
         e.ADDR_LINE_2 as ADDRESS_LINE_2,
         e.entity_id
- from   KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_ADDR_T e ON p.entity_id=e.entity_id)
-/
-rem
-update KRIM_ENTITY_ADDR_T x
-set ADDR_LINE_2 = (select ADDRESS_LINE_2
-                 from   temp
-                 where  entity_id =x.entity_id)
-where entity_id in (select entity_id from temp)
+        from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_ADDR_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
+ where t1.OFFICE_LOCATION <>nvl(t2.ADDRESS_LINE_2,0);
+r_update c_update%ROWTYPE;
+
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_ADDR_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+
+    IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+    
+           INSERT INTO KRIM_ENTITY_ADDR_T(ENTITY_ADDR_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,ADDR_TYP_CD,ADDR_LINE_2) 
+           VALUES(KRIM_ENTITY_ADDR_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'PERSON','WRK',SUBSTRB(r_update.ADDRESS_LINE_2,1,45));
+       
+
+
+    ELSE
+   
+       UPDATE KRIM_ENTITY_ADDR_T
+       SET ADDR_LINE_2=SUBSTRB(r_update.ADDRESS_LINE_2,1,45)
+       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       
+    END IF;
+
+
+END LOOP;
+CLOSE c_update;
+END;
 /
 commit
 /
-
-rem
+select 'Updation of changed address_line2 ends.' from dual
+/
+select 'Updation of changed primary_dept_cd begins.' from dual
+/
 update KRIM_ENTITY_EMP_INFO_T
 set PRMRY_DEPT_CD = '999999'
 where PRMRY_DEPT_CD is null
 /
 commit
 /
-rem
-rem
-rem
-select 'refreshing denormalised tables' from dual
+select 'Updation of changed primary_dept_cd ends.' from dual
 /
-rem
-rem
-select 'Sync AWARD_PERSONS.' from dual
+select 'Updation of changed AWARD_PERSONS begins.' from dual
 /
 create table temp_full_name as
 select p.prncpl_id, (case 
@@ -2017,7 +2607,6 @@ where p.entity_id= e.entity_id
 /
 drop   table temp
 /
-rem
 create table temp 
 as
 select distinct t.prncpl_id as person_id,t.full_name
@@ -2026,10 +2615,6 @@ where t.prncpl_id = a.person_id
 and a.ROLODEX_ID is NULL and
 trim(a.FULL_NAME) <> trim(t.full_name)
 /
-rem
-select * from temp
-/
-rem
 update AWARD_PERSONS x
 set FULL_NAME =(select full_name
                  from   temp
@@ -2039,14 +2624,12 @@ where person_id in (select person_id
 /
 commit
 /
-rem
-rem
-rem
-select 'Sync AWARD_APPROVED_FOREIGN_TRAVEL.' from dual
+select 'Updation of changed AWARD_PERSONS ends.' from dual
+/
+select 'Updation of changed AWARD_APPROVED_FOREIGN_TRAVEL begins.' from dual
 /
 drop   table temp
 /
-rem
 create table temp 
 as
 select distinct t.prncpl_id as person_id,t.full_name
@@ -2054,11 +2637,6 @@ from temp_full_name t,AWARD_APPROVED_FOREIGN_TRAVEL a
 where  t.prncpl_id = a.person_id and 
 trim(a.TRAVELER_NAME) <> trim(t.full_name)
 /
-rem
-rem
-select * from temp
-/
-rem
 update AWARD_APPROVED_FOREIGN_TRAVEL x
 set TRAVELER_NAME = (select full_name
                  from   temp
@@ -2068,14 +2646,12 @@ where person_id in (select person_id
 /
 commit
 /
-rem
-rem
-rem
-select 'Sync PROPOSAL_PERSONS.' from dual
+select 'Updation of changed AWARD_APPROVED_FOREIGN_TRAVEL ends.' from dual
+/
+select 'Updation of changed PROPOSAL_PERSONS begins.' from dual
 /
 drop   table temp
 /
-rem
 create table temp 
 as
 select distinct t.prncpl_id as person_id,t.full_name
@@ -2084,9 +2660,6 @@ where  t.prncpl_id = pp.person_id and
 pp.rolodex_id is null and
 trim(pp.full_name) <> trim(t.full_name)
 /
-rem
-rem
-rem
 update PROPOSAL_PERSONS x
 set full_name = (select full_name
                  from   temp
@@ -2096,14 +2669,12 @@ where person_id in (select person_id
 /
 commit
 /
-rem
-rem
-rem
-select 'Sync EPS_PROP_PERSON.' from dual
+select 'Updation of changed PROPOSAL_PERSONS ends.' from dual
+/
+select 'Updation of changed EPS_PROP_PERSON begins.' from dual
 /
 drop   table temp
 /
-rem
 create table temp 
 as
 select distinct t.prncpl_id as person_id,t.full_name
@@ -2112,7 +2683,6 @@ where  t.prncpl_id=ep.person_id and
 ep.rolodex_id is null and
 trim(ep.full_name) <> trim(t.full_name)
 /
-rem
 update EPS_PROP_PERSON x
 set full_name = (select full_name
                  from   temp
@@ -2122,14 +2692,12 @@ where person_id in (select person_id
 /
 commit
 /
-rem
-rem
-rem
-select 'Sync PROPOSAL_LOG.' from dual
+select 'Updation of changed EPS_PROP_PERSON ends.' from dual
+/
+select 'Updation of changed PROPOSAL_LOG begins.' from dual
 /
 drop   table temp
 /
-rem
 create table temp 
 as
 select distinct t.prncpl_id as person_id,t.full_name
@@ -2138,7 +2706,6 @@ where  t.prncpl_id = pl.pi_id
 and pl.ROLODEX_ID is null and
 trim(pl.pi_name) <> trim(t.full_name)
 /
-rem
 update PROPOSAL_LOG x
 set pi_name = (select full_name
                  from   temp
@@ -2150,22 +2717,12 @@ commit
 /
 drop table temp_full_name
 /
-rem
-rem
-rem ** After warehouse switched to SAP, job codes were prefixed with 'HR-'
-rem ** when we get the feed we will remove the HR- prefix from job codes
-
-select 'Starting Appointment Feed from warehouse at '  from dual
+select 'Updation of changed PROPOSAL_LOG ends.' from dual
 /
-rem
-rem
 select 'Purge all rows from  warehouse_appointment ' from dual
 /
 delete from warehouse_appointment
 /
-rem
-rem
-rem
 select 'Populate warehouse_appointment from warehouse ' from dual
 /
 insert into warehouse_appointment
@@ -2192,12 +2749,6 @@ FROM WAREUSER.COEUS_APPOINTMENT@warehouse_coeus.MIT.EDU
 /
 commit
 /
-rem
-rem
-rem
-rem **Should not delete appointments for people with ID > 999999983
-rem **These are all TBAs
-rem
 select 'Purge all rows from  PERSON_APPOINTMENT ' from dual
 /
 delete from PERSON_APPOINTMENT
@@ -2205,9 +2756,6 @@ where person_id < '999999983'
 /
 commit
 /
-rem
-rem
-rem
 select 'Populate PERSON_APPOINTMENT from warehouse_appointment ' from dual
 /
 insert into PERSON_APPOINTMENT
@@ -2242,58 +2790,16 @@ SEQ_PERSON_APPOINTMENT.NEXTVAL,
 SYS_GUID()
 FROM warehouse_appointment                   
 /
-rem
 commit
 /
-rem ************************************************
-rem following update is a temp fix for issue COEUSQA-3815
-rem ************************************************
 update PERSON_APPOINTMENT
 set APPOINTMENT_TYPE_CODE = '7'
 where APPOINTMENT_TYPE_CODE is null
 /
-rem
 commit
 /
-rem
-rem 
-rem 
-rem ******************************************************************
-rem                DEGREE FEED FROM WAREHOUSE                         
-rem ******************************************************************
-rem 
-rem 
-rem *** Purge all rows from WAREHOUSE_DEGREE table
 delete from WAREHOUSE_DEGREE
 /
-rem
-rem
-
-/****************
-insert into warehouse_degree (PERSON_ID ,     
-DEGREE_CODE ,   
-GRADUATION_DATE,
-DEGREE ,        
-FIELD_OF_STUDY ,
-SPECIALIZATION ,
-SCHOOL ,        
-SCHOOL_ID )
-select p.mit_id, d.hr_degree_code, 
-to_date(decode(pd.degree_completion_month, '00', '01', pd.degree_completion_month) || '/01/' || 
-       decode(pd.degree_completion_year, '0000', '1900', pd.degree_completion_year), 'mm/dd/yyyy'), 
- dt.hr_degree_type_code || '.' || d.hr_degree_code || '.' ||  d.hr_degree,
-cip.hr_cip_four_digit_code_desc, cip.hr_cip_program_desc, s.hr_edu_institution_name, 
-s.hr_edu_institution_id 
-from coeus_person@warehouse_coeus.mit.edu p, hr_degree@warehouse_coeus.mit.edu d, 
-hr_education_detail@warehouse_coeus.mit.edu pd, hr_degree_type@warehouse_coeus.mit.edu dt, 
-hr_cip@warehouse_coeus.mit.edu cip, hr_edu_institution@warehouse_coeus.mit.edu s
-where p.mit_id = pd.mit_id and
-pd.hr_degree_key = d.hr_degree_key and
-pd.hr_degree_type_key = dt.hr_degree_type_key and
-pd.cip_key = cip.hr_cip_key and
-pd.hr_edu_institution_key = s.hr_edu_institution_key
-***********************************************************/
-
 insert into warehouse_degree (PERSON_ID ,     
 DEGREE_CODE ,   
 GRADUATION_DATE,
@@ -2306,17 +2812,9 @@ select * from coeus_degree@warehouse_coeus.mit.edu
 /
 commit
 /
-rem 
-rem 
-rem **** Purge data from osp$person_degree table
-rem *** do not delete any rows that were updated by Coeus users.  
-rem 
-rem 
 delete from PERSON_DEGREE
 where update_user = 'OSPA'
 /
-rem  *** Populate osp$person_degree
-rem 
 insert into PERSON_DEGREE 
 select SEQ_PERSON_DEGREE.NEXTVAL, 
 d.PERSON_ID,
@@ -2335,10 +2833,8 @@ sys_guid()
 from PERSON_EXT_T p, warehouse_degree d, warehouse_degree_type_mapping m
 where p.person_id = d.person_id and d.degree_code = m.warehouse_degree_code (+)
 /
-rem 
 commit
 /
-
-rem 
-rem 
+select 'Person_feed Completed.' from dual
+/
 exit;
