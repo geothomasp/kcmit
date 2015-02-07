@@ -157,6 +157,7 @@ public class BudgetCalculationServiceImpl implements BudgetCalculationService {
         budgetPersonnelDetails.setCostElementBO(budgetLineItem.getCostElementBO());
         budgetPersonnelDetails.setApplyInRateFlag(budgetLineItem.getApplyInRateFlag());
         budgetPersonnelDetails.setOnOffCampusFlag(budgetLineItem.getOnOffCampusFlag());
+        budgetPersonnelDetails.setBudgetLineItem(budgetLineItem);
     }
 
     @Override
