@@ -167,7 +167,7 @@ begin
             exit when cur_everify_award_data%NOTFOUND;
             if ls_PIID is not null then
                 if ls_PIEmail is null then
-                    ls_PIEmail := 'coeus-mit@mit.edu';
+                    ls_PIEmail := 'kc-mit-dev@mit.edu';
                 end if; 
                                 
                 
@@ -190,7 +190,7 @@ begin
             
             if ls_AIID is not null then
                 if ls_AIEmail is null then
-                    ls_AIEmail := 'coeus-mit@mit.edu';
+                    ls_AIEmail := 'kc-mit-dev@mit.edu';
                 end if;
                 
                    
@@ -212,7 +212,7 @@ begin
                     
             if ls_OIID is not null then
                 if ls_OIEmail is null then
-                    ls_OIEmail := 'coeus-mit@mit.edu';
+                    ls_OIEmail := 'kc-mit-dev@mit.edu';
                 end if;
                 
                    
@@ -287,7 +287,7 @@ ls_AccountNUmber    AWARD.ACCOUNT_NUMBER%type;
 
 ls_recipients           varchar2(2000) := null;
 ls_email_address        KRIM_ENTITY_EMAIL_T.EMAIL_ADDR%type;
-ls_cc_email              varchar2(200) := 'coeus-mit@mit.edu';
+ls_cc_email              varchar2(200) := 'kc-mit-dev@mit.edu';
 ls_subject               varchar2(600) := 'Award Accounts Subject to E-Verify Certification' ;
 mesg                     CLOB;
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
@@ -301,7 +301,7 @@ cursor cur_get_recipients is
     from EVERIFY_NOTIF_DETAILS
     where NOTIFICATION_ID = gl_NofificationId
         and substr(AWARD_NUMBER,1,6) = substr(as_award_num,1,6) 
-        and RECIPIENT_EMAIL != 'coeus-mit@mit.edu';
+        and RECIPIENT_EMAIL != 'kc-mit-dev@mit.edu';
         
 cursor cur_get_award_account is 
     select distinct AWARD_NUMBER ,FN_GET_ACCOUNT_FOR_AWARD(AWARD_NUMBER)
