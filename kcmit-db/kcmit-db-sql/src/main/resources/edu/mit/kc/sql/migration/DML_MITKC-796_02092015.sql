@@ -1,3 +1,12 @@
+declare
+li_count number;
+begin
+select count(*) into li_count from user_tables where table_name = 'OSP$PROPOSAL_ATTACHMENTS';
+if li_count = 0 then
+execute immediate('create table osp$proposal_attachments as select * from osp$proposal_attachments@coeus.kuali');
+end if;
+end;
+/
 ALTER TABLE proposal_attachments DROP CONSTRAINT UK_PROPOSAL_ATTACHMENTS
 /
 delete from proposal_attachments where (proposal_number,attachment_number) in ( select proposal_number , attachment_number from osp$proposal_attachments)
