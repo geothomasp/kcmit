@@ -80,10 +80,10 @@
                         <bean class="org.kuali.coeus.common.budget.impl.core.BudgetPeriodValuesFinder" p:addBlankOption="false"/>
                     </property>
                 </bean>
-                <bean parent="Kc-InlineEdit-InputField" p:propertyName="unit" p:skipInTabOrder="false" p:order="20" p:label="Unit Number" >
+                <bean parent="Kc-InlineEdit-InputField" p:propertyName="sourceUnit" p:skipInTabOrder="false" p:order="20" p:label="Unit Number" >
                   <property name="quickfinder">
             		<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.coeus.common.framework.unit.Unit"
-            		p:fieldConversions="unitNumber:unit" p:returnByScript="true" p:hideCriteriaOnSearch="true" />
+            		p:fieldConversions="unitNumber:sourceUnit" p:returnByScript="true" p:hideCriteriaOnSearch="true" />
                   </property>
                 </bean>
                 <bean parent="Kc-InlineEdit-InputField" p:propertyName="sharePercentage" p:skipInTabOrder="false" p:order="30" p:label="Percentage" >
