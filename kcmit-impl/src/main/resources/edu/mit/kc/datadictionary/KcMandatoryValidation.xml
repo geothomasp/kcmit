@@ -33,7 +33,8 @@
         <ref bean="MIT-AwardCostShare-destination" />
         <ref bean="AwardCostShare-commitmentAmount" /> 
         <ref bean="AwardCostShare-verificationDate" />
-        <ref bean="AwardCostShare-costShareMet" />   
+        <ref bean="AwardCostShare-costShareMet" />
+        <ref bean="AwardCostShare-unitNumber" />   
       </list>
        </property>
             </bean>           
