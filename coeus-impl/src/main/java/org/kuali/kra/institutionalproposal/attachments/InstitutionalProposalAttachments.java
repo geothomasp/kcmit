@@ -29,6 +29,8 @@ import org.kuali.kra.institutionalproposal.InstitutionalProposalAssociate;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposalAttachmentType;
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.web.struts.form.BlankFormFile;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
@@ -56,12 +58,6 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
     private String fileName;
     
     private String contentType;
-    
-    private String contactName;
-    
-    private String phoneNumber;
-    
-    private String emailAddress;
     
     private String comments;
     
@@ -212,44 +208,6 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
 	/**
 	 * @return the contactName
 	 */
-	public String getContactName() {
-		return contactName;
-	}
-
-	/**
-	 * @param contactName the contactName to set
-	 */
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
-	}
-
-	/**
-	 * @return the phoneNumber
-	 */
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	/**
-	 * @param phoneNumber the phoneNumber to set
-	 */
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	/**
-	 * @return the emailAddress
-	 */
-	public String getEmailAddress() {
-		return emailAddress;
-	}
-
-	/**
-	 * @param emailAddress the emailAddress to set
-	 */
-	public void setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
-	}
 
 	/**
 	 * @return the comments
@@ -320,6 +278,16 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
 	public void setFile(InstitutionalProposalAttachmentsData file) {
 		this.file = file;
 	}
+	
+	/**
+     * 
+     * This method returns the full name of the update user.
+     * @return
+     */
+    public String getUpdateUserName() {
+        Person updateUser = KcServiceLocator.getService(PersonService.class).getPersonByPrincipalName(this.getUpdateUser());
+        return updateUser != null ? updateUser.getName() : this.getUpdateUser();
+    }
 
 	@Override
 	public int compareTo(InstitutionalProposalAttachments o) {

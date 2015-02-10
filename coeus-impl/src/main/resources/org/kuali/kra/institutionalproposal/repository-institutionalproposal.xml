@@ -842,9 +842,6 @@
 		<field-descriptor name="attachmentTitle" column="ATTACHMENT_TITLE" jdbc-type="VARCHAR"/>
 		<field-descriptor name="attachmentTypeCode" column="ATTACHMENT_TYPE_CODE" jdbc-type="INTEGER"/>
 		<field-descriptor name="fileName" column="FILE_NAME" jdbc-type="VARCHAR"/>
-		<field-descriptor name="contactName" column="CONTACT_NAME" jdbc-type="VARCHAR"/>
-		<field-descriptor name="phoneNumber" column="PHONE_NUMBER" jdbc-type="VARCHAR"/>
-		<field-descriptor name="emailAddress" column="EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
 		<field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
 		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
         <field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
