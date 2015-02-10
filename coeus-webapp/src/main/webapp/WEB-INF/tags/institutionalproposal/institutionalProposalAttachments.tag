@@ -36,27 +36,7 @@ td.infoline select {
          	    </th>
          	    <th>
          			<div align="center">
-         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.updateTimestamp}" noColon="false" />
-         			</div>
-         		</th>
-         		<th>
-         			<div align="center">
-         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.updateUser}" noColon="false" />
-         			</div>
-         		</th>
-         		<th>
-         			<div align="center">
-         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.contactName}" noColon="false"/>
-         			</div>
-         		</th>
-         		<th>
-         			<div align="center">
-         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.phoneNumber}" noColon="false"/>
-         			</div>
-         		</th>
-         		<th>
-         			<div align="center">
-         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.emailAddress}" noColon="false"/>
+         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.attachmentTypeCode}" noColon="false"/>
          			</div>
          		</th>
          		<th>
@@ -64,11 +44,7 @@ td.infoline select {
          				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.attachmentTitle}" noColon="false"/>
          			</div>
          		</th>
-         		<th>
-         			<div align="center">
-         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.attachmentTypeCode}" noColon="false"/>
-         			</div>
-         		</th>
+         		
          		<th>
          			<div align="center">
          				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.comments}" noColon="false"/>
@@ -80,9 +56,17 @@ td.infoline select {
 						<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes['fileName']}" noColon="false"/>
 					</div>
 				</th>
-         		
-         
-         		
+				<th>
+         			<div align="center">
+         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.updateTimestamp}" noColon="false" />
+         			</div>
+         		</th>
+         		<th>
+         			<div align="center">
+         				<kul:htmlAttributeLabel attributeEntry="${instproposalAttachmentAttributes.updateUser}" noColon="false" />
+         			</div>
+         		</th>
+         	
          		<th>
 					<div align="center">
 						Actions
@@ -100,27 +84,7 @@ td.infoline select {
 					</td>
 					<td align="left" valign="middle" class="infoline">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.updateTimestamp" attributeEntry="${instproposalAttachmentAttributes.updateTimestamp}" readOnly="true"/>
-		            	</div>
-					</td>
-	                <td align="left" valign="middle" class="infoline">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.updateUser" attributeEntry="${instproposalAttachmentAttributes.updateUser}" readOnly="true"/>
-		            	</div>
-					</td> 
-					<td align="left" valign="middle" class="infoline">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.contactName" attributeEntry="${instproposalAttachmentAttributes.contactName}" /> 
-		            	</div>
-					</td>
-					<td align="left" valign="middle" class="infoline">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.phoneNumber" attributeEntry="${instproposalAttachmentAttributes.phoneNumber}" /> 
-		            	</div>
-					</td>
-					<td align="left" valign="middle" class="infoline">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.emailAddress" attributeEntry="${instproposalAttachmentAttributes.emailAddress}" /> 
+	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.attachmentTypeCode" attributeEntry="${instproposalAttachmentAttributes.attachmentTypeCode}" /> 
 		            	</div>
 					</td>
 					<td align="left" valign="middle" class="infoline">
@@ -128,13 +92,7 @@ td.infoline select {
 	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.attachmentTitle" attributeEntry="${instproposalAttachmentAttributes.attachmentTitle}" /> 
 		            	</div>
 					</td>
-	                <td align="left" valign="middle" class="infoline">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.attachmentTypeCode" attributeEntry="${instproposalAttachmentAttributes.attachmentTypeCode}" /> 
-		            	</div>
-					</td>
-	           
-	         		<td class="infoline">
+	                <td class="infoline">
 	              		<div align="center">
 	            			<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.comments" attributeEntry="${instproposalAttachmentAttributes.comments}" /> 
 	              		</div>
@@ -144,7 +102,18 @@ td.infoline select {
 	              		    <c:set var="property" value="institutionalProposalAttachmentBean.newAttachment.newFile" />
 	              		    <html:file property="${property}"/>
 	           			</div>
-					</td>  
+					</td> 
+					<td align="left" valign="middle" class="infoline">
+	                	<div align="left">
+	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.updateTimestamp" attributeEntry="${instproposalAttachmentAttributes.updateTimestamp}" readOnly="true"/>
+		            	</div>
+					</td>
+	                <td align="left" valign="middle" class="infoline">
+	                	<div align="left">
+	                		<kul:htmlControlAttribute property="institutionalProposalAttachmentBean.newAttachment.updateUser" attributeEntry="${instproposalAttachmentAttributes.updateUser}" readOnly="true"/>
+		            	</div>
+					</td> 
+					 
 					<td align="center" valign="middle" class="infoline">
 						<div align="center">
 							<html:image property="methodToCall.addAttachment.anchor${tabKey}"
@@ -160,40 +129,15 @@ td.infoline select {
 	         			<div align="center">
 	                		${itrStatus.index + 1}
 		            	</div>
-	         		</td>
-	         		<td align="left" valign="middle">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].updateTimestamp" attributeEntry="${instproposalAttachmentAttributes.updateTimestamp}" readOnly="true"/>
-		            	</div>
-					</td>
-	         		<td align="left" valign="middle">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].updateUser" attributeEntry="${instproposalAttachmentAttributes.updateUser}" readOnly="true"/>
-		            	</div>
-					</td>  
+	         		</td>  
 					<td align="left" valign="middle">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].contactName" attributeEntry="${instproposalAttachmentAttributes.contactName}" readOnly="true"/>
-		            	</div>
-					</td>
-					<td align="left" valign="middle">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].phoneNumber" attributeEntry="${instproposalAttachmentAttributes.phoneNumber}" readOnly="true"/>
-		            	</div>
-					</td>
-					<td align="left" valign="middle">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].emailAddress" attributeEntry="${instproposalAttachmentAttributes.emailAddress}" readOnly="true"/>
+	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].attachmentTypeCode" attributeEntry="${instproposalAttachmentAttributes.attachmentTypeCode}" readOnly="true"/>
 		            	</div>
 					</td>
 					<td align="left" valign="middle">
 	                	<div align="left">
 	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].attachmentTitle" attributeEntry="${instproposalAttachmentAttributes.attachmentTitle}" readOnly="true"/>
-		            	</div>
-					</td>
-	         		 <td align="left" valign="middle">
-	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].attachmentTypeCode" attributeEntry="${instproposalAttachmentAttributes.attachmentTypeCode}" readOnly="true"/>
 		            	</div>
 					</td>
 					<td align="left" valign="middle">
@@ -206,6 +150,16 @@ td.infoline select {
 	              			 <kra:fileicon attachment="${attachment.file}"/>${attachment.file.name} 
 	           			</div>
 					</td> 
+					<td align="left" valign="middle">
+	                	<div align="left">
+	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].updateTimestamp" attributeEntry="${instproposalAttachmentAttributes.updateTimestamp}" readOnly="true"/>
+		            	</div>
+					</td>
+	         		<td align="left" valign="middle">
+	                	<div align="left">
+	                		<kul:htmlControlAttribute property="document.institutionalProposalList[0].instProposalAttachments[${itrStatus.index}].updateUserName" attributeEntry="${instproposalAttachmentAttributes.updateUser}" readOnly="true"/>
+		            	</div>
+					</td>
 					 <td align="center" valign="middle">
 						<div align="center">
 							<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"

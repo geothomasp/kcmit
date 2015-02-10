@@ -14,9 +14,6 @@
 			<ref bean="InstitutionalProposalAttachments-attachmentTypeCode"/>
 		    <ref bean="InstitutionalProposalAttachments-comments"/>
 			<ref bean="InstitutionalProposalAttachments-fileName" />
-			<ref bean="InstitutionalProposalAttachments-contactName"/>
-			<ref bean="InstitutionalProposalAttachments-phoneNumber" />
-			<ref bean="InstitutionalProposalAttachments-emailAddress" />
 			<ref bean="InstitutionalProposalAttachments-attachmentTitle"/>
 			<ref bean="InstitutionalProposalAttachments-updateUser" />
 			<ref bean="InstitutionalProposalAttachments-updateTimestamp" />
@@ -70,62 +67,7 @@
             <bean parent="AnyCharacterPatternConstraint"/>
         </property>
 	  </bean>
-	  
-	  <bean id="InstitutionalProposalAttachments-contactName" parent="InstitutionalProposalAttachments-contactName-parentBean" />
-       <bean id="InstitutionalProposalAttachments-contactName-parentBean"  parent="AttributeDefinition">
-	    <property name="name" value="contactName" />
-	    <property name="forceUppercase" value="false" />
-	    <property name="label" value="Contact Name" />
-	    <property name="shortLabel" value="Contact Name" />
-	    <property name="maxLength" value="100" />
-	    <property name="validationPattern">
-           <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
-        </property>
-        <property name="validCharactersConstraint">
-           <bean parent="AnyCharacterPatternConstraint">
-            <property name="allowWhitespace" value="true"/>
-           </bean>
-        </property>
-        <property name="control" >
-          <bean parent="TextControlDefinition" p:size="15"/>
-        </property>
-        <property name="controlField">
-          <bean p:size="15" parent="Uif-TextControl"/>
-        </property>
-	  </bean>
-	  
-	  <bean id="InstitutionalProposalAttachments-phoneNumber" parent="InstitutionalProposalAttachments-phoneNumber-parentBean" />
-       <bean id="InstitutionalProposalAttachments-phoneNumber-parentBean"  parent="AttributeDefinition">
-	    <property name="name" value="phoneNumber" />
-	    <property name="forceUppercase" value="false" />
-	    <property name="label" value="Phone Number" />
-	    <property name="shortLabel" value="Phone Number" />
-	    <property name="maxLength" value="25" />
-	     <property name="validationPattern" >
-            <bean parent="AnyCharacterValidationPattern" />
-        </property>
-        <property name="validCharactersConstraint">
-            <bean parent="AnyCharacterPatternConstraint"/>
-        </property>
-        <property name="control" >
-         <bean parent="TextControlDefinition" p:size="15"/>
-        </property>
-        <property name="controlField">
-          <bean p:size="15" parent="Uif-TextControl"/>
-        </property>
-	   </bean>
-	    
-	    <bean id="InstitutionalProposalAttachments-emailAddress" parent="InstitutionalProposalAttachments-emailAddress-parentBean" />
-        <bean id="InstitutionalProposalAttachments-emailAddress-parentBean" abstract="true" parent="KraAttributeReferenceDummy-emailAddress">
-        <property name="control" >
-           <bean parent="TextControlDefinition" p:size="20"/>
-        </property>
-        <property name="controlField">
-          <bean p:size="20" parent="Uif-TextControl"/>
-        </property>
-        </bean>
- 	    
-	    
+	
 	    <bean id="InstitutionalProposalAttachments-comments" parent="InstitutionalProposalAttachments-comments-parentBean" />
         <bean id="InstitutionalProposalAttachments-comments-parentBean"  parent="AttributeDefinition">
 	    <property name="name" value="comments"/>
@@ -142,10 +84,10 @@
          </bean>
          </property>
 	     <property name="control">
-	      <bean p:cols="30" p:rows="3" parent="TextareaControlDefinition"/>
+	      <bean p:cols="40" p:rows="4" parent="TextareaControlDefinition"/>
 	     </property>
          <property name="controlField">
-         <bean p:cols="30" p:rows="3" parent="Uif-TextAreaControl"/>
+         <bean p:cols="40" p:rows="4" parent="Uif-TextAreaControl"/>
          </property>
 		 <property name="summary" value="Comments"/>
 		 <property name="description" value="Comments"/>
@@ -169,8 +111,8 @@
         <bean id="InstitutionalProposalAttachments-attachmentTitle-parentBean"  parent="AttributeDefinition">
 	    <property name="name" value="attachmentTitle" />
 	    <property name="forceUppercase" value="false" />
-	    <property name="label" value="Attachment Title" />
-	    <property name="shortLabel" value="Attachment Title" />
+	    <property name="label" value="Description" />
+	    <property name="shortLabel" value="Description" />
 	    <property name="maxLength" value="150" />
 	    <property name="validationPattern">
            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
@@ -181,7 +123,7 @@
            </bean>
        </property>
        <property name="control" >
-          <bean parent="TextControlDefinition" p:size="15"/>
+          <bean parent="TextControlDefinition" p:size="25"/>
        </property>
         <property name="controlField">
           <bean p:size="15" parent="Uif-TextControl"/>
