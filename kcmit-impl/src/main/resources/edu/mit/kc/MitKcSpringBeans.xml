@@ -44,6 +44,9 @@
 	<bean id="mitPropDevJavaFunctionKrmsTermService" class="edu.mit.kc.propdev.krms.MitPropDevJavaFunctionKrmsTermServiceImpl">
 	<property name="documentService" ref="documentService" />
 	</bean>
+	
+	<bean id="mitAwardBudgetJavaFunctionKrmsTermService" class="edu.mit.kc.award.budget.krms.MitAwardBudgetJavaFunctionKrmsTermServiceImpl">
+	</bean>
 
 	<bean id="lookupableHelperService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="lookupableHelperService" />
