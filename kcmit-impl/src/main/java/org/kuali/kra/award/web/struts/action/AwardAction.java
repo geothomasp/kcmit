@@ -1928,7 +1928,7 @@ public class AwardAction extends BudgetParentActionBase {
            //if we are entering this from the search results
            loadDocumentInForm(request, awardForm);
        }
-       awardForm.getMedusaBean().setMedusaViewRadio("0");
+       awardForm.getMedusaBean().setMedusaViewRadio("1");
        awardForm.getMedusaBean().setModuleName("award");
        awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
        awardForm.getMedusaBean().generateParentNodes();
