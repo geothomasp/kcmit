@@ -64,7 +64,8 @@
 			</policies>
 			<routePaths>
 				<routePath>
-					<start name="Initiated" nextNode="hasSync"/>
+					<start name="Initiated" nextNode="PeopleFlows"/>
+<!-- 					<start name="Initiated" nextNode="hasSync"/>
 					<split name="hasSync">
 						<branch name="True">
 							<requests name="SyncValidationApproval" nextNode="AwardStandardApprovalInSync"/>
@@ -82,7 +83,7 @@
 						</branch>
 					</split>
 					<join name="JoinSync"/>
-					
+ -->					
 				</routePath>
 			</routePaths>
 			<routeNodes>
@@ -91,7 +92,11 @@
 					<mandatoryRoute>false</mandatoryRoute>
 					<finalApproval>false</finalApproval>
 				</start>
-				<split name="hasSync">
+	            <requests name="PeopleFlows">
+                    <activationType>R</activationType>
+                    <rulesEngine executorClass="edu.mit.kc.award.service.impl.AwardRulesEngineExecutorImpl"/>
+                </requests>
+<!-- 				<split name="hasSync">
        			   <type>org.kuali.coeus.sys.framework.workflow.SimpleBooleanSplitNode</type>
         		</split>
 				<split name="isSyncChild">
@@ -124,7 +129,8 @@
 					<ruleTemplate>AwardStandardApproval</ruleTemplate>
 					<mandatoryRoute>false</mandatoryRoute>
 				</requests>				
-			</routeNodes>
+ -->
+ 			</routeNodes>
 		</documentType>
 	</documentTypes>
 	
