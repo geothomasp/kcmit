@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN" "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+
+<struts-config>
+
+    <form-beans >
+<!-- Rice content Start -->
+    	<!-- Begin required KNS forms -->
+        <form-bean name="BackdoorForm" type="org.kuali.rice.kns.web.struts.form.BackdoorForm" />
+        <form-bean name="KualiForm" type="org.kuali.rice.kns.web.struts.form.KualiForm" />
+        <form-bean name="KualiLogoutForm" type="org.kuali.rice.kns.web.struts.form.KualiLogoutForm" />
+    	<!-- End required KNS forms -->
+<!-- Rice content End -->		
+    </form-beans>
+
+
+
+    <action-mappings>  
+      
+       
+
+       
+      
+      <!--  Award -->      
+      <action path="/award*" name="AwardForm" input="/WEB-INF/jsp/award/Award{1}.jsp" type="org.kuali.kra.award.web.struts.action.Award{1}Action"  scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
+          <forward name="basic" path="/WEB-INF/jsp/award/Award{1}.jsp" />
+          <forward name="home" path="/WEB-INF/jsp/award/AwardHome.jsp" />
+          <forward name="budgets" path="/WEB-INF/jsp/award/AwardBudgetVersions.jsp" />
+          <forward name="contacts" path="/WEB-INF/jsp/award/AwardContacts.jsp" />
+          <forward name="commitments" path="/WEB-INF/jsp/award/AwardCommitments.jsp" />
+          <forward name="timeAndMoney" path="/WEB-INF/jsp/timeAndMoney/TimeAndMoney.jsp" />
+          <forward name="paymentReportsAndTerms" path="/WEB-INF/jsp/award/AwardPaymentReportsAndTerms.jsp" />
+          <forward name="specialReview" path="/WEB-INF/jsp/award/AwardSpecialReview.jsp" />
+          <forward name="customData" path="/WEB-INF/jsp/award/AwardCustomData.jsp" />
+          <forward name="questions" path="/WEB-INF/jsp/award/AwardQuestions.jsp" />
+          <forward name="permissions" path="/WEB-INF/jsp/award/AwardPermissions.jsp" />
+          <forward name="permissionsRoleRights" path="/WEB-INF/jsp/award/AwardPermissionsRoleRights.jsp" />
+          <forward name="permissionsEditRoles" path="/WEB-INF/jsp/award/AwardPermissionsEditRoles.jsp" />
+          <forward name="permissionsCloseEditRoles" path="/WEB-INF/jsp/award/AwardPermissionsCloseEditRoles.jsp" />
+          <forward name="notesAndAttachments" path="/WEB-INF/jsp/award/AwardNotesAndAttachments.jsp" />
+          <forward name="awardActions" path="/WEB-INF/jsp/award/AwardActions.jsp" />
+          <forward name="medusa" path="/WEB-INF/jsp/award/AwardMedusa.jsp" />
+          <forward name="sharedDoc" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" /> 
+          <forward name="icrRateCodePrompt" path="/WEB-INF/jsp/award/IcrRateCodePrompt.jsp" />
+          <!--<forward name="commentViewHistory" path="/WEB-INF/jsp/award/AwardCommentViewHistory.jsp" />-->                                  
+          <forward name="notificationEditor" path="/WEB-INF/jsp/award/AwardNotificationEditor.jsp" />
+      </action>     
+     
+     
+    </action-mappings>
+
+
+
+    <controller processorClass="org.kuali.coeus.sys.framework.controller.interceptor.KcRequestProcessor" />
+    <message-resources factory="org.kuali.rice.kns.web.struts.action.KualiPropertyMessageResourcesFactory" parameter="" /> 
+    <plug-in className="org.kuali.coeus.sys.framework.controller.GlobalFormatterRegistry" />
+</struts-config>
