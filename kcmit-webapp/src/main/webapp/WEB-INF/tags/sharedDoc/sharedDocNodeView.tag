@@ -13,9 +13,6 @@
 <c:when test="${node.type == 'DP'}">
   <kra-shared:sharedDocDevPropSummary node="${node}"/>
 </c:when>
-<c:when test="${node.type == 'neg'}">
-  <kra-shared:sharedDocNegotiationSummary node="${node}"/>
-</c:when>
 <c:when test="${node.type == 'subaward'}">
   <kra-shared:sharedDocSubAwardSummary node="${node}"/>
 </c:when>
