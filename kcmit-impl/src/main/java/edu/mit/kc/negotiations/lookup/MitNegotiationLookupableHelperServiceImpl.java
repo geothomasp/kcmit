@@ -17,6 +17,7 @@ package edu.mit.kc.negotiations.lookup;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kra.lookup.KraLookupableHelperServiceImpl;
+import org.kuali.kra.negotiations.bo.Negotiable;
 import org.kuali.kra.negotiations.bo.Negotiation;
 import org.kuali.kra.negotiations.lookup.NegotiationDao;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -76,6 +77,7 @@ public class MitNegotiationLookupableHelperServiceImpl extends KraLookupableHelp
     @Override
     public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
         List<HtmlData> htmlDataList = new ArrayList<HtmlData>();
+//        List<HtmlData> htmlDataList = super.getCustomActionUrls(businessObject, pkNames);
         htmlDataList.add(getOpenLink(((Negotiation) businessObject).getDocument()));
         htmlDataList.add(getMedusaLink(((Negotiation) businessObject).getDocument(), false));
         return htmlDataList;
@@ -134,9 +136,9 @@ public class MitNegotiationLookupableHelperServiceImpl extends KraLookupableHelp
         final String leadUnitName = "associatedNegotiable.leadUnitName";
         final String leadUnitNumber = "associatedNegotiable.leadUnitNumber";
         final String sponsorName = "associatedNegotiable.sponsorName";
-        final String piName = "associatedNegotiable.piName";
-                
+        final String piName = "associatedNegotiable.piName";      
         Collection lookupStuff = getResults(lookupForm, resultTable, bounded);
+//        Collection lookupStuff = super.performLookup(lookupForm, resultTable, bounded);
         Iterator i = resultTable.iterator();
         while (i.hasNext()) {
             ResultRow row = (ResultRow) i.next();
@@ -154,26 +156,24 @@ public class MitNegotiationLookupableHelperServiceImpl extends KraLookupableHelp
                     }
                 }
                 if (StringUtils.equalsIgnoreCase(column.getPropertyName(), leadUnitNumber)){
-                    String unitNumber = column.getPropertyValue();
+                    String unitNumber = column.getPropertyValue();                    
                     //String newUrl = "http://127.0.0.1:8080/kc-dev/kr/inquiry.do?businessObjectClassName=org.kuali.kra.bo.Unit&unitNumber=" + unitNumber + "&methodToCall=start";
                     String newUrl = "inquiry.do?businessObjectClassName=org.kuali.kra.bo.Unit&unitNumber=" + unitNumber + "&methodToCall=start";
                     column.setPropertyURL(newUrl);
                     for (AnchorHtmlData data : column.getColumnAnchors()) {
                         if (data != null) {
-                            data.setHref(newUrl);
+                        	data.setHref(newUrl);                        	
                         }
-                        
-                    }
+                    }    
                 }
             }
-        }
+        }        
         return lookupStuff;
     }
 
     
     public Collection<? extends BusinessObject> getResults(LookupForm lookupForm, Collection<ResultRow> resultTable, boolean bounded) {
-        Map lookupFormFields = lookupForm.getFieldsForLookup();
-
+        Map lookupFormFields = lookupForm.getFieldsForLookup();      
         setBackLocation((String) lookupFormFields.get(KRADConstants.BACK_LOCATION));
         setDocFormKey((String) lookupFormFields.get(KRADConstants.DOC_FORM_KEY));
         Collection<? extends BusinessObject> displayList;
@@ -184,6 +184,12 @@ public class MitNegotiationLookupableHelperServiceImpl extends KraLookupableHelp
             displayList = getSearchResults(lookupFormFields);
         } else {
             displayList = getSearchResultsUnbounded(lookupFormFields);
+        }
+        
+        if (!lookupForm.isHideReturnLink()) {
+            lookupForm.setSuppressActions(true);
+        } else {
+            lookupForm.setShowMaintenanceLinks(true);
         }
 
         boolean hasReturnableRow = false;
@@ -206,6 +212,8 @@ public class MitNegotiationLookupableHelperServiceImpl extends KraLookupableHelp
 
                 HtmlData returnUrl = getReturnUrl(element, lookupForm, returnKeys, businessObjectRestrictions);
                 String actionUrls = getActionUrls(element, pkNames, businessObjectRestrictions);
+                
+                getCustomActionUrls(negotiation, pkNames);
                 if ("".equals(actionUrls)) {
                     actionUrls = ACTION_URLS_EMPTY;
                 }
