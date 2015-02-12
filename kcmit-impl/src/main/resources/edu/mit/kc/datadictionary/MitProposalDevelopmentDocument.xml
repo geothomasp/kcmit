@@ -3,5 +3,6 @@
   <bean id="ProposalDevelopmentDocument" parent="MIT-ProposalDevelopmentDocument-parentBean"/>
   <bean id="MIT-ProposalDevelopmentDocument-parentBean"  parent="ProposalDevelopmentDocument-parentBean">
     <property name="businessRulesClass" value="edu.mit.kc.propdev.impl.core.MitProposalDevelopmentDocumentRule"/>
+    <property name="documentAuthorizerClass" value="edu.mit.kc.propdev.impl.auth.MitProposalDevelopmentDocumentAuthorizer"/>
   </bean>
 </beans>
