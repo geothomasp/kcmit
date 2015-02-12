@@ -27,7 +27,7 @@
         </td>
         <td colspan="2">      
       
-        <html:image property="methodToCall.viewAttachmentSubAward.line${itrStatus.index}.anchor${currentTabIndex}"
+        <html:image property="methodToCall.viewAttachmentSubAward.line${itrStatus.index}.anchor${currentTabIndex}.id${attachment.subAwardId}"
 		src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
         </td>

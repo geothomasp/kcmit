@@ -1986,7 +1986,7 @@ public class AwardAction extends BudgetParentActionBase {
        awardForm.getMedusaBean().setModuleName("award");
        awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
        awardForm.getMedusaBean().generateParentNodes();
-       return mapping.findForward("sharedDoc");
+       return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
    }
     @Override
     public ActionForward superUserApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

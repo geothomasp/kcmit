@@ -29,6 +29,7 @@ import org.kuali.coeus.propdev.impl.attachment.NarrativeAttachment;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
+import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
@@ -41,8 +42,6 @@ import org.kuali.rice.krad.util.KRADConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-
 
 
 /**
@@ -75,21 +74,6 @@ public class AwardSharedDocAction extends AwardAction {
            }
            MedusaNode node = getMedusaService().getMedusaNode("IP", proposalId);
            institutionalProposal=(InstitutionalProposal) node.getData();
-    	 /* AwardForm awardForm = (AwardForm) form; 
-    	 List<MedusaNode>parentNodes= awardForm.getMedusaBean().getParentNodes();
-    	 for(MedusaNode parentNode:parentNodes){  
-    		 List<MedusaNode>childNodes =(List<MedusaNode>) parentNode.getChildNodes();
-    		List<Node<Object, String>>children=parentNode.getChildren();
-    		for(Node<Object, String> child:children){
-    			if(child.getNodeType().equals("IP")){
-    				 institutionalProposal= (InstitutionalProposal) child.getData();
-    			for(MedusaNode childNode:childNodes)
-    		 { if(childNode.getNodeType().equals("IP")){
-    			 institutionalProposal= (InstitutionalProposal) childNode.getData();
-    		    		 
-    		 }}
-    		 break;
-    	 } */
         if(institutionalProposal!=null){
       attachment= institutionalProposal.getInstProposalAttachments().get(selection);
       }
@@ -103,13 +87,23 @@ public class AwardSharedDocAction extends AwardAction {
 	
     public ActionForward viewAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
-        AwardForm awardForm = (AwardForm) form;       
-        moduleIdentifier=awardForm.getAwardDocument().getAward().getAwardId();
-        MedusaNode node = getMedusaService().getMedusaNode("award", moduleIdentifier);
+        AwardForm awardForm = (AwardForm) form;  
+        AwardAttachment attachment=null;
+        Award award=null;
+      Long awardId=null;
        
         final int selection = this.getSelectedLine(request);
-        final AwardAttachment attachment = awardForm.getAwardAttachmentFormBean().retrieveExistingAttachment(selection);
-        MedusaNode medusaNode= new MedusaNode();
+        String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
+        if (StringUtils.isNotBlank(parameterName)) {
+            String lineNumber = StringUtils.substringBetween(parameterName, ".line", ".");
+           String awardIdOld = (StringUtils.substringBetween(parameterName, ".id", "."));
+           awardId=Long.valueOf(awardIdOld);           
+        }      
+        MedusaNode node = getMedusaService().getMedusaNode("award", awardId);
+        award=(Award) node.getData();
+        if(award!=null)
+        	 attachment= award.getAwardAttachments().get(selection);        	
+     
         if (attachment == null) {
             return mapping.findForward(Constants.MAPPING_BASIC);
         }
@@ -134,23 +128,7 @@ public class AwardSharedDocAction extends AwardAction {
               
           }
               MedusaNode node = getMedusaService().getMedusaNode("DP", proposalNumber);
-          developmentProposal=(DevelopmentProposal) node.getData();
-   /* 	List<MedusaNode>parentNodes= awardForm.getMedusaBean().getParentNodes();
-   
-    for(MedusaNode parentNode:parentNodes){
-    		List<MedusaNode>childNodes =(List<MedusaNode>) parentNode.getChildNodes();
-    		 if(parentNode.getNodeType().equals("DP")){
-    			 developmentProposal= (DevelopmentProposal) parentNode.getData();
-    		 } for(MedusaNode childNode:childNodes)
-    		 { if(childNode.getNodeType().equals("DP")){
-    			 developmentProposal= (DevelopmentProposal) childNode.getData();
-    		 }
-    			 
-    		 }
-    		 
-    		 break;
-    	 }*/
-    	  
+          developmentProposal=(DevelopmentProposal) node.getData();    	  
           if(developmentProposal!=null){
      attachment= developmentProposal.getNarratives().get(selection);}
        if (attachment == null) {
@@ -176,22 +154,7 @@ public class AwardSharedDocAction extends AwardAction {
              
           }
           MedusaNode node = getMedusaService().getMedusaNode("subAward", subAwardId);
-          subAward=(SubAward) node.getData();
-    	/* List<MedusaNode>parentNodes= awardForm.getMedusaBean().getParentNodes();
-   
-    	 for(MedusaNode parentNode:parentNodes){
-    		List<MedusaNode>childNodes =(List<MedusaNode>) parentNode.getChildNodes();
-    		 if(parentNode.getNodeType().equals("subAward")){
-    			 subAward= (SubAward) parentNode.getData();
-    		 } for(MedusaNode childNode:childNodes)
-    		 { if(childNode.getNodeType().equals("subAward")){
-    			 subAward= (SubAward) childNode.getData();
-    		 }
-    			 
-    		 }
-    		 
-    		 break;
-    	 }*/
+          subAward=(SubAward) node.getData();    	
           if(subAward!=null){
       attachment= subAward.getSubAwardAttachments().get(selection);}
        if (attachment == null) {
@@ -206,10 +169,4 @@ public class AwardSharedDocAction extends AwardAction {
         
         return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
     }
- /*   public InstitutionalProposalAttachments retrieveExistingAttachment(int attachmentNumber) {
-        if (!validIndexForList(attachmentNumber, this.getInstitutionalProposal().getInstProposalAttachments())) {
-            return null;
-        }
-        return this.getInstitutionalProposal().getInstProposalAttachments().get(attachmentNumber);
-    }*/
-}
+ }
