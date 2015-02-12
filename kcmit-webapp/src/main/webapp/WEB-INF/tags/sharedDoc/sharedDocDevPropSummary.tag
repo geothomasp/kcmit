@@ -20,7 +20,7 @@
             <c:out value="${pdAttachment.name}"/>
             </td>
          <td colspan="2">
-          <html:image property="methodToCall.viewAttachmentDp.line${itrStatus.index}.anchor${currentTabIndex}"
+          <html:image property="methodToCall.viewAttachmentDp.line${itrStatus.index}.anchor${currentTabIndex}.id${pdAttachment.proposalNumber}"
 		src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
         </td>
