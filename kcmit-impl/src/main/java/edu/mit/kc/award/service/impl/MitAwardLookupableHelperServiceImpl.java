@@ -85,7 +85,7 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
         parameters.put("docId", award.getAwardDocument().getDocumentNumber());
         parameters.put("docOpenedFromAwardSearch", "true");
         parameters.put("placeHolderAwardId", award.getAwardId().toString());
-        String href  = UrlFactory.parameterizeUrl("../"+getHtmlAction(), parameters);        
+        String href  = UrlFactory.parameterizeUrl("../"+getHtmlActionShared(), parameters);        
         htmlData.setHref(href);
         return htmlData;
     }
@@ -103,6 +103,9 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
            String href  = UrlFactory.parameterizeUrl("../"+getHtmlAction(), parameters);
            htmlData.setHref(href);
            return htmlData;
+    }
+    protected String getHtmlActionShared() {
+        return "sharedDoc.do";
     }
 
 }

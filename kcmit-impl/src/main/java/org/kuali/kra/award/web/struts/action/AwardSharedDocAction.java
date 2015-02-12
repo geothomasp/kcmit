@@ -122,10 +122,20 @@ public class AwardSharedDocAction extends AwardAction {
     public ActionForward viewAttachmentDp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
     	 DevelopmentProposal developmentProposal =null;
+    	 Long proposalNumber=null;
     	  Narrative attachment =null;
     	 final int selection = this.getSelectedLine(request);
     	  AwardForm awardForm = (AwardForm) form; 
-    	List<MedusaNode>parentNodes= awardForm.getMedusaBean().getParentNodes();
+    	  String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
+          if (StringUtils.isNotBlank(parameterName)) {
+              String lineNumber = StringUtils.substringBetween(parameterName, ".line", ".");
+             String proposalNumberOld = (StringUtils.substringBetween(parameterName, ".id", "."));
+             proposalNumber=Long.valueOf(proposalNumberOld);
+              
+          }
+              MedusaNode node = getMedusaService().getMedusaNode("DP", proposalNumber);
+          developmentProposal=(DevelopmentProposal) node.getData();
+   /* 	List<MedusaNode>parentNodes= awardForm.getMedusaBean().getParentNodes();
    
     for(MedusaNode parentNode:parentNodes){
     		List<MedusaNode>childNodes =(List<MedusaNode>) parentNode.getChildNodes();
@@ -139,7 +149,7 @@ public class AwardSharedDocAction extends AwardAction {
     		 }
     		 
     		 break;
-    	 }
+    	 }*/
     	  
           if(developmentProposal!=null){
      attachment= developmentProposal.getNarratives().get(selection);}
