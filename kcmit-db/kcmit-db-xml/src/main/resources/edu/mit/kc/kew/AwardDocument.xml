@@ -65,6 +65,7 @@
 			<routePaths>
 				<routePath>
 					<start name="Initiated" nextNode="PeopleFlows"/>
+					<requests name="PeopleFlows" />
 <!-- 					<start name="Initiated" nextNode="hasSync"/>
 					<split name="hasSync">
 						<branch name="True">
@@ -94,7 +95,7 @@
 				</start>
 	            <requests name="PeopleFlows">
                     <activationType>R</activationType>
-                    <rulesEngine executorClass="edu.mit.kc.award.service.impl.AwardRulesEngineExecutorImpl"/>
+                    <rulesEngine executorClass="org.kuali.kra.award.service.impl.AwardRulesEngineExecutorImpl"/>
                 </requests>
 <!-- 				<split name="hasSync">
        			   <type>org.kuali.coeus.sys.framework.workflow.SimpleBooleanSplitNode</type>
