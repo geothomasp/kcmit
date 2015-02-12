@@ -7,8 +7,7 @@ function fn_gen_sub_award_notifications(as_AwardNUmber in AWARD_APPROVED_SUBAWAR
      ai_type number ) return number;
 end;
 /
-
-CREATE OR REPLACE package body  kc_sub_notifications_pkg as
+create or replace package body  kc_sub_notifications_pkg as
 
 FUNCTION fn_gen_sub_award_notifications
 (as_AwardNUmber in AWARD_APPROVED_SUBAWARDS.AWARD_NUMBER%type,
@@ -53,8 +52,8 @@ ls_sponsor_award_num    AWARD.SPONSOR_AWARD_NUMBER%type;
 ls_unit_num     AWARD_PERSON_UNITS.UNIT_NUMBER%type;
 ls_unit_name    UNIT.UNIT_NAME%type;
 ls_PI_name      AWARD_PERSONS.FULL_NAME%type;
-li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type;
-
+li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type:= null;
+li_notification_is_active PLS_INTEGER;
 
 BEGIN
     
@@ -159,8 +158,12 @@ END;
 
   select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=501;
   select document_number into ls_doc from award where award_number=as_AwardNUmber 
-  and sequence_number=(select max(sequence_number) from award where award_number=as_AwardNUmber);  
+  and sequence_number=(select max(sequence_number) from award where award_number=as_AwardNUmber); 
+
     if ai_type = 1 then
+	
+	     li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'501');
+	     if li_notification_is_active = 1 then  
          KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,501,mail_subject,mail_message);
 		   mail_message := replace(mail_message,'{SUBCONTRACT_NAME}',as_subcontractorName );	
 		   mail_message := replace(mail_message,'{AMOUNT}',trim(to_char(ai_amount, '$9,999,999,999.00')));
@@ -172,20 +175,24 @@ END;
 		   mail_message := replace(mail_message, '{UNIT_NUMBER}',ls_unit_num );
 		   mail_message := replace(mail_message, '{UNIT_NAME}',ls_unit_name );				   
 		   BEGIN
-			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,ls_cc,NULL,mail_subject,mail_message); 
+			KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipients,ls_cc,NULL,mail_subject,mail_message); 
 	   EXCEPTION
 	   WHEN OTHERS THEN
 	   ls_message_status:='N';
 	   END; 
 	 
 	  
-	  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+	  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 	  
 	  if li_ntfctn_id <>  -1 then 
-		  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipients,ls_message_status);
-	  end if;   	        
+		  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_recipients,ls_message_status);
+	  end if;
+        end if;	  
         else
+		 
          select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=502; 
+		 li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'502');
+	     if li_notification_is_active = 1 then
 		  KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,502,mail_subject,mail_message);
 		   mail_message := replace(mail_message,'{SUBCONTRACT_NAME}',as_subcontractorName );	
 		   mail_message := replace(mail_message,'{AMOUNT}',trim(to_char(ai_amount, '$9,999,999,999.00')));
@@ -198,20 +205,21 @@ END;
 		   mail_message := replace(mail_message, '{UNIT_NAME}',ls_unit_name );			   
 		   --KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TraineeEmail,ls_PIEmail,NULL,mail_subject,mail_message);
 		   BEGIN
-			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,ls_cc,NULL,mail_subject,mail_message); 
+			KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipients,ls_cc,NULL,mail_subject,mail_message); 
 	   EXCEPTION
 	   WHEN OTHERS THEN
 	   ls_message_status:='N';
 	   END; 
 							   
 	
-	  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+	  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 	  
 	  if li_ntfctn_id <>  -1 then 
-		  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipients,ls_message_status);
-	  end if;   	        
+		  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_recipients,ls_message_status);
+	  end if;  
+      end if;	  
     end if;
-
+    
     
      return 1;
 
@@ -260,7 +268,8 @@ ls_subject                  varchar2(600) := 'Subaward End Date in 30 Days' ;
 ls_message_status CHAR(1);
 mesg                     CLOB;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
-li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type;
+li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type:= null;
+li_notification_is_active PLS_INTEGER;
 
 cursor cur_end_prior is
    select S.SUBAWARD_CODE,  S.END_DATE , S.PURCHASE_ORDER_NUM,t.EMAIL_ADDR, O.ORGANIZATION_NAME,S.REQUISITIONER_ID 
@@ -354,8 +363,12 @@ BEGIN
                     select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=503;
 					select document_number into ls_doc from subaward where subaward_code=ls_sub_code 
 			        and sequence_number=(select max(sequence_number) from subaward_funding_source where subaward_code=ls_sub_code);
+					li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'503');
+	                if li_notification_is_active = 1 then
                     if (li_requisitioner = 0 ) and (li_recipient = 0 ) then
 					 ls_REQUISITIONER_email:=ls_REQUISITIONER_email||',' || ls_recipient;
+					 
+					    
                         KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,503,mail_subject,mail_message);
 		                mail_message := replace(mail_message,'{ORGANIZATION_NAME}',ls_subawardee );	
 		                mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));	
@@ -363,36 +376,40 @@ BEGIN
 		                mail_message := replace(mail_message, '{SPONSOR_AWARD_NUMBER}',ls_sponsor_award_num );
                         mail_message := replace(mail_message, '{ACCOUNT_NUMBER}',ls_account_num );
 						BEGIN
-		                KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'---'||ls_requisitioner_note ||'---'||ls_recipient_note,mail_message);
+		                KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'---'||ls_requisitioner_note ||'---'||ls_recipient_note,mail_message);
 						EXCEPTION
 						WHEN OTHERS THEN
 						 ls_message_status:='N';
 						 END;
 					
-						li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+						li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 						if li_ntfctn_id <>  -1 then 
-						  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,'00000',ls_message_status);
+						  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,'00000',ls_message_status);
 						end if;
+						
                     else
                         if (li_requisitioner = 1 ) and (li_recipient = 1 ) then
 						    ls_REQUISITIONER_email:=ls_REQUISITIONER_email||',' || ls_recipient;
-                            KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,503,mail_subject,mail_message);
+							
+							li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'502');
+	                     
 		                mail_message := replace(mail_message,'{ORGANIZATION_NAME}',ls_subawardee );	
 		                mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));	
 		                mail_message := replace(mail_message, '{PERCHASE_ORDER_NUM}',ls_po );	
 		                mail_message := replace(mail_message, '{SPONSOR_AWARD_NUMBER}',ls_sponsor_award_num );
                         mail_message := replace(mail_message, '{ACCOUNT_NUMBER}',ls_account_num );
 						BEGIN
-		                KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject,mail_message);
+		                KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject,mail_message);
 						EXCEPTION
 						WHEN OTHERS THEN
 						 ls_message_status:='N';
 						 END;
 						
-                         li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+                         li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 						if li_ntfctn_id <>  -1 then 
-						  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_person_id,ls_message_status);
-						end if;   
+						  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_person_id,ls_message_status);
+						end if;  
+                       					
                         else
                             if  (li_requisitioner = 0 ) then
 							  ls_REQUISITIONER_email:=ls_REQUISITIONER_email||',' || ls_recipient;
@@ -403,15 +420,15 @@ BEGIN
 		                      mail_message := replace(mail_message, '{SPONSOR_AWARD_NUMBER}',ls_sponsor_award_num );
                               mail_message := replace(mail_message, '{ACCOUNT_NUMBER}',ls_account_num );						
 		                      BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message);
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message);
                                EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END;
 							  
-							   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 						       if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_person_id,ls_message_status);
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_person_id,ls_message_status);
 						       end if;   							  
                             else
 							    ls_REQUISITIONER_email:=ls_REQUISITIONER_email||',' || ls_recipient;
@@ -422,21 +439,22 @@ BEGIN
 		                      mail_message := replace(mail_message, '{SPONSOR_AWARD_NUMBER}',ls_sponsor_award_num );
                               mail_message := replace(mail_message, '{ACCOUNT_NUMBER}',ls_account_num );						
 		                       BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message);
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message);
                               EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END;
 							 
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_person_id,ls_message_status);
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_person_id,ls_message_status);
 						       end if;   							  
                             end if;                     
-                        end if;                        
+                        end if;
+                                              
                     
                     end if; 
-                    
+                    end if;  
                      
                 end loop;
                 close cur_fund_source;
@@ -447,21 +465,24 @@ BEGIN
                 ls_recipient := 'coeus-mit@mit.edu';
 				ls_REQUISITIONER_email:=ls_REQUISITIONER_email||',' || ls_recipient;
 				select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=504;
+				             li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'504');
+	                        if li_notification_is_active = 1 then
                               KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,504,mail_subject,mail_message);
 		                      mail_message := replace(mail_message,'{ORGANIZATION_NAME}',ls_subawardee );	
 		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));	
 		                      mail_message := replace(mail_message, '{PERCHASE_ORDER_NUM}',ls_po );							
 		                      BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'--- No funding source info',mail_message); 
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_REQUISITIONER_email,ls_cc_email,NULL,mail_subject||'--- No funding source info',mail_message); 
                                 EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END;
 							
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,'00000',ls_message_status);
-						       end if;   							  
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,'00000',ls_message_status);
+						       end if; 
+                            end if;							   
                 
             end if;
         
@@ -524,7 +545,8 @@ ls_subject                  varchar2(600) := 'Subaward from MIT Ended' ;
 ls_message_status CHAR(1);
 mesg                     CLOB;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
-li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type;
+li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type:= null;
+li_notification_is_active PLS_INTEGER;
 
 cursor cur_end_after is
    select distinct S.SUBAWARD_CODE, S.START_DATE,  S.END_DATE , S.PURCHASE_ORDER_NUM,e.EMAIL_ADDR, sai.ANTICIPATED_AMOUNT
@@ -615,6 +637,8 @@ BEGIN
                     select document_number into ls_doc from subaward where subaward_code=ls_sub_code 
 			        and sequence_number=(select max(sequence_number) from subaward_funding_source where subaward_code=ls_sub_code);
                     select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=505;
+					li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'505');
+	                if li_notification_is_active = 1 then
                     if (li_requisitioner = 0 ) and (li_recipient = 0 ) then
 					    ls_cc_email:=ls_cc_email || ',' || ls_REQUISITIONER_email;
                         KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,505,mail_subject,mail_message);
@@ -623,15 +647,15 @@ BEGIN
 		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));
                               mail_message := replace(mail_message,'{ANTICIPATED_AMOUNT}',ls_anticipated_amount);							  
 		                       BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipient,ls_cc_email,NULL,mail_subject||'---'||ls_requisitioner_note ||'---'||ls_recipient_note,mail_message); 
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipient,ls_cc_email,NULL,mail_subject||'---'||ls_requisitioner_note ||'---'||ls_recipient_note,mail_message); 
                               EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END;
 							 
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,'00000',ls_message_status);
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,'00000',ls_message_status);
 						       end if;   	
                     else
                         if (li_requisitioner = 1 ) and (li_recipient = 1 ) then
@@ -642,15 +666,15 @@ BEGIN
 		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));
                               mail_message := replace(mail_message,'{ANTICIPATED_AMOUNT}',ls_anticipated_amount);							  
 		                      BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipient,ls_cc_email,NULL,mail_subject,mail_message); 
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipient,ls_cc_email,NULL,mail_subject,mail_message); 
                               EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END;
 							  
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_rolodex_id,ls_message_status);
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_rolodex_id,ls_message_status);
 						       end if;   	
                         else
                             if  (li_requisitioner = 0 ) then
@@ -661,15 +685,15 @@ BEGIN
 		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));
                               mail_message := replace(mail_message,'{ANTICIPATED_AMOUNT}',ls_anticipated_amount);							  
 		                      BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipient,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message); 
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipient,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message); 
                               EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END; 
 							   
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_rolodex_id,ls_message_status);
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_rolodex_id,ls_message_status);
 						       end if;   	
                             else
 							    ls_cc_email:=ls_cc_email || ',' || ls_REQUISITIONER_email;
@@ -679,21 +703,21 @@ BEGIN
 		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));
                               mail_message := replace(mail_message,'{ANTICIPATED_AMOUNT}',ls_anticipated_amount);							  
 		                      BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipient,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message); 
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipient,ls_cc_email,NULL,mail_subject||'---' ||ls_requisitioner_note,mail_message); 
                                EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END; 
 							 
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_rolodex_id,ls_message_status);
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_rolodex_id,ls_message_status);
 						       end if;   	            
                             end if;                     
                         end if;                        
                     
                     end if; 
-                    
+                    end if;
                      
                 end loop;
                 close cur_contact;
@@ -726,22 +750,25 @@ BEGIN
                 dbms_output.put_line('no Contact Type : Subaward Ending Email Contact');
 				ls_recipient:='coeus-mit@mit.edu'; 
 				ls_cc_email:=ls_cc_email|| ',' || ls_ao_email;
+				               li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'506');
+	                        if li_notification_is_active = 1 then
                                 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,4,506,mail_subject,mail_message);
 		                      mail_message := replace(mail_message,'{PERCHASE_ORDER_NUM}',ls_po );
                               mail_message := replace(mail_message,'{START_DATE}',to_char(ls_start_date, 'mm/dd/yyyy'));							  
 		                      mail_message := replace(mail_message,'{END_DATE}',to_char(ls_end_date, 'mm/dd/yyyy'));
                               mail_message := replace(mail_message,'{ANTICIPATED_AMOUNT}',ls_anticipated_amount);							  
 		                      BEGIN
-							  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipient,ls_cc_email,NULL,mail_subject,mail_message); 
+							  KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipient,ls_cc_email,NULL,mail_subject,mail_message); 
                                EXCEPTION
 						       WHEN OTHERS THEN
 						       ls_message_status:='N';
 						        END; 
 							 
-							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Subaward Notification',mail_message);
+							  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Subaward Notification',mail_message);
 							  if li_ntfctn_id <>  -1 then 
-						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_rolodex_id,ls_message_status);
-						       end if;   	            
+						          KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_rolodex_id,ls_message_status);
+						       end if; 
+                            end if;							   
               end if;
               
            -- else 
@@ -765,11 +792,6 @@ return 1;
 
 
 END fn_sub_end_after_notification;
-
-
-
-
-
 
 end;
 /

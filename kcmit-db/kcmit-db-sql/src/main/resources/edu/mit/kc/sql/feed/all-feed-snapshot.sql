@@ -1,7 +1,6 @@
 set define off;
-@all_sap_feed.sql
-@all_person_feed.sql
-@osp_person/person_reverse_feed.sql
+@person/dml_person_feed.sql
+@person/fn_inactive_users_pfeed.sql
 commit
 /
 EXIT

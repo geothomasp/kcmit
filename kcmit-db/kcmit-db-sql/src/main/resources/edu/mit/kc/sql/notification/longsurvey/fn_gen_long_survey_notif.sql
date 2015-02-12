@@ -17,7 +17,7 @@ ls_ReplyToId            varchar2(256);
 ls_DefaultDomain        varchar2(256);
 mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE ;
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
-li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type;
+li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type := null;
 ls_recipients           varchar2(2000);
 ls_Allrecipients           varchar2(2000);
 li_negotiation  NEGOTIATION.NEGOTIATION_ID%type;
@@ -43,6 +43,7 @@ ls_doc NOTIFICATION.DOCUMENT_NUMBER%TYPE;
 li_pos                      number;
 li_NotifCount               number;
 ls_emailid                  varchar2(200);
+li_notification_is_active PLS_INTEGER;
 
 BEGIN
 
@@ -103,6 +104,9 @@ BEGIN
 			
 		   ls_message_status:='Y';
 		   
+		li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,5,'501');
+		if li_notification_is_active = 1 then
+			
            select notification_type_id into li_notification_typ_id from notification_type where module_code=5 and action_code=501;
 		   
            KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,5,501,mail_subject,mail_message);
@@ -129,7 +133,7 @@ BEGIN
                 || crlf || crlf;
 				
 				BEGIN
-					 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_Allrecipients,NULL,NULL,mail_subject,mail_message); 
+					 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_Allrecipients,NULL,NULL,mail_subject,mail_message); 
 				EXCEPTION
 				WHEN OTHERS THEN
 				ls_message_status:='N';
@@ -142,11 +146,12 @@ BEGIN
 				end;
 				
 								
-				li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Long Survey Notification',mail_message);
+				li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Long Survey Notification',mail_message);
 				if li_ntfctn_id <>  -1 then 
-				  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipient,ls_message_status);
-				end if;   	            
-	   
+				  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_recipient,ls_message_status);
+				end if;   
+	            
+	   end if;
 
 				select negotiation_id into li_negotiation from NEGOTIATION WHERE ASSOCIATED_DOCUMENT_ID=as_negotiation_number;
 				

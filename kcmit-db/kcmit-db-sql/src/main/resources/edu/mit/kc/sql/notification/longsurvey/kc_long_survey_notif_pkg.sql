@@ -52,7 +52,7 @@ ls_recipient            varchar2(8);
 ls_email_address        KRIM_ENTITY_EMAIL_T.EMAIL_ADDR%type;
 mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE ;
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
-li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type;
+li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type := null;
 ls_PIId                 PROPOSAL_LOG.PI_ID%type;
 ls_PiName               VARCHAR2(120);
 ls_PiLastName           KRIM_ENTITY_NM_T.LAST_NM%type;
@@ -79,6 +79,7 @@ ls_SurvserResponseID        varchar2(200);
 ls_Question                 varchar2(2000);
 ls_Answer                   varchar2(2000);
 ls_NegotEmail                  KRIM_ENTITY_EMAIL_T.EMAIL_ADDR%type;
+li_notification_is_active PLS_INTEGER;
 
 cursor cur_survey_response is
         select QUESTION_DESC, ANSWER
@@ -126,9 +127,11 @@ BEGIN
         
     ls_SurvserResponseID := as_survey_responseid;
 
-     open cur_survey_response;
-        
-   
+	  li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,5,'500');
+	  
+	  if li_notification_is_active = 1 then
+	  
+		open cur_survey_response; 
         loop
         FETCH cur_survey_response INTO  ls_Question, ls_Answer;
         EXIT WHEN cur_survey_response%NOTFOUND;
@@ -155,19 +158,20 @@ BEGIN
 
        close cur_survey_response;
 	   BEGIN
-			KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,NULL,NULL,mail_subject,mail_message); 
+			KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_recipients,NULL,NULL,mail_subject,mail_message); 
 	   EXCEPTION
 	   WHEN OTHERS THEN
 	   ls_message_status:='N';
 	   END; 
 				
-	  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Long Survey Notification',mail_message);
+	  li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Long Survey Notification',mail_message);
 	  
 	  if li_ntfctn_id <>  -1 then 
-		  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipients,ls_message_status);
+		  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_recipients,ls_message_status);
 	  end if;   	            
 
-
+	end if;
+	
     return 1;
 
     EXCEPTION
@@ -197,7 +201,7 @@ ls_ReplyToId            varchar2(256);
 ls_DefaultDomain        varchar2(256);
 mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE ;
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
-li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type;
+li_notification_typ_id NOTIFICATION_TYPE.NOTIFICATION_TYPE_ID%type := null;
 ls_recipients           varchar2(2000);
 ls_Allrecipients           varchar2(2000);
 li_negotiation  NEGOTIATION.NEGOTIATION_ID%type;
@@ -223,6 +227,7 @@ ls_doc NOTIFICATION.DOCUMENT_NUMBER%TYPE;
 li_pos                      number;
 li_NotifCount               number;
 ls_emailid                  varchar2(200);
+li_notification_is_active PLS_INTEGER;
 
 BEGIN
 
@@ -281,8 +286,9 @@ BEGIN
             ls_recipients := ls_PIEmail ;
             ls_Allrecipients := ls_recipients;
 			
-		   ls_message_status:='Y';
-		   
+	 ls_message_status:='Y';
+	 li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,5,'501');
+	 if li_notification_is_active = 1 then
            select notification_type_id into li_notification_typ_id from notification_type where module_code=5 and action_code=501;
 		   
            KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_typ_id,5,501,mail_subject,mail_message);
@@ -309,19 +315,19 @@ BEGIN
                 || crlf || crlf;
 				
 				BEGIN
-					 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_Allrecipients,NULL,NULL,mail_subject,mail_message); 
+					 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_typ_id,ls_Allrecipients,NULL,NULL,mail_subject,mail_message); 
 				EXCEPTION
 				WHEN OTHERS THEN
 				ls_message_status:='N';
 				END; 
 			
 								
-				li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('Long Survey Notification',mail_message);
+				li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_typ_id,'Long Survey Notification',mail_message);
 				if li_ntfctn_id <>  -1 then 
-				  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipient,ls_message_status);
+				  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_typ_id,li_ntfctn_id,ls_recipient,ls_message_status);
 				end if;   	            
 	   
-
+		end if;
 				--select negotiation_id into li_negotiation from NEGOTIATION WHERE ASSOCIATED_DOCUMENT_ID=as_negotiation_number;
 				
 				Insert into LONG_SURVEY_NOTIF

@@ -293,7 +293,7 @@ mesg                     CLOB;
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
 mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE ;
 li_ntfctn_id   KREN_NTFCTN_T.NTFCTN_ID%TYPE;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_document_number award.document_number% type;
 
 cursor cur_get_recipients is 
@@ -318,8 +318,12 @@ cursor cur_get_pers_for_kc_wf is
         order by AWARD_NUMBER;		
 		
 rec_get_pers_for_kc_wf cur_get_pers_for_kc_wf%rowtype;
-
+li_notification_is_active pls_integer;
 begin
+
+	li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,1,'601');
+	if li_notification_is_active = 1 then
+	
     open cur_get_recipients;
         loop
             fetch cur_get_recipients into ls_email_address;
@@ -364,9 +368,9 @@ begin
 	
 		-- sending email start
 		begin
-			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,1,601,mail_subject,mail_message);
+			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,1,601,mail_subject,mail_message);
 			 mail_message := replace(mail_message, '{AWARD_LIST}',mesg );	
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_recipients,null,NULL,mail_subject,mail_message);	
 		exception
 		when others then
 			UPDATE EVERIFY_NOTIF_DETAILS SET MAIL_SENT_STATUS = 'N'
@@ -389,7 +393,7 @@ begin
 		 
 		
 		-- inserting into KC tables START
-	    li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('EVERIFY',mail_message);
+	    li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'EVERIFY',mail_message);
 		
     	open  cur_get_pers_for_kc_wf;
         loop
@@ -398,7 +402,7 @@ begin
 			
 			begin
 				 if li_ntfctn_id <>  -1 then 
-						KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,rec_get_pers_for_kc_wf.RECIPIENT_ID,rec_get_pers_for_kc_wf.MAIL_SENT_STATUS);
+						KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,rec_get_pers_for_kc_wf.RECIPIENT_ID,rec_get_pers_for_kc_wf.MAIL_SENT_STATUS);
 						
 				end if;		
 			exception
@@ -409,7 +413,8 @@ begin
 			
         end loop;
       close cur_get_pers_for_kc_wf;  
-			
+	
+	end if;	
 	-- inserting into KC tables END
 		
 	

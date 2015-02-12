@@ -115,10 +115,10 @@ ls_PIName               award_persons.full_name%type;
 mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
 mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE ;
 li_ntfctn_id   KREN_NTFCTN_T.NTFCTN_ID%TYPE;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_document_number award.document_number% type;
 li_mail_send CHAR(1);
-
+li_notification_is_active PLS_INTEGER;
 BEGIN
 
     BEGIN
@@ -182,8 +182,8 @@ BEGIN
         if (li_NeedsCoi = 0) and  (li_isPCK = 1) then
 			
 			select NOTIFICATION_TYPE_ID into li_notification_type_id from NOTIFICATION_TYPE where module_code = 1 and action_code = 602;
- 
-			KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,1,602,mail_subject,mail_message);
+			li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,1,'602');	
+			KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,1,602,mail_subject,mail_message);
 			mail_message := replace(mail_message, '{PI_NAME}',ls_PIName );
             mail_message := replace(mail_message, '{LEAD_UNIT}',ls_LeadUnit );
 			mail_message := replace(mail_message, '{LEAD_UNIT_NAME}',ls_LeadUnitName );
@@ -192,7 +192,8 @@ BEGIN
 
         else
             select NOTIFICATION_TYPE_ID into li_notification_type_id from NOTIFICATION_TYPE where module_code = 1 and action_code = 603;
-			KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,1,603,mail_subject,mail_message);
+			li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,1,'603');	
+			KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,1,603,mail_subject,mail_message);
             mail_message := replace(mail_message, '{PI_NAME}',ls_PIName );
             mail_message := replace(mail_message, '{LEAD_UNIT}',ls_LeadUnit );
 			mail_message := replace(mail_message, '{LEAD_UNIT_NAME}',ls_LeadUnitName );
@@ -207,7 +208,8 @@ BEGIN
                 mail_message := mail_message || '<p>Please complete your training; it will take approximately 1-1 1/2 hours and can be completed in multiple sessions.  Details for how to access the training can be found at <br/>http://coi.mit.edu/research/sponsor-specific-guidelines/nih/training-requirements-for-phs-investigators';
            end if;
         end if;
-
+	
+	if li_notification_is_active = 1 then
 		-- appending subject
 		if (li_NeedsCoi = 0) and  (li_isPCK = 1) then
              mail_subject := mail_subject||' - COI Disclosure Required' ;
@@ -229,7 +231,7 @@ BEGIN
 	-- sending email start
 		li_mail_send := 'Y';
 		begin
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_recipients,null,NULL,mail_subject,mail_message);
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_recipients,null,NULL,mail_subject,mail_message);
 
 		exception
 		when others then
@@ -239,15 +241,16 @@ BEGIN
 
 	-- KC entry
 			begin
-					li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('KP Notification',mail_message);
-					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipients,li_mail_send);
+					li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'KP Notification',mail_message);
+					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_recipients,li_mail_send);
 
 			exception
 			when others then
 				null;
 			end;
 	-- KC entry
-
+	end if;
+	
     return 1;
 
     EXCEPTION

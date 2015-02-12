@@ -156,10 +156,6 @@ function FN_GET_TRAINING_MODULE (li_training_code number) return number is
 	 
     return li_module_code;
 
-     EXCEPTION
-          WHEN OTHERS then
-          return 0;
-
 
   end FN_GET_TRAINING_MODULE;
   

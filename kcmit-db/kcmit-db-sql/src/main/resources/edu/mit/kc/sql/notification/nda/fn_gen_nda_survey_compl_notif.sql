@@ -20,7 +20,8 @@ ls_Answer                   NOVI_NDA_SURVEY_RESP.ANSWER%type;
 li_Count                    number;
 li_Count2                    number;
 ls_message_status char(1);
-
+li_notification_is_active PLS_INTEGER;
+li_notification_type_id notification_type.notification_type_id% type := null;
 cursor cur_survey_response is
         select QUESTION_DESC, ANSWER
         from NOVI_NDA_SURVEY_RESP s
@@ -107,29 +108,33 @@ BEGIN
     
     ls_recipients := ls_recipients || ',' || ls_PIEmail;
     ls_Allrecipients := ls_recipients;
-
+	
+    li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,101,'501');
+	if li_notification_is_active = 1 then
 	begin
 			   ls_message_status:='Y'; 
-			   KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,101,501,mail_subject,mail_message);
+			   KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,101,501,mail_subject,mail_message);
 			   mail_subject := replace(mail_subject,'{NDA_NUMBER}',as_nda_number );				
 			   mail_message := replace(mail_message, '{NDA_NUMBER}',as_nda_number );				   
 			   mail_message := replace(mail_message, '{PI_NAME}',ls_PiName );	
 			   mail_message := replace(mail_message, '{ORG_NAME}',as_OrgName );			
 			   mail_message := replace(mail_message, '{TITLE}',as_Title );		
 			   mail_message := replace(mail_message, '{SURVEY_RESPONSE_ID}',trim(ls_SurveyResponseID)  );				   
-			   KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_Allrecipients,NULL,NULL,mail_subject,mail_message);	
+			   KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_Allrecipients,NULL,NULL,mail_subject,mail_message);	
 				
 	exception
 	when others then
 				ls_message_status:='N'; 		 
 	end;   			
 				
-	li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('NDA Survey Completion report',mail_message);
+	li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'NDA Survey Completion report',mail_message);
 	if li_ntfctn_id <>  -1 then 
-	  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_recipients,ls_message_status);
-	  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_PIEmail,ls_message_status);	
+	  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_recipients,ls_message_status);
+	  KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_PIEmail,ls_message_status);	
 	end if;   			
-				
+	
+	end if;	
+	
     return 1;
 
     EXCEPTION

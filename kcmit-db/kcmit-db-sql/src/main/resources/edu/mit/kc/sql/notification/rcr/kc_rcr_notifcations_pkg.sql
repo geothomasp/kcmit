@@ -97,8 +97,9 @@ mesg                     CLOB;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
 
 ls_document_number award.document_number% type;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_mail_sent_status RCR_NOTIF_DETAILS.MAIL_SENT_STATUS%type;
+li_notification_is_active PLS_INTEGER;
 cursor cur_award is
     select distinct AWARD_NUMBER
     from AWARD
@@ -238,6 +239,8 @@ begin
                 ldt_DeadlineDate, ls_PIID, 'PI-CC','Y',
                 ls_PIEmail, sysdate, user,1 , sys_guid() );
            
+		li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,100,'501');
+		if li_notification_is_active = 1 then
 		    begin
 			   
 			   KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,501,mail_subject,mail_message);
@@ -245,7 +248,7 @@ begin
 			   mail_subject := replace(mail_subject,'{TRAINEE_NAME}',ls_TraineeName);	
 			   mail_message := replace(mail_message, '{TRAINEE_NAME}',ls_TraineeName );	
 			   mail_message := replace(mail_message, '{TRAINING_DEADLINE}',to_char(ldt_DeadlineDate, 'mm-dd-yyyy') );				
-			   KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TraineeEmail,ls_PIEmail,NULL,mail_subject,mail_message);	
+			   KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_TraineeEmail,ls_PIEmail,NULL,mail_subject,mail_message);	
 				
 			exception
 			when others then
@@ -254,28 +257,32 @@ begin
 				AND ( RECIPIENT_ID = ls_PersonID OR RECIPIENT_ID = ls_PIID);				
 			 
 			end;   
-          				  
+        end if;
+		
         end if;
     end loop;
-    
-    if ll_NofificationId is not null then
-    
-       li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('RCR Notification',mail_message);
-	   
-        if li_ntfctn_id <>  -1 then
+   
+   if li_notification_is_active = 1 then
+		if ll_NofificationId is not null then
 		
-			open cur_notification_details;
-			loop
-				fetch cur_notification_details into ls_PersonID, ls_Role, ls_mail_sent_status ,ls_AccountNUmber, ls_PiName; 
-				exit when cur_notification_details%NOTFOUND;
+		   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'RCR Notification',mail_message);
+		   
+			if li_ntfctn_id <>  -1 then
+			
+				open cur_notification_details;
+				loop
+					fetch cur_notification_details into ls_PersonID, ls_Role, ls_mail_sent_status ,ls_AccountNUmber, ls_PiName; 
+					exit when cur_notification_details%NOTFOUND;
+					
+						KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
+								   
+				end loop;
+				close cur_notification_details;
+		 end if;
 				
-					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
-							   
-			end loop;
-			close cur_notification_details;
-     end if;
-            
-    end if;
+		end if;
+	end if;
+	
               
     return 0;
     
@@ -321,7 +328,7 @@ mesg                     CLOB;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
 ls_mail_sent_status RCR_NOTIF_DETAILS.MAIL_SENT_STATUS%type;
 ls_document_number award.document_number% type;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 
 cursor cur_award is
     select distinct AWARD_NUMBER
@@ -460,7 +467,7 @@ begin
 		   mail_subject := replace(mail_subject, '{TRAINING_DEADLINE}',to_char(ldt_DeadlineDate, 'mm-dd-yyyy') );	
 		   mail_message := replace(mail_message, '{TRAINEE_NAME}',ls_TraineeName );	
 		   mail_message := replace(mail_message, '{TRAINING_DEADLINE}',to_char(ldt_DeadlineDate, 'mm-dd-yyyy') );				
-		   KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TraineeEmail,null,NULL,mail_subject,mail_message);		
+		   KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_TraineeEmail,null,NULL,mail_subject,mail_message);		
 		   
 		exception
 			when others then
@@ -477,7 +484,7 @@ begin
     
     if ll_NofificationId is not null then    
 	
-		li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('RCR Notification',mail_message);
+		li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'RCR Notification',mail_message);
 	   
         if li_ntfctn_id <>  -1 then
 		
@@ -486,7 +493,7 @@ begin
 				fetch cur_notification_details into ls_PersonID, ls_Role, ls_mail_sent_status , ls_AccountNUmber, ls_PiName; 
 				exit when cur_notification_details%NOTFOUND;
 				
-					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
+					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
 							   
 			end loop;
 			close cur_notification_details;
@@ -546,10 +553,10 @@ mesg                     CLOB;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
 
 ls_document_number award.document_number% type;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_mail_sent_status RCR_NOTIF_DETAILS.MAIL_SENT_STATUS%type;
 li_entered_inside NUMBER;
-
+li_notification_is_active PLS_INTEGER;
 cursor cur_award is
     select distinct AWARD_NUMBER
     from AWARD
@@ -827,8 +834,10 @@ begin
     IF ll_NofificationId is not null then
     -- This run of the notification generated emails.  
     --Sent a grouped email to the PIs
-        open cur_pis;
-        
+	
+	 li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,100,503);
+	 if li_notification_is_active = 1 then
+        open cur_pis;        
         loop
             fetch cur_pis into ls_PIID, ls_PIEmail;
             exit when cur_pis%NOTFOUND;
@@ -867,7 +876,7 @@ begin
              KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,503,mail_subject,mail_message);	             
 		     mail_message := replace(mail_message, '{STUDENT_LIST}',mesg );	
 			 mail_message_PI	 :=  mail_message;		 
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_PIEmail,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_PIEmail,null,NULL,mail_subject,mail_message);	
 			
 			exception
 			when others then
@@ -881,6 +890,7 @@ begin
         end loop;
         
         close cur_pis;
+    
         
             --Sent a grouped email to the AOs
         open cur_aos;
@@ -921,7 +931,7 @@ begin
              KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,503,mail_subject,mail_message);	             
 		     mail_message := replace(mail_message, '{STUDENT_LIST}',mesg );	
 			 mail_message_AO := mail_message;
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_AOEmail,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_AOEmail,null,NULL,mail_subject,mail_message);	
             
 			exception
 			when others then
@@ -977,7 +987,7 @@ begin
 				 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,503,mail_subject,mail_message);	             
 				 mail_message := replace(mail_message, '{STUDENT_LIST}',mesg );
 				 mail_message_DH := mail_message;
-				 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_DHEmail,null,NULL,mail_subject,mail_message);	
+				 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_DHEmail,null,NULL,mail_subject,mail_message);	
             
 			exception
 			when others then
@@ -996,7 +1006,7 @@ begin
         -- Notifications were sent.  		
 
 	   KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,503,mail_subject,mail_message);	 
-	   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('RCR Notification',mail_message);
+	   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'RCR Notification',mail_message);
 	   
        if li_ntfctn_id <>  -1 then 
 			open cur_notification_details;
@@ -1004,12 +1014,14 @@ begin
 				fetch cur_notification_details into ls_PersonID, ls_Role, ls_mail_sent_status ,ls_AccountNUmber, ls_PiName, ls_LeadUnit; 
 				exit when cur_notification_details%NOTFOUND;
 				
-					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
+					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
 				   
 			end loop;
 			close cur_notification_details;        
        end if;
-         
+	   
+    end if;
+	
     end if;
     
     return 0;
@@ -1062,9 +1074,12 @@ mesg                     CLOB;
 crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
 
 ls_document_number award.document_number% type;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_mail_sent_status RCR_NOTIF_DETAILS.MAIL_SENT_STATUS%type;
 li_entered_inside NUMBER;
+
+li_notification_is_active  PLS_INTEGER;
+
 cursor cur_award is
     select distinct AWARD_NUMBER
     from AWARD
@@ -1342,8 +1357,9 @@ begin
     IF ll_NofificationId is not null then
     -- This run of the notification generated emails.  
     --Sent a grouped email to the PIs
-        open cur_pis;
-        
+	 li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,100,504);
+	 if li_notification_is_active = 1 then
+        open cur_pis;        
         loop
             fetch cur_pis into ls_PIID, ls_PIEmail;
             exit when cur_pis%NOTFOUND;
@@ -1381,7 +1397,7 @@ begin
              KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,504,mail_subject,mail_message);	             
 		     mail_message := replace(mail_message, '{STUDENT_LIST}',mesg );	
 			 mail_message_PI	 :=  mail_message;		 
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_PIEmail,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_PIEmail,null,NULL,mail_subject,mail_message);	
             
 			exception
 			when others then
@@ -1436,7 +1452,7 @@ begin
              KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,504,mail_subject,mail_message);	             
 		     mail_message := replace(mail_message, '{STUDENT_LIST}',mesg );	
 			 mail_message_AO	 :=  mail_message;		 
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_AOEmail,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_AOEmail,null,NULL,mail_subject,mail_message);	
         
             exception
 			when others then
@@ -1491,7 +1507,7 @@ begin
              KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,504,mail_subject,mail_message);	             
 		     mail_message := replace(mail_message, '{STUDENT_LIST}',mesg );
 			 mail_message_DH := mail_message;
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_DHEmail,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_DHEmail,null,NULL,mail_subject,mail_message);	
             
 			exception
 			when others then
@@ -1507,7 +1523,7 @@ begin
         
         -- Notifications were sent.  
 		   KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,504,mail_subject,mail_message);	 
-		   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('RCR Notification',mail_message);
+		   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'RCR Notification',mail_message);
 		   
 		   if li_ntfctn_id <>  -1 then 
 				open cur_notification_details;
@@ -1515,12 +1531,12 @@ begin
 					fetch cur_notification_details into ls_PersonID, ls_Role,ls_mail_sent_status, ls_AccountNUmber, ls_PiName, ls_LeadUnit; 
 					exit when cur_notification_details%NOTFOUND;
 					
-						KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
+						KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
 					   
 				end loop;
 				close cur_notification_details;        
 		   end if;
-         
+    end if;     
 
     end if;
     
@@ -1580,10 +1596,11 @@ crlf                     VARCHAR2( 2 ) := CHR( 13 ) || CHR( 10 );
 
 
 ls_document_number award.document_number% type;
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_mail_sent_status RCR_NOTIF_DETAILS.MAIL_SENT_STATUS%type;
 
 li_entered_inside NUMBER;
+li_notification_is_active PLS_INTEGER;
 
 cursor cur_award is
     select distinct AWARD_NUMBER
@@ -1864,7 +1881,8 @@ begin
     IF ll_NofificationId is not null then
     -- This run of the notification generated emails.  
     --Sent a grouped email to the PIs
-               
+    li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,100,505);  
+	if li_notification_is_active = 1 then
         open cur_ads;
         loop
             fetch cur_ads into ls_ADID, ls_ADEmail, ls_ADName, ls_ADFName, ls_ADLName;
@@ -1913,7 +1931,7 @@ begin
 			 
 			begin
 			
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_ADEmail,null,NULL,mail_subject,mail_message);	
+			 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_ADEmail,null,NULL,mail_subject,mail_message);	
 			 
             exception
 			when others then
@@ -1930,7 +1948,7 @@ begin
 		
 		
 	   KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,505,mail_subject,mail_message);	 
-	   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('RCR Notification',mail_message);
+	   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'RCR Notification',mail_message);
 	   
        if li_ntfctn_id <>  -1 then 
 			open cur_notification_details;
@@ -1938,13 +1956,13 @@ begin
             fetch cur_notification_details into ls_PersonID, ls_Role,ls_mail_sent_status, ls_AccountNUmber, ls_PiName, ls_LeadUnit; 
             exit when cur_notification_details%NOTFOUND;
 				
-					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
+					KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,ls_PersonID,ls_mail_sent_status);
 				   
 			end loop;
 			close cur_notification_details;        
        end if;
 		
-	        
+	end if;        
 
     end if;
     
@@ -1968,8 +1986,9 @@ mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
 mail_message   NOTIFICATION_TYPE.MESSAGE%TYPE; 
 li_ntfctn_id   KREN_NTFCTN_T.NTFCTN_ID%TYPE;
 ls_mail_sent_status RCR_NOTIF_DETAILS.MAIL_SENT_STATUS%type := 'Y';
-li_notification_type_id notification_type.notification_type_id% type;
+li_notification_type_id notification_type.notification_type_id% type := null;
 ls_document_number KRIM_PERSON_DOCUMENT_T.FDOC_NBR% type;
+li_notification_is_active PLS_INTEGER;
 begin
     
     begin
@@ -1990,26 +2009,29 @@ begin
         ls_TraineeName := ls_TraineeFName || ' ' || ls_TraineeLName;
     end if;
 	
-    KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(null,100,506,mail_subject,mail_message);	
+	li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,100,506);
 	
-	select NOTIFICATION_TYPE_ID into li_notification_type_id from NOTIFICATION_TYPE where module_code = 100 and action_code = 506; 
+	if li_notification_is_active = 1 then
 	
-	begin
-		if (ls_TraineeEmail is not null) and (length(trim(ls_TraineeEmail)) > 0) then         
-			 mail_message := replace(mail_message, '{TRAINEE_NAME}',ls_TraineeName );	
-			 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TraineeEmail,null,NULL,mail_subject,mail_message);	
-					
-		end if;
-    exception
-	when others then
-	ls_mail_sent_status := 'N';
-	end;
-	
-	
-	   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN('RCR Notification',mail_message);       
-	   KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_ntfctn_id,as_personid,ls_mail_sent_status);
-    
+		select NOTIFICATION_TYPE_ID into li_notification_type_id from NOTIFICATION_TYPE where module_code = 100 and action_code = 506;
+		KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,100,506,mail_subject,mail_message);				
+		begin
+			if (ls_TraineeEmail is not null) and (length(trim(ls_TraineeEmail)) > 0) then         
+				 mail_message := replace(mail_message, '{TRAINEE_NAME}',ls_TraineeName );	
+				 KC_MAIL_GENERIC_PKG.SEND_MAIL(li_notification_type_id,ls_TraineeEmail,null,NULL,mail_subject,mail_message);	
+						
+			end if;
+		exception
+		when others then
+		ls_mail_sent_status := 'N';
+		end;
 		
+		
+		   li_ntfctn_id := KC_MAIL_GENERIC_PKG.FN_INSERT_KREN_NTFCTN(li_notification_type_id,'RCR Notification',mail_message);       
+		   KC_MAIL_GENERIC_PKG.FN_INSRT_KREN_NTFCTN_MSG_DELIV(li_notification_type_id,li_ntfctn_id,as_personid,ls_mail_sent_status);
+		
+	end if;
+	
     Return ll_ret;
     
 end fn_rcr_tr_compl_notif;           

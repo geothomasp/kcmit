@@ -122,7 +122,7 @@ begin
 			   mail_message:='COI Disclosure from coeus not synced with KC and the error message is:'||CHR(13)||ls_error_message;			
 			   li_mail_send := 'Y';
 				begin
-					 KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_TestMailReceiver,null,ls_TestMailReceiver,mail_subject,mail_message);
+					 KC_MAIL_GENERIC_PKG.SEND_MAIL(-999,ls_TestMailReceiver,null,ls_TestMailReceiver,mail_subject,mail_message);
 
 				exception
 				when others then
