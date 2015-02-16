@@ -51,9 +51,7 @@
             </policies>
 			<routePaths>
 				<routePath>
-					<start name="Initiated" nextNode="PeopleFlows"/><!--
-					<requests name="AwardBudgetInitialApproval" nextNode="AwardBudgetOSPApproval"/>
-					<requests name="AwardBudgetOSPApproval" nextNode="PeopleFlows"/>-->
+					<start name="Initiated" nextNode="PeopleFlows"/>
 					<requests name="PeopleFlows" />
 				</routePath>
 			</routePaths>
@@ -62,18 +60,10 @@
 					<activationType>P</activationType>
 					<mandatoryRoute>false</mandatoryRoute>
 					<finalApproval>false</finalApproval>
-				</start><!--
-				<role name="AwardBudgetInitialApproval">
-					<qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
-                    <activationType>S</activationType>
-	            </role>
-				<role name="AwardBudgetOSPApproval">
-					<qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
-                    <activationType>S</activationType>
-                    <finalApproval>true</finalApproval>
-	            </role>-->
+				</start>
 	            <requests name="PeopleFlows">
                     <activationType>R</activationType>
+                    <forceAction>true</forceAction>
                     <rulesEngine executorClass="org.kuali.kra.award.budget.service.impl.AwardBudgetRulesEngineExecutorImpl"/>
                 </requests>
 			</routeNodes>
