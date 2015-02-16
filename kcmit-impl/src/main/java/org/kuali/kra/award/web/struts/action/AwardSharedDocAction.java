@@ -15,7 +15,10 @@
  */
 package org.kuali.kra.award.web.struts.action;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -31,6 +34,7 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
+import org.kuali.kra.bo.CommentType;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
@@ -39,6 +43,9 @@ import org.kuali.kra.subaward.bo.SubAward;
 import org.kuali.kra.subaward.bo.SubAwardAttachments;
 import org.kuali.rice.core.api.util.tree.Node;
 import org.kuali.rice.krad.util.KRADConstants;
+
+
+import edu.mit.kc.bo.SharedDocumentType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,12 +59,12 @@ public class AwardSharedDocAction extends AwardAction {
 	private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
 	private MedusaService medusaService;
 	private Long moduleIdentifier;
+	private List<SharedDocumentType> sharedDocType=new ArrayList<SharedDocumentType>();
 	 protected  MedusaService getMedusaService (){
 	        if (medusaService == null)
 	            medusaService = KcServiceLocator.getService(MedusaService.class);
 	        return medusaService;
 	    }
-  
     public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
      InstitutionalProposalAttachments attachment =null;
@@ -88,6 +95,7 @@ public class AwardSharedDocAction extends AwardAction {
     public ActionForward viewAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
         AwardForm awardForm = (AwardForm) form;  
+       // SharedDocForm sharedForm = (SharedDocForm) form;  
         AwardAttachment attachment=null;
         Award award=null;
       Long awardId=null;
@@ -98,27 +106,37 @@ public class AwardSharedDocAction extends AwardAction {
             String lineNumber = StringUtils.substringBetween(parameterName, ".line", ".");
            String awardIdOld = (StringUtils.substringBetween(parameterName, ".id", "."));
            awardId=Long.valueOf(awardIdOld);           
-        }      
+        }   
+       // List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
         MedusaNode node = getMedusaService().getMedusaNode("award", awardId);
         award=(Award) node.getData();
         if(award!=null)
         	 attachment= award.getAwardAttachments().get(selection);        	
      
         if (attachment == null) {
-            return mapping.findForward(Constants.MAPPING_BASIC);
+        	return mapping.findForward(Constants.MAPPING_BASIC);
         }
-        
+    /*    for(SharedDocumentType sharedDocType:sharedDocTypeNew){
+        if(sharedDocType.getModuleCode()==1 && attachment.getAwardAttachmentType().getTypeCode()==sharedDocType.getDocumentTypeCode().toString()){
+            final AttachmentFile file = attachment.getFile();
+            this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
+            return RESPONSE_ALREADY_HANDLED;
+        }
+        	
+        }
+        return mapping.findForward(Constants.MAPPING_BASIC);*/
         final AttachmentFile file = attachment.getFile();
         this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
-        
         return RESPONSE_ALREADY_HANDLED;
-    }
+        }
+ 
     public ActionForward viewAttachmentDp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
     	 DevelopmentProposal developmentProposal =null;
     	 Long proposalNumber=null;
     	  Narrative attachment =null;
-    	 final int selection = this.getSelectedLine(request);
+    	  List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
+    	  	 final int selection = this.getSelectedLine(request);
     	  AwardForm awardForm = (AwardForm) form; 
     	  String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
           if (StringUtils.isNotBlank(parameterName)) {
@@ -134,8 +152,15 @@ public class AwardSharedDocAction extends AwardAction {
        if (attachment == null) {
             return mapping.findForward(Constants.MAPPING_BASIC);
         }
-        
+    /*   for(SharedDocumentType sharedDocType:sharedDocTypeNew){
+       if(sharedDocType.getModuleCode()==3 && attachment.getNarrativeType().getCode()==sharedDocType.getDocumentTypeCode().toString()){
         final NarrativeAttachment file = attachment.getNarrativeAttachment();
+       this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
+        return RESPONSE_ALREADY_HANDLED;
+    }
+       }
+       return mapping.findForward(Constants.MAPPING_BASIC);*/
+       final NarrativeAttachment file = attachment.getNarrativeAttachment();
        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
         return RESPONSE_ALREADY_HANDLED;
     }
@@ -165,8 +190,24 @@ public class AwardSharedDocAction extends AwardAction {
        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
         return RESPONSE_ALREADY_HANDLED;
     }
+    
+    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return mapping.findForward(KRADConstants.MAPPING_PORTAL);
+    }
+    
     public ActionForward refreshView(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         
         return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
     }
+
+	public List<SharedDocumentType> getSharedDocType() {		
+		 List<SharedDocumentType> sharedDocType = 
+ 	            (List<SharedDocumentType>) getBusinessObjectService().findAll(SharedDocumentType.class);
+		
+		return sharedDocType;
+	}
+
+	public void setSharedDocType(List<SharedDocumentType> sharedDocType) {
+		this.sharedDocType = sharedDocType;
+	}
  }

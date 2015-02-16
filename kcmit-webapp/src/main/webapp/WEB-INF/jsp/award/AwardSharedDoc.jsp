@@ -26,7 +26,11 @@
 <kra-shared:sharedDoc helpParameterNamespace="KC-AWARD" helpParameterDetailType="Document" helpParameterName="awardMedusaHelpUrl" />
 </kul:tabTop>
 <kul:panelFooter />
-<kul:documentControls transactionalDocument="true" suppressRoutingControls="true" suppressCancelButton="true" />
+<div id="globalbuttons" class="globalbuttons">	    
+	    <html:image src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_close.gif" styleClass="globalbuttons" property="methodToCall.close" title="close" alt="close" onclick="excludeSubmitRestriction=true"/>
+	    
+	</div>
+<!-- <kul:documentControls transactionalDocument="true" suppressRoutingControls="true" suppressCancelButton="true" /> -->
 
 	<script type="text/javascript" src="scripts/medusaView.js"></script>	
 	</kul:page> 
