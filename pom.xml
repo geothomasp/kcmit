@@ -34,8 +34,8 @@
         <avalon-framework.version>4.3.1</avalon-framework.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <cglib-nodep.version>3.1</cglib-nodep.version>
-        <coeus-api.version>6.0.0-s14</coeus-api.version>
-        <coeus-s2sgen.version>6.0.0-s14</coeus-s2sgen.version>
+        <coeus-api.version>6.0.0</coeus-api.version>
+        <coeus-s2sgen.version>6.0.0</coeus-s2sgen.version>
         <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -91,7 +91,7 @@
         <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
         <pdfbox.version>1.8.6</pdfbox.version>
         <quartz.version>1.8.4</quartz.version>
-        <rice.version>2.5.2-r49495</rice.version>
+        <rice.version>2.5.2</rice.version>
         <servlet.version>3.0.1</servlet.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring.version>3.2.12.RELEASE</spring.version>
@@ -182,7 +182,7 @@
         <build.environment>dev</build.environment>
 
         <!-- This is used in the licenses section as well as the jar/war plugins -->
-        <kuali.ecl.license.url>http://maven.kuali.org/external/org/opensource/ecl/2.0/ecl-2.0.txt</kuali.ecl.license.url>
+        <kuali.agpl3.license.url>http://www.gnu.org/licenses/agpl-3.0.txt</kuali.agpl3.license.url>
 
         <maven.skip.packaging>false</maven.skip.packaging>
 
@@ -461,7 +461,7 @@
                             <manifestEntries>
                                 <Bundle-Version>${project.version}</Bundle-Version>
                                 <Bundle-Name>${project.name}</Bundle-Name>
-                                <Bundle-License>${kuali.ecl.license.url}</Bundle-License>
+                                <Bundle-License>${kuali.agpl3.license.url}</Bundle-License>
                                 <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                                 <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
                                 <Bundle-Timestamp>${maven.build.timestamp}</Bundle-Timestamp>
@@ -566,7 +566,7 @@
                             <manifestEntries>
                                 <Bundle-Version>${project.version}</Bundle-Version>
                                 <Bundle-Name>${project.name}</Bundle-Name>
-                                <Bundle-License>${kuali.ecl.license.url}</Bundle-License>
+                                <Bundle-License>${kuali.agpl3.license.url}</Bundle-License>
                                 <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                                 <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
                                 <Bundle-Timestamp>${maven.build.timestamp}</Bundle-Timestamp>
@@ -629,7 +629,7 @@
                                     <licenseMerge>CDDL - Version 1.0|CDDL|CDDL 1.0|CDDL License|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|Common Development and Distribution License (CDDL) v1.0</licenseMerge>
                                     <licenseMerge>CDDL - Version 1.1|CDDL 1.1</licenseMerge>
                                     <licenseMerge>CDDL - Version 1.1 / GNU General Public License - Version 2|CDDL v1.1 / GPL v2 dual license|CDDL + GPLv2 with classpath exception</licenseMerge>
-                                    <licenseMerge>Educational Community License - Version 2.0|Educational Community License, Version 2.0</licenseMerge>
+                                    <licenseMerge>Educational Community License - Version 2.0|GNU Affero General Public License, Version 3</licenseMerge>
                                     <licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|lgpl|license.txt|GNU General Public Library|GNU Lesser General Public Licence|LGPL</licenseMerge>
                                     <licenseMerge>GNU Lesser General Public License - Version 2.1|GNU Lesser General Public License Version 2.1|LGPL 2.1|LGPL, version 2.1</licenseMerge>
                                     <licenseMerge>GNU Lesser General Public License - Version 3|GNU Lesser General Public License v3.0|GNU Lesser General Public License - Version 3.0</licenseMerge>
@@ -1557,6 +1557,10 @@
                         <groupId>xml-apis</groupId>
                         <artifactId>xml-apis</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>org.eclipse.persistence.oracle</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1676,6 +1680,10 @@
                     <exclusion>
                         <groupId>org.opensaml</groupId>
                         <artifactId>opensaml</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>org.eclipse.persistence.oracle</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
