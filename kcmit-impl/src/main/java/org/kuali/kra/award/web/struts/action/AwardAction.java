@@ -97,6 +97,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
+import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
 import org.kuali.kra.subaward.service.SubAwardService;
 import org.kuali.kra.timeandmoney.AwardHierarchyNode;
@@ -131,6 +132,7 @@ import org.kuali.rice.krad.service.PessimisticLockService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
+import edu.mit.kc.award.SharedDocForm;
 import edu.mit.kc.infrastructure.KcMitConstants;
 
 /**
@@ -242,15 +244,43 @@ public class AwardAction extends BudgetParentActionBase {
         }
     }
     
+
+    private void handlePlaceHolderDocumentDoc(SharedDocForm form, AwardDocument awardDocument) {
+        if(awardDocument.isPlaceHolderDocument()) {
+            Long awardId = form.getPlaceHolderAwardId();
+            //If it is a placeholder document, we want to initialize it with the award that the user is viewing
+            int currentAwardIndex = -1;
+            Award currentAward = null;
+            for(Award award : awardDocument.getAwardList()) {
+                currentAwardIndex++;
+                if(ObjectUtils.equals(award.getAwardId(), awardId)) {
+                	currentAward = award;
+                    break;
+                }
+            }
+            if(currentAward != null) {
+                awardDocument.getAwardList().remove(currentAwardIndex);
+                awardDocument.getAwardList().add(0, currentAward);
+                form.setViewOnly(true);                
+            }
+        }
+    }
     protected void cleanUpUserSession() {
         GlobalVariables.getUserSession().removeObject(GlobalVariables.getUserSession().getKualiSessionId() + Constants.TIME_AND_MONEY_DOCUMENT_STRING_FOR_SESSION);
     }
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AwardForm awardForm = (AwardForm)form;
-        boolean awardNewStatus=awardForm.isStatusHold();     
-        ActionForward actionForward = super.execute(mapping, form, request, response);        
-        if (awardForm.isAuditActivated()){
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {       
+    	SharedDocForm sharedDocForm = new SharedDocForm();
+    	if(form.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
+    	    sharedDocForm = (SharedDocForm)form;    	   
+        ActionForward actionForward = super.execute(mapping, form, request, response);
+        return actionForward;
+        }    else{
+        	form.getClass();
+        	AwardForm awardForm = (AwardForm)form;
+            boolean awardNewStatus=awardForm.isStatusHold();  
+            ActionForward actionForward = super.execute(mapping, form, request, response);
+            if (awardForm.isAuditActivated()){
             awardForm.setUnitRulesMessages(getUnitRulesMessages(awardForm.getAwardDocument()));
         }
         if (GlobalVariables.getAuditErrorMap().isEmpty()) {
@@ -263,9 +293,11 @@ public class AwardAction extends BudgetParentActionBase {
        if(awardNewStatus){
         	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
         }
-        return actionForward;
-    }
-    
+       return actionForward;
+        }     
+
+       
+    }   
     protected List<String> getUnitRulesMessages(AwardDocument awardDoc) {
         KrmsRulesExecutionService rulesService = KcServiceLocator.getService(KrmsRulesExecutionService.class);
         return rulesService.processUnitValidations(awardDoc.getLeadUnitNumber(), awardDoc);
@@ -1324,6 +1356,14 @@ public class AwardAction extends BudgetParentActionBase {
         handlePlaceHolderDocument(awardForm, retrievedDocument);        
     }
     
+    protected void loadDocumentInFormDoc(HttpServletRequest request, SharedDocForm sharedForm)
+    	    throws WorkflowException {
+    	        String docIdRequestParameter = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
+    	        AwardDocument retrievedDocument = (AwardDocument) KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(docIdRequestParameter);
+    	        sharedForm.setDocument(retrievedDocument);
+    	        request.setAttribute(KRADConstants.PARAMETER_DOC_ID, docIdRequestParameter);
+    	        handlePlaceHolderDocumentDoc(sharedForm, retrievedDocument);        
+    	    }
 
     @Override
     protected DocumentService getDocumentService() {
@@ -1806,10 +1846,15 @@ public class AwardAction extends BudgetParentActionBase {
     @SuppressWarnings("unchecked")
     @Override
     protected void populateAuthorizationFields(KualiDocumentFormBase formBase) {
-        
-        AwardForm awardForm = (AwardForm) formBase;
-        super.populateAuthorizationFields(formBase);
-        AwardDocument awardDocument = awardForm.getAwardDocument();
+    	AwardDocument awardDocument =null;
+    	if(formBase.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
+    		 SharedDocForm awardForm = (SharedDocForm) formBase; 
+    		 awardDocument = awardForm.getAwardDocument();
+    	 }else{
+    		 AwardForm awardForm = (AwardForm) formBase;
+    		 awardDocument = awardForm.getAwardDocument();
+    	 }       
+        super.populateAuthorizationFields(formBase);       
         Award award = awardDocument.getAward();
         Map documentActions = formBase.getDocumentActions();
         //if Award version has been edited in T&M doc then we suppress cancel action.
@@ -1936,37 +1981,7 @@ public class AwardAction extends BudgetParentActionBase {
         return mapping.findForward(Constants.MAPPING_AWARD_CONTACTS_PAGE);
     }
     
-    public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {  
-        InstitutionalProposalForm InstitutionalProposalForm = (InstitutionalProposalForm) form;
-        final int selection = this.getSelectedLine(request);
-        final InstitutionalProposalAttachments attachment = InstitutionalProposalForm.getInstitutionalProposalAttachmentBean().retrieveExistingAttachment(selection);
-        
-        if (attachment == null) {
-            return mapping.findForward(Constants.MAPPING_BASIC);
-        }
-        
-        final InstitutionalProposalAttachmentsData file = attachment.getFile();
-        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
-        return RESPONSE_ALREADY_HANDLED;
-    }
-    public ActionForward viewAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {  
-        AwardForm awardForm = (AwardForm) form;
-        final int selection = this.getSelectedLine(request);
-        final AwardAttachment attachment = awardForm.getAwardAttachmentFormBean().retrieveExistingAttachment(selection);
-        
-        if (attachment == null) {
-            return mapping.findForward(Constants.MAPPING_BASIC);
-        }
-        
-        final AttachmentFile file = attachment.getFile();
-        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
-        
-        return RESPONSE_ALREADY_HANDLED;
-    }
    
-    
     /**
     *
     * This method gets called upon navigation to EDS tab.
@@ -1977,15 +1992,20 @@ public class AwardAction extends BudgetParentActionBase {
     * @return
     */
    public ActionForward sharedDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-       AwardForm awardForm = (AwardForm) form;
-       if (awardForm.getDocument().getDocumentNumber() == null) {
+	   InstitutionalProposal instProp=null;	   
+	 SharedDocForm sharedDocForm=(SharedDocForm)form;
+	//   AwardForm awardForm = (AwardForm) form;
+      
+       
+      if (sharedDocForm.getDocument().getDocumentNumber() == null) {
            //if we are entering this from the search results
-           loadDocumentInForm(request, awardForm);
+           loadDocumentInFormDoc(request, sharedDocForm);
        }
-       awardForm.getMedusaBean().setMedusaViewRadio("1");
-       awardForm.getMedusaBean().setModuleName("award");
-       awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
-       awardForm.getMedusaBean().generateParentNodes();
+   
+	 sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
+	 sharedDocForm.getMedusaBean().setModuleName("award");
+	 sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
+	 sharedDocForm.getMedusaBean().generateParentNodes();
        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
    }
     @Override

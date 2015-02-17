@@ -13,7 +13,8 @@
       <th colspan="2">Description</th>
       <th colspan="2">File Name</th>
     </tr>
-    
+     <c:set var="viewSharedDoc" value="${KualiForm.subAwardProjectDocView}" />
+       <c:if test="${viewSharedDoc}">
     <c:forEach items="${node.bo.subAwardAttachments}" var="attachment" varStatus="itrStatus">
           <tr>
         <td style="text-align: center;" colspan="2">
@@ -32,4 +33,5 @@
 		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
         </td>
      </c:forEach>
+     </c:if>
   </table>

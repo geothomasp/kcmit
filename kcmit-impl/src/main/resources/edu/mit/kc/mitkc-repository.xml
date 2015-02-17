@@ -143,7 +143,7 @@
     </class-descriptor> 
     
     	<class-descriptor class="edu.mit.kc.bo.SharedDocumentType" table="SHARED_DOCUMENT_TYPE">
-    	<field-descriptor id="1" name="sharedDocumentType" column="SHARED_DOCUMENT_TYPE_ID" jdbc-type="INTEGER" primarykey="true"/>	
+    	<field-descriptor id="1" name="sharedDocumentTypeId" column="SHARED_DOCUMENT_TYPE_ID" jdbc-type="INTEGER" primarykey="true"/>	
 		<field-descriptor  name="moduleCode" column="COEUS_MODULE_CODE" jdbc-type="INTEGER" />	 
 		<field-descriptor name="documentTypeCode" column="DOCUMENT_TYPE_CODE" jdbc-type="INTEGER"  />		
 		 <field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />

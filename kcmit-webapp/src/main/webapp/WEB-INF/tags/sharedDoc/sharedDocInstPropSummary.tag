@@ -13,6 +13,8 @@
       <th colspan="2">Description</th>
       <th colspan="2">FileName</th>
     </tr>
+     <c:set var="viewSharedDoc" value="${KualiForm.ipProjectDocView}" />
+      <c:if test="${viewSharedDoc}">
     <c:forEach items="${node.bo.instProposalAttachments}" var="ipAttachment" varStatus="itrStatus">
       <tr>
         <td style="text-align: center;" colspan="2">
@@ -35,4 +37,5 @@
         </td>
       </tr>
     </c:forEach>
+    </c:if>
   </table>

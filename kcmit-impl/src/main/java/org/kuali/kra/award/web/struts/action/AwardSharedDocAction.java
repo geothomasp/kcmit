@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.framework.attachment.AttachmentFile;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.medusa.MedusaNode;
 import org.kuali.coeus.common.framework.medusa.MedusaService;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
@@ -32,6 +33,7 @@ import org.kuali.coeus.propdev.impl.attachment.NarrativeAttachment;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
+import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.bo.CommentType;
@@ -42,9 +44,13 @@ import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.subaward.bo.SubAward;
 import org.kuali.kra.subaward.bo.SubAwardAttachments;
 import org.kuali.rice.core.api.util.tree.Node;
+import org.kuali.rice.kim.api.permission.PermissionService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
 
+import edu.mit.kc.award.SharedDocForm;
 import edu.mit.kc.bo.SharedDocumentType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,12 +65,50 @@ public class AwardSharedDocAction extends AwardAction {
 	private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
 	private MedusaService medusaService;
 	private Long moduleIdentifier;
+	 private KcAuthorizationService kraAuthorizationService;
 	private List<SharedDocumentType> sharedDocType=new ArrayList<SharedDocumentType>();
 	 protected  MedusaService getMedusaService (){
 	        if (medusaService == null)
 	            medusaService = KcServiceLocator.getService(MedusaService.class);
 	        return medusaService;
 	    }
+	 public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		 if(form.getClass().getName().equals("org.kuali.kra.award.AwardForm")){ 
+    		 AwardForm awardForm = (AwardForm) form; 
+    		 ActionForward actionForward = super.execute(mapping, form, request, response);
+    		 return actionForward;
+    	 }else{
+		 SharedDocForm sharedDocForm=(SharedDocForm)form;
+		 AwardDocument document=sharedDocForm.getAwardDocument();
+		 ActionForward actionForward = super.execute(mapping, form, request, response); 
+		 String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+		 if(!sharedDocForm.isAwardProjectDocView()){
+			 if ((getPermissionService().hasPermission(currentUser, "KC_AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
+					 (getPermissionService().hasPermission(currentUser, "KC_AWARD", "VIEW_AWARD_DOCUMENTS"))||
+							 (getPermissionService().hasPermission(currentUser, "KC_AWARD", "CREATE_AWARD"))){
+				 sharedDocForm.setAwardProjectDocView(true);
+			 }}	
+		 if(!sharedDocForm.isSubAwardProjectDocView()){
+			 if ((getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY_SUBAWARD"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "CREATE_SUBAWARD"))||
+							 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS"))){
+				 sharedDocForm.setSubAwardProjectDocView(true);
+			 }}	
+		 if(!sharedDocForm.isIpProjectDocView()){
+			 if ((getPermissionService().hasPermission(currentUser, "KC_IP", "MODIFY_INST_PROPOSAL"))||
+					 (getPermissionService().hasPermission(currentUser, "KC_IP", "CREATE_INST_PROPOSAL"))||
+							 (getPermissionService().hasPermission(currentUser, "KC_IP", "MAINTAIN_INST_PROPOSAL_DOC")||
+									 (getPermissionService().hasPermission(currentUser, "KC_IP", "VIEW_INST_PROPOSAL_DOC")))){
+				 sharedDocForm.setIpProjectDocView(true);
+			 }}	
+		 if(!sharedDocForm.isPropProjectDocView()){
+			 if (getPermissionService().hasPermission(currentUser, "KC-PD", "VIEW_DEV_PROPOSAL_DOC")){
+									 sharedDocForm.setPropProjectDocView(true);
+			 }}	
+		      
+		
+	 return actionForward;
+	 }}
     public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
      InstitutionalProposalAttachments attachment =null;
@@ -107,7 +151,7 @@ public class AwardSharedDocAction extends AwardAction {
            String awardIdOld = (StringUtils.substringBetween(parameterName, ".id", "."));
            awardId=Long.valueOf(awardIdOld);           
         }   
-       // List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
+        List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
         MedusaNode node = getMedusaService().getMedusaNode("award", awardId);
         award=(Award) node.getData();
         if(award!=null)
@@ -210,4 +254,7 @@ public class AwardSharedDocAction extends AwardAction {
 	public void setSharedDocType(List<SharedDocumentType> sharedDocType) {
 		this.sharedDocType = sharedDocType;
 	}
+	  private PermissionService getPermissionService() {
+	        return KimApiServiceLocator.getPermissionService();
+	    }  
  }

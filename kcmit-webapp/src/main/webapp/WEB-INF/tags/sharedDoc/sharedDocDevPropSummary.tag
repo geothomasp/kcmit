@@ -9,6 +9,8 @@
       <th colspan="2">Attachments</th>
       <th colspan="2">FileName</th>
     </tr>
+    	 <c:set var="viewSharedDoc" value="${KualiForm.propProjectDocView}" />
+    	   <c:if test="${viewSharedDoc}">
     <c:forEach items="${node.bo.narratives}" var="pdAttachment" varStatus="itrStatus">
       <tr>
         <td style="text-align: center;" colspan="2">
@@ -26,6 +28,5 @@
         </td>
       </tr>
     </c:forEach>
-
-   
+</c:if>   
   </table>
