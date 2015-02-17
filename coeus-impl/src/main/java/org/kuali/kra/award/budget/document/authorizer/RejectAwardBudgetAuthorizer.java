@@ -44,7 +44,6 @@ public class RejectAwardBudgetAuthorizer extends BudgetAuthorizer {
 	        AwardBudgetDocument doc = ((AwardBudgetTask) task).getAwardBudgetDocument();
 	        WorkflowDocument workDoc = doc.getDocumentHeader().getWorkflowDocument();
 	        return !workDoc.isCompletionRequested() 
-	            && !getKraDocumentRejectionService().isDocumentOnInitialNode(doc.getDocumentHeader().getWorkflowDocument())
 	            && workDoc.isApprovalRequested() 
 	            && workDoc.isEnroute();
     	}

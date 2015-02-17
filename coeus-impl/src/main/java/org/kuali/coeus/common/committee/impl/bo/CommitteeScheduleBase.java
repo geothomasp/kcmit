@@ -195,16 +195,18 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
 	 * @return
 	 */
 	public Timestamp getTime() {
+		if(this.time != null) {
 	    java.util.Date dt = new java.util.Date(this.time.getTime());
 	    dt = DateUtils.round(dt, Calendar.DAY_OF_MONTH);
-	    if (viewTime != null) {
+	     if (viewTime != null) {
             dt = new java.util.Date(0); // 12/31/1969 19:00:00
             dt = DateUtils.round(dt, Calendar.DAY_OF_MONTH);
 	        dt = DateUtils.addMinutes(dt, viewTime.findMinutes()); // to set it to 1970-01-01
             //dt = DateUtils.addMinutes(dt, viewTime.findMinutes());
             //dt = DateUtils.addMinutes(dt, getViewTime().findMinutes());
 	        this.time = new Timestamp(dt.getTime());
-	    }
+	     }
+		}
 	    return time;
 	}
 
@@ -502,20 +504,23 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
                 if (submission.getProtocol().isActive()) {
                     PS existingSubmission = latestSubmissions.get(key);
                     if (existingSubmission == null) {
-                        latestSubmissions.put(key, submission);
+                    //  latestSubmissions.put(key, submission);
+                    	returnList.add(submission);
                     } else {
                         int newInt = submission.getSequenceNumber().intValue();
                         int existInt = existingSubmission.getSequenceNumber().intValue();
                         int newSubNum = submission.getSubmissionNumber().intValue();
                         int existSubNum = existingSubmission.getSubmissionNumber().intValue();
                         if ((newInt > existInt) || ((newInt == existInt) && (newSubNum > existSubNum))){
-                            latestSubmissions.put(key, submission);
+                           // latestSubmissions.put(key, submission);
+                        	returnList.add(submission); 
                         }
                     }
                 }
             }
+            
         }
-        returnList.addAll(latestSubmissions.values());
+      //  returnList.addAll(latestSubmissions.values());
         return returnList;
     }
 

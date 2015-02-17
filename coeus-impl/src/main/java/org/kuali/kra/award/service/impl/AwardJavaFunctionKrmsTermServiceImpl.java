@@ -18,9 +18,15 @@
  */
 package org.kuali.kra.award.service.impl;
 
+import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.service.AwardJavaFunctionKrmsTermService;
 import org.kuali.coeus.common.impl.krms.KcKrmsJavaFunctionTermServiceBase;
 
 public class AwardJavaFunctionKrmsTermServiceImpl extends KcKrmsJavaFunctionTermServiceBase implements AwardJavaFunctionKrmsTermService {
 
+	@Override
+	public String allAwards(Award award) {
+		return TRUE;
+	}
+	
 }

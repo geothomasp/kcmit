@@ -99,19 +99,6 @@ public class BudgetExpensesAuditRule extends BudgetAuditRuleBase {
             for (BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
                 String panelName = budgetExpenseService.getBudgetExpensePanelName(budgetPeriod, budgetLineItem);
                 
-                if(budgetLineItem.getUnderrecoveryAmount() != null && budgetLineItem.getUnderrecoveryAmount().isNegative()) {
-                    String key = "budgetNonPersonnelAuditWarnings" + budgetPeriod.getBudgetPeriod()+panelName;
-                    AuditCluster auditCluster = (AuditCluster) getGlobalVariableService().getAuditErrorMap().get(key);
-                    if (auditCluster == null) {
-                        List<AuditError> auditErrors = new ArrayList<AuditError>();
-                        auditCluster = new AuditCluster(panelName+" Budget Period "+budgetPeriod.getBudgetPeriod(), auditErrors, Constants.AUDIT_WARNINGS);
-                        getGlobalVariableService().getAuditErrorMap().put(key, auditCluster);
-                    }
-                    List<AuditError> auditErrors = auditCluster.getAuditErrorList();
-                    auditErrors.add(new AuditError("document.budgetPeriod[" + (budgetPeriod.getBudgetPeriod() - 1) + "].budgetLineItem["+j+"].underrecoveryAmount", KeyConstants.WARNING_UNRECOVERED_FA_NEGATIVE, Constants.BUDGET_EXPENSES_PAGE_METHOD + "." + budgetLineItem.getBudgetCategory().getBudgetCategoryType().getDescription() + "&viewBudgetPeriod=" + budgetPeriod.getBudgetPeriod() + "&selectedBudgetLineItemIndex=" + j + "&activePanelName=" + panelName));
-                    retval=false;
-                }
-                    
                 int k = 0;
                 for (BudgetPersonnelDetails budgetPersonnelDetails : budgetLineItem.getBudgetPersonnelDetailsList()) {
                     if (StringUtils.isNotEmpty(budgetPersonnelDetails.getEffdtAfterStartdtMsg())) {
@@ -159,12 +146,6 @@ public class BudgetExpensesAuditRule extends BudgetAuditRuleBase {
         	auditRulePassed &= verifyPeriodCostLimit(budgetPeriod);
         }
        
-        int budgetLineItemIndex = 0;
-        for (BudgetLineItem budgetLineItem : budget.getBudgetLineItems()) {
-        	auditRulePassed &= verifyUnderRecoveryAmount(budgetLineItem, budgetLineItemIndex);
-            budgetLineItemIndex++;
-        }
-       
         for (BudgetPersonnelDetails budgetPersonnelDetails : budget.getBudgetPersonnelDetails()) {
         	auditRulePassed &= verifyPersonnelDetails(budget, budgetPersonnelDetails); 
         }
@@ -190,20 +171,6 @@ public class BudgetExpensesAuditRule extends BudgetAuditRuleBase {
                     KeyConstants.WARNING_PERIOD_COST_LIMIT_EXCEEDED, budgetPeriodAndTotalRule.getPageId(), new String[]{budgetPeriod.getBudgetPeriod().toString()}));
             return false;
         } 
-        return true;
-	}
-	
-	protected boolean verifyUnderRecoveryAmount(BudgetLineItem budgetLineItem, int budgetLineItemIndex) {
-        if(budgetLineItem.getUnderrecoveryAmount() != null && budgetLineItem.getUnderrecoveryAmount().isNegative()) {
-        	BudgetPeriod budgetPeriod = budgetLineItem.getBudgetPeriodBO();
-            BudgetConstants.BudgetAuditRules budgetNonPersonnelRule = BudgetConstants.BudgetAuditRules.NON_PERSONNEL_COSTS;
-            String additionalMessage = " Budget Period "+ budgetPeriod.getBudgetPeriod() + "Line item " + budgetLineItem.getCostElementBO().getDescription();
-			List<AuditError> auditErrors = getAuditErrors(budgetNonPersonnelRule, additionalMessage, false);
-            auditErrors.add(new AuditError(budgetNonPersonnelRule.getPageId(), 
-            		KeyConstants.WARNING_UNRECOVERED_FA_NEGATIVE, budgetNonPersonnelRule.getPageId(), 
-            		new String[]{additionalMessage}));
-            return false;
-       }
         return true;
 	}
 	

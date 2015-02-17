@@ -351,6 +351,22 @@ case "${dbtype}" in
             mv *.log ../LOGS/
             cd ..
 		fi
+		if [ "${version}" = "5.2.1" ] || [ "${version}" = "5.2" ] || [ "${version}" = "5.1.1" ] || [ "${version}" = "5.1" ] || [ "${version}" = "5.0.1" ] || [ "${version}" = "5.0" ] || [ "${version}" = '3.1.1' ] || [ "${version}" = "NEW" ]
+        then
+            cd KC-RELEASE-6_0_0-SCRIPT
+            if [ "${mode}" = "EMBED" ]
+            then
+                sqlplus "${un}"/"${pw}${DBSvrNm}" < KRC_RICE-RELEASE-6_0_0-Upgrade-ORACLE.sql
+            fi
+            if [ "${InstRice}" = "Y" ]
+            then
+                sqlplus "${Riceun}"/"${Ricepw}${RiceDBSvrNm}" < KR_RICE-RELEASE-6_0_0-Upgrade-ORACLE.sql
+            fi
+            sqlplus "${un}"/"${pw}${DBSvrNm}" < KC-RELEASE-6_0_0-Upgrade-ORACLE.sql
+            sqlplus "${Riceun}"/"${Ricepw}${RiceDBSvrNm}" < KR-RELEASE-6_0_0-Upgrade-ORACLE.sql
+            mv *.log ../LOGS/
+            cd ..
+		fi
 		
 		if [ "${version}" = "5.2.1" ] || [ "${version}" = "5.2" ] || [ "${version}" = "5.1.1" ] || [ "${version}" = "5.1" ] || [ "${version}" = "5.0.1" ] || [ "${version}" = "5.0" ] || [ "${version}" = '3.1.1' ] || [ "${version}" = "NEW" ]
         then
@@ -628,7 +644,7 @@ case "${dbtype}" in
             mv *.log ../LOGS/
             cd ..
         fi
-                      
+
 		cd KC-RELEASE-99_9_9-SCRIPT
 		mysql -u ${Riceun} -p${Ricepw} -D ${RiceDBSvrNm} -s -f < KR-RELEASE-99_9_9-Upgrade-MYSQL.sql > KR-RELEASE-99_9_9-Upgrade-MYSQL-Install.log 2>&1
 		mv *.log ../LOGS/

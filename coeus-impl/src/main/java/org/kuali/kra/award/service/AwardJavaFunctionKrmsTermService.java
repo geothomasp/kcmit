@@ -18,6 +18,8 @@
  */
 package org.kuali.kra.award.service;
 
-public interface AwardJavaFunctionKrmsTermService {
+import org.kuali.kra.award.home.Award;
 
+public interface AwardJavaFunctionKrmsTermService {
+	public String allAwards(Award award);
 }

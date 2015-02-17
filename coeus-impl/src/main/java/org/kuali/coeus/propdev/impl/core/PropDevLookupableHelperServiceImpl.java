@@ -28,6 +28,7 @@ import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.unit.Unit;
 import org.kuali.coeus.common.framework.unit.UnitService;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.PermissionConstants;
@@ -120,7 +121,7 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
 
         QueryByCriteria.Builder query = lookupCriteriaGenerator.generateCriteria(DevelopmentProposal.class, modifiedSearchCriteria,
                 wildcardAsLiteralSearchCriteria, getLookupService().allPrimaryKeyValuesPresentAndNotWildcard(DevelopmentProposal.class, modifiedSearchCriteria));
-        if (!bounded && searchResultsLimit != null) {
+        if (bounded && searchResultsLimit != null) {
             query.setMaxResults(searchResultsLimit);
         }
         if (StringUtils.isBlank(adjustedSearchCriteria.get("proposalNumber"))
@@ -312,13 +313,20 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
      * @throws WorkflowException 
      */
 	@Override
-	public void buildPropDevEditActionLink(Link actionLink, Object model,String title) throws WorkflowException {
+	public void buildPropDevEditActionLink(Link actionLink, Object model,String title,ProposalDevelopmentDocument proposalDevelopmentDocument) throws WorkflowException {
+		boolean actionLinkTitleFlag=true;
+		if(proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode() != null &&
+				!proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) && !proposalDevelopmentDocument.getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)){
+			actionLinkTitleFlag=false;
+		} 
+		if (actionLinkTitleFlag) {
 			actionLink.setTitle(title);
 			actionLink.setLinkText(title);
 			actionLink.setHref(getConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
-	                + KRADConstants.DOCHANDLER_DO_URL
-	                + actionLink.getHref()
-	                + KRADConstants.DOCHANDLER_URL_CHUNK);
+					+ KRADConstants.DOCHANDLER_DO_URL
+					+ actionLink.getHref()
+					+ KRADConstants.DOCHANDLER_URL_CHUNK);
+		}
 
 	}
 
@@ -336,7 +344,7 @@ public class PropDevLookupableHelperServiceImpl extends LookupableImpl implement
             fieldGroup.setRender(false);
         }
     }
-
+    
 	public KcAuthorizationService getKcAuthorizationService() {
 		return kcAuthorizationService;
 	}

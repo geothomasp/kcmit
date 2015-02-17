@@ -366,6 +366,9 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     
     
     @Transient
+    private boolean selectedPerson;
+
+    @Transient
     private Boolean active = true;
 
     @ManyToOne(targetEntity = Unit.class, cascade = { CascadeType.REFRESH })
@@ -1732,4 +1735,12 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     public String getPersonName(){
         return getFullName();
     }
+
+	public boolean isSelectedPerson() {
+		return selectedPerson;
+	}
+
+	public void setSelectedPerson(boolean selectedPerson) {
+		this.selectedPerson = selectedPerson;
+	}
 }

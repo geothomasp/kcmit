@@ -19,7 +19,6 @@
 
 alter table AWARD_PERSONS drop constraint FK_PROP_PERS_ROLE_AWD_PERSONS
 /
-
 alter table EPS_PROP_PERSON_ROLE drop primary key
 /
 

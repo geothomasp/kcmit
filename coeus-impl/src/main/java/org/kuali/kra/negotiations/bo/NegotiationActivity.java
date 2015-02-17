@@ -101,7 +101,7 @@ public class NegotiationActivity extends KcPersistableBusinessObjectBase {
      * @return
      */
     public static String getNumberOfDays(Date startDate, Date endDate) {
-        if (startDate == null) {
+        if (startDate == null||endDate==null) {
             return "";
         } else {
             long start = startDate.getTime();
@@ -111,7 +111,7 @@ public class NegotiationActivity extends KcPersistableBusinessObjectBase {
             } else {
                 end = endDate.getTime();
             }
-            return (((end - start) / MILLISECS_PER_DAY) + 1) + "";
+            return (((end - start) / MILLISECS_PER_DAY)) + "";
         }
     }
 

@@ -95,7 +95,9 @@ public class AwardAmountInfoServiceImpl implements AwardAmountInfoService {
                 validAwardAmountInfos.add(aai);
             }else {
                 if(Integer.parseInt(aai.getTimeAndMoneyDocumentNumber().trim()) > docNumIntValue) {
-                    break;
+                	if(!validAwardAmountInfos.isEmpty()){
+                     break;
+                	}
                 }else{
                     validAwardAmountInfos.add(aai);
                 }

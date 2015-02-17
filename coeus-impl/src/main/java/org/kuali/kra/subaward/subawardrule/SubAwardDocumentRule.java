@@ -253,15 +253,6 @@ SubAwardTemplateInfoRule {
             reportError(CLOSEOUT_TYPE_CODE
                     , KeyConstants.ERROR_REQUIRED_SUBAWARD_CLOSEOUT_TYPE_CODE);
         }  
-        if (subAwardCloseout == null || subAwardCloseout.getDateRequested() == null) {
-            rulePassed = false;
-            reportError(DATE_REQUESTED, KeyConstants.ERROR_REQUIRED_SUBAWARD_DATE_REQUESTED);
-        }
-        
-        if (subAwardCloseout == null || subAwardCloseout.getDateFollowup()== null) {
-            rulePassed = false;
-            reportError(DATE_FLLOWUP, KeyConstants.ERROR_REQUIRED_SUBAWARD_DATE_FOLLOWUP);
-        }
         
         return rulePassed;
     }

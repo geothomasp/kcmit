@@ -103,6 +103,18 @@ public class BudgetCostShareAuditRule extends CostShareRuleResearchDocumentBase 
                                     Constants.BUDGET_DISTRIBUTION_AND_INCOME_PAGE + "." + Constants.BUDGET_COST_SHARE_PANEL_ANCHOR,
                                     params));
             }
+            
+            String sourceUnit = costShare.getSourceUnit();
+            //          fiscalYear = iuCostShare.getFiscalYear();
+                      
+                      if (null == sourceUnit || sourceUnit.length() == 0) {
+                          retval = false;
+                          getAuditErrors(BUDGET_COST_SHARE_ERROR_KEY, Constants.BUDGET_COST_SHARE_PANEL_NAME).add(new AuditError("document.budget.budgetCostShare["+i+"].sourceUnit",
+                                                              KeyConstants.AUDIT_ERROR_BUDGET_DISTRIBUTION_SOURCE_MISSING,
+                                                              Constants.BUDGET_DISTRIBUTION_AND_INCOME_PAGE + "." + Constants.BUDGET_COST_SHARE_PANEL_ANCHOR,
+                                                              params));
+                      }
+
             int numberOfProjectPeriods = -1;
             if (budget.getBudgetPeriods() != null) {
                 numberOfProjectPeriods = budget.getBudgetPeriods().size();

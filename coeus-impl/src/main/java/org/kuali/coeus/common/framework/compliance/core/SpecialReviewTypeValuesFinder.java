@@ -57,7 +57,7 @@ public abstract class SpecialReviewTypeValuesFinder extends UifKeyValuesFinderBa
     
     @SuppressWarnings("unchecked")
     private List<KeyValue> createKeyValues() {
-        Collection<SpecialReviewType> specialReviewTypes = getKeyValuesService().findAllOrderBy(SpecialReviewType.class, "sortId", true);
+        Collection<SpecialReviewType> specialReviewTypes = getKeyValuesService().findAllOrderBy(SpecialReviewType.class, "description", true);
         
         List<KeyValue> keyValues = new ArrayList<KeyValue>();
         for (SpecialReviewType specialReviewType : specialReviewTypes) {

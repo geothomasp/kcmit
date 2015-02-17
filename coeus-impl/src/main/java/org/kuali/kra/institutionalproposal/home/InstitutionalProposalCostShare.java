@@ -28,6 +28,8 @@ import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 public class InstitutionalProposalCostShare extends InstitutionalProposalAssociate implements ValuableItem, SequenceAssociate {
 
     private static final long serialVersionUID = 1L;
+    
+    private String unit;
 
     private Long proposalCostShareId;
 
@@ -92,6 +94,14 @@ public class InstitutionalProposalCostShare extends InstitutionalProposalAssocia
 
     public void setAmount(ScaleTwoDecimal amount) {
         this.amount = amount;
+    }
+    
+    public String getUnit() {
+    	return unit;
+    }
+    	
+    public void setUnit(String unit) {
+    	this.unit = unit;
     }
 
     /**

@@ -29,15 +29,15 @@
         <c:set var="tabItemCount" value="${tabItemCount+1}" />
 </c:forEach>
 
-<kul:tab tabItemCount="${tabItemCount}" tabTitle="Unrecovered F&A" defaultOpen="false" tabErrorKey="newInstitutionalProposalUnrecoveredFandA.*,institutionalProposalUnrecoveredFandABean.newInstitutionalProposalUnrecoveredFandA.*,document.institutionalProposal.institutionalProposalUnrecoveredFandA*">
+<kul:tab tabItemCount="${tabItemCount}" tabTitle="IDC Rates" defaultOpen="false" tabErrorKey="newInstitutionalProposalUnrecoveredFandA.*,institutionalProposalUnrecoveredFandABean.newInstitutionalProposalUnrecoveredFandA.*,document.institutionalProposal.institutionalProposalUnrecoveredFandA*">
 	<div class="tab-container" align="center">
     	<h3>
-    		<span class="subhead-left">Unrecovered F&A Distribution List</span>
+    		<span class="subhead-left">IDC Rates Distribution List</span>
    			<span class="subhead-right">
    				<kul:help parameterNamespace="KC-IP" parameterDetailType="Document" parameterName="ipDistUnrecoveredFandAHelp" altText="help"/>
 			</span>
         </h3>
-        <table id="unrecovered-fanda-table" cellpadding="0" cellspacing="0" summary="Unrecovered F&A">
+        <table id="unrecovered-fanda-table" cellpadding="0" cellspacing="0" summary="IDC Rates">
 			<tr>
 				<th scope="row">&nbsp;</th>
 				<th><kul:htmlAttributeLabel attributeEntry="${institutionalProposalUnrecoveredFandAAttributes.fiscalYear}" useShortLabel="true" noColon="true" /></th>
@@ -155,7 +155,7 @@
    </c:if>
    <div class="tab-container" align="center">
         <h3>
-            <span class="subhead-left">Unrecovered F&A Comments</span>
+            <span class="subhead-left">IDC Rates Comments</span>
         </h3>
         <table>
             <th width="100" align="right" scope="row"><div align="center">Add:</div></th>

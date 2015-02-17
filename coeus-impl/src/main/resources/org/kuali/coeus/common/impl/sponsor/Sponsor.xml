@@ -74,6 +74,8 @@
 		<ref bean="Sponsor-rolodex.countryCode"/>
 		<ref bean="Sponsor-rolodex.active"/>
 		<ref bean="Sponsor-rolodex.versionNumber"/>
+		<ref bean="Sponsor-updateUser" />
+        <ref bean="Sponsor-updateTimestamp" />
       </list>
     </property>
     <property name="relationships" >
@@ -527,6 +529,36 @@
  	<bean id="Sponsor-rolodex.versionNumber-parentBean" abstract="true" parent="Rolodex-versionNumber-parentBean">
    	<property name="name" value="rolodex.versionNumber" />
 </bean>
+<bean id="Sponsor-updateTimestamp" parent="Sponsor-updateTimestamp-parentBean" />
+	<bean id="Sponsor-updateTimestamp-parentBean" abstract="true" parent="KraAttributeReferenceDummy-updateTimestamp" >
+		<property name="name" value="updateTimestamp" />
+		<property name="label" value="Last Update" />
+		<property name="shortLabel" value="Last Update" />
+	</bean>
+   
+  <bean id="Sponsor-updateUser" parent="Sponsor-updateUser-parentBean"/>
+  
+  <bean id="Sponsor-updateUser-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="updateUser" />
+    <property name="forceUppercase" value="false" />
+    <property name="label" value="Update User" />
+    <property name="shortLabel" value="Update User" />
+    <property name="maxLength" value="60" />
+    <property name="validationPattern" >
+      <bean parent="AnyCharacterValidationPattern" />
+    </property>
+    <property name="validCharactersConstraint">
+      <bean parent="AnyCharacterPatternConstraint"/>
+    </property>
+    <property name="control" >
+      <bean parent="TextControlDefinition" p:size="20"/>
+    </property>
+    <property name="controlField">
+      <bean p:size="20" parent="Uif-TextControl"/>
+    </property>
+    <property name="summary" value="User who uploads the document" />
+    <property name="description" value="User who uploads the document" />
+  </bean>
 
 <!-- Business Object Inquiry Definition -->
   <bean id="Sponsor-inquiryDefinition" parent="Sponsor-inquiryDefinition-parentBean" />
@@ -555,6 +587,9 @@
               <bean parent="FieldDefinition" p:attributeName="sponsorType.description" />
               <bean parent="FieldDefinition" p:attributeName="state" />
               <bean parent="FieldDefinition" p:attributeName="active" />
+              <bean parent="FieldDefinition" p:attributeName="updateUser" />
+              <bean parent="FieldDefinition" p:attributeName="updateTimestamp"/>
+            
             </list>
           </property>
         </bean>
@@ -576,7 +611,7 @@
               <bean parent="FieldDefinition" p:attributeName="rolodex.county" />
               <bean parent="FieldDefinition" p:attributeName="rolodex.state" />
               <bean parent="FieldDefinition" p:attributeName="rolodex.countryCode" />
-            </list>
+              </list>
           </property>
         </bean>
       </list>

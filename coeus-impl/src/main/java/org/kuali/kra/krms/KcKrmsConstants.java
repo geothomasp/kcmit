@@ -96,7 +96,7 @@ public final class KcKrmsConstants {
     public static final class Award {
         public static final String AWARD_CONTEXT_ID = "KC-AWARD-CONTEXT";
 
-        public static final String AWARD = "award";
+        public static final String AWARD = "Award";
         
         public static final String AWARD_CONTEXT = "KC Award Context";
         

@@ -19,11 +19,16 @@
 package org.kuali.kra.award.commitments;
 
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.apache.commons.lang.StringUtils;
+
 import org.kuali.kra.bo.CostShareType;
 import org.kuali.coeus.common.framework.costshare.CostShareRuleResearchDocumentBase;
+import org.kuali.coeus.common.framework.unit.UnitService;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -166,5 +171,45 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
             this.reportError(fieldStarter + ".costShareMet", KeyConstants.ERROR_COST_SHARE_MET_INVALID, new String[] { costShareMet.toString() });
         }
         return isValid;
+    }
+    
+    private boolean validateCostShareUnit(String unitNumber) {
+        boolean valid = true;
+            
+            //check if the unit is valid
+        MessageMap errorMap = GlobalVariables.getMessageMap();
+           
+            
+            if (StringUtils.isNotEmpty(unitNumber)) {
+            	UnitService unitService = KcServiceLocator.getService(UnitService.class);
+            	
+            	if (unitService.getUnit(unitNumber) == null) {
+                	valid = false;
+                	errorMap.putError("unitNumber", KeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+                //    this.reportError(fieldStarter + ".unitNumber", IUKeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+           	}       
+            } else {
+            	valid = false;
+                this.reportError(fieldStarter + ".unitNumber", KeyConstants.ERROR_REQUIRED_COST_SHARE_UNIT, unitNumber);
+            	
+            }
+           
+   
+        return valid;
+    }
+
+    private boolean validateNotEmptyUnit(String unitNumber) {
+        boolean valid = true;
+            
+            //check if the unit is valid           
+            
+            if (StringUtils.isEmpty(unitNumber)) {
+            	valid = false;
+                this.reportError(fieldStarter + ".unitNumber", KeyConstants.ERROR_REQUIRED_COST_SHARE_UNIT, unitNumber);
+            	
+            }
+            
+        
+        return valid;
     }
 }

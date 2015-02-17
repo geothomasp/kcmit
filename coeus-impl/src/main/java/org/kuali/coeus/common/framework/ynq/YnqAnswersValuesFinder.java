@@ -33,6 +33,7 @@ public class YnqAnswersValuesFinder extends UifKeyValuesFinderBase {
         final List<KeyValue> temp = new ArrayList<>();
         temp.add(new ConcreteKeyValue("Y", "Yes"));
         temp.add(new ConcreteKeyValue("N", "No"));
+        temp.add(new ConcreteKeyValue("X", "N/A"));
         KEY_VALUES = Collections.unmodifiableList(temp);
     }
 

@@ -19,6 +19,7 @@
 package org.kuali.kra.award;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.lookup.keyvalue.FrequencyBaseCodeValuesFinder;
 import org.kuali.kra.award.lookup.keyvalue.FrequencyCodeValuesFinder;
@@ -28,6 +29,7 @@ import org.kuali.kra.award.paymentreports.awardreports.AwardReportTermRecipient;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.util.AuditCluster;
 import org.kuali.rice.krad.util.AuditError;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -47,6 +49,8 @@ public class AwardReportAuditRule implements DocumentAuditRule {
     private static final String REPORTS_AUDIT_ERRORS = "reportsAuditErrors";
     private static final int ZERO = 0;
     private List<AuditError> auditErrors;
+    public static final String DISABLE_FREQUENCY_VALIDATION_FORNULL_PARAM = "DisableFrequencyValidationForNull";
+    ParameterService parameterService = (ParameterService)KcServiceLocator.getService(ParameterService.class);
     
     @Override
     @SuppressWarnings("unchecked")
@@ -103,7 +107,14 @@ public class AwardReportAuditRule implements DocumentAuditRule {
     protected boolean isValidFrequencyBase(
             AwardReportTerm awardReportTerm, List<KeyValue> frequencyBaseCodes){
         boolean isValid = false;
-        
+        String disableValidation = parameterService.getParameterValueAsString(
+				Constants.KC_GENERIC_PARAMETER_NAMESPACE,
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+				DISABLE_FREQUENCY_VALIDATION_FORNULL_PARAM);
+		if (disableValidation!=null && disableValidation.equals("Y")) {
+			if (awardReportTerm.getFrequencyBaseCode() == null || awardReportTerm.getFrequencyBaseCode().equals("-1"))
+				return true;
+		}
         for(KeyValue KeyValue:frequencyBaseCodes){
             if(StringUtils.equalsIgnoreCase(KeyValue.getKey().toString(), 
                     awardReportTerm.getFrequencyBaseCode())) {
@@ -133,6 +144,14 @@ public class AwardReportAuditRule implements DocumentAuditRule {
     protected boolean isValidFrequency(
             AwardReportTerm awardReportTerm, List<KeyValue> frequencyCodes){
         boolean isValid = false;
+        String disableValidation = parameterService.getParameterValueAsString(
+				Constants.KC_GENERIC_PARAMETER_NAMESPACE,
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+				DISABLE_FREQUENCY_VALIDATION_FORNULL_PARAM);
+		if (disableValidation!=null && disableValidation.equals("Y")) {
+			if (awardReportTerm.getFrequencyCode() == null || awardReportTerm.getFrequencyCode().equals("-1"))
+				return true;
+		}
         for(KeyValue KeyValue:frequencyCodes){
             if(StringUtils.equalsIgnoreCase(KeyValue.getKey().toString(), 
                     awardReportTerm.getFrequencyCode())) {

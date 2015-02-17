@@ -29,6 +29,7 @@ import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.ModuleQuestionnaireBean;
 
 
+
 public class ProposalPersonQuestionnaireHelper extends QuestionnaireHelperBase {
 
 
@@ -74,7 +75,7 @@ public class ProposalPersonQuestionnaireHelper extends QuestionnaireHelperBase {
             for (AnswerHeader header : getAnswerHeaders()) {
                 //should only be 1 header that is the current questionnaire and has the usage for certification
                 if (getQuestionnaireService().isCurrentQuestionnaire(header.getQuestionnaire()) &&
-                        header.getQuestionnaire().hasUsageFor(getModuleCode(), CoeusSubModule.PROPOSAL_PERSON_CERTIFICATION)) {
+                        header.getQuestionnaire().hasUsageFor(getModuleCode(),this.getModuleQnBean().getModuleSubItemCode())) {
                     mostCurrentHeader = header;
                 }
             }

@@ -203,6 +203,9 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
             String routeHeaderId = budgetDocument.getDocumentHeader().getWorkflowDocument().getDocumentId();
             Budget budget = budgetDocument.getBudget();
             String forward = buildForwardUrl(routeHeaderId);
+            if (budget.getActivityTypeCode().equals("x")) {
+                budget.setActivityTypeCode(KcServiceLocator.getService(BudgetService.class).getActivityTypeForBudget(budget));
+            }
             if (!budget.getActivityTypeCode().equals(newestAward.getActivityTypeCode()) || budget.isRateClassTypesReloaded()) {
                 budget.setActivityTypeCode(newestAward.getActivityTypeCode());
                 forward = forward.replace("awardBudgetParameters.do?", "awardBudgetParameters.do?syncBudgetRate=Y&");

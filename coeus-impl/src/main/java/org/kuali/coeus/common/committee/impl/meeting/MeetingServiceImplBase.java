@@ -366,7 +366,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         for (CommitteeMembershipBase committeeMembership : committeeMemberships) {
             if ((committeeScheduleAttendance.getNonEmployeeFlag() && committeeMembership.getRolodexId() != null && committeeScheduleAttendance
                     .getPersonId().equals(committeeMembership.getRolodexId().toString()))
-                    || (!committeeScheduleAttendance.getNonEmployeeFlag() && committeeScheduleAttendance.getPersonId().equals(
+                    || (!committeeScheduleAttendance.getNonEmployeeFlag() && committeeScheduleAttendance.getPersonId()!=null && committeeScheduleAttendance.getPersonId().equals(
                             committeeMembership.getPersonId()))) {
                 if (!committeeMembership.getTermStartDate().after(scheduleDate)
                         && !committeeMembership.getTermEndDate().before(scheduleDate)) {
@@ -732,12 +732,13 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 meetingHelper.getOtherPresentBeans().add(otherPresentBean);
                 otherPresentBean.setAttendance(committeeScheduleAttendance);
             }
-            else {
+            else {if(isActiveMember(committeeScheduleAttendance, committeeMemberships, commSchedule
+                        .getScheduledDate())){
                 MemberPresentBean memberPresentBean = new MemberPresentBean();
                 memberPresentBean.setAttendance(committeeScheduleAttendance);
                 meetingHelper.getMemberPresentBeans().add(memberPresentBean);
             }
-        }
+        }}
     }
 
     /*
@@ -758,14 +759,15 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 }
                 else {
                     attendance.setPersonId(committeeMembership.getPersonId());
-                }
+                }if(isActiveMember(attendance, committeeMemberships, commSchedule
+                        .getScheduledDate())){
                 attendance.setPersonName(committeeMembership.getPersonName());
                 attendance.setAlternateFlag(false);
                 attendance.setNonEmployeeFlag(StringUtils.isBlank(committeeMembership.getPersonId()));
                 memberAbsentBean.setAttendance(attendance);
                 meetingHelper.getMemberAbsentBeans().add(memberAbsentBean);
             }
-        }
+        }}
 
     }
 

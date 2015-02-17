@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.kuali.coeus.propdev.impl.core.*;
+import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.uif.field.AttributeQueryResult;
 import org.kuali.rice.krad.web.form.DialogResponse;
@@ -193,6 +194,8 @@ public class ProposalDevelopmentCoreController extends ProposalDevelopmentContro
 
     @Transactional @RequestMapping(value ="/proposalDevelopment", params = "methodToCall=closeProposal")
     public ModelAndView closeProposal(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
+    	if(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.IN_PROGRESS) ||
+        		form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalStateTypeCode().equals(ProposalState.REVISIONS_REQUESTED)){
         DialogResponse dialogResponse = form.getDialogResponse("PropDev-Close-Dialog");
         if(dialogResponse == null) {
             return getModelAndViewService().showDialog("PropDev-Close-Dialog", true, form);
@@ -202,6 +205,9 @@ public class ProposalDevelopmentCoreController extends ProposalDevelopmentContro
         } else if (dialogResponse.getResponse().equals("no")) {
             return closeWithoutSave(form);
         }
+    	}else{
+    		 return closeWithoutSave(form);
+    	}
         return getModelAndViewService().getModelAndView(form);
     }
 
