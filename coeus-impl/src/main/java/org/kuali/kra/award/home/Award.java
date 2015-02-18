@@ -239,6 +239,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     private boolean syncChild;
 
     private List<AwardFundingProposal> fundingProposals;
+    private List<AwardFundingProposal> allFundingProposals;
 
     private List<AwardBudgetLimit> awardBudgetLimits;
 
@@ -3506,4 +3507,11 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         this.awardCgbList = awardCgbList;
     }
 
+	public List<AwardFundingProposal> getAllFundingProposals() {
+		return allFundingProposals;
+	}
+
+	public void setAllFundingProposals(List<AwardFundingProposal> allFundingProposals) {
+		this.allFundingProposals = allFundingProposals;
+	}
 }
