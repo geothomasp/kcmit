@@ -21,5 +21,5 @@ then
 fi
 if [ "$env" == "kcstage" ]
 then
-	sudo -u www scp /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-stage-web:/usr/local/tomcat_kc_qa/webapps/kc-stage.war
+	sudo -u www scp /var/lib/jenkins/jobs/kc_mit_6_0/workspace/kcmit-webapp/target/kcmit-webapp-6.0.0.1.war www@kc-stage-web:/usr/local/tomcat_kc_stage/webapps/kc-stage.war
 fi
