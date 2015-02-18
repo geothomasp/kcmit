@@ -67,8 +67,10 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
     @SuppressWarnings("unchecked")
     public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
         List<HtmlData> htmlDataList = super.getCustomActionUrls(businessObject, pkNames);
-      //  AwardDocument document = ((Award) businessObject).getAwardDocument();    
-       htmlDataList.add(getSharedDocLink((Award) businessObject, false));
+       AwardDocument document = ((Award) businessObject).getAwardDocument();   
+       if(document.getAward().getPrincipalInvestigator()!=null){
+    	   if(document.getAward().getPrincipalInvestigator().getPersonId().equals(GlobalVariables.getUserSession().getPrincipalId())){
+       htmlDataList.add(getSharedDocLink((Award) businessObject, false));}}
         if(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "Maintain Keyperson")){// -- if user has kp role then only display the link
             htmlDataList.add(getKeyPersonLink((Award) businessObject, false));}
         return htmlDataList;
