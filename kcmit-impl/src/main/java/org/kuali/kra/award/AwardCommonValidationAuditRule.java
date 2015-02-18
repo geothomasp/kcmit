@@ -44,6 +44,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	   private AwardCommonValidationService awardCommonValidationService;
 	   private String HOLD_PROMPT ="Hold Prompt";
 	   private String Hold_Status="6";
+	   private String SPECIAL_REVIEW_PANEL="Special Review";
 	public boolean processRunAuditBusinessRules(Document document) {
 		 String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
 	      String errorKey = "document.awardList[0].statusCode";
@@ -72,8 +73,8 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	        String errorKey4 ="specialReviewHelper.newSpecialReview*";
 	    	auditWarnings.add(new AuditError(errorKey4, messageKey, link4));
 	    	 if (auditWarnings.size() > 0) {
-		            GlobalVariables.getAuditErrorMap().put("reportsAuditErrors",new AuditCluster(Constants.REPORTS_PANEL_NAME, auditWarnings, HOLD_PROMPT)); 
-		            retval=false;
+		            GlobalVariables.getAuditErrorMap().put("specialReviewAuditWarnings",new AuditCluster(SPECIAL_REVIEW_PANEL, auditWarnings, HOLD_PROMPT)); 
+		             retval=false;
 		        }             
 	     }
     if (!retvalReports) {
@@ -82,7 +83,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
         String errorkey1="document.awardList[0].awardReportTermItems";
         auditWarnings1.add(new AuditError(errorkey1, messageKey1, link1));
     	 if (auditWarnings1.size() > 0) {
-	            GlobalVariables.getAuditErrorMap().put("reportsAuditErrors",new AuditCluster(Constants.REPORTS_PANEL_NAME, auditWarnings1, HOLD_PROMPT)); 
+	           GlobalVariables.getAuditErrorMap().put("reportsAuditWarnings",new AuditCluster(Constants.REPORTS_PANEL_NAME, auditWarnings1, HOLD_PROMPT));     		
 	            retval=false;
 	        }             
      }
@@ -91,8 +92,8 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	      String errorKey3 = "document.awardList[0].awardSponsorTerms*";
     	auditWarnings3.add(new AuditError(errorKey3, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW, link3));
     	 if (auditWarnings3.size() > 0) {
-	            GlobalVariables.getAuditErrorMap().put("termsAuditErrors",new AuditCluster(Constants.TERMS_PANEL_NAME, auditWarnings3, HOLD_PROMPT)); 
-	            retval=false;
+	            GlobalVariables.getAuditErrorMap().put("termsAuditWarnings",new AuditCluster(Constants.TERMS_PANEL_NAME, auditWarnings3, HOLD_PROMPT));
+    		     retval=false;
 	        }             
      }
     if (!retvalSponsor) {
