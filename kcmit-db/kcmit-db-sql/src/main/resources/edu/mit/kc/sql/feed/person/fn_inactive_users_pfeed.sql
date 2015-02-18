@@ -90,11 +90,11 @@ if li_notification_is_active = 1 then
 	BEGIN
 		select VAL into ls_TestMailReceiver
 		from KRCR_PARM_T
-		where PARM_NM = 'EMAIL_NOTIFICATION_TEST_ADDRESS'
+		where PARM_NM = 'KC_DEFAULT_EMAIL_RECIPIENT'
 		AND  nmspc_cd ='KC-GEN';
 	EXCEPTION
 	WHEN OTHERS THEN
-	raise_application_error(-20101, 'Error Generating Email. Parameter EMAIL_NOTIFICATION_TEST_ADDRESS not found in parameter table' );
+	raise_application_error(-20101, 'Error Generating Email. Parameter KC_DEFAULT_EMAIL_RECIPIENT not found in parameter table' );
 	END;
 
 	--mail_subject := as_Subject;
@@ -122,7 +122,7 @@ end if;
 										minus
 								 		select person_id
 								 		from warehouse_person)
-	and prncpl_nm not in ('admin','kr','notsys','kc','guest')
+	and prncpl_nm not in ('admin','kr','notsys','kc','guest','kc-notificaion')
 	and prncpl_nm is not null;
 	
 	update krim_prncpl_t
@@ -132,7 +132,7 @@ end if;
 										minus
 								 		select person_id
 								 		from warehouse_person)
-	and prncpl_nm not in ('admin','kr','notsys','kc','guest')								 		
+	and prncpl_nm not in ('admin','kr','notsys','kc','guest','kc-notificaion')								 		
 	and prncpl_nm is not null;
   
 	return 0;
