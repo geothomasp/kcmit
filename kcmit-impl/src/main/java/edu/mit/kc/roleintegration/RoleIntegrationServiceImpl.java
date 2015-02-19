@@ -98,7 +98,9 @@ public class RoleIntegrationServiceImpl implements RoleIntegrationService{
 				 roleList.add(roleIdforUpdate.getRoleId());
 				 qualifiedRoleAttributes.put("unitNumber", roleIdforUpdate.getUnitNumber());
 				 qualifiedRoleAttributes.put("subunits","Y");
-				 getRoleManagementService().assignPrincipalToRole(kcPerson.getPersonId(), roleIdforUpdate.getNameSpace(), roleIdforUpdate.getRoleName(), qualifiedRoleAttributes);
+				 if(!getRoleManagementService().principalHasRole(kcPerson.getPersonId(), roleList, qualifiedRoleAttributes)){
+					 getRoleManagementService().assignPrincipalToRole(kcPerson.getPersonId(), roleIdforUpdate.getNameSpace(), roleIdforUpdate.getRoleName(), qualifiedRoleAttributes);
+				 }
 			 }
 		 }
 		}

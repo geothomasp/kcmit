@@ -47,29 +47,38 @@ public class MitKcFilter implements Filter {
 	    ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
 
 		String user = request.getParameter("__login_user");
+		String backdoorId = request.getParameter("backdoorId");
+		
 		if(user!=null){
 			try{
 		    backboorEnabled = parameterService.getParameterValueAsBoolean(org.kuali.rice.kew.api.KewApiConstants.KEW_NAMESPACE, org.kuali.rice.krad.util.KRADConstants.DetailTypes.BACKDOOR_DETAIL_TYPE, org.kuali.rice.kew.api.KewApiConstants.SHOW_BACK_DOOR_LOGIN_IND);
-		    roleIntegrationEnabled = parameterService.getParameterValueAsBoolean(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-	                Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, KcMitConstants.ENABLE_ROLE_INTEGRATION);
 			}catch (NullPointerException ex){
 				 LOG.error(ex.getMessage(), ex);
 			}
-
 		    hasBackdoorloginPermission = backDoorLoginAuthorizationService.hasBackdoorLoginPermission(user);
 			hsreq.getSession().setAttribute("hasBackdoorloginPermission",hasBackdoorloginPermission);
 			hsreq.getSession().setAttribute("backboorEnabled", backboorEnabled);
-			
-			
-		if(roleIntegrationEnabled){
-			RoleIntegrationService roleIntegrationService = KcServiceLocator.getService(RoleIntegrationService.class);
-
-			try {
-				roleIntegrationService.updateUserRoles(user);
-			} catch (Throwable  ex) {
-				 LOG.error(ex.getMessage(), ex);
-			}
 		}
+		if(user != null || backdoorId !=null){
+			if(user == null){
+				user = backdoorId;
+			}
+			try{
+				roleIntegrationEnabled = parameterService.getParameterValueAsBoolean(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+						Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, KcMitConstants.ENABLE_ROLE_INTEGRATION);
+			}catch (NullPointerException ex){
+				LOG.error(ex.getMessage(), ex);
+			}
+
+			if(roleIntegrationEnabled){
+				RoleIntegrationService roleIntegrationService = KcServiceLocator.getService(RoleIntegrationService.class);
+
+				try {
+					roleIntegrationService.updateUserRoles(user);
+				} catch (Throwable  ex) {
+					LOG.error(ex.getMessage(), ex);
+				}
+			}
 		}
 		chain.doFilter(request, response);
 		
