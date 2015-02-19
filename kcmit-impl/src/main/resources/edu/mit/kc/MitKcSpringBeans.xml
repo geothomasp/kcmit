@@ -171,6 +171,8 @@
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalDevelopmentDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITKcApplicationHeader.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardBudgetDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentType.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentTypeMaintenanceDocument.xml</value>
 				
 			</list>
 		</property>

@@ -3,9 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<bean id="SharedDocumentType" parent="SharedDocumentType-parentBean" />
-	<bean id="SharedDocumentType-parentBean" abstract="true" parent="DataObjectEntry"
-		p:dataObjectClass="edu.mit.kc.bo.SharedDocumentType" p:objectLabel="Shared Document Types">
-		 <property name="titleAttribute" value="id"/>
+	<bean id="SharedDocumentType-parentBean" abstract="true" parent="BusinessObjectEntry">
+		 <property name="businessObjectClass" value="edu.mit.kc.bo.SharedDocumentType" />
+		<property name="objectLabel" value="Award" />
+		 <property name="inquiryDefinition" >
+      <ref bean="SharedDocumentType-inquiryDefinition" />
+    </property> 
+    <property name="lookupDefinition" >
+      <ref bean="SharedDocumentType-lookupDefinition" />
+    </property>
+		 <property name="titleAttribute" value="sharedDocumentTypeId"/>
  		<property name="attributes">
 			<list>
 			     <ref bean="SharedDocumentType-sharedDocumentTypeId" />
@@ -63,9 +70,28 @@
 	
 	
    <!-- Inquiry Definition -->
+     <bean id="SharedDocumentType-inquiryDefinition" parent="SharedDocumentType-inquiryDefinition-parentBean" />
    <bean id="SharedDocumentType-InquiryView" parent="SharedDocumentType-InquiryView-parentBean"/>
-   <bean id="SharedDocumentType-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
-    <property name="headerText" value="Pi Appointment Type Inquiry"/>
+     <bean id="SharedDocumentType-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+      <property name="title" value="Shared Document Type" />
+    <property name="inquirySections" >
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value="Shared Document Type" />
+          <property name="numberOfColumns" value="1" />
+          <property name="inquiryFields" >
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="sharedDocumentTypeId"/>
+              <bean parent="FieldDefinition" p:attributeName="moduleCode"/>
+              <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean> 
+  <bean id="SharedDocumentType-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
+    <property name="headerText" value="Shared Document Type"/>
     <property name="dataObjectClassName" value="edu.mit.kc.bo.SharedDocumentType"/>
     <property name="singlePageView" value="true"/>
     <property name="items">
@@ -74,25 +100,17 @@
           <property name="header.headerText" value="Shared Document Type" />
           <property name="items">
           <list>
-            <ref bean="SharedDocumentType-InquiryView-id"/>
-            <ref bean="SharedDocumentType-InquiryView-parameters"/> 
+          <bean parent="FieldDefinition" p:attributeName="sharedDocumentTypeId"/>
+              <bean parent="FieldDefinition" p:attributeName="moduleCode"/>
+              <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/>
+           <!--  <ref bean="SharedDocumentType-InquiryView-id"/>
+            <ref bean="SharedDocumentType-InquiryView-parameters"/>  -->
           </list>
           </property>
         </bean>
       </list>
     </property>
-   </bean>
-   <bean id="SharedDocumentType-InquiryView-id" parent="SharedDocumentType-InquiryView-id-parentBean"/>
-   <bean id="SharedDocumentType-InquiryView-id-parentBean" abstract="true" parent="Uif-GridGroup">
-    <property name="layoutManager.numberOfColumns" value="2"/>
-    <property name="items">
-      <list>
-      <bean parent="Uif-InputField" p:propertyName="sharedDocumentTypeId"/>
-        <bean parent="Uif-InputField" p:propertyName="moduleCode"/>
-        <bean parent="Uif-InputField" p:propertyName="documentTypeCode"/>        
-      </list>
-    </property>
-   </bean>
+   </bean>  
   
   <!--  <bean id="PiAppointmentType-InquiryView-parameters" parent="PiAppointmentType-InquiryView-parameters-parentBean"/>
    <bean id="PiAppointmentType-InquiryView-parameters-parentBean" abstract="true" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3">
@@ -111,7 +129,29 @@
     </bean>
    -->
 	<!-- Lookup Definition -->
+	
+	<bean id="SharedDocumentType-lookupDefinition" parent="SharedDocumentType-lookupDefinition-parentBean" />  
 	<bean id="SharedDocumentType-LookupView" parent="SharedDocumentType-LookupView-parentBean" />
+	<bean id="SharedDocumentType-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+	   <property name="title" value="Shared Document TypeLookup" /><property name="defaultSort" >
+      <bean parent="SortDefinition"/>
+    </property>
+    <property name="lookupFields" >
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="sharedDocumentTypeId"/>
+        <bean parent="FieldDefinition" p:attributeName="moduleCode"/>
+        <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/>       
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="sharedDocumentTypeId"/>
+        <bean parent="FieldDefinition" p:attributeName="moduleCode"/>
+        <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/>       
+      </list>
+    </property>
+  </bean>	
+	
 	<bean id="SharedDocumentType-LookupView-parentBean" abstract="true"
 		parent="Uif-LookupView" p:headerText="Shared Document Type"
 		p:dataObjectClassName="edu.mit.kc.bo.SharedDocumentType">
