@@ -55,7 +55,7 @@ public class CentralRoleServiceImpl implements CentralRoleService {
     	try {
     		String category = parameterService.getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
     				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, KcMitConstants.ROLE_CENTRAL_DB_CATEGORY_CODE);
-    		rolesAuthorizationExt = port.listAuthorizationsByPersonExt(userName,category,true,true,userName);
+    		rolesAuthorizationExt = port.listAuthorizationsByPersonExt(userName,category,true,false,userName);
     	} catch (SOAPFaultException | NullPointerException e) {
 			 LOG.error(e.getMessage(), e);
 		}

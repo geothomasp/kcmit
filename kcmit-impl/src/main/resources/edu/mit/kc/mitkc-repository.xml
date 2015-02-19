@@ -119,7 +119,7 @@
 		<field-descriptor name="description" column="DESCRIPTION" jdbc-type="VARCHAR"/>	
 	</class-descriptor>
 	
-    <class-descriptor class="edu.mit.kc.roleintegration.RoleCentralMap" table="ROLE_CNTRL_MAP_T">
+    <class-descriptor class="edu.mit.kc.roleintegration.RoleCentralMap" table="KC_ROLE_CNTRAL_MAP">
     <field-descriptor name="roleCentralMapid" column="ROLE_CNTRL_MAP_ID" jdbc-type="VARCHAR" primarykey="true"  autoincrement="true" sequence-name="SEQ_ROLE_CNTRL_MAP_ID"/>
     <field-descriptor name="roleId" column="ROLE_ID" jdbc-type="VARCHAR" />
     <field-descriptor name="roleName" column="ROLE_NM" jdbc-type="VARCHAR" />
@@ -131,7 +131,7 @@
     </class-descriptor> 
     
     
-    <class-descriptor class="edu.mit.kc.roleintegration.SyncLog" table="SYNC_LOG">
+    <class-descriptor class="edu.mit.kc.roleintegration.SyncLog" table="USER_ROLE_CNTRL_MAP_LOG">
 	    <field-descriptor name="syncLogid" column="SYNC_LOG_ID" jdbc-type="VARCHAR" primarykey="true"  autoincrement="true" sequence-name="SEQ_SYNC_LOG_ID"/>
 	    <field-descriptor name="centralRoleName" column="ROLE_NM" jdbc-type="VARCHAR" />
 	    <field-descriptor name="principleName" column="PRNCPL_NM" jdbc-type="VARCHAR" />
