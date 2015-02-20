@@ -151,7 +151,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalLog.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposalDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposal.xml</value>
-			<!-- <value>classpath:edu/mit/kc/datadictionary/MitDevelopmentProposal.xml</value>  -->
+				<value>classpath:edu/mit/kc/datadictionary/MitDevelopmentProposal.xml</value>
 			<value>classpath:edu/mit/kc/datadictionary/MitAwardSpecialReview.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTermRecipient.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTerm.xml</value>

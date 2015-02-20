@@ -40,7 +40,7 @@
 				<ref bean="DevelopmentProposal-requestedEndDateInitial" />
 				<ref bean="DevelopmentProposal-activityTypeCode" />
 				<ref bean="DevelopmentProposal-ownedByUnitNumber" />
-				<ref bean="DevelopmentProposal-ownedByUnitNumberRestricted" />
+				<!-- <ref bean="DevelopmentProposal-ownedByUnitNumberRestricted" /> -->
 				<ref bean="DevelopmentProposal-ownedByUnit.unitName" />
 				<ref bean="DevelopmentProposal-proposalTypeCode" />
 				<ref bean="DevelopmentProposal-proposalType.description" />
@@ -97,6 +97,29 @@
 			<property name="summary" value="Proposal Person" /> 
 			<property name="description" value="Proposal Person" /> 
 		</bean>
+   <bean id="DevelopmentProposal-numberOfCopies" parent="DevelopmentProposal-numberOfCopies-parent" />
+   <bean id="DevelopmentProposal-numberOfCopies-parent" abstract="true" parent="AttributeDefinition">
+		<property name="name" value="numberOfCopies" />
+		<property name="forceUppercase" value="false" />
+		<property name="label" value="Number of Copies" />
+		<property name="maxLength" value="3" />
+		<property name="validationPattern">
+			<bean parent="NumericValidationPattern" />
+		</property>
+    <property name="validCharactersConstraint">
+      <bean parent="NumericPatternConstraint"/>
+    </property>
+		<property name="required" value="false" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="3" />
+		</property>
+    <property name="controlField">
+      <bean p:size="3" parent="Uif-TextControl"/>
+    </property>
+		<property name="summary" value="Number of Copies" />
+    <property name="description" value="The number of paper copies of the proposal that should be mailed to the agency/sponsor."/>
+	</bean>
+	
 	
 	<bean id="DevelopmentProposal-lookupDefinition" parent="MIT-DevelopmentProposal-lookupDefinition" />
 	<bean id="MIT-DevelopmentProposal-lookupDefinition"
