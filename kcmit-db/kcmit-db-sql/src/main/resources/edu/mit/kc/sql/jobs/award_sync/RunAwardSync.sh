@@ -1,4 +1,4 @@
-echo `date` 'Starting award_sync.sh ***Kuali Coeus QA Database***'
+echo `date` 'Starting award sync from COEUS QA ***KCDEV***'
 
 ORACLE_SID=KCDEV
 export ORACLE_SID
@@ -11,4 +11,4 @@ ORACLE_CONNECT_STRING=`cat /opt/kc/dbcred/dbcred`
 $ORACLE_HOME/bin/sqlplus  $ORACLE_CONNECT_STRING @/opt/kc/jobs/award_sync/start_sync.sql > logs/award_sync_qawkly-${tod}.log
 
 echo `date` 'End award_sync.sh'
-mail -s 'Person Feed - Dev Database - KCSO' geot@mit.edu < /opt/kc/jobs/logs/award_sync_qawkly-${tod}.log
+mail -s 'Award sync from COEUS QA - KCDEV' kc-mit-dev@mit.edu < /opt/kc/jobs/logs/award_sync_qawkly-${tod}.log
