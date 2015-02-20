@@ -1,13 +1,17 @@
-ORACLE_SID=OSPA
-export ORACLE_SID
+echo `date` 'Starting Deactivate IPs ** KCDEV **'
 
-ORACLE_HOME=/oracle/product/11.2.0/db
-export ORACLE_HOME
+export ORACLE_HOME=/oracle/product/11.2.0.4/db/
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export PATH=$PATH:$LD_LIBRARY_PATH:$ORACLE_HOME/bin:/usr/local/bin
+export TNS_ADMIN=/oracle/network/admin/
+scriptDir="/opt/kc/jobs/deactivateip"
+cd $scriptDir
+tod=$(date +%Y%m%d%H%M)
+echo $tod
+echo "spool deactivateip-${tod}.log"
+ORACLE_CONNECT_STRING=`cat /opt/kc/dbcreds/kcdevid`
+$ORACLE_HOME/bin/sqlplus  $ORACLE_CONNECT_STRING @deactivate_inst_proposal.sql > logs/deactivateip-${tod}.log
 
-ORACLE_CONNECT_STRING=`cat /home/coeus/ospauser/id`
-$ORACLE_HOME/bin/sqlplus  $ORACLE_CONNECT_STRING @/home/coeus/deactivateip/deactivate.sql
+echo `date` 'Deactivate IPs deactivate.sh ** KCDEV **'
 
-
-echo `date` 'End deactivate.sh'
-
-mail -s 'Deactivate IP  - Production ' coeus-mit@mit.edu < /home/coeus/deactivateip/deactivate.log
+mail -s "Deactivate IPs log - KCDEV" kc-mit-dev@mit.edu < /opt/kc/jobs/deactivateip/logs/deactivateip-${tod}.log

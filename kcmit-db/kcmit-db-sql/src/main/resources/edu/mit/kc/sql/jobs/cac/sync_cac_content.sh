@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CREDS="/etc/creds/samba/creds.txt"
+CREDS="/opt/kc/creds/cac-file-creds.txt"
 SRC_DIR="departmental/osp/CAC"
 DST_DIR="/home/coeus/cac"
 FILE="CAC.tab"

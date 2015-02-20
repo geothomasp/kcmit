@@ -9,6 +9,7 @@ set define off;
 @all_nda.sql
 @all_cac.sql
 @all_citi.sql
+@all_deactivateip.sql
 commit
 /
 EXIT
