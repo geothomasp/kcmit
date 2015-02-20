@@ -399,7 +399,7 @@ public class AwardAction extends BudgetParentActionBase {
         } else {
             award.setScienceCodeIndicator(Constants.YES_FLAG);
         }
-
+        award.setSponsorNihMultiplePi(true);
         forward = super.save(mapping, form, request, response);
         if (awardForm.getMethodToCall().equals("save") && awardForm.isAuditActivated()) {
             forward = mapping.findForward(Constants.MAPPING_AWARD_ACTIONS_PAGE);
