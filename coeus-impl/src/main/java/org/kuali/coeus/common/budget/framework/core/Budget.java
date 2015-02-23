@@ -165,6 +165,15 @@ public class Budget extends AbstractBudget implements BudgetContract {
     @OrderBy("budgetPeriod")
     private List<BudgetPeriod> budgetPeriods;
     
+   // @OneToMany(mappedBy="budget", orphanRemoval = true, cascade = { CascadeType.ALL })
+    //@Transient
+    @OneToMany(orphanRemoval = true, cascade = { CascadeType.ALL })
+    @JoinColumn(name = "BUDGET_ID", referencedColumnName = "BUDGET_ID")
+   private List<BudgetLineItem> sepLineItems;
+    
+	//List<BudgetLineItem> sepLineItems = new ArrayList<BudgetLineItem>();
+  //  private BudgetPeriod budgetPeriod;
+    
     @Transient
     private List<Period> budgetSummaryDetails;
     
@@ -263,6 +272,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
         budgetRates = new ArrayList<BudgetRate>();
         budgetLaRates = new ArrayList<BudgetLaRate>();
         budgetPeriods = new ArrayList<BudgetPeriod>();
+     sepLineItems = new ArrayList<BudgetLineItem>();
         budgetPersonnelDetailsList = new ArrayList<BudgetPersonnelDetails>();
         budgetUnrecoveredFandAs = new ArrayList<BudgetUnrecoveredFandA>();
         instituteRates = new ArrayList<InstituteRate>();
@@ -275,6 +285,13 @@ public class Budget extends AbstractBudget implements BudgetContract {
         budgetSubAwards = new ArrayList<BudgetSubAwards>();
         budgetSummaryDetails = new ArrayList<Period>();
         setOnOffCampusFlag("D");
+        //sepLineItems = new
+        //setLineItems();
+    }
+    
+    public void setLineItems(){
+    	//sepLineItems = new ArrayList<BudgetLineItem>();
+    	sepLineItems.addAll(getBudgetLineItems());
     }
 
     /**
@@ -1786,7 +1803,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
 		}
 		return budgetPersonnelDetailsList;
 	}
-
+//test data
 	public List<BudgetLineItem> getBudgetLineItems() {
 		String personnelBudgetCategoryTypeCode = getBudgetCalculationService().getPersonnelBudgetCategoryTypeCode();
 		List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();
@@ -1832,4 +1849,57 @@ public class Budget extends AbstractBudget implements BudgetContract {
     public void setCreateUser(String createUser) {
         this.createUser = createUser;
     }
+
+	public List<BudgetLineItem> getSepLineItems() {
+		return sepLineItems;
+	}
+
+	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
+		this.sepLineItems = sepLineItems;
+	}
+
+/*	public BudgetPeriod getBudgetPeriod() {
+		return budgetPeriod;
+	}
+
+	public void setBudgetPeriod(BudgetPeriod budgetPeriod) {
+		this.budgetPeriod = budgetPeriod;
+	}*/
+
+ /*   @Autowired
+    @Qualifier("businessObjectService")
+    private BusinessObjectService businessObjectService;
+ public BusinessObjectService getBusinessObjectService() {
+     
+  return KcServiceLocator.getService(BusinessObjectService.class);
+ }
+
+
+
+ public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+  this.businessObjectService = businessObjectService;
+ }*/
+	/*public List<BudgetLineItem> getSepLineItems() {
+		 List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();
+		 BudgetLineItem  budgetLineItem = new BudgetLineItem();
+	 budgetLineItem.setBudgetLineItemId(1l);
+		 budgetLineItem.setBudgetCategoryCode("budgetCategoryCode");
+		 budgetLineItem.setQuantity(0);		
+		 HashMap<String, String> paramValues = new HashMap<>();
+		 paramValues.put("budgetLineItemId", "745");
+		 budgetLineItem = getBusinessObjectService().findByPrimaryKey(BudgetLineItem.class, paramValues);
+		 
+					
+					
+				
+		 budgetLineItems.add(budgetLineItem);
+		return sepLineItems = budgetLineItems;
+	}
+
+	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
+		this.sepLineItems = sepLineItems;
+	}
+*/
+
+	
 }
