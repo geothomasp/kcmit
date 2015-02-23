@@ -317,7 +317,7 @@ public class KcPerson extends TransientBusinessObjectBase implements Contactable
     public String getFullName() {
         final String middleName = this.getMiddleName() != null ? this.getMiddleName() + " " : "";
         
-        return (this.getLastName() + "," + middleName + this.getFirstName()).trim();
+        return (this.getLastName() + "," + this.getFirstName()  + middleName).trim();
     }
 
     /**
