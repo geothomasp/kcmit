@@ -10,6 +10,7 @@ import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.BudgetContainer;
 import org.kuali.coeus.common.budget.framework.income.BudgetPeriodIncomeTotal;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationWrapper;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.propdev.impl.budget.ProposalDevelopmentBudgetExt;
 import org.kuali.coeus.propdev.impl.budget.modular.BudgetModularSummary;
 import org.kuali.coeus.propdev.impl.budget.nonpersonnel.AddProjectBudgetLineItemHelper;
@@ -39,7 +40,9 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
     private boolean auditActivated;
     private List<DataValidationItem> dataValidationItems;
     private boolean viewOnly = false;
-
+    
+    private List<BudgetLineItem> sepLineItems;
+    private List<BudgetLineItem> budgetLineItems;
     public void initialize() {
     	editableBudgetLineItems = new HashMap<String,List<String>>();
     	addProjectPersonnelHelper = new AddProjectPersonnelHelper();
@@ -209,6 +212,22 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
 
 	public void setViewOnly(boolean viewOnly) {
 		this.viewOnly = viewOnly;
+	}
+
+	public List<BudgetLineItem> getSepLineItems() {
+		return sepLineItems;
+	}
+
+	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
+		this.sepLineItems = sepLineItems;
+	}
+
+	public List<BudgetLineItem> getBudgetLineItems() {
+		return budgetLineItems;
+	}
+
+	public void setBudgetLineItems(List<BudgetLineItem> budgetLineItems) {
+		this.budgetLineItems = budgetLineItems;
 	}
 
 }

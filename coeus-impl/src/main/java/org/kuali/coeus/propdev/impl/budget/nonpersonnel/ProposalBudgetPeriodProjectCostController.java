@@ -1,6 +1,9 @@
 package org.kuali.coeus.propdev.impl.budget.nonpersonnel;
 
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
@@ -17,6 +20,7 @@ import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.web.form.DialogResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +37,11 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	protected static final String CONFIRM_SYNC_TO_PERIOD_COST_LIMIT_DIALOG_ID = "PropBudget-NonPersonnelCosts-SyncToPeriodCostLimit";
 	protected static final String CONFIRM_SYNC_TO_DIRECT_COST_LIMIT_DIALOG_ID = "PropBudget-NonPersonnelCosts-SyncToDirectCostLimit";
 	
-
+	protected static final String ADD_NONPERSONNEL_PERIOD_DIALOG_ID_SEP = "PropBudget-SinglePointEntryPage-AddNonPersonnel-Dialog";
+	
+	private static final String EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SEP= "PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog";
+	private static final String EDIT_NONPERSONNEL_PARTICIPANT_DIALOG_ID_SEP = "PropBudget-SinglePointEntryPage-EditParticipantSupport-Dialog";
+	
 	@Transactional @RequestMapping(params="methodToCall=assignLineItemToPeriod")
 	public ModelAndView assignLineItemToPeriod(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
 		ModelAndView modelAndView = getModelAndViewService().getModelAndView(form);
@@ -53,7 +61,26 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
         }
  		return modelAndView;
 	}
-	
+	@Transactional @RequestMapping(params="methodToCall=assignSEPLineItemToPeriod")
+	public ModelAndView assignSEPLineItemToPeriod(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+		ModelAndView modelAndView = getModelAndViewService().getModelAndView(form);
+		Budget budget = form.getBudget();
+        Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
+		BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
+        DialogResponse dialogResponse = form.getDialogResponse(CONFIRM_PERIOD_CHANGES_DIALOG_ID);
+        if(dialogResponse == null && budgetPeriod.getBudgetPeriod() > 1 && !isBudgetLineItemExists(budget)) {
+        	modelAndView = getModelAndViewService().showDialog(CONFIRM_PERIOD_CHANGES_DIALOG_ID, true, form);
+        }else {
+            boolean confirmResetDefault = dialogResponse == null ? true : dialogResponse.getResponseAsBoolean();
+            if(confirmResetDefault) {
+        		form.getAddProjectBudgetLineItemHelper().reset();
+        		form.getAddProjectBudgetLineItemHelper().setCurrentTabBudgetPeriod(budgetPeriod);
+        		modelAndView = getModelAndViewService().showDialog(ADD_NONPERSONNEL_PERIOD_DIALOG_ID_SEP, true, form);
+             }
+        }
+ 		return modelAndView;
+	}
+
 	@Transactional @RequestMapping(params="methodToCall=addLineItemToPeriod")
 	public ModelAndView addLineItemToPeriod(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
 		Budget budget = form.getBudget();
@@ -86,7 +113,24 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    }
     	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PERIOD_DIALOG_ID, true, form);
 	}
-
+	@Transactional @RequestMapping(params="methodToCall=editSepNonPersonnelPeriodDetails")
+	public ModelAndView editSepNonPersonnelPeriodDetails(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+	    Budget budget = form.getBudget();
+	    String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
+        if (StringUtils.isNotEmpty(selectedLine)) {
+		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
+		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
+        	form.getAddProjectBudgetLineItemHelper().reset();
+        	BudgetLineItem editBudgetLineItem = form.getBudget().getSepLineItems().get(Integer.parseInt(selectedLine));
+        	String editLineIndex = Integer.toString(form.getBudget().getSepLineItems().indexOf(editBudgetLineItem));//set the same in budgetPriod
+        	
+		    form.getAddProjectBudgetLineItemHelper().setBudgetLineItem(getDataObjectService().copyInstance(editBudgetLineItem));
+		    form.getAddProjectBudgetLineItemHelper().setEditLineIndex(editLineIndex);
+		    form.getAddProjectBudgetLineItemHelper().setCurrentTabBudgetPeriod(budgetPeriod);
+		    //form.getAddProjectBudgetLineItemHelper().setBudgetCategoryTypeCode(editBudgetLineItem.getBudgetCategory().getBudgetCategoryTypeCode());
+	    }
+    	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SEP, true, form);
+	}
 	@Transactional @RequestMapping(params="methodToCall=deleteBudgetLineItem")
 	public ModelAndView deleteBudgetLineItem(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
 	    Budget budget = form.getBudget();
@@ -96,6 +140,7 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
 		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
 		    budgetPeriod.getBudgetLineItems().remove(deletedBudgetLineItem);
+		    budget.getSepLineItems().remove(deletedBudgetLineItem);
 		    validateBudgetExpenses(budget, budgetPeriod);
 		    form.setAjaxReturnType("update-page");
 	    }
@@ -206,6 +251,16 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    String editLineIndex = Integer.toString(budget.getBudgetPeriods().indexOf(currentTabBudgetPeriod));
 	    form.getAddProjectBudgetLineItemHelper().setEditLineIndex(editLineIndex);
     	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PARTICIPANT_DIALOG_ID, true, form);
+	}
+	@Transactional @RequestMapping(params="methodToCall=editSEPParticipantDetails")
+	public ModelAndView editSEPParticipantDetails(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+		Budget budget = form.getBudget();
+	    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
+		BudgetPeriod currentTabBudgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
+	    form.getAddProjectBudgetLineItemHelper().setCurrentTabBudgetPeriod(currentTabBudgetPeriod);
+	    String editLineIndex = Integer.toString(budget.getBudgetPeriods().indexOf(currentTabBudgetPeriod));
+	    form.getAddProjectBudgetLineItemHelper().setEditLineIndex(editLineIndex);
+    	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PARTICIPANT_DIALOG_ID_SEP, true, form);
 	}
 	
 	@Transactional @RequestMapping(params="methodToCall=saveParticipantDetails")

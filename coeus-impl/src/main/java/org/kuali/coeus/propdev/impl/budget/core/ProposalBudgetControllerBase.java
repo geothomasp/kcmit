@@ -1,7 +1,9 @@
 package org.kuali.coeus.propdev.impl.budget.core;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,8 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.calculator.BudgetCalculationService;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
+import org.kuali.coeus.common.budget.framework.core.CostElement;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationService;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
+import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.summary.BudgetSummaryService;
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetService;
@@ -23,12 +28,14 @@ import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.model.ScaleTwoDecimalEditor;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.document.TransactionalDocumentControllerService;
 import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.uif.UifParameters;
+import org.kuali.rice.krad.web.form.DialogResponse;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.rice.krad.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +43,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 public abstract class ProposalBudgetControllerBase {
@@ -119,7 +127,8 @@ public abstract class ProposalBudgetControllerBase {
     protected UifFormBase createInitialForm(HttpServletRequest request) {
         return new ProposalBudgetForm();
     }
-    
+    protected static final String CONFIRM_PERIOD_CHANGES_DIALOG_ID = "PropBudget-ConfirmPeriodChangesDialog";
+    protected static final String ADD_NONPERSONNEL_PERIOD_DIALOG_ID = "PropBudget-NonPersonnelCostsPage-AddNonPersonnel-Dialog";
     @ModelAttribute(value = "KualiForm")
     public UifFormBase initForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
         UifFormBase form =  getKcCommonControllerService().initForm(this.createInitialForm(request), request, response);
@@ -136,11 +145,82 @@ public abstract class ProposalBudgetControllerBase {
     	}
     	return budget;
     }
+    //------------------
+    
+	/*private BudgetPeriod getBudgetPeriod(Long currentTabBudgetPeriodId, Budget budget) {
+        for(BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
+        	if(budgetPeriod.getBudgetPeriodId().equals(currentTabBudgetPeriodId)) {
+        		return budgetPeriod;
+        	}
+        }
+        return null;
+	}
+	private boolean isBudgetLineItemExists(Budget budget) {
+		boolean lineItemExists = false;
+		for(BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
+			if(budgetPeriod.getBudgetPeriod() > 1 && budgetPeriod.getBudgetLineItems().size() > 0) {
+				lineItemExists = true;
+				break;
+			}
+		}
+		return lineItemExists;
+	}*/
 
     public ModelAndView save(ProposalBudgetForm form) {
-    	budgetService.calculateBudgetOnSave(form.getBudget());
+
+	if(!form.getBudget().getSepLineItems().isEmpty()){
+		
+	    
+		List<BudgetLineItem> newBudgetLineItems = new ArrayList<BudgetLineItem>();
+    	List<BudgetLineItem> budgetLineItems =  form.getBudget().getSepLineItems();
+    	List<BudgetPeriod> budgetPeriods =  form.getBudget().getBudgetPeriods();
+    	for(BudgetLineItem budgetLineItem:budgetLineItems){  		
+    		budgetLineItem.setBudget(form.getBudget());
+    	for(BudgetPeriod budgetPeriod:budgetPeriods){
+    	
+    		newBudgetLineItems.add(populateNewBudgetLineItem(budgetLineItem, budgetPeriod));
+    			/*
+    		
+    		if(budgetLineItem.getBudgetPeriodBO()==null)
+        	{
+        		budgetLineItem.setBudgetPeriodBO(budgetPeriod);
+        	}
+    		
+    	if(budgetLineItem.getBudgetPeriodId()==null)
+    	{
+    		budgetLineItem.setBudgetPeriodId(budgetPeriod.getBudgetPeriodId());
+    	}
+    	if(budgetLineItem.getBudgetPeriod()==null){
+    		budgetLineItem.setBudgetPeriod(budgetPeriod.getBudgetPeriod());
+    	}
+    	
+    	if(budgetLineItem.getBudgetId()==null){
+    		budgetLineItem.setBudgetId(budgetPeriod.getBudgetId());
+    	}
+    	
+    	if(budgetLineItem.getLineItemNumber()==null){
+    		budgetLineItem.setLineItemNumber(1);
+    	}
+    	
+    	if(budgetLineItem.getBudgetCategoryCode()==null){
+    		CostElement costElement = getDataObjectService().findUnique(CostElement.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("costElement", budgetLineItem.getCostElement())).build());
+    		budgetLineItem.setBudgetCategoryCode(costElement.getBudgetCategoryCode());
+    	}
+    	*/
+    	
+    	
+    	
+    	}
+    	}
+    	form.getBudget().setSepLineItems(newBudgetLineItems);
+    	
+    	}
+	  List<BudgetLineItem> newBudgetLineItems =  form.getBudget().getSepLineItems();
+    	
+	budgetService.calculateBudgetOnSave(form.getBudget());
     	form.setBudget(getDataObjectService().save(form.getBudget()));
        	getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());
+       
         getBudgetJustificationService().preSave(form.getBudget(), form.getBudgetJustificationWrapper());
         getBudgetSummaryService().setupOldStartEndDate(form.getBudget(), false);
         form.setBudgetModularSummary(budgetModularService.generateModularSummary(form.getBudget()));
@@ -149,6 +229,42 @@ public abstract class ProposalBudgetControllerBase {
         	((ProposalBudgetViewHelperServiceImpl)form.getViewHelperService()).applyBudgetAuditRules(form);
         }
         return getModelAndViewService().getModelAndView(form);
+    }
+    
+    public BudgetLineItem populateNewBudgetLineItem(BudgetLineItem newBudgetLineItem, BudgetPeriod budgetPeriod) {
+        Budget budget = budgetPeriod.getBudget();
+        newBudgetLineItem.setBudgetPeriod(budgetPeriod.getBudgetPeriod());
+        newBudgetLineItem.setBudgetPeriodBO(budgetPeriod);
+        newBudgetLineItem.setBudgetPeriodId(budgetPeriod.getBudgetPeriodId());
+       /* newBudgetLineItem.setStartDate(budgetPeriod.getStartDate());
+        newBudgetLineItem.setEndDate(budgetPeriod.getEndDate());*/
+        newBudgetLineItem.setBudgetId(budget.getBudgetId());
+        newBudgetLineItem.setLineItemNumber(budget.getNextValue(Constants.BUDGET_LINEITEM_NUMBER));
+        newBudgetLineItem.setApplyInRateFlag(true);
+        newBudgetLineItem.setSubmitCostSharingFlag(budget.getSubmitCostSharingFlag());
+    	if(newBudgetLineItem.getBudgetCategoryCode()==null){
+    		CostElement costElement = getDataObjectService().findUnique(CostElement.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("costElement", newBudgetLineItem.getCostElement())).build());
+    		newBudgetLineItem.setBudgetCategoryCode(costElement.getBudgetCategoryCode());//budget_category  category_type=p
+    	}
+/*    refreshBudgetLineCostElement(newBudgetLineItem);
+        // on/off campus flag enhancement
+        String onOffCampusFlag = budget.getOnOffCampusFlag();
+        if (onOffCampusFlag.equalsIgnoreCase(BudgetConstants.DEFAULT_CAMPUS_FLAG)) {
+            newBudgetLineItem.setOnOffCampusFlag(newBudgetLineItem.getCostElementBO().getOnOffCampusFlag()); 
+        } else {
+            newBudgetLineItem.setOnOffCampusFlag(onOffCampusFlag.equalsIgnoreCase(Constants.ON_CAMUS_FLAG));                 
+        }
+        newBudgetLineItem.setBudgetCategoryCode(newBudgetLineItem.getCostElementBO().getBudgetCategoryCode());
+        newBudgetLineItem.setLineItemSequence(newBudgetLineItem.getLineItemNumber());
+        refreshBudgetLineBudgetCategory(newBudgetLineItem);
+        
+        if(isBudgetFormulatedCostEnabled()){
+            List<String> formulatedCostElements = getFormulatedCostElements();
+            if(formulatedCostElements.contains(newBudgetLineItem.getCostElement())){
+                newBudgetLineItem.setFormulatedCostElementFlag(true);
+            }
+        }*/
+		return newBudgetLineItem;
     }
     
     protected void validateBudgetExpenses(ProposalBudgetForm form) {
