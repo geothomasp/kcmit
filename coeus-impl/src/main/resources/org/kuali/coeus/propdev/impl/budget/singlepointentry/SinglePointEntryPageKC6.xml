@@ -149,7 +149,7 @@
 					</property>
 				</bean>
 				<bean parent="Uif-DeleteLineAction-IconOnly" p:order="20"
-					p:methodToCall="deleteBudgetLineItem" p:iconClass="icon-trash"
+					p:methodToCall="deleteSEPBudgetLineItem" p:iconClass="icon-trash"
 					p:render="@{!#parent.readOnly}">
 					<property name="additionalSubmitData">
 						<map>
@@ -201,7 +201,7 @@
 				<property name="items">
 					<list>
 						<bean parent="Uif-PrimaryActionButton" p:actionLabel="Save Changes" p:methodToCall="saveBudgetLineItem"
-							p:ajaxReturnType="update-page" 
+							p:ajaxReturnType="update-page" 	
                       		p:actionParameters="@{T(org.kuali.rice.krad.uif.UifParameters).SELECTED_COLLECTION_PATH}:budget.budgetLineItems,
                       		@{T(org.kuali.rice.krad.uif.UifParameters).SELECTED_COLLECTION_ID}:PropBudget-NonPersonnelCosts-LineItemDetails,
                       		@{T(org.kuali.rice.krad.uif.UifParameters).SELECTED_LINE_INDEX}:@{addProjectBudgetLineItemHelper.editLineIndex}"

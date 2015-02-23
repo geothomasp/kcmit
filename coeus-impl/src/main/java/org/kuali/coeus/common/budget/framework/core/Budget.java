@@ -1800,7 +1800,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
 		}
 		return budgetPersonnelDetailsList;
 	}
-
+//test data
 	public List<BudgetLineItem> getBudgetLineItems() {
 		String personnelBudgetCategoryTypeCode = getBudgetCalculationService().getPersonnelBudgetCategoryTypeCode();
 		List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();

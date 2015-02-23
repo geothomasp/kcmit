@@ -17,6 +17,7 @@ import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationService;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
 import org.kuali.coeus.common.budget.framework.summary.BudgetSummaryService;
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetService;
@@ -170,7 +171,7 @@ public abstract class ProposalBudgetControllerBase {
 
 	if(!form.getBudget().getSepLineItems().isEmpty()){
 		
-	    
+		
 		List<BudgetLineItem> newBudgetLineItems = new ArrayList<BudgetLineItem>();
     	List<BudgetLineItem> budgetLineItems =  form.getBudget().getSepLineItems();
     	List<BudgetPeriod> budgetPeriods =  form.getBudget().getBudgetPeriods();
@@ -215,8 +216,17 @@ public abstract class ProposalBudgetControllerBase {
     	form.getBudget().setSepLineItems(newBudgetLineItems);
     	
     	}
-	  List<BudgetLineItem> newBudgetLineItems =  form.getBudget().getSepLineItems();
-    	
+	
+	//form.getBudget().getBudgetLineItems().addAll(form.getBudget().getSepLineItems());
+	//form.getBudget().getBudgetPersonnelDetails()..addAll(form.getBudget().getSepLineItems());
+	/*  List<BudgetLineItem> newBudgetLineItems =  form.getBudget().getSepLineItems();
+	  List<BudgetLineItem> oldBudgetLineItems =  form.getBudget().getBudgetLineItems();
+	  
+	  for(BudgetLineItem formulateBudgetLineItems: newBudgetLineItems){
+		  if(oldBudgetLineItems.contains(formulateBudgetLineItems)){
+			  oldBudgetLineItems.set
+		  }
+	  }*/
 	budgetService.calculateBudgetOnSave(form.getBudget());
     	form.setBudget(getDataObjectService().save(form.getBudget()));
        	getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());
@@ -245,7 +255,9 @@ public abstract class ProposalBudgetControllerBase {
     	if(newBudgetLineItem.getBudgetCategoryCode()==null){
     		CostElement costElement = getDataObjectService().findUnique(CostElement.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("costElement", newBudgetLineItem.getCostElement())).build());
     		newBudgetLineItem.setBudgetCategoryCode(costElement.getBudgetCategoryCode());//budget_category  category_type=p
+    		newBudgetLineItem.setLineItemDescription(costElement.getDescription());
     	}
+    	
 /*    refreshBudgetLineCostElement(newBudgetLineItem);
         // on/off campus flag enhancement
         String onOffCampusFlag = budget.getOnOffCampusFlag();

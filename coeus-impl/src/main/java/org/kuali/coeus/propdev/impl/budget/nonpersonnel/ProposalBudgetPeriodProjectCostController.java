@@ -1,6 +1,9 @@
 package org.kuali.coeus.propdev.impl.budget.nonpersonnel;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -137,6 +140,26 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
         if (StringUtils.isNotEmpty(selectedLine)) {
         	BudgetLineItem deletedBudgetLineItem = form.getBudget().getBudgetLineItems().get(Integer.parseInt(selectedLine));
+		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
+		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
+		    budgetPeriod.getBudgetLineItems().remove(deletedBudgetLineItem);
+		    budget.getSepLineItems().remove(deletedBudgetLineItem);
+		    validateBudgetExpenses(budget, budgetPeriod);
+		    form.setAjaxReturnType("update-page");
+	    }
+		return getModelAndViewService().getModelAndView(form);
+	}
+	
+	@Transactional @RequestMapping(params="methodToCall=deleteSEPBudgetLineItem")
+	public ModelAndView deleteSEPBudgetLineItem(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+	    Budget budget = form.getBudget();
+	    String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
+        if (StringUtils.isNotEmpty(selectedLine)) {
+        	//BudgetLineItem deletedBudgetLineItem = form.getBudget().getBudgetLineItems().get(Integer.parseInt(selectedLine));
+        	
+        	BudgetLineItem deletedBudgetLineItem = form.getBudget().getSepLineItems().get(Integer.parseInt(selectedLine));
+        	
+        	
 		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
 		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
 		    budgetPeriod.getBudgetLineItems().remove(deletedBudgetLineItem);
