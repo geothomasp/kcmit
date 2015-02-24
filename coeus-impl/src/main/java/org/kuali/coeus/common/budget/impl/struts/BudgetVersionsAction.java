@@ -361,10 +361,11 @@ public class BudgetVersionsAction extends BudgetAction {
     
     private void copyBudget(ActionForm form, HttpServletRequest request, boolean copyPeriodOneOnly) throws WorkflowException {
         BudgetForm budgetForm = (BudgetForm) form;
-        AwardBudgetDocument budgetDoc = budgetForm.getBudgetDocument();
-        BudgetParentDocument pdDoc = budgetDoc.getBudget().getBudgetParent().getDocument();
         Budget budgetToCopy = getSelectedVersion(budgetForm, request);
-        copyBudget(pdDoc, budgetToCopy, copyPeriodOneOnly);
+        DocumentService documentService = KcServiceLocator.getService(DocumentService.class);
+        AwardBudgetDocument awardBudgetDocument = (AwardBudgetDocument) documentService.getByDocumentHeaderId(budgetToCopy.getDocumentNumber());
+        AwardBudgetDocument  awardBudgetDocumentCopy = getAwardBudgetService().copyBudgetVersion(awardBudgetDocument, copyPeriodOneOnly);
+        budgetForm.getBudgetDocument().getBudget().getBudgetParent().getBudgets().add(awardBudgetDocumentCopy.getBudget());
     }
     
     

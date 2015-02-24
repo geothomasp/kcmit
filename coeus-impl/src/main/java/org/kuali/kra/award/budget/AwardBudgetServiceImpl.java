@@ -95,11 +95,9 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         saveDocument(awardBudgetDocument);
     }
     
-    /**
-     * Need to move this to AwardBudgetService service
-     */
-    @SuppressWarnings("unchecked")
-    protected AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException {
+    
+    @Override
+    public AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException {
         AwardDocument awardDocument = (AwardDocument)budgetDocument.getBudget().getBudgetParent().getDocument();
 		String parentDocumentNumber = awardDocument.getDocumentNumber();
         budgetDocument.toCopy();

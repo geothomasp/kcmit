@@ -310,9 +310,13 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
     
     private void copyBudget(ActionForm form, HttpServletRequest request, boolean copyPeriodOneOnly) throws WorkflowException {
         AwardForm awardForm = (AwardForm) form;
-        AwardDocument awardDoc = awardForm.getAwardDocument();
         Budget budgetToCopy = getSelectedVersion(awardForm, request);
-        copyBudget(awardDoc.getBudgetParent(), budgetToCopy, copyPeriodOneOnly);
+        DocumentService documentService = KcServiceLocator.getService(DocumentService.class);
+        AwardBudgetDocument awardBudgetDocument = (AwardBudgetDocument) documentService.getByDocumentHeaderId(budgetToCopy.getDocumentNumber());
+        
+        AwardBudgetDocument  awardBudgetDocumentCopy = getAwardBudgetService().copyBudgetVersion(awardBudgetDocument, copyPeriodOneOnly);
+        
+        awardForm.getAwardDocument().getBudgetParent().getBudgets().add(awardBudgetDocumentCopy.getBudget());
     }
     
     private StrutsConfirmation syncBudgetRateConfirmationQuestion(ActionMapping mapping, ActionForm form,
