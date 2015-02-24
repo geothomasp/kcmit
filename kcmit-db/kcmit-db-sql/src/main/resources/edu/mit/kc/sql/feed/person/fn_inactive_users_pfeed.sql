@@ -1,6 +1,5 @@
 create or replace
-FUNCTION fn_inactive_users_pfeed ( as_EmailId IN VARCHAR2,
-									as_Subject IN VARCHAR2) return number IS
+FUNCTION fn_inactive_users_pfeed return number IS
 
 /*******************************************************************
 This procedure generates emails listing all persons whose user names where set

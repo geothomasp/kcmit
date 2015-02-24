@@ -999,12 +999,12 @@ END;
 /
 select 'Updation of changed user_name ends.'  from dual
 /
-select 'Set user_name as NULL for all incative people.' from dual
+select 'Set people as inactive if username is NULL in warehouse.' from dual
 /
 DECLARE
 li_ret number;
 BEGIN
-li_ret:=fn_inactive_users_pfeed('kc-mit-dev@mit.edu', 'KC Person Feed Prncpl ID cleanup');
+li_ret:=fn_inactive_users_pfeed();
 END;
 /
 select 'Updation of changed email_address begins.'  from dual

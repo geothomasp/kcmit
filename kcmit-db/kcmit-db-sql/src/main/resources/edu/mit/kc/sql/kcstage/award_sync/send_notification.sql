@@ -119,7 +119,7 @@ begin
   
   ls_msg := ls_msg || ls_temp_msg|| '<br/>'||'<br/>'||'Thank you';
   
-  KC_MAIL_GENERIC_PKG.SEND_MAIL(ls_receipt,null,null,ls_sub,ls_msg);
+  KC_MAIL_GENERIC_PKG.SEND_MAIL(null,ls_receipt,null,null,ls_sub,ls_msg);
 
 end;
 /
