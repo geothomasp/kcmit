@@ -11,4 +11,8 @@ public class MitAwardBudgetDocumentAuthorizer extends AwardBudgetDocumentAuthori
 	        return false;
 	    }
 
+	@Override
+	public boolean canCopy(Document document, Person user) {
+		return false;
+	}
 }
