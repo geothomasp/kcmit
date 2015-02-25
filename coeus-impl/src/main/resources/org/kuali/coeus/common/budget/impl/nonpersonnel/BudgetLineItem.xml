@@ -68,7 +68,7 @@
     <property name="forceUppercase" value="false" />
     <property name="label" value="Budget Period Id" />
     <property name="shortLabel" value="Budget Period Id" />
-    <property name="maxLength" value="3" />
+    <property name="maxLength" value="12" />
     <property name="validationPattern" >
       <bean parent="NumericValidationPattern" />
     </property>
