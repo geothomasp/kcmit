@@ -18,18 +18,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.drools.core.util.StringUtils;
-import org.kuali.kra.service.impl.adapters.IdentityServiceAdapter;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kim.api.identity.AuthenticationService;
-import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kim.impl.identity.IdentityServiceImpl;
 
 
 /**
  *
  */
-public class MitKcUserAuthServiceImpl extends IdentityServiceAdapter implements AuthenticationService{
+public class MitKcUserAuthServiceImpl extends IdentityServiceImpl implements AuthenticationService{
     private static final Log LOG = LogFactory.getLog(MitKcUserAuthServiceImpl.class);
 	
     private ConfigurationService kualiConfigurationService;
@@ -49,8 +47,7 @@ public class MitKcUserAuthServiceImpl extends IdentityServiceAdapter implements 
         try{
             conn = DriverManager.getConnection(dburl, userName, password);
             if (conn != null ) {
-                IdentityService auth = KimApiServiceLocator.getIdentityService();
-                return auth.getPrincipalByPrincipalName(userName);
+                return getPrincipalByPrincipalName(userName);
             }
         }catch(SQLException ex){
             if(ex.getMessage().indexOf("invalid username")!=-1){
