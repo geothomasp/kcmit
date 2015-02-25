@@ -921,7 +921,13 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     
             String value = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
            List<String> newRoles=Arrays.asList(value.split(PARAMETER_DELIMITER));     
-           String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY);          
+           String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+           String principalId=getGlobalVariableService().getUserSession().getPrincipalId();
+          if (proposalPerson.isInvestigator() && proposalPerson.isPrincipalInvestigator()
+                  && StringUtils.equals(principalId, proposalPerson.getPersonId())) {
+              return true;
+          }
+           
         if (proposalPerson.getProposalPersonRoleId().equals("KP")){
         	for(String projectRole:newRoles){
         	if(proposalPerson.getProjectRole().equals(projectRole)) {
