@@ -37,5 +37,4 @@
                            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     
      <bean id="kimAuthenticationService" class="edu.mit.kc.auth.MitKcUserAuthServiceImpl"/>
-     <bean id="kimIdentityService" class="edu.mit.kc.auth.MitKcUserAuthServiceImpl"/>
 </beans>
