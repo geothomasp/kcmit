@@ -34,13 +34,13 @@ import org.kuali.rice.krad.exception.AuthenticationException;
 import org.kuali.rice.krad.util.KRADUtils;
 import org.kuali.rice.krad.web.filter.UserLoginFilter;
 
-public class ShibUserLoginFilter extends UserLoginFilter {
+public class MitKcShibUserLoginFilter extends UserLoginFilter {
     private String loginPath;
     @Override
     public void init(FilterConfig config) throws ServletException {
         loginPath = config.getInitParameter("loginPath");
         if (loginPath == null) {
-            loginPath = "/WEB-INF/jsp/tuftsInvalidLogin.jsp";
+            loginPath = "/WEB-INF/jsp/mit/mitInvalidLogin.jsp";
         }
         super.init(config);
     }
@@ -54,7 +54,7 @@ public class ShibUserLoginFilter extends UserLoginFilter {
             doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
         }else{
             try{
-                loginPath = "/WEB-INF/jsp/tuftsInvalidLogin.jsp";
+                loginPath = "/WEB-INF/jsp/mit/mitInvalidLogin.jsp";
                 super.doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
             }catch(AuthenticationException ex){
                 handleInvalidLogin(request, response);
@@ -112,7 +112,6 @@ public class ShibUserLoginFilter extends UserLoginFilter {
     private void handleInvalidLogin(ServletRequest request, ServletResponse response)
         throws ServletException, IOException {
         request.setAttribute("invalidAuth", Boolean.TRUE);
-//        return new ActionForward(redirectString, true);
         request.getRequestDispatcher(loginPath).forward(request, response);
     }
     @Override

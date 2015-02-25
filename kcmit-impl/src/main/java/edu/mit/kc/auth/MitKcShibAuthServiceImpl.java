@@ -22,20 +22,20 @@ import org.apache.commons.logging.LogFactory;
 import org.drools.core.util.StringUtils;
 import org.kuali.rice.kim.api.identity.AuthenticationService;
 
-public class ShibAuthenticationServiceImpl implements AuthenticationService {
-    private static final Log LOG = LogFactory.getLog(ShibAuthenticationServiceImpl.class);
+public class MitKcShibAuthServiceImpl implements AuthenticationService {
+    private static final Log LOG = LogFactory.getLog(MitKcShibAuthServiceImpl.class);
     @Override
     public String getPrincipalName(HttpServletRequest request) {
         String remoteUser = request.getRemoteUser();
         LOG.info("Loggedin remote user=> "+remoteUser);
-        String utln = remoteUser;
+        String kerbEmail = remoteUser;
         if(!StringUtils.isEmpty(remoteUser) && remoteUser.indexOf("@")!=-1){
-            utln = remoteUser.substring(0,remoteUser.lastIndexOf("@"));
-            LOG.info("Loggedin user utln=> "+utln);
+        	kerbEmail = remoteUser.substring(0,remoteUser.lastIndexOf("@"));
+            LOG.info("Loggedin user utln=> "+kerbEmail);
         }else{
             LOG.info("Remote user=> "+remoteUser+ " is not valid");
         }
-        return utln;
+        return kerbEmail;
     }
 
 }
