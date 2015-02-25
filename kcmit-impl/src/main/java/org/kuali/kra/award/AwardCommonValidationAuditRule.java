@@ -39,11 +39,11 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	private List<AuditError> auditWarnings1 = new ArrayList<AuditError>();
 	private List<AuditError> auditWarnings2 = new ArrayList<AuditError>();
 	private List<AuditError> auditWarnings3 = new ArrayList<AuditError>();
-	private List<AuditError> auditErrors = new ArrayList<AuditError>();
+	private List<AuditError> auditWarnings5 = new ArrayList<AuditError>();
 	   private ParameterService parameterService;	
 	   private AwardCommonValidationService awardCommonValidationService;
 	   private String HOLD_PROMPT ="Hold Prompt";
-	   private String Hold_Status="6";
+	   private Integer Hold_Status=6;
 	   private String SPECIAL_REVIEW_PANEL="Special Review";
 	public boolean processRunAuditBusinessRules(Document document) {
 		 String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
@@ -53,17 +53,18 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	boolean retvalSpReview = true;
 	boolean retvalReports =true;
 	boolean retvalTerm =true;
+	boolean retvalCoi =true;
 	  AwardDocument awardDocument = (AwardDocument)document;
 	 Award award = awardDocument.getAward();
-	 String status=award.getAwardStatus().getStatusCode();
+	 Integer status=award.getStatusCode();
 	boolean awardHoldPromptEnabled = getParameterService().getParameterValueAsBoolean(
              "KC-AWARD", "Document", "ENABLE_AWARD_VALIDATIONS");
-	if(awardHoldPromptEnabled && !status.equalsIgnoreCase(Hold_Status)){
+	if(awardHoldPromptEnabled && status!=Hold_Status){
 	retvalSponsor &= getAwardCommonValidationService().validateSponsorCodeIsNIH(award);
 	 retvalSpReview &= getAwardCommonValidationService().validateSpecialReviews(award);
 	 retvalReports &= getAwardCommonValidationService().validateReports(award);
 	 retvalTerm &= getAwardCommonValidationService().validateAwardTerm(award);
-	 /* retval &=getAwardCommonValidationService().validateAwardOnCOI(award);*/
+	 retvalCoi &=getAwardCommonValidationService().validateAwardOnCOI(award);
 	}else{
 		retval = true;
 	}
@@ -104,6 +105,15 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	            GlobalVariables.getAuditErrorMap().put("homePageAuditWarnings",new AuditCluster(Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_NAME, auditWarnings2, HOLD_PROMPT)); 
 	            retval=false;
 	        }             
+    }
+    if (!retvalCoi){
+    	 String link5 = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+	      String errorKey5 = "document.awardList[0].statusCode";
+  	auditWarnings5.add(new AuditError(errorKey5, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE, link5));
+  	 if (auditWarnings5.size() > 0) {
+	            GlobalVariables.getAuditErrorMap().put("homePageAuditWarnings",new AuditCluster(Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_NAME, auditWarnings5, HOLD_PROMPT)); 
+	            retval=false;
+	        }  
     }
 	return retval;
 	}

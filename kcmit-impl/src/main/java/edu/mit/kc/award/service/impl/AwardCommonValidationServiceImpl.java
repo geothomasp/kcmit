@@ -15,6 +15,8 @@
  */
 package edu.mit.kc.award.service.impl;
 
+import org.kuali.kra.award.contacts.AwardPerson;
+import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardSponsorTerm;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
@@ -22,9 +24,20 @@ import org.kuali.kra.award.paymentreports.awardreports.reporting.ReportTracking;
 import org.kuali.kra.award.specialreview.AwardSpecialReview;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
+import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
+import org.kuali.coeus.common.framework.module.CoeusModule;
+import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
+import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
+import org.kuali.coeus.common.questionnaire.framework.answer.ModuleQuestionnaireBean;
+import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
+import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.person.question.ProposalPersonModuleQuestionnaireBean;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import edu.mit.kc.award.service.AwardCommonValidationService;
+import edu.mit.kc.common.DbFunctionExecuteService;
 import edu.mit.kc.infrastructure.KcMitConstants;
+import org.kuali.rice.coreservice.api.parameter.Parameter;
 
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
@@ -34,7 +47,10 @@ import org.kuali.rice.krad.util.AuditError;
 import org.kuali.rice.krad.util.ErrorMessage;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import java.util.*;
 
 /**
@@ -44,12 +60,27 @@ import java.util.*;
 public class AwardCommonValidationServiceImpl implements AwardCommonValidationService {
     
     private List<AuditError> auditWarnings = new ArrayList<AuditError>();
-    private ParameterService parameterService;   
+    private ParameterService parameterService;  
+    private Integer AWARD_MODULE_CODE=1;
     private String SPONSOR_TERM_CODE_HOLD ="143";
     private String NIH_SPONSOR_CODE="000500";
     private String REPORT_TRACKING_FREQ_CODE="4";
     private String REPORT_TRACKING_STATUS_CODE="1";
     private String REPORT_TRACKING_CLASS_CODE="4";
+    private DbFunctionExecuteService dbFunctionExecuteService;
+    private SponsorHierarchyService sponsorHierarchyService;
+    private QuestionnaireAnswerService questionnaireAnswerService;
+	protected static final String KC_COI_DB_LINK = "KC_COI_DB_LINK"; 
+	protected static final String KC_GENERAL_NAMESPACE = "KC-GEN";
+	protected static final String DOCUMENT_COMPONENT_NAME = "Document";
+	private String  coiReqKP ="COI Disclosures with KP req";
+   private String  coiReqNoKP ="COI Disclosures no KP";
+	Logger LOGGER;
+	
+	public AwardCommonValidationServiceImpl() {
+		super();
+		LOGGER = Logger.getLogger(AwardCommonValidationServiceImpl.class.getName());
+	}
     
 /* public boolean validateAwardHoldPrompt(Award award) {
     	boolean retval = true;      	
@@ -66,6 +97,106 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     	
     }*/
     @SuppressWarnings("unchecked")
+    
+	protected String getDBLink() {
+    	
+		try {
+			Parameter parm = this.getParameterService().getParameter(KC_GENERAL_NAMESPACE, DOCUMENT_COMPONENT_NAME,KC_COI_DB_LINK);
+			
+			if (!parm.getValue().isEmpty()) {
+				return '@' + parm.getValue();
+			}
+			
+		
+
+		} catch (NullPointerException e) {
+			LOGGER.log(Level.ALL, e.getMessage(), e);
+			LOGGER.log(Level.ALL,
+					"DBLINK is not accessible or the parameter value returning null");
+		} 
+
+		return "";
+	}
+    public boolean validateAwardOnCOI(Award award) {
+    	List<Object> paramValues = new ArrayList<Object>();
+		String result = "";		
+		String awardNumber=award.getAwardNumber();
+		String number1=awardNumber.substring(0, 7);
+		String number2=awardNumber.substring(9,12);
+		String awardNumberNew=number1+number2;
+	    paramValues.add(0, awardNumberNew);
+	   /* paramValues.add(0, "002589-001");*/
+		paramValues.add(1,AWARD_MODULE_CODE);
+
+		try {			
+			result = getDbFunctionExecuteService().executeFunction(
+					"fn_is_all_disc_status_complete"+this.getDBLink(), paramValues);
+	
+		} catch (Exception ex) {
+			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
+			LOGGER.log(Level.ALL, ex.getMessage(), ex);
+		} finally {
+			try {
+				if (!result.isEmpty()) {
+					LOGGER.log(Level.INFO, "Function Successfully Invoked");
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.ALL, e.getMessage(), e);
+			}
+		}if(result!=null && result.equals("1")){
+			return false;
+		}
+		 String sponsorCode=award.getSponsorCode();
+	     String primeSponsorCode=award.getPrimeSponsorCode(); 
+	    // String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY);
+
+if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
+	return false;
+}else if(getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqNoKP)){
+	List<AwardCustomData> awardCustomDataList= award.getAwardCustomDataList();
+	for(AwardCustomData awardCustomData:awardCustomDataList ){
+		CustomAttribute customAttribute=awardCustomData.getCustomAttribute();
+		if(customAttribute.getLabel().equals("COI requirement") && customAttribute.getValue().equals("PCK")){
+			return false;
+		}else if(customAttribute.getLabel().equals("COI requirement") && customAttribute.getValue().equals("PC")){
+			return false;
+		}
+		
+		
+	}
+		
+}else{
+	String moduleSubItemCode="";
+	String moduleItemCode = ""; 
+	 moduleItemCode = CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE;
+	moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
+	for (AwardPerson person : award.getProjectPersons()) {
+	ModuleQuestionnaireBean moduleQuestionnaireBean=	getQuestionnaireAnswerService().getModuleSpecificBean(moduleItemCode,person.getPersonId(),moduleSubItemCode,"0", false);	
+		List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
+				QuestionnaireAnswerService.class).getQuestionnaireAnswer(
+				moduleQuestionnaireBean);
+		for (AnswerHeader header : answerHeaders) {
+			List<Answer> answers = header.getAnswers();
+			for (Answer answer : answers) {
+
+				if ((answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
+					
+						if (answer.getAnswer().equals("N")) {
+							return false;
+						}
+					
+					if (answer.getAnswer().equals("Y")) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+}
+		
+  return true;
+    }
     public boolean validateSponsorCodeIsNIH (Award award) {
         boolean valid = true;
         String sponsorCode=award.getSponsorCode();
@@ -276,5 +407,39 @@ protected ParameterService getParameterService() {
 }
 public void setParameterService(ParameterService parameterService) {
     this.parameterService = parameterService;
+}
+
+public DbFunctionExecuteService getDbFunctionExecuteService() {
+	if (dbFunctionExecuteService == null) {
+		dbFunctionExecuteService = KcServiceLocator.getService(DbFunctionExecuteService.class);
+	}
+
+	return dbFunctionExecuteService;
+}
+
+public void setDbFunctionExecuteService(DbFunctionExecuteService dbFunctionExecuteService) {
+	this.dbFunctionExecuteService = dbFunctionExecuteService;
+}
+
+public SponsorHierarchyService getSponsorHierarchyService() {
+	if (sponsorHierarchyService == null) {
+		sponsorHierarchyService = KcServiceLocator.getService(SponsorHierarchyService.class);
+	}
+	return sponsorHierarchyService;
+}
+	
+public void setSponsorHierarchyService(SponsorHierarchyService sponsorHierarchyService) {
+	this.sponsorHierarchyService = sponsorHierarchyService;
+}
+
+public QuestionnaireAnswerService getQuestionnaireAnswerService() {
+	if (questionnaireAnswerService == null) {
+		questionnaireAnswerService = KcServiceLocator.getService(QuestionnaireAnswerService.class);
+	}	
+	return questionnaireAnswerService;
+}
+
+public void setQuestionnaireAnswerService(QuestionnaireAnswerService questionnaireAnswerService) {
+	this.questionnaireAnswerService = questionnaireAnswerService;
 }
 }

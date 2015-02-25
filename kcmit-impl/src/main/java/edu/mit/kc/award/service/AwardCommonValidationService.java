@@ -24,7 +24,7 @@ import org.kuali.kra.award.home.Award;
 public interface AwardCommonValidationService {
     
    
- /* boolean validateAwardHoldPrompt(Award award); */
+boolean validateAwardOnCOI(Award award); 
 	
 	/**
      * This method gets validate sponsor code NIH for making Award Status Hold

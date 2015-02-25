@@ -146,7 +146,7 @@ public class AwardAction extends BudgetParentActionBase {
     private static final String PAYMENT_INVOICES_PROPERTY_NAME = "Payments and Invoices";
     private static final String COMFIRMATION_PARAM_STRING = "After Award {0} information is synchronized, make sure that the Award Sponsor Contacts information is also synchronized with the same sponsor template. Failing to do so will result in data inconsistency. Are you sure you want to replace current {0} information with selected {1} template information?";
     private static final String SUPER_USER_ACTION_REQUESTS = "superUserActionRequests";
-    private static final String AWARD_STATUS_HOLD ="6";    
+    private static final Integer AWARD_STATUS_HOLD =6;    
     private KcAuthorizationService kraAuthorizationService;
     private enum SuperUserAction {
         SUPER_USER_APPROVE, TAKE_SUPER_USER_ACTIONS
@@ -290,9 +290,9 @@ public class AwardAction extends BudgetParentActionBase {
              KNSGlobalVariables.getMessageList().add("error.award.awardhdata.save.pending");
              awardForm.setViewOnly(true);
         }
-       if(awardNewStatus){
+     /*  if(awardNewStatus){
         	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
-        }
+        }*/
        return actionForward;
         }     
 
@@ -387,23 +387,25 @@ public class AwardAction extends BudgetParentActionBase {
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
         AwardForm awardForm = (AwardForm) form;
         awardForm.setAuditActivated(true);
-        String awardStatus= awardForm.getAwardDocument().getAward().getAwardStatus().getStatusCode();
+    Award award=awardForm.getAwardDocument().getAward();
+    award.refreshReferenceObject("statusCode");
+        Integer awardStatus= awardForm.getAwardDocument().getAward().getStatusCode();
         Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
         Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
         String methodToCall = ((KualiForm) form).getMethodToCall();
         ValidationState status = KcServiceLocator.getService(AuditHelper.class).isValidSubmission(awardForm, true);
         ValidationState validHoldPrompt = KcServiceLocator.getService(AuditHelper.class).isValidHoldPrompt(awardForm, true);
-        if(validHoldPrompt==ValidationState.HOLDPROMPT && !awardStatus.equals(AWARD_STATUS_HOLD)){
+        if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus!=AWARD_STATUS_HOLD){
         	/*request.getSession().setAttribute("isWarning", true);*/
         	awardForm.setValidPrompt(true);
-        }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus.equals(AWARD_STATUS_HOLD)){
+        }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus!=AWARD_STATUS_HOLD){
         	/*request.getSession().setAttribute("isWarning", false);*/
         	awardForm.setValidPrompt(false);
         }
         boolean awardNewStatus=awardForm.isStatusHold();
-        if(awardNewStatus){
+       /* if(awardNewStatus){
         	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
-        }
+        }*/
         if (status == ValidationState.WARNING) {
             if(question == null){
                 return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Validation Warning Exists. Are you sure want to submit to workflow routing.", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
