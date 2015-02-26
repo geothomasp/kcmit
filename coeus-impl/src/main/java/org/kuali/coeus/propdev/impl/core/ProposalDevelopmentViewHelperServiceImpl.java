@@ -938,10 +938,25 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         	}
         	if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy)) {
 				return true;
-			}}            
+			}}
+        if(isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal()))
+        {
+     	   return true;
+     	   }  
         return true;       		
         	
     }
+    public boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal){
+   	 String principalId=getGlobalVariableService().getUserSession().getPrincipalId();    	
+   	       for (ProposalPerson person : developmentProposal.getInvestigators()) {
+   	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+   	                    && StringUtils.equals(principalId, person.getPersonId())) {
+   	                return true;
+   	            }
+   	        }
+   	        return false;
+   	    } 	 
+   	
     public String getWizardMaxResults() {
         return getParameterService().getParameterValueAsString(KRADConstants.KRAD_NAMESPACE,
                 KRADConstants.DetailTypes.LOOKUP_PARM_DETAIL_TYPE,
