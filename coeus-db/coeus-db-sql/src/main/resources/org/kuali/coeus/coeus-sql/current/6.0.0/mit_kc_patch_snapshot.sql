@@ -1,2 +1,0 @@
-@dml/KC_DML_01_KRACOEUS-8748_B000.sql
-commit;
