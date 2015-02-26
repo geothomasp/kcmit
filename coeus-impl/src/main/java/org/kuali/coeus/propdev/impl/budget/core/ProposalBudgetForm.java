@@ -37,10 +37,12 @@ import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.validation.Auditable;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.uif.component.Component;
 import org.kuali.rice.krad.uif.element.Action;
 import org.kuali.rice.krad.uif.element.ToggleMenu;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.form.UifFormBase;
 
 public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, Auditable, SelectableBudget {
@@ -68,7 +70,11 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
         budgetJustificationWrapper = new BudgetJustificationWrapper (budget.getBudgetJustification());
         dataValidationItems = new ArrayList<DataValidationItem>();
     }
-
+    //commented permission check for SPE
+   /* public boolean isSPEEnabled() {
+		return KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-PD", "Single Point Entry");
+	}*/
+    
     public ProposalDevelopmentBudgetExt getBudget() {
 		return budget;
 	}

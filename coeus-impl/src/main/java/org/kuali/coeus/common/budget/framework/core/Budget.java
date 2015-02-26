@@ -1858,48 +1858,6 @@ public class Budget extends AbstractBudget implements BudgetContract {
 		this.sepLineItems = sepLineItems;
 	}
 
-/*	public BudgetPeriod getBudgetPeriod() {
-		return budgetPeriod;
-	}
-
-	public void setBudgetPeriod(BudgetPeriod budgetPeriod) {
-		this.budgetPeriod = budgetPeriod;
-	}*/
-
- /*   @Autowired
-    @Qualifier("businessObjectService")
-    private BusinessObjectService businessObjectService;
- public BusinessObjectService getBusinessObjectService() {
-     
-  return KcServiceLocator.getService(BusinessObjectService.class);
- }
-
-
-
- public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-  this.businessObjectService = businessObjectService;
- }*/
-	/*public List<BudgetLineItem> getSepLineItems() {
-		 List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();
-		 BudgetLineItem  budgetLineItem = new BudgetLineItem();
-	 budgetLineItem.setBudgetLineItemId(1l);
-		 budgetLineItem.setBudgetCategoryCode("budgetCategoryCode");
-		 budgetLineItem.setQuantity(0);		
-		 HashMap<String, String> paramValues = new HashMap<>();
-		 paramValues.put("budgetLineItemId", "745");
-		 budgetLineItem = getBusinessObjectService().findByPrimaryKey(BudgetLineItem.class, paramValues);
-		 
-					
-					
-				
-		 budgetLineItems.add(budgetLineItem);
-		return sepLineItems = budgetLineItems;
-	}
-
-	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
-		this.sepLineItems = sepLineItems;
-	}
-*/
 
 	
 }

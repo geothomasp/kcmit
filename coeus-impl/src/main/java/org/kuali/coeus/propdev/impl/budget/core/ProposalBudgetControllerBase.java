@@ -164,26 +164,7 @@ public abstract class ProposalBudgetControllerBase {
     	}
     	return budget;
     }
-    //------------------
     
-	/*private BudgetPeriod getBudgetPeriod(Long currentTabBudgetPeriodId, Budget budget) {
-        for(BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
-        	if(budgetPeriod.getBudgetPeriodId().equals(currentTabBudgetPeriodId)) {
-        		return budgetPeriod;
-        	}
-        }
-        return null;
-	}
-	private boolean isBudgetLineItemExists(Budget budget) {
-		boolean lineItemExists = false;
-		for(BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
-			if(budgetPeriod.getBudgetPeriod() > 1 && budgetPeriod.getBudgetLineItems().size() > 0) {
-				lineItemExists = true;
-				break;
-			}
-		}
-		return lineItemExists;
-	}*/
 
     public ModelAndView save(ProposalBudgetForm form) {
 
@@ -198,53 +179,14 @@ public abstract class ProposalBudgetControllerBase {
     	for(BudgetPeriod budgetPeriod:budgetPeriods){
     	
     		newBudgetLineItems.add(populateNewBudgetLineItem(budgetLineItem, budgetPeriod));
-    			/*
-    		
-    		if(budgetLineItem.getBudgetPeriodBO()==null)
-        	{
-        		budgetLineItem.setBudgetPeriodBO(budgetPeriod);
-        	}
-    		
-    	if(budgetLineItem.getBudgetPeriodId()==null)
-    	{
-    		budgetLineItem.setBudgetPeriodId(budgetPeriod.getBudgetPeriodId());
-    	}
-    	if(budgetLineItem.getBudgetPeriod()==null){
-    		budgetLineItem.setBudgetPeriod(budgetPeriod.getBudgetPeriod());
-    	}
-    	
-    	if(budgetLineItem.getBudgetId()==null){
-    		budgetLineItem.setBudgetId(budgetPeriod.getBudgetId());
-    	}
-    	
-    	if(budgetLineItem.getLineItemNumber()==null){
-    		budgetLineItem.setLineItemNumber(1);
-    	}
-    	
-    	if(budgetLineItem.getBudgetCategoryCode()==null){
-    		CostElement costElement = getDataObjectService().findUnique(CostElement.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("costElement", budgetLineItem.getCostElement())).build());
-    		budgetLineItem.setBudgetCategoryCode(costElement.getBudgetCategoryCode());
-    	}
-    	*/
-    	
-    	
-    	
+    			
     	}
     	}
     	form.getBudget().setSepLineItems(newBudgetLineItems);
     	
     	}
 	
-	//form.getBudget().getBudgetLineItems().addAll(form.getBudget().getSepLineItems());
-	//form.getBudget().getBudgetPersonnelDetails()..addAll(form.getBudget().getSepLineItems());
-	/*  List<BudgetLineItem> newBudgetLineItems =  form.getBudget().getSepLineItems();
-	  List<BudgetLineItem> oldBudgetLineItems =  form.getBudget().getBudgetLineItems();
-	  
-	  for(BudgetLineItem formulateBudgetLineItems: newBudgetLineItems){
-		  if(oldBudgetLineItems.contains(formulateBudgetLineItems)){
-			  oldBudgetLineItems.set
-		  }
-	  }*/
+	
 	budgetService.calculateBudgetOnSave(form.getBudget());
     	form.setBudget(getDataObjectService().save(form.getBudget()));
        	getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());
@@ -258,44 +200,34 @@ public abstract class ProposalBudgetControllerBase {
         }
         return getModelAndViewService().getModelAndView(form);
     }
+   
     
     public BudgetLineItem populateNewBudgetLineItem(BudgetLineItem newBudgetLineItem, BudgetPeriod budgetPeriod) {
-        Budget budget = budgetPeriod.getBudget();
-        newBudgetLineItem.setBudgetPeriod(budgetPeriod.getBudgetPeriod());
-        newBudgetLineItem.setBudgetPeriodBO(budgetPeriod);
-        newBudgetLineItem.setBudgetPeriodId(budgetPeriod.getBudgetPeriodId());
-       /* newBudgetLineItem.setStartDate(budgetPeriod.getStartDate());
-        newBudgetLineItem.setEndDate(budgetPeriod.getEndDate());*/
-        newBudgetLineItem.setBudgetId(budget.getBudgetId());
-        newBudgetLineItem.setLineItemNumber(budget.getNextValue(Constants.BUDGET_LINEITEM_NUMBER));
-        newBudgetLineItem.setApplyInRateFlag(true);
-        newBudgetLineItem.setSubmitCostSharingFlag(budget.getSubmitCostSharingFlag());
-    	if(newBudgetLineItem.getBudgetCategoryCode()==null){
-    		CostElement costElement = getDataObjectService().findUnique(CostElement.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("costElement", newBudgetLineItem.getCostElement())).build());
-    		newBudgetLineItem.setBudgetCategoryCode(costElement.getBudgetCategoryCode());//budget_category  category_type=p
-    		newBudgetLineItem.setLineItemDescription(costElement.getDescription());
-    	}
-    	
-/*    refreshBudgetLineCostElement(newBudgetLineItem);
-        // on/off campus flag enhancement
-        String onOffCampusFlag = budget.getOnOffCampusFlag();
-        if (onOffCampusFlag.equalsIgnoreCase(BudgetConstants.DEFAULT_CAMPUS_FLAG)) {
-            newBudgetLineItem.setOnOffCampusFlag(newBudgetLineItem.getCostElementBO().getOnOffCampusFlag()); 
-        } else {
-            newBudgetLineItem.setOnOffCampusFlag(onOffCampusFlag.equalsIgnoreCase(Constants.ON_CAMUS_FLAG));                 
-        }
-        newBudgetLineItem.setBudgetCategoryCode(newBudgetLineItem.getCostElementBO().getBudgetCategoryCode());
-        newBudgetLineItem.setLineItemSequence(newBudgetLineItem.getLineItemNumber());
-        refreshBudgetLineBudgetCategory(newBudgetLineItem);
-        
-        if(isBudgetFormulatedCostEnabled()){
-            List<String> formulatedCostElements = getFormulatedCostElements();
-            if(formulatedCostElements.contains(newBudgetLineItem.getCostElement())){
-                newBudgetLineItem.setFormulatedCostElementFlag(true);
-            }
-        }*/
+ 	   Budget budget = budgetPeriod.getBudget();
+ 	   if(newBudgetLineItem.getBudgetPeriod()==null){
+ 			newBudgetLineItem.setBudgetPeriod(budgetPeriod.getBudgetPeriod());
+ 		}
+ 	   	if(newBudgetLineItem.getBudgetPeriodBO()==null){
+			 newBudgetLineItem.setBudgetPeriodBO(budgetPeriod);
+ 	   	}
+ 	   	if(newBudgetLineItem.getBudgetPeriodId()==null){
+ 			newBudgetLineItem.setBudgetPeriodId(budgetPeriod.getBudgetPeriodId());
+ 		}
+ 	   	if(newBudgetLineItem.getBudgetId()==null){
+ 			newBudgetLineItem.setBudgetId(budget.getBudgetId());
+ 		}
+ 	   	if(newBudgetLineItem.getLineItemNumber()==null){
+ 			newBudgetLineItem.setLineItemNumber(budget.getNextValue(Constants.BUDGET_LINEITEM_NUMBER));
+ 		}
+ 	   	newBudgetLineItem.setApplyInRateFlag(true);
+         newBudgetLineItem.setSubmitCostSharingFlag(budget.getSubmitCostSharingFlag());
+     	if(newBudgetLineItem.getBudgetCategoryCode()==null){
+     		CostElement costElement = getDataObjectService().findUnique(CostElement.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("costElement", newBudgetLineItem.getCostElement())).build());
+     		newBudgetLineItem.setBudgetCategoryCode(costElement.getBudgetCategoryCode());
+     		newBudgetLineItem.setLineItemDescription(costElement.getDescription());
+     	}
 		return newBudgetLineItem;
-    }
+ }
     
     protected void validateBudgetExpenses(ProposalBudgetForm form) {
     	String errorPath = null;

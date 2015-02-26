@@ -92,7 +92,7 @@
 				<bean parent="PropBudget-NavigationMenu-NonPersonnelCosts" p:order="40" />
 				
 				<bean parent="PropBudget-NavigationMenu-SinglePointEntry" p:order="45" /> 
-				
+				<!-- <bean parent="PropBudget-NavigationMenu-SinglePointEntry" p:order="45" p:render="@{isSPEEnabled()}"  /> -->
 				<bean parent="PropBudget-NavigationMenu-Subawards" p:order="50" />
 				<bean parent="PropBudget-NavigationMenu-InstitutionalCommitments" p:order="60" />
 				<bean parent="PropBudget-NavigationMenu-ProjectIncome" p:order="70" />
