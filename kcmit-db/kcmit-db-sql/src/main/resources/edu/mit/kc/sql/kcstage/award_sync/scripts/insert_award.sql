@@ -19,7 +19,7 @@ li_cfda_lenght PLS_INTEGER;
 ls_hierarchy_sync_child varchar2(2):='N';
 ls_award_number VARCHAR2(12);
 li_new_seq NUMBER(4,0):=0;
-ls_award_sequence_status VARCHAR2(10):='PENDING';
+ls_award_sequence_status VARCHAR2(10):='ACTIVE';
 li_commit_count number:=0;
 ls_lead_unit_num  VARCHAR2(8);
 li_krew_rnt_brch NUMBER(19,0);
