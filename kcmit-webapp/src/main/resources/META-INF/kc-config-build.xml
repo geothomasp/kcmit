@@ -30,7 +30,6 @@ This config file only contains properties that are set by the maven build proces
     <param name="rolecentraldb.port">roles</param>
     <param name="CAC.FILE">/opt/kc/feeds/cac/CAC.tab</param>
 	<param name="showPassword">true</param>
-    <param name="loginPath">/kr-login/login?viewId=DummyLoginView</param>
     <param name="rice.kim.additionalSpringFiles">classpath:edu/mit/kc/MitKcKimOverridesSpringBeans.xml</param>
     <param name="filter.login.class">org.kuali.rice.krad.web.filter.UserLoginFilter</param>
     <param name="app.feedback.link">https://jira.mit.edu/jira/secure/CreateIssue.jspa?pid=12540&amp;issuetype=1&amp;Create=Create</param>
