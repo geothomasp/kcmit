@@ -111,8 +111,8 @@
                     p:attributeName="proposalLogType.description" /-->
                 <bean parent="FieldDefinition"
                     p:attributeName="proposalLogStatus.description" />
-                <bean parent="FieldDefinition"
-                    p:attributeName="mergedWith" />
+               <!--  <bean parent="FieldDefinition"
+                    p:attributeName="mergedWith" /> -->
                 <!--  bean parent="FieldDefinition"
                     p:attributeName="instProposalNumber" /-->                    
                 <bean parent="FieldDefinition"
