@@ -66,24 +66,24 @@ http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
                 <bean parent="PropDev-CopyDialog-OwnedByUnitNumberField" p:propertyName="leadUnitNumber"
                       p:enableAutoQuickfinder="false"
-                      p:order="30"/>
+                      p:order="30" p:readOnly="false"/>
 
-                <bean parent="Uif-InputField" p:propertyName="includeBudget" p:order="40" p:fieldLabel.renderColon="false" p:render="@{!document.developmentProposal.isParent() and !#emptyList(document.developmentProposal.budgets)}">
+                <bean parent="Uif-InputField" p:propertyName="includeBudget" p:order="40" p:fieldLabel.renderColon="false" p:render="@{!document.developmentProposal.isParent() and !#emptyList(document.developmentProposal.budgets)}" p:readOnly="false">
                     <property name="control">
                         <bean parent="Uif-CheckboxControl" p:checkboxLabel="Yes. Include Budget(s)." p:disabled="false"/>
                     </property>
                 </bean>
 
                 <bean id="PropDev-CopyDialog-BudgetSelection" parent="PropDev-CopyDialog-BudgetSelection-parentBean"
-                      p:order="50" p:render="@{!document.developmentProposal.isParent() and !#emptyList(document.developmentProposal.budgets)}"/>
+                      p:order="50" p:render="@{!document.developmentProposal.isParent() and !#emptyList(document.developmentProposal.budgets)}" p:readOnly="false"/>
 
-                <bean parent="Uif-InputField" p:propertyName="includeAttachments" p:order="60" p:fieldLabel.renderColon="false" p:render="@{!#emptyList(document.developmentProposal.narratives) or !#emptyList(document.developmentProposal.propPersonBios) or !#emptyList(document.developmentProposal.instituteAttachments) or !#emptyList(document.developmentProposal.proposalAbstracts) or !#emptyList(document.notes)}">
+                <bean parent="Uif-InputField" p:propertyName="includeAttachments" p:order="60" p:fieldLabel.renderColon="false" p:render="@{!#emptyList(document.developmentProposal.narratives) or !#emptyList(document.developmentProposal.propPersonBios) or !#emptyList(document.developmentProposal.instituteAttachments) or !#emptyList(document.developmentProposal.proposalAbstracts) or !#emptyList(document.notes)}" p:readOnly="false">
                      <property name="control">
                         <bean parent="Uif-CheckboxControl" p:checkboxLabel="Yes. Include attachment." p:disabled="false"/>
                     </property>
                 </bean>
 
-                <bean parent="Uif-InputField" p:propertyName="includeQuestionnaire" p:order="70" p:fieldLabel.renderColon="false" p:render="@{#ViewHelper.areAnsweredQuestionnaires(questionnaireHelper.answerHeaders) or #ViewHelper.areAnsweredQuestionnaires(s2sQuestionnaireHelper.answerHeaders)}">
+                <bean parent="Uif-InputField" p:propertyName="includeQuestionnaire" p:order="70" p:fieldLabel.renderColon="false" p:render="@{#ViewHelper.areAnsweredQuestionnaires(questionnaireHelper.answerHeaders) or #ViewHelper.areAnsweredQuestionnaires(s2sQuestionnaireHelper.answerHeaders)}" p:readOnly="false">
                     <property name="control">
                         <bean parent="Uif-CheckboxControl" p:checkboxLabel="Yes. Include questionnaire" p:disabled="false"/>
                     </property>
