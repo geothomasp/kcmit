@@ -230,6 +230,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         recipient.setPersonId(person.getPersonId());        
         getKcNotificationService().sendNotification(context,notification,Collections.singletonList(recipient));
         getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-PersonnelPage-Collection", KeyConstants.INFO_NOTIFICATIONS_SENT, person.getFullName()+" "+notification.getCreateTimestamp());
+        person.setCreateTimestamp(notification.getCreateTimestamp());
     }
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=sendAllCertificationNotifications")

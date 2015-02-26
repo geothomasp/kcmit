@@ -52,6 +52,7 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -389,6 +390,9 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     
     @Transient
     private transient PropAwardPersonRoleService propAwardPersonRoleService;
+    
+    @Transient
+    private Timestamp createTimestamp;
  
     public boolean isMoveDownAllowed() {
         return moveDownAllowed;
@@ -1739,5 +1743,13 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 
 	public void setSelectedPerson(boolean selectedPerson) {
 		this.selectedPerson = selectedPerson;
+	}
+
+	public Timestamp getCreateTimestamp() {
+		return createTimestamp;
+	}
+
+	public void setCreateTimestamp(Timestamp createTimestamp) {
+		this.createTimestamp = createTimestamp;
 	}
 }
