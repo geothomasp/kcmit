@@ -280,7 +280,8 @@
           p:layoutManager.summaryTitle="@{#lp.fullName}
 		                                (@{#lp.role.description}
                                             @{#lp.keyPerson eq true ? ': ' + #lp.projectRole : '' })
-		                                        (@{#lp.questionnairesCompleted eq true ? 'Certification Completed' : 'Certification Incomplete'})"
+		                                        (@{#lp.questionnairesCompleted eq true ? 'Certification Completed' : 'Certification Incomplete'})
+		                                        @{#lp.createTimestamp == null ? '' : '(Notification successfully sent at ' + #lp.createTimestamp + ')' + #lp.updateUser}"
 
           p:renderAddLine="false"
           p:renderInactiveToggleButton="false">
