@@ -22,15 +22,15 @@ import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 
 public class SubAwardAttachmentType extends KcPersistableBusinessObjectBase {
     
-    private Integer subAwardAttachmentTypeCode;
+    private String subAwardAttachmentTypeCode;
     
     private String description;
 
-    public Integer getSubAwardAttachmentTypeCode() {
+    public String getSubAwardAttachmentTypeCode() {
         return subAwardAttachmentTypeCode;
     }
 
-    public void setSubAwardAttachmentTypeCode(Integer subAwardAttachmentTypeCode) {
+    public void setSubAwardAttachmentTypeCode(String subAwardAttachmentTypeCode) {
         this.subAwardAttachmentTypeCode = subAwardAttachmentTypeCode;
     }
 
