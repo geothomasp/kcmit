@@ -118,6 +118,8 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
 		return "";
 	}
     public boolean validateAwardOnCOI(Award award) {
+    	 boolean awardPromptCoi = getParameterService().getParameterValueAsBoolean(
+                 "KC-AWARD", "Document", "AWARD_ON_HOLD_BASED_ON_COI");
     	List<Object> paramValues = new ArrayList<Object>();
 		String result = "";		
 		String awardNumber=award.getAwardNumber();
@@ -143,13 +145,13 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
 			} catch (Exception e) {
 				LOGGER.log(Level.ALL, e.getMessage(), e);
 			}
-		}if(result!=null && result.equals("1")){
+		}if(awardPromptCoi && result!=null && result.equals("1")){
 			return false;
 		}
 		 String sponsorCode=award.getSponsorCode();
 	     String primeSponsorCode=award.getPrimeSponsorCode(); 
 	    // String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY);
-
+if(awardPromptCoi){
 if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
 	return false;
 }else if(getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqNoKP)){
@@ -176,8 +178,10 @@ if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
 		List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
 				QuestionnaireAnswerService.class).getQuestionnaireAnswer(
 				moduleQuestionnaireBean);
+		if(answerHeaders!=null){
 		for (AnswerHeader header : answerHeaders) {
 			List<Answer> answers = header.getAnswers();
+			if(answers!=null){
 			for (Answer answer : answers) {
 
 				if ((answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
@@ -190,10 +194,10 @@ if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
 						return true;
 					}
 				}
-			}
-		}
+			}}
+		}}
 	}
-}
+}}
 		
   return true;
     }
