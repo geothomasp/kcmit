@@ -18,6 +18,8 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.util.KRADUtils;
 
 
 import edu.mit.kc.common.BackDoorLoginAuthorizationService;
@@ -47,6 +49,11 @@ public class MitKcFilter implements Filter {
 	    ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
 
 		String user = request.getParameter("__login_user");
+		if(user==null){
+			final UserSession session = KRADUtils.getUserSessionFromRequest((HttpServletRequest)request);
+			user = session.getPrincipalName();
+		}
+			
 		String backdoorId = request.getParameter("backdoorId");
 		
 		if(user!=null){
