@@ -18,9 +18,6 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.krad.UserSession;
-import org.kuali.rice.krad.util.KRADUtils;
-
 
 import edu.mit.kc.common.BackDoorLoginAuthorizationService;
 import edu.mit.kc.infrastructure.KcMitConstants;
