@@ -178,19 +178,19 @@ if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
 		List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
 				QuestionnaireAnswerService.class).getQuestionnaireAnswer(
 				moduleQuestionnaireBean);
-		if(answerHeaders!=null){
+		if(answerHeaders!=null && !answerHeaders.isEmpty()){
 		for (AnswerHeader header : answerHeaders) {
 			List<Answer> answers = header.getAnswers();
-			if(answers!=null){
+			if(answers!=null && !answers.isEmpty()){
 			for (Answer answer : answers) {
 
-				if ((answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
+				if ((answer.getQuestion()!=null && answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
 					
-						if (answer.getAnswer().equals("N")) {
+						if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
 							return false;
 						}
 					
-					if (answer.getAnswer().equals("Y")) {
+					if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
 						return true;
 					}
 				}
