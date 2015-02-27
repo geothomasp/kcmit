@@ -668,23 +668,5 @@
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
-        <dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>org.eclipse.persistence.oracle</artifactId>
-	              <exclusions>
-	                  <exclusion>
-	                      <groupId>org.eclipse.persistence</groupId>
-	                      <artifactId>javax.persistence</artifactId>
-	                  </exclusion>
-	                  <exclusion>
-	                      <groupId>org.eclipse.persistence</groupId>
-	                      <artifactId>org.eclipse.persistence.asm</artifactId>
-	                  </exclusion>
-	                  <exclusion>
-	                      <groupId>org.eclipse.persistence</groupId>
-	                      <artifactId>org.eclipse.persistence.core</artifactId>
-	                  </exclusion>
-	              </exclusions>
-		</dependency>
     </dependencies>
 </project>
