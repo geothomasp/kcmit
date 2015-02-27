@@ -395,10 +395,10 @@ public class AwardAction extends BudgetParentActionBase {
         String methodToCall = ((KualiForm) form).getMethodToCall();
         ValidationState status = KcServiceLocator.getService(AuditHelper.class).isValidSubmission(awardForm, true);
         ValidationState validHoldPrompt = KcServiceLocator.getService(AuditHelper.class).isValidHoldPrompt(awardForm, true);
-        if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus!=AWARD_STATUS_HOLD){
+        if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus!=6){
         	/*request.getSession().setAttribute("isWarning", true);*/
         	awardForm.setValidPrompt(true);
-        }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus!=AWARD_STATUS_HOLD){
+        }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus==6){
         	/*request.getSession().setAttribute("isWarning", false);*/
         	awardForm.setValidPrompt(false);
         }

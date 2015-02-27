@@ -59,7 +59,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	 Integer status=award.getStatusCode();
 	boolean awardHoldPromptEnabled = getParameterService().getParameterValueAsBoolean(
              "KC-AWARD", "Document", "ENABLE_AWARD_VALIDATIONS");
-	if(awardHoldPromptEnabled && status!=Hold_Status){
+	if(awardHoldPromptEnabled && status!=6){
 	retvalSponsor &= getAwardCommonValidationService().validateSponsorCodeIsNIH(award);
 	 retvalSpReview &= getAwardCommonValidationService().validateSpecialReviews(award);
 	 retvalReports &= getAwardCommonValidationService().validateReports(award);
