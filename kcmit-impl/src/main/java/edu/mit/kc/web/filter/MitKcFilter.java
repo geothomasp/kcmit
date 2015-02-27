@@ -49,11 +49,6 @@ public class MitKcFilter implements Filter {
 	    ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
 
 		String user = request.getParameter("__login_user");
-		if(user==null){
-			final UserSession session = KRADUtils.getUserSessionFromRequest((HttpServletRequest)request);
-			user = session.getPrincipalName();
-		}
-			
 		String backdoorId = request.getParameter("backdoorId");
 		
 		if(user!=null){
