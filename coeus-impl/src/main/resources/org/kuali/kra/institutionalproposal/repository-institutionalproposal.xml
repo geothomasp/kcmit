@@ -846,6 +846,7 @@
 		<field-descriptor name="attachmentTypeCode" column="ATTACHMENT_TYPE_CODE" jdbc-type="INTEGER"/>
 		<field-descriptor name="fileName" column="FILE_NAME" jdbc-type="VARCHAR"/>
 		<field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
+		<field-descriptor name="documentStatusCode" column="DOCUMENT_STATUS_CODE" jdbc-type="VARCHAR"/>
 		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
         <field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />

@@ -29,11 +29,12 @@ public class InstitutionalProposalAddAttachmentRuleImpl extends KcTransactionalD
         boolean valid=true;
         if( proposalAttachment.getAttachmentTypeCode()  == null ) {
             valid = false;
-            reportError("institutionalProposalAttachmentBean.newAttachment.attachmentTypeCode", KeyConstants.INSTITUTIONAL_PROPOSAL_ATTACHMENT_TYPE_CODE_REQUIRED);
-            
+            if(!proposalAttachment.isModifyAttachment()) {
+                reportError("institutionalProposalAttachmentBean.newAttachment.attachmentTypeCode", KeyConstants.INSTITUTIONAL_PROPOSAL_ATTACHMENT_TYPE_CODE_REQUIRED);
+            }
         }
         
-        if( proposalAttachment.getNewFile() == null || StringUtils.isEmpty(proposalAttachment.getNewFile().getFileName())) {
+        if((proposalAttachment.getFile() == null) && (proposalAttachment.getNewFile() == null || StringUtils.isEmpty(proposalAttachment.getNewFile().getFileName()))) {
             valid = false;
             reportError("institutionalProposalAttachmentBean.newAttachment.newFile", KeyConstants.INSTITUTIONAL_PROPOSAL_ATTACHMENT_FILE_REQUIRED);
         }

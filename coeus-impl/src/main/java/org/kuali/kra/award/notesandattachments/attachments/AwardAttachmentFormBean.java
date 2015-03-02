@@ -43,6 +43,8 @@ public class AwardAttachmentFormBean implements Serializable{
     
     private AwardAttachment newAttachment;
     
+    private boolean disableAttachmentRemovalIndicator=false;
+    
     public AwardAttachmentFormBean(final AwardForm form) {
         this.form = form;
     }
@@ -80,7 +82,26 @@ public class AwardAttachmentFormBean implements Serializable{
         this.newAttachment = newAttachment;
     }
 
-    /**
+    public boolean isDisableAttachmentRemovalIndicator() {
+		return disableAttachmentRemovalIndicator;
+	}
+
+
+
+
+
+
+	public void setDisableAttachmentRemovalIndicator(
+			boolean disableAttachmentRemovalIndicator) {
+		this.disableAttachmentRemovalIndicator = disableAttachmentRemovalIndicator;
+	}
+
+
+
+
+
+
+	/**
      * Gets the form attribute. 
      * @return Returns the form.
      */
@@ -119,6 +140,7 @@ public class AwardAttachmentFormBean implements Serializable{
                 this.createTypeToMaxDocNumber(this.getAward().getAwardAttachments()));
         
         this.newAttachment.setAwardId(this.getAward().getAwardId()); //OJB Hack.  Could not get the awardId to persist with anonymous access in repository file.
+        this.newAttachment.setDocumentStatusCode("A");
         this.getAward().addAttachment(this.newAttachment);
         getBusinessObjectService().save(this.newAttachment);
 

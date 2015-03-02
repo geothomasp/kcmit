@@ -47,6 +47,8 @@ public class SubAwardAttachments extends SubAwardAssociate implements Comparable
      private String mimeType;
      private Boolean selectToPrint = false;
      private String fileNameSplit;
+     private String documentStatusCode;
+     private boolean modifyAttachment=false;
      /**
      * Gets the fileNameSplit attribute. 
      * @return Returns the fileNameSplit.
@@ -384,7 +386,23 @@ public class SubAwardAttachments extends SubAwardAssociate implements Comparable
         }
     }
 
-    @Override
+    public String getDocumentStatusCode() {
+		return documentStatusCode;
+	}
+
+	public void setDocumentStatusCode(String documentStatusCode) {
+		this.documentStatusCode = documentStatusCode;
+	}
+
+	public boolean isModifyAttachment() {
+		return modifyAttachment;
+	}
+
+	public void setModifyAttachment(boolean modifyAttachment) {
+		this.modifyAttachment = modifyAttachment;
+	}
+
+	@Override
     public void resetPersistenceState() {
         this.setAttachmentId(null);
     }

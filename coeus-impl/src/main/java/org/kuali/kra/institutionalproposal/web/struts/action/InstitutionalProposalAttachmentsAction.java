@@ -24,6 +24,7 @@ import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.kra.award.rule.event.AddAwardAttachmentEvent;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
 import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocument;
@@ -31,6 +32,7 @@ import org.kuali.kra.institutionalproposal.home.*;
 import org.kuali.kra.institutionalproposal.rules.InstitutionalProposalAddAttachmentRuleEvent;
 import org.kuali.kra.institutionalproposal.rules.InstitutionalProposalAddAttachmentRuleImpl;
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +47,7 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         ActionForward forward = super.execute(mapping, form, request, response);
+        
         return forward;
     }
     
@@ -96,6 +99,36 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
         final InstitutionalProposalAttachmentsData file = attachment.getFile();
         this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
         return RESPONSE_ALREADY_HANDLED;
+    }
+    
+    /**
+     * This method is used to modify InstitutionalProposal Attachment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return mapping forward
+     * @throws Exception
+     */
+    
+    public ActionForward modifyAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {  
+        InstitutionalProposalForm InstitutionalProposalForm = (InstitutionalProposalForm) form;
+        final int selection = this.getSelectedLine(request);
+        InstitutionalProposalDocument instProposalDocumnet=(InstitutionalProposalDocument) InstitutionalProposalForm.getDocument();
+        instProposalDocumnet.getInstitutionalProposalList().get(0).getInstProposalAttachments().get(selection).setModifyAttachment(true);
+        return mapping.findForward(Constants.MAPPING_BASIC);
+    }
+    
+    public ActionForward voidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+    	InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm) form;
+        InstitutionalProposalDocument intitutionalProposalDocument = institutionalProposalForm.getInstitutionalProposalDocument();
+        int voidAttachment = getSelectedLine(request);
+        intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment).setDocumentStatusCode("V");
+        getBusinessObjectService().save(intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment));
+        return mapping.findForward(Constants.MAPPING_BASIC);
     }
     
     /**

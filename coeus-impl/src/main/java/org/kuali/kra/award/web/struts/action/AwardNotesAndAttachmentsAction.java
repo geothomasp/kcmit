@@ -30,13 +30,18 @@ import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachmentFormBean;
 import org.kuali.kra.award.notesandattachments.notes.AwardNoteAddEvent;
 import org.kuali.kra.award.notesandattachments.notes.AwardNoteEventBase.ErrorType;
 import org.kuali.kra.award.notesandattachments.notes.AwardNotepadBean;
 import org.kuali.kra.award.rule.event.AddAwardAttachmentEvent;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
+import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocument;
+import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
 import org.kuali.kra.award.service.impl.AwardCommentServiceImpl;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import javax.servlet.http.HttpServletRequest;
@@ -290,4 +295,24 @@ public class AwardNotesAndAttachmentsAction extends AwardAction {
                 new AwardSyncPendingChangeBean(AwardSyncType.ADD_SYNC, comment, "awardComments"));
         return mapping.findForward(Constants.MAPPING_BASIC);
     }   
+    
+    public ActionForward modifyAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {  
+    	AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+        int modifyAttachment = getLineToEdit(request);
+        awardDocument.getAwardList().get(0).getAwardAttachments().get(modifyAttachment).setModifyAttachment(true);
+        return mapping.findForward(Constants.MAPPING_BASIC);
+    }
+    
+    public ActionForward voidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+    	
+    	AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+        int voidAttachment = getLineToEdit(request);
+        awardDocument.getAward().getAwardAttachments().get(voidAttachment).setDocumentStatusCode("V");
+    	getBusinessObjectService().save(awardDocument.getAward().getAwardAttachments().get(voidAttachment));
+        return mapping.findForward(Constants.MAPPING_BASIC);
+    }
 }

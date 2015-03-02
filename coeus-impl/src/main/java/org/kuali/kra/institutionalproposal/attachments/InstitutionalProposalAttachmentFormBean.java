@@ -42,6 +42,8 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
     
     private InstitutionalProposalAttachments newAttachment;
     
+    private boolean disableAttachmentRemovalIndicator=false;
+    
     public InstitutionalProposalAttachmentFormBean(final InstitutionalProposalForm form) {
         this.form = form;
     }
@@ -108,6 +110,7 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
      */
     public void addNewInstitutionalProposalAttachment() {
          this.newAttachment.setProposalId(this.getInstitutionalProposal().getProposalId()); //OJB Hack.  Could not get the awardId to persist with anonymous access in repository file.
+         this.newAttachment.setDocumentStatusCode("A");
          Map<String, String> criteria = new HashMap<String, String>();
          criteria.put("proposalNumber", this.getInstitutionalProposal().getProposalNumber());
          Collection<InstitutionalProposalAttachments> allAttachments = getBusinessObjectService().findMatching(InstitutionalProposalAttachments.class, criteria);
@@ -210,7 +213,20 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
     
 
 
-    private BusinessObjectService getBusinessObjectService() {
+    public boolean isDisableAttachmentRemovalIndicator() {
+		return disableAttachmentRemovalIndicator;
+	}
+
+
+
+	public void setDisableAttachmentRemovalIndicator(
+			boolean disableAttachmentRemovalIndicator) {
+		this.disableAttachmentRemovalIndicator = disableAttachmentRemovalIndicator;
+	}
+
+
+
+	private BusinessObjectService getBusinessObjectService() {
         return KcServiceLocator.getService(BusinessObjectService.class);
     }
 }

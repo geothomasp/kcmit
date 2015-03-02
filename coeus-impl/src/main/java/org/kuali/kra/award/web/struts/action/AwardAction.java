@@ -56,6 +56,7 @@ import org.kuali.kra.award.home.AwardAmountInfo;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.home.AwardService;
 import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubaward;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachmentFormBean;
 import org.kuali.kra.award.paymentreports.ReportClass;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTermRecipient;
@@ -70,6 +71,8 @@ import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
 import org.kuali.kra.award.infrastructure.AwardRoleConstants;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
+import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
 import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.kra.subaward.service.SubAwardService;
@@ -185,6 +188,15 @@ public class AwardAction extends BudgetParentActionBase {
             setSubAwardDetails(awardDocument.getAward());
             handlePlaceHolderDocument(awardForm, awardDocument);
         }
+        
+        String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+                ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+    	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+    		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachment != null) {
+    			awardAttachment.setDisableAttachmentRemovalIndicator(true);
+    		}
+    	}
       
        
         return forward;

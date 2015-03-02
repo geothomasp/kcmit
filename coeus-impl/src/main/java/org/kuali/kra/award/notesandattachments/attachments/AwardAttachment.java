@@ -55,6 +55,10 @@ public class AwardAttachment extends AwardAssociate implements Comparable<AwardA
     private Integer documentId;
 
     private String description;
+    
+    private String documentStatusCode;
+    
+    private boolean modifyAttachment=false;
 
     /**
      * empty ctor to satisfy JavaBean convention.
@@ -116,7 +120,23 @@ public class AwardAttachment extends AwardAssociate implements Comparable<AwardA
         this.description = description;
     }
 
-    public String getAttachmentDescription() {
+    public String getDocumentStatusCode() {
+		return documentStatusCode;
+	}
+
+	public void setDocumentStatusCode(String documentStatusCode) {
+		this.documentStatusCode = documentStatusCode;
+	}
+
+	public boolean isModifyAttachment() {
+		return modifyAttachment;
+	}
+
+	public void setModifyAttachment(boolean modifyAttachment) {
+		this.modifyAttachment = modifyAttachment;
+	}
+
+	public String getAttachmentDescription() {
         return "Award Attachment";
     }
 
