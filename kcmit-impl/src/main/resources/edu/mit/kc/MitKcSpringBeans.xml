@@ -173,6 +173,8 @@
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardBudgetDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentType.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentTypeMaintenanceDocument.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitProposalDetailsPage.xml</value>
+				
 				
 			</list>
 		</property>
@@ -233,13 +235,11 @@
 	
 	 <bean id="versionHistoryService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="versionHistoryService" />
-    </bean>  
-	
+    </bean>  	
 	
 	 <bean id="dateTimeService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="dateTimeService" />
-    </bean>
-    
+    </bean>    
     
      <bean id="platformAwareDao" class="org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb" abstract="true">
         <property name="jcdAlias" value="kradApplicationDataSource" />
@@ -348,6 +348,5 @@
         <property name="serviceName" value="versioningService" />
     </bean>
     
-    <bean id="awardDao" parent="platformAwareDao" class="org.kuali.kra.award.dao.ojb.AwardDaoOjb" />
-    
+    <bean id="awardDao" parent="platformAwareDao" class="org.kuali.kra.award.dao.ojb.AwardDaoOjb" />    
 </beans>
