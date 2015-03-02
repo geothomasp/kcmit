@@ -63,6 +63,10 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
     
     private Long proposalAttachmentsDataId;
     
+    private String documentStatusCode;
+    
+    private boolean modifyAttachment=false;
+    
     private transient FormFile newFile;
     
     private InstitutionalProposalAttachmentType type;
@@ -235,6 +239,22 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
 	 */
 	public void setProposalAttachmentsDataId(Long proposalAttachmentsDataId) {
 		this.proposalAttachmentsDataId = proposalAttachmentsDataId;
+	}
+
+	public String getDocumentStatusCode() {
+		return documentStatusCode;
+	}
+
+	public void setDocumentStatusCode(String documentStatusCode) {
+		this.documentStatusCode = documentStatusCode;
+	}
+
+	public boolean isModifyAttachment() {
+		return modifyAttachment;
+	}
+
+	public void setModifyAttachment(boolean modifyAttachment) {
+		this.modifyAttachment = modifyAttachment;
 	}
 
 	/**

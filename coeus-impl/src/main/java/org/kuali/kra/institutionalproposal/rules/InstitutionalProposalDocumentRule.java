@@ -28,6 +28,7 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalCreditSplitBean;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalPersonAuditRule;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalPersonSaveRuleEvent;
@@ -72,6 +73,7 @@ public class InstitutionalProposalDocumentRule extends KcTransactionalDocumentRu
         retval &= processAccountIdBusinessRule(document);
         retval &= processCostShareRules(document);
         retval &= validateSponsors(document);
+        retval &= processInstitutionalProposalAttachmentsBusinessRules(document);
         return retval;
     }    
         
@@ -260,6 +262,32 @@ public class InstitutionalProposalDocumentRule extends KcTransactionalDocumentRu
             valid &= new InstitutionalProposalAddCostShareRuleImpl().processInstitutionalProposalCostShareBusinessRules(event, i);
             i++;
         }
+        return valid;
+    }
+    
+    /**
+     * Validate information on Institutional Proposal Tab from Institutional Proposal Home page.
+     * @param document
+     * @return(String errorPathPrefix, 
+            InstitutionalProposalDocument institutionalProposalDocument,
+            InstitutionalProposalAttachments institutionalProposalAttachment)
+    */
+    private boolean processInstitutionalProposalAttachmentsBusinessRules(Document document) {
+        boolean valid = true;
+        InstitutionalProposalDocument institutionalProposalDocument = (InstitutionalProposalDocument) document;
+        String errorPath = "institutionalProposal";
+        List<InstitutionalProposalAttachments> instProposalAttachments = institutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments();
+        for(InstitutionalProposalAttachments instProposalAttachment:instProposalAttachments) {
+        InstitutionalProposalAddAttachmentRuleEvent event = new InstitutionalProposalAddAttachmentRuleEvent(errorPath, 
+                                                               institutionalProposalDocument,instProposalAttachment);
+        valid &= new InstitutionalProposalAddAttachmentRuleImpl().processAddInstitutionalProposalAttachmentBusinessRules(event);
+        }
+       if(valid) {
+    	   List <InstitutionalProposalAttachments> instProposalList = institutionalProposalDocument.getInstitutionalProposalList().get(0).getInstProposalAttachments();
+           for (InstitutionalProposalAttachments instProposal : instProposalList) {
+           	instProposal.setModifyAttachment(false); 
+           }
+       }
         return valid;
     }
     

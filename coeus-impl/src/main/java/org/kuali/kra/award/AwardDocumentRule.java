@@ -44,6 +44,7 @@ import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubawardRuleImpl;
 import org.kuali.kra.award.home.keywords.AwardScienceKeyword;
 import org.kuali.kra.award.lookup.keyvalue.FrequencyBaseCodeValuesFinder;
 import org.kuali.kra.award.lookup.keyvalue.ReportCodeValuesFinder;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.award.paymentreports.awardreports.*;
 import org.kuali.kra.award.paymentreports.awardreports.reporting.ReportTracking;
 import org.kuali.kra.award.paymentreports.awardreports.reporting.ReportTrackingBean;
@@ -70,6 +71,7 @@ import org.kuali.kra.award.rule.event.AddAwardAttachmentEvent;
 import org.kuali.kra.award.rule.event.AwardCommentsRuleEvent;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.timeandmoney.TimeAndMoneyForm;
 import org.kuali.kra.timeandmoney.rule.event.TimeAndMoneyAwardDateSaveEvent;
 import org.kuali.kra.timeandmoney.rules.TimeAndMoneyAwardDateSaveRuleImpl;
@@ -291,6 +293,7 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
         retval &= processAwardDetailsAndDatesSaveRules(document);
         retval &= processDateBusinessRule(errorMap, awardDocument);
         retval &=processKeywordBusinessRule(awardDocument);
+        retval &=processAwardAttachmentBusinessRule(awardDocument);
         
         return retval;
     }
@@ -333,23 +336,40 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
         return success;
     }
     
+    private boolean processAwardAttachmentBusinessRule(AwardDocument awardDocument) {
+       boolean valid=true;
+       List<AwardAttachment> awardAttachments= awardDocument.getAwardList().get(0).getAwardAttachments();
+       for ( AwardAttachment awardAttachment : awardAttachments ) {
+           if (awardAttachment.getTypeCode() == null) {
+                   valid = false;
+           }
+      }
+       if(valid) {
+    	   List <AwardAttachment> awardattachmentList = awardDocument.getAwardList().get(0).getAwardAttachments();
+           for (AwardAttachment awardattachment : awardattachmentList) {
+        	   awardattachment.setModifyAttachment(false); 
+           }
+       }
+        return valid;
+    }
+    
     private boolean processKeywordBusinessRule(AwardDocument awardDocument) {
         
-       List<AwardScienceKeyword> keywords= awardDocument.getAward().getKeywords();
-        
-       for ( AwardScienceKeyword keyword : keywords ) {
-            for ( AwardScienceKeyword keyword2 : keywords ) {
-                if ( keyword == keyword2 ) {
-                    continue;
-                } else if ( StringUtils.equalsIgnoreCase(keyword.getScienceKeywordCode(), keyword2.getScienceKeywordCode()) ) {
-                    GlobalVariables.getMessageMap().putError("document.awardList[0].keywords", "error.proposalKeywords.duplicate");
-                   
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+        List<AwardScienceKeyword> keywords= awardDocument.getAward().getKeywords();
+         
+        for ( AwardScienceKeyword keyword : keywords ) {
+             for ( AwardScienceKeyword keyword2 : keywords ) {
+                 if ( keyword == keyword2 ) {
+                     continue;
+                 } else if ( StringUtils.equalsIgnoreCase(keyword.getScienceKeywordCode(), keyword2.getScienceKeywordCode()) ) {
+                     GlobalVariables.getMessageMap().putError("document.awardList[0].keywords", "error.proposalKeywords.duplicate");
+                    
+                     return false;
+                 }
+             }
+         }
+         return true;
+     }
     
     private boolean processAddPaymentScheduleBusinessRules(MessageMap errorMap, AddAwardPaymentScheduleRuleEvent event) {
         boolean success = new AwardPaymentScheduleRuleImpl().processAddAwardPaymentScheduleBusinessRules(event);

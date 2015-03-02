@@ -38,12 +38,14 @@ import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.controller.KcTransactionalDocumentActionBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
 import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocument;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.institutionalproposal.service.InstitutionalProposalLockService;
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
 import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
@@ -352,6 +354,15 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         if (Constants.MAPPING_INSTITUTIONAL_PROPOSAL_ACTIONS_PAGE.equals(command)) {
             forward = institutionalProposalActions(mapping, form, request, response);
         }  
+        
+        String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+                ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+    	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+    		InstitutionalProposalAttachmentFormBean instProposalAttachment = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
+    		if(instProposalAttachment != null) {
+    			instProposalAttachment.setDisableAttachmentRemovalIndicator(true);
+    		}
+    	}
        
         return forward;
     }
