@@ -84,6 +84,7 @@ import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubaward;
 import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
 import org.kuali.kra.award.infrastructure.AwardRoleConstants;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachmentFormBean;
 import org.kuali.kra.award.paymentreports.ReportClass;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTermRecipient;
@@ -218,6 +219,15 @@ public class AwardAction extends BudgetParentActionBase {
             handlePlaceHolderDocument(awardForm, awardDocument);
         }
         awardForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
+        
+        String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+                ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+    	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+    		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachment != null) {
+    			awardAttachment.setDisableAttachmentRemovalIndicator(true);
+    		}
+    	}
       
        
         return forward;
