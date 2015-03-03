@@ -44,6 +44,8 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
     
     private boolean disableAttachmentRemovalIndicator=false;
     
+    private boolean maintainInstituteProposal=false;
+    
     public InstitutionalProposalAttachmentFormBean(final InstitutionalProposalForm form) {
         this.form = form;
     }
@@ -222,6 +224,18 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
 	public void setDisableAttachmentRemovalIndicator(
 			boolean disableAttachmentRemovalIndicator) {
 		this.disableAttachmentRemovalIndicator = disableAttachmentRemovalIndicator;
+	}
+
+
+
+	public boolean isMaintainInstituteProposal() {
+		return maintainInstituteProposal;
+	}
+
+
+
+	public void setMaintainInstituteProposal(boolean maintainInstituteProposal) {
+		this.maintainInstituteProposal = maintainInstituteProposal;
 	}
 
 
