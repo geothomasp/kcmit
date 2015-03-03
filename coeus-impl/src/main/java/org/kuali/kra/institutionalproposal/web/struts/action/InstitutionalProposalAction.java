@@ -49,6 +49,8 @@ import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.permission.PermissionService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.authorization.AuthorizationConstants;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.document.authorization.DocumentPresentationController;
@@ -355,6 +357,14 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
             forward = institutionalProposalActions(mapping, form, request, response);
         }  
         
+        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        if(getPermissionService().hasPermission(currentUser, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")) {
+        	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
+    		if(instProposalAttachmentform != null) {
+    			instProposalAttachmentform.setMaintainInstituteProposal(true);
+    		}
+        }
+        
         String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
                 ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
     	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
@@ -445,5 +455,9 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         KrmsRulesExecutionService rulesService = KcServiceLocator.getService(KrmsRulesExecutionService.class);
         return rulesService.processUnitValidations(ipDoc.getLeadUnitNumber(), ipDoc);
     }
+    
+    private PermissionService getPermissionService() {
+        return KimApiServiceLocator.getPermissionService();
+    } 
 
 }

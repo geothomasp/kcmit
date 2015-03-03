@@ -85,6 +85,7 @@ td select {
              
                  <tbody class="addline">
 	             <tr>
+	             <c:if test="${institutionalProposalAttachmentBean.maintainInstituteProposal == true}">
 	                <td align="center" valign="middle" class="infoline">
 	                	<div align="center">
 	                		Add:
@@ -128,6 +129,7 @@ td select {
 							src="${ConfigProperties.kra.externalizable.images.url}tinybutton-add1.gif" styleClass="tinybutton addButton"/>
 						</div>
 					</td>
+			   </c:if>
 			</tr>
 			<tr>
 			
@@ -181,6 +183,7 @@ td select {
 					</td>
 					 <td align="center" valign="middle">
 						<div align="center">
+						<c:if test="${institutionalProposalAttachmentBean.maintainInstituteProposal == true}">
 						<c:choose>
 							<c:when test="${institutionalProposalAttachmentBean.disableAttachmentRemovalIndicator == true}">
 								<c:if test="${KualiForm.document.institutionalProposalList[0].instProposalAttachments[itrStatus.index].documentStatusCode != 'V'}">
@@ -204,6 +207,7 @@ td select {
 									   alt="Delete Attachment"/>
 						   </c:otherwise>
 						   </c:choose>
+						   </c:if>
 							   </div>
 					</td>  
 				</tr>
