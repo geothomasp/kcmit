@@ -1,3 +1,0 @@
-@dml/DML_MITKC-611_02262015.sql
-@dml/DML_MITKC-945_02262015.sql
-commit;
