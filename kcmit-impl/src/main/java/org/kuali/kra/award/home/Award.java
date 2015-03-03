@@ -1687,6 +1687,8 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     }
 
     public List<AwardFandaRate> getAwardFandaRate() {
+    	
+    	Collections.sort(awardFandaRate,new AwardFandaRateComparator());
         return awardFandaRate;
     }
 
@@ -3558,5 +3560,19 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 
 	    public void setAwardCgbList(List<AwardCgb> awardCgbList) {
 	        this.awardCgbList = awardCgbList;
+	    }
+	    
+	    public class AwardFandaRateComparator implements Comparator<AwardFandaRate> {
+	        public int compare(AwardFandaRate o1, AwardFandaRate o2) {
+	            int value1 = o1.getFiscalYear().compareTo(o2.getFiscalYear());
+	            if (value1 == 0) {
+	                int value2 = o1.getOnCampusFlag().compareTo(o2.getOnCampusFlag());
+	                if (value2 == 0) {
+	                    return o1.getSourceAccount().compareTo(o2.getSourceAccount());
+	                } else {
+	                    return value2;
+	            }}
+	            return value1;
+	        }
 	    }
 }
