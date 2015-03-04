@@ -95,10 +95,10 @@ public class AwardSharedDocAction extends AwardAction {
 				 sharedDocForm.setSubAwardProjectDocView(true);
 			 }}	
 		 if(!sharedDocForm.isIpProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC_IP", "MODIFY_INST_PROPOSAL"))||
-					 (getPermissionService().hasPermission(currentUser, "KC_IP", "CREATE_INST_PROPOSAL"))||
-							 (getPermissionService().hasPermission(currentUser, "KC_IP", "MAINTAIN_INST_PROPOSAL_DOC")||
-									 (getPermissionService().hasPermission(currentUser, "KC_IP", "VIEW_INST_PROPOSAL_DOC")))){
+			 if ((getPermissionService().hasPermission(currentUser, "KC-IP", "MODIFY_INST_PROPOSAL"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-IP", "CREATE_INST_PROPOSAL"))||
+							 (getPermissionService().hasPermission(currentUser, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")||
+									 (getPermissionService().hasPermission(currentUser, "KC-IP", "VIEW_INST_PROPOSAL_DOC")))){
 				 sharedDocForm.setIpProjectDocView(true);
 			 }}	
 		 if(!sharedDocForm.isPropProjectDocView()){
