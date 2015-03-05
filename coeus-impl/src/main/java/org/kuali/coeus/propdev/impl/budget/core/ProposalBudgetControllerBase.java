@@ -167,27 +167,7 @@ public abstract class ProposalBudgetControllerBase {
     
 
     public ModelAndView save(ProposalBudgetForm form) {
-
-	if(!form.getBudget().getSepLineItems().isEmpty()){
-		
-		
-		List<BudgetLineItem> newBudgetLineItems = new ArrayList<BudgetLineItem>();
-    	List<BudgetLineItem> budgetLineItems =  form.getBudget().getSepLineItems();
-    	List<BudgetPeriod> budgetPeriods =  form.getBudget().getBudgetPeriods();
-    	for(BudgetLineItem budgetLineItem:budgetLineItems){  		
-    		budgetLineItem.setBudget(form.getBudget());
-    	for(BudgetPeriod budgetPeriod:budgetPeriods){
-    	
-    		newBudgetLineItems.add(populateNewBudgetLineItem(budgetLineItem, budgetPeriod));
-    			
-    	}
-    	}
-    	form.getBudget().setSepLineItems(newBudgetLineItems);
-    	
-    	}
-	
-	
-	budgetService.calculateBudgetOnSave(form.getBudget());
+    	budgetService.calculateBudgetOnSave(form.getBudget());
     	form.setBudget(getDataObjectService().save(form.getBudget()));
        	getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());
        
