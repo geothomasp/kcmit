@@ -165,14 +165,8 @@ public class Budget extends AbstractBudget implements BudgetContract {
     @OrderBy("budgetPeriod")
     private List<BudgetPeriod> budgetPeriods;
     
-   // @OneToMany(mappedBy="budget", orphanRemoval = true, cascade = { CascadeType.ALL })
-    //@Transient
-    @OneToMany(orphanRemoval = true, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "BUDGET_ID", referencedColumnName = "BUDGET_ID")
-   private List<BudgetLineItem> sepLineItems;
-    
-	//List<BudgetLineItem> sepLineItems = new ArrayList<BudgetLineItem>();
-  //  private BudgetPeriod budgetPeriod;
+    @Transient
+    private List<BudgetLineItem> sepLineItems;
     
     @Transient
     private List<Period> budgetSummaryDetails;
