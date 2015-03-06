@@ -67,6 +67,6 @@ public interface KcMitConstants {
     public static final String ERROR_COST_SHARE_DESTINATION_LIMIT="error.awardCostShare.destination.limit";
     public static final String ERROR_OBLIGATED_OR_ANTICIPATED_AMOUNT_REQUIRED = "error.transaction.amount.required";
     public static final String ERROR_IP_COST_SHARE_SOURCE_ACCOUNT_LIMIT_EXCEEDS="error.institutionalProposalCostShare.sourceamount.exceeds";
-   
+    public static final String AWARD_BUDGET_STATUS_REPOSTED = "awardBudgetStatusRePosted";
     
 }
