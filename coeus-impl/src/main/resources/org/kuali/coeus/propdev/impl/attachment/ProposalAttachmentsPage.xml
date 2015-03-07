@@ -165,7 +165,7 @@
                       p:render="@{#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).PROPOSAL_ATTACHMENT_TYPE_NAME}')}"
                       p:order="80"/>
                 <bean parent="Uif-InputField" p:propertyName="narrative.multipartFile" p:fieldLabel.labelText="@{!#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).PROPOSAL_ATTACHMENT_TYPE_NAME}')?'File':'New File'}"
-                      p:order="90"  p:render="@{document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12'}" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
+                      p:order="90"  p:render="@{canEditView}" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
                     <property name="control">
                         <bean parent="Uif-FileControl"/>
                     </property>
@@ -176,10 +176,10 @@
             <list>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="addNarrative"
                       p:successCallback="Kc.Dialog.closeDialogWithoutError('PropDev-AttachmentsPage-ProposalDetails')"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null and (document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12')}" p:order="0"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null and canEditView}" p:order="0"/>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="saveNarrative"
                       p:successCallback="Kc.Dialog.closeDialogWithoutError('PropDev-AttachmentsPage-ProposalDetails')"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null and (document.developmentProposal.proposalState?.code eq '1' or document.developmentProposal.proposalState?.code eq '12')}" p:order="10"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null and canEditView}" p:order="10"/>
             </list>
         </property>
     </bean>
@@ -280,7 +280,7 @@
                       p:render="@{#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).PERSONNEL_ATTACHMENT_TYPE_NAME}')}"
                       p:order="50"/>
                 <bean parent="Uif-InputField" p:propertyName="biography.multipartFile" p:fieldLabel.labelText="@{!#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).PERSONNEL_ATTACHMENT_TYPE_NAME}')?'File':'New File'}"
-                      p:order="60" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
+                      p:order="60" p:render="@{canEditView}" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
                     <property name="control">
                         <bean parent="Uif-FileControl"/>
                     </property>
@@ -291,10 +291,10 @@
             <list>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="addBiography"
                       p:successCallback="Kc.Dialog.closeDialogWithoutError('PropDev-AttachmentsPage-PersonnelDetails')"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null}" p:order="0"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null and canEditView}" p:order="0"/>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="saveBiography"
                     p:successCallback="Kc.Dialog.closeDialogWithoutError('PropDev-AttachmentsPage-PersonnelDetails')"
-                    p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null}" p:order="10"/>
+                    p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null and canEditView}" p:order="10"/>
             </list>
         </property>
     </bean>
@@ -446,7 +446,7 @@
                       p:render="@{#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).INSTITUTIONAL_ATTACHMENT_TYPE_NAME}')}"
                       p:order="30"/>
                 <bean parent="Uif-InputField" p:propertyName="instituteAttachment.multipartFile" p:fieldLabel.labelText="@{!#ViewHelper.hasAttachment(proposalDevelopmentAttachmentHelper,'#{T(org.kuali.kra.infrastructure.Constants).INSTITUTIONAL_ATTACHMENT_TYPE_NAME}')?'File':'New File'}"
-                     p:order="40" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
+                     p:order="40" p:render="@{canEditView}" p:readOnly="@{!#editModes['replaceNarratives'] and #parent.readOnly}">
                     <property name="control">
                         <bean parent="Uif-FileControl"/>
                     </property>
@@ -458,11 +458,11 @@
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="addInstituteAttachment"
                       p:refreshId="PropDev-AttachmentsPage-InternalCollection-Collection"
                       p:dialogDismissOption="REQUEST"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null}" p:order="0"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex eq null and canEditView}" p:order="0"/>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Save" p:methodToCall="saveInstituteAttachment"
                       p:refreshId="PropDev-AttachmentsPage-InternalCollection-Collection"
                       p:dialogDismissOption="REQUEST"
-                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null}" p:order="10"/>
+                      p:render="@{proposalDevelopmentAttachmentHelper.selectedLineIndex ne null and canEditView}" p:order="10"/>
             </list>
         </property>
     </bean>
