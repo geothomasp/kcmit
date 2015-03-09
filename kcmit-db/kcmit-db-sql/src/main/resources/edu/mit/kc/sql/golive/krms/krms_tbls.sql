@@ -1,42 +1,3 @@
-ALTER TABLE KRMS_ACTN_ATTR_T DISABLE CONSTRAINT KRMS_ACTN_ATTR_FK1
-/
-ALTER TABLE KRMS_ACTN_ATTR_T DISABLE CONSTRAINT KRMS_ACTN_ATTR_FK2
-/
-DELETE FROM KRMS_ACTN_ATTR_T WHERE ACTN_ID in ( select actn_id from krms_actn_t where typ_id in (SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow') )
-/
-DELETE FROM KRMS_ACTN_T WHERE typ_id in (SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow')
-/
-DECLARE
-	cursor c_data is
-	SELECT a.ACTN_ID,a.NM,a.RULE_ID,a.NMSPC_CD FROM KRMS_ACTN_T@KC_STAG_DB_LINK a
-	WHERE a.typ_id in (SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow');
-	r_data c_data%rowtype;
-	ls_seq KRMS_ACTN_T.ACTN_ID%type;
-
-BEGIN
-OPEN c_data;
-LOOP
-FETCH c_data INTO r_data;
-EXIT WHEN c_data%NOTFOUND;
-	ls_seq := KRMS_ACTN_S.nextval;
-	INSERT INTO KRMS_ACTN_T(ACTN_ID,NM,DESC_TXT,TYP_ID,RULE_ID,SEQ_NO,VER_NBR,NMSPC_CD)
-	SELECT ls_seq,a.NM,a.DESC_TXT,a.TYP_ID,a.RULE_ID,a.SEQ_NO,a.VER_NBR,a.NMSPC_CD 
-	FROM KRMS_ACTN_T@KC_STAG_DB_LINK a
-	WHERE a.ACTN_ID = r_data.ACTN_ID;
-
-	INSERT INTO KRMS_ACTN_ATTR_T(ACTN_ATTR_DATA_ID,ACTN_ID,ATTR_DEFN_ID,ATTR_VAL,VER_NBR)
-	SELECT KRMS_ACTN_ATTR_S.nextval,ls_seq,a.ATTR_DEFN_ID,a.ATTR_VAL,a.VER_NBR FROM KRMS_ACTN_ATTR_T@KC_STAG_DB_LINK a 
-	INNER JOIN KRMS_ATTR_DEFN_T@KC_STAG_DB_LINK b on a.ATTR_DEFN_ID=b.ATTR_DEFN_ID	
-	WHERE b.ACTV = 'Y'
-	AND a.ACTN_ID = r_data.ACTN_ID;
-	
-END LOOP;
-CLOSE c_data;
-
-END;
-/
-ALTER TABLE KRMS_ACTN_T DISABLE CONSTRAINT KRMS_ACTN_FK1
-/
 ALTER TABLE KRMS_AGENDA_ATTR_T DISABLE CONSTRAINT KRMS_AGENDA_ATTR_FK1
 /
 ALTER TABLE KRMS_AGENDA_ATTR_T DISABLE CONSTRAINT KRMS_AGENDA_ATTR_FK2
@@ -206,6 +167,48 @@ ALTER TABLE KRMS_RULE_ATTR_T DISABLE CONSTRAINT KRMS_RULE_ATTR_FK2
 /
 ALTER TABLE KRMS_NL_TMPL_ATTR_T DISABLE CONSTRAINT KRMS_NL_TMPL_ATTR_FK2
 /
+-----------------------------
+ALTER TABLE KRMS_ACTN_ATTR_T DISABLE CONSTRAINT KRMS_ACTN_ATTR_FK1
+/
+ALTER TABLE KRMS_ACTN_T DISABLE CONSTRAINT KRMS_ACTN_FK1
+/
+ALTER TABLE KRMS_ACTN_ATTR_T DISABLE CONSTRAINT KRMS_ACTN_ATTR_FK2
+/
+DELETE FROM KRMS_ACTN_ATTR_T WHERE ACTN_ID in ( select actn_id from krms_actn_t where typ_id in (SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow') )
+/
+DELETE FROM KRMS_ACTN_T WHERE typ_id in (SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow')
+/
+DECLARE
+	cursor c_data is
+	SELECT a.ACTN_ID,a.NM,a.RULE_ID,a.NMSPC_CD FROM KRMS_ACTN_T@KC_STAG_DB_LINK a
+	WHERE a.typ_id in (SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow');
+	r_data c_data%rowtype;
+	ls_seq KRMS_ACTN_T.ACTN_ID%type;
+
+BEGIN
+OPEN c_data;
+LOOP
+FETCH c_data INTO r_data;
+EXIT WHEN c_data%NOTFOUND;
+	ls_seq := KRMS_ACTN_S.nextval;
+	INSERT INTO KRMS_ACTN_T(ACTN_ID,NM,DESC_TXT,TYP_ID,RULE_ID,SEQ_NO,VER_NBR,NMSPC_CD)
+	SELECT ls_seq,a.NM,a.DESC_TXT,a.TYP_ID,a.RULE_ID,a.SEQ_NO,a.VER_NBR,a.NMSPC_CD 
+	FROM KRMS_ACTN_T@KC_STAG_DB_LINK a
+	WHERE a.ACTN_ID = r_data.ACTN_ID;
+
+	INSERT INTO KRMS_ACTN_ATTR_T(ACTN_ATTR_DATA_ID,ACTN_ID,ATTR_DEFN_ID,ATTR_VAL,VER_NBR)
+	SELECT KRMS_ACTN_ATTR_S.nextval,ls_seq,a.ATTR_DEFN_ID,a.ATTR_VAL,a.VER_NBR FROM KRMS_ACTN_ATTR_T@KC_STAG_DB_LINK a 
+	INNER JOIN KRMS_ATTR_DEFN_T@KC_STAG_DB_LINK b on a.ATTR_DEFN_ID=b.ATTR_DEFN_ID	
+	WHERE b.ACTV = 'Y'
+	AND a.ACTN_ID = r_data.ACTN_ID;
+	
+END LOOP;
+CLOSE c_data;
+
+END;
+/
+
+--------------------------
 ALTER TABLE KRMS_CNTXT_ATTR_T DISABLE CONSTRAINT KRMS_CNTXT_ATTR_FK2
 /
 ALTER TABLE KRMS_TERM_RSLVR_ATTR_T DISABLE CONSTRAINT KRMS_TERM_RSLVR_ATTR_FK2
@@ -712,7 +715,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(AGENDA_ATTR_ID,'KC')) into ls_max_val from KRMS_AGENDA_ATTR_T;
+  select max(ltrim(AGENDA_ATTR_ID,'MITKC')) into ls_max_val from KRMS_AGENDA_ATTR_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -732,7 +735,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(AGENDA_ITM_ID,'KC')) into ls_max_val from KRMS_AGENDA_ITM_T;
+  select max(ltrim(AGENDA_ITM_ID,'MITKC')) into ls_max_val from KRMS_AGENDA_ITM_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -752,7 +755,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(AGENDA_ID,'KC')) into ls_max_val from KRMS_AGENDA_T;
+  select max(ltrim(AGENDA_ID,'MITKC')) into ls_max_val from KRMS_AGENDA_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -772,7 +775,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(ATTR_DEFN_ID,'KC')) into ls_max_val from KRMS_ATTR_DEFN_T;
+  select max(ltrim(ATTR_DEFN_ID,'MITKC')) into ls_max_val from KRMS_ATTR_DEFN_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -792,7 +795,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(CMPND_PROP_ID,'KC')) into ls_max_val from KRMS_CMPND_PROP_PROPS_T;
+  select max(ltrim(CMPND_PROP_ID,'MITKC')) into ls_max_val from KRMS_CMPND_PROP_PROPS_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -832,7 +835,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(CNTXT_VLD_ACTN_ID,'KC')) into ls_max_val from KRMS_CNTXT_VLD_ACTN_TYP_T;
+  select max(ltrim(CNTXT_VLD_ACTN_ID,'MITKC')) into ls_max_val from KRMS_CNTXT_VLD_ACTN_TYP_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -852,7 +855,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(CNTXT_VLD_AGENDA_ID,'KC')) into ls_max_val from KRMS_CNTXT_VLD_AGENDA_TYP_T;
+  select max(ltrim(CNTXT_VLD_AGENDA_ID,'MITKC')) into ls_max_val from KRMS_CNTXT_VLD_AGENDA_TYP_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -892,7 +895,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(CNTXT_VLD_RULE_ID,'KC')) into ls_max_val from KRMS_CNTXT_VLD_RULE_TYP_T;
+  select max(ltrim(CNTXT_VLD_RULE_ID,'MITKC')) into ls_max_val from KRMS_CNTXT_VLD_RULE_TYP_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -912,7 +915,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(CNTXT_TERM_SPEC_PREREQ_ID,'KC')) into ls_max_val from KRMS_CNTXT_VLD_TERM_SPEC_T;
+  select max(ltrim(CNTXT_TERM_SPEC_PREREQ_ID,'MITKC')) into ls_max_val from KRMS_CNTXT_VLD_TERM_SPEC_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -932,7 +935,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(CTGRY_ID,'KC')) into ls_max_val from KRMS_CTGRY_T;
+  select max(ltrim(CTGRY_ID,'MITKC')) into ls_max_val from KRMS_CTGRY_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -952,7 +955,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(FUNC_PARM_ID,'KC')) into ls_max_val from KRMS_FUNC_PARM_T;
+  select max(ltrim(FUNC_PARM_ID,'MITKC')) into ls_max_val from KRMS_FUNC_PARM_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
@@ -972,7 +975,7 @@ li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
 
-  select max(ltrim(FUNC_ID,'KC')) into ls_max_val from KRMS_FUNC_T;
+  select max(ltrim(FUNC_ID,'MITKC')) into ls_max_val from KRMS_FUNC_T;
   if ls_max_val is null then
   ls_max_val := 0;
   end if;    
