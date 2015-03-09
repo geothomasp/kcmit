@@ -426,7 +426,7 @@ public class AwardAction extends BudgetParentActionBase {
             }    
         }
         
-        if(status == ValidationState.OK){
+        if(status == ValidationState.OK || validHoldPrompt==ValidationState.HOLDPROMPT){
            return submitAward(mapping, form, request, response);
         } else {
             GlobalVariables.getMessageMap().clearErrorMessages(); 
