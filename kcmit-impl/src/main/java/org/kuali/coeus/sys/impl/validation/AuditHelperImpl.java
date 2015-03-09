@@ -84,9 +84,11 @@ public class AuditHelperImpl implements AuditHelper {
             result = AuditHelper.ValidationState.WARNING;
             for (Iterator iter = GlobalVariables.getAuditErrorMap().keySet().iterator(); iter.hasNext();) {
                 AuditCluster auditCluster = (AuditCluster)GlobalVariables.getAuditErrorMap().get(iter.next());
-                if (!StringUtils.equalsIgnoreCase(auditCluster.getCategory(), Constants.AUDIT_WARNINGS)) {
+                if (!StringUtils.equalsIgnoreCase(auditCluster.getCategory(), Constants.AUDIT_WARNINGS) && !StringUtils.equalsIgnoreCase(auditCluster.getCategory(), HOLD_PROMPT)) {
                     result = AuditHelper.ValidationState.ERROR;
                     break;
+                }else if(StringUtils.equalsIgnoreCase(auditCluster.getCategory(), HOLD_PROMPT)){
+                	 result = ValidationState.HOLDPROMPT;
                 }
             }
         }
