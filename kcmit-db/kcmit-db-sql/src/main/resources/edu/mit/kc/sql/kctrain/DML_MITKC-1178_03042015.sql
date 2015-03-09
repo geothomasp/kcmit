@@ -79,7 +79,7 @@ if li_count = 0 and li_count_1 = 0 then
 			  
 	BEGIN   
 	  INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,OBJ_ID,VER_NBR,ENTITY_ID,NM_TYP_CD,FIRST_NM,MIDDLE_NM,LAST_NM,SUFFIX_NM,TITLE_NM,DFLT_IND,ACTV_IND,LAST_UPDT_DT,PREFIX_NM,NOTE_MSG,NM_CHNG_DT)  
-	  VALUES(li_seq_entity_nm_id,SYS_GUID(),li_ver_nbr,li_seq_entity_id,'PRFR',ls_prncpl_nm,NULL,NULL,NULL,NULL,'Y',ls_actv_ind,ll_last_upd_tmst,NULL,NULL,NULL);
+	  VALUES(li_seq_entity_nm_id,SYS_GUID(),li_ver_nbr,li_seq_entity_id,'PRFR',ls_prncpl_nm,NULL,'Test',NULL,NULL,'Y',ls_actv_ind,ll_last_upd_tmst,NULL,NULL,NULL);
 
     EXCEPTION
     WHEN OTHERS THEN 
