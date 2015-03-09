@@ -426,9 +426,9 @@ public class AwardAction extends BudgetParentActionBase {
             }    
         }
         
-        if(status == ValidationState.OK || validHoldPrompt==ValidationState.HOLDPROMPT){
+        if(status == ValidationState.OK || status == ValidationState.HOLDPROMPT){
            return submitAward(mapping, form, request, response);
-        } else {
+        } else{
             GlobalVariables.getMessageMap().clearErrorMessages(); 
             GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
             return forward;
