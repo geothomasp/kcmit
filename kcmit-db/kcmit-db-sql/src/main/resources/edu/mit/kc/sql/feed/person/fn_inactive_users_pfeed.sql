@@ -121,7 +121,7 @@ end if;
 										minus
 								 		select person_id
 								 		from warehouse_person)
-	and prncpl_nm not in ('admin','kr','notsys','kc','guest','kc-notificaion')
+	and prncpl_id not in ( select prncpl_id from person_inactive_exception )
 	and prncpl_nm is not null;
 	
 	update krim_prncpl_t
@@ -131,7 +131,7 @@ end if;
 										minus
 								 		select person_id
 								 		from warehouse_person)
-	and prncpl_nm not in ('admin','kr','notsys','kc','guest','kc-notificaion')								 		
+	and prncpl_id not in ( select prncpl_id from person_inactive_exception )								 		
 	and prncpl_nm is not null;
   
 	return 0;
