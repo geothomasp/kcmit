@@ -858,6 +858,11 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
 		return "Y".equalsIgnoreCase(getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,ParameterConstants.DOCUMENT_COMPONENT,ProposalDevelopmentService.SUMMARY_KEYWORDS_INDICATOR));
 
 	}
+	
+	public boolean isDetailsPageKeywordsEnabled() {
+		return "TRUE".equalsIgnoreCase(getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,ParameterConstants.DOCUMENT_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY));
+
+	}
 
     public boolean isSummaryBudgetPanelEnabled(DevelopmentProposal developmentProposal) {
         return "Y".equalsIgnoreCase(getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,ParameterConstants.DOCUMENT_COMPONENT,ProposalDevelopmentService.BUDGET_SUMMARY_INDICATOR)) &&
