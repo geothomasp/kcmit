@@ -31,6 +31,7 @@
 		<property name="validationPattern">
 			<bean parent="NumericValidationPattern" />
 		</property>
+		<property name="maxLength" value="3" />
 				<property name="control">
 			<bean parent="TextControlDefinition" p:size="8" />
 		</property>
@@ -46,6 +47,7 @@
 		<property name="validationPattern">
 			<bean parent="NumericValidationPattern" />
 		</property>
+		<property name="maxLength" value="3" />
 				<property name="control">
 			<bean parent="TextControlDefinition" p:size="8" />
 		</property>
@@ -63,6 +65,7 @@
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="8" />
 		</property>
+		<property name="maxLength" value="3" />
 		<property name="controlField">
 			<bean parent="Uif-TextControl" p:size="15" />
 		</property>

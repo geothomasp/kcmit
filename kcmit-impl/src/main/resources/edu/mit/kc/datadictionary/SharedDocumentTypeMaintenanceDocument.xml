@@ -51,6 +51,8 @@
         <property name="title" value="Edit Shared Document Type" />
         <property name="maintainableItems" >
             <list>
+            <bean parent="MaintainableFieldDefinition"
+                    p:name="sharedDocumentTypeId"/>   
                 <bean parent="MaintainableFieldDefinition"
                     p:name="moduleCode"/> 
                 <bean parent="MaintainableFieldDefinition"
