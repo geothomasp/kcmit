@@ -36,49 +36,6 @@
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-
-  <context:annotation-config />
-
-    <bean id="globalVariableService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="globalVariableService" />
-    </bean>
-    
-   <bean id="budgetSummaryService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="budgetSummaryService" />
-    </bean>
-    
-       <bean id="kualiRuleService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="kualiRuleService" />
-    </bean>
-    
-    <bean id="budgetCalculationService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="budgetCalculationService" />
-    </bean>
-    
-    <bean id="budgetDistributionService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="budgetDistributionService" />
-    </bean>
-    
-    <bean id="kcDocumentRejectionService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="kcDocumentRejectionService" />
-    </bean>
-
-    <bean id="budgetRatesService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="budgetRatesService" />
-    </bean>
-    
-    <bean id="pessimisticLockService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="pessimisticLockService" />
-    </bean>  
-    
-    <bean id="fiscalYearMonthService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="fiscalYearMonthService" />
-    </bean>     
-    
-     <bean id="legacyDataAdapter" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="legacyDataAdapter" />
-     </bean>
-     
 	<bean id="permissionService"
 		class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
 		<property name="serviceName" value="kimPermissionService" />
@@ -104,10 +61,6 @@
           parent="parentLookupableHelperService" scope="prototype" /> 
           
           
-    <bean id="kcBusinessRulesEngine" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="kcBusinessRulesEngine" />
-    </bean>
-    
 	 <bean id="parentLookupableHelperService" abstract="true">
         <property name="persistenceStructureService" ref="persistenceStructureService" />
         <property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
@@ -199,7 +152,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposalDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITInstitutionalProposal.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitDevelopmentProposal.xml</value>
-			<value>classpath:edu/mit/kc/datadictionary/MitAwardSpecialReview.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MitAwardSpecialReview.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTermRecipient.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardReportTerm.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardPaymentSchedule.xml</value>
@@ -265,9 +218,9 @@
         <property name="serviceName" value="parameterService" />
     </bean>
 	
-	<!-- <bean id="awardBudgetService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+	<bean id="awardBudgetService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="awardBudgetService" />
-    </bean> -->
+    </bean>
 	<bean id="institutionalProposalService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="institutionalProposalService" />
     </bean>
@@ -395,21 +348,16 @@
         <property name="serviceName" value="versioningService" />
     </bean>
     
-    <bean id="awardDao" parent="platformAwareDao" class="org.kuali.kra.award.dao.ojb.AwardDaoOjb" />    
-    
-    <bean id="awardBudgetService"  class="edu.mit.kc.award.budget.MitKcAwardBudgetServiceImpl">
-     <property name="parameterService" ref="parameterService" />
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="documentService" ref="documentService" />
-        <property name="budgetSummaryService" ref="budgetSummaryService" />
-        <property name="budgetCalculationService" ref="budgetCalculationService" />
-        <property name="awardBudgetCalculationService" ref="awardBudgetCalculationService" />
-        <property name="versionHistoryService" ref="versionHistoryService" />
-        <property name="awardService" ref="awardService" />
-    </bean>
-    
-     <bean id="awardBudgetCalculationService" class="org.kuali.kra.award.budget.calculator.AwardBudgetCalculationServiceImpl">
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="budgetDistributionService" ref="budgetDistributionService" />
-    </bean>
+    <bean id="awardDao" parent="platformAwareDao" class="org.kuali.kra.award.dao.ojb.AwardDaoOjb" />   
+    <bean id="mitProposalLogLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService" ref="mitProposalLogLookupableHelperService" />
+	</bean>   
+    <bean id="mitProposalLogLookupableHelperService" class="edu.mit.kc.proposallog.service.impl.MitProposalLogLookupableHelperServiceImpl" parent="parentLookupableHelperService" 
+          scope="prototype">
+          <property name="kcPersonService" ref="kcPersonService" />  
+          <property name="documentDictionaryService" ref="documentDictionaryService" />    
+    </bean> 
+     <bean id="documentDictionaryService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="documentDictionaryService" />
+     </bean>
 </beans>
