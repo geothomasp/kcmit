@@ -67,6 +67,7 @@
     
     <bean id="ProposalLog-lookupDefinition" parent="MIT-ProposalLog-lookupDefinition-parentBean" />
     <bean id="MIT-ProposalLog-lookupDefinition-parentBean"  parent="ProposalLog-lookupDefinition-parentBean">
+     <property name="lookupableID" value="mitProposalLogLookupable" />
         <property name="lookupFields" >
             <list>
                 <bean parent="FieldDefinition"
@@ -76,7 +77,7 @@
                     p:attributeName="proposalLogTypeCode" /-->
                 <bean parent="FieldDefinition"
                     p:attributeName="logStatus" />
-                <bean parent="FieldDefinition"
+             	<bean parent="FieldDefinition"
                     p:attributeName="mergedWith" />
                 <!--  bean parent="FieldDefinition"
                     p:attributeName="instProposalNumber" /-->
@@ -111,8 +112,8 @@
                     p:attributeName="proposalLogType.description" /-->
                 <bean parent="FieldDefinition"
                     p:attributeName="proposalLogStatus.description" />
-               <!--  <bean parent="FieldDefinition"
-                    p:attributeName="mergedWith" /> -->
+                <bean parent="FieldDefinition"
+                    p:attributeName="mergedWith" />
                 <!--  bean parent="FieldDefinition"
                     p:attributeName="instProposalNumber" /-->                    
                 <bean parent="FieldDefinition"
