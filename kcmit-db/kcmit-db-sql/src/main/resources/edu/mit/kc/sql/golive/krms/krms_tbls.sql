@@ -59,7 +59,7 @@ NEW_RULE_ID VARCHAR2(40)
 DECLARE
 	cursor c_data is
 	SELECT RULE_ID,PROP_ID FROM KRMS_RULE_T@KC_STAG_DB_LINK
-	WHERE RULE_ID IN ( SELECT RULE_ID FROM KRMS_ACTN_T WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow') );
+	WHERE RULE_ID IN ( SELECT RULE_ID FROM KRMS_ACTN_T@KC_STAG_DB_LINK WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t@KC_STAG_DB_LINK WHERE nm = 'Route to PeopleFlow') );
 	r_data c_data%rowtype;
 	
 	ls_seq KRMS_RULE_T.RULE_ID%type;
@@ -101,7 +101,7 @@ ALTER TABLE KRMS_NL_TMPL_ATTR_T DISABLE CONSTRAINT KRMS_NL_TMPL_ATTR_FK2
 DECLARE
 	cursor c_data is
 	SELECT PROP_ID,RULE_ID FROM KRMS_PROP_T@KC_STAG_DB_LINK	
-	WHERE RULE_ID IN ( SELECT RULE_ID FROM KRMS_ACTN_T WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow') );
+	WHERE RULE_ID IN ( SELECT RULE_ID FROM KRMS_ACTN_T@KC_STAG_DB_LINK WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t@KC_STAG_DB_LINK WHERE nm = 'Route to PeopleFlow') );
 	r_data c_data%rowtype;
 	ls_seq KRMS_PROP_T.PROP_ID%type;
 
@@ -141,8 +141,8 @@ DELETE FROM KRMS_AGENDA_ITM_T WHERE RULE_ID IN ( SELECT RULE_ID FROM KRMS_ACTN_T
 /
 DECLARE
 	cursor c_data is
-	select t2.agenda_id, t1.rule_id from KRMS_AGENDA_ITM_T t1 inner join KRMS_AGENDA_T t2 on t1.AGENDA_ID = t2.AGENDA_ID
-	where t1.RULE_ID in ( SELECT RULE_ID FROM KRMS_ACTN_T WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow') );	
+	select t2.agenda_id, t1.rule_id from KRMS_AGENDA_ITM_T@KC_STAG_DB_LINK t1 inner join KRMS_AGENDA_T@KC_STAG_DB_LINK t2 on t1.AGENDA_ID = t2.AGENDA_ID
+	where t1.RULE_ID in ( SELECT RULE_ID FROM KRMS_ACTN_T@KC_STAG_DB_LINK WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t@KC_STAG_DB_LINK WHERE nm = 'Route to PeopleFlow') );	
 	r_data c_data%rowtype;	
 	ls_seq KRMS_AGENDA_T.AGENDA_ID%type;
 
@@ -192,7 +192,7 @@ DELETE FROM KRMS_ACTN_T WHERE RULE_ID in ( SELECT RULE_ID FROM KRMS_ACTN_T WHERE
 DECLARE
 	cursor c_data is
 	SELECT a.ACTN_ID,a.RULE_ID FROM KRMS_ACTN_T@KC_STAG_DB_LINK a
-	WHERE a.RULE_ID in ( SELECT RULE_ID FROM KRMS_ACTN_T WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t WHERE nm = 'Route to PeopleFlow') );
+	WHERE a.RULE_ID in ( SELECT RULE_ID FROM KRMS_ACTN_T@KC_STAG_DB_LINK WHERE typ_id IN ( SELECT typ_id FROM krms_typ_t@KC_STAG_DB_LINK WHERE nm = 'Route to PeopleFlow') );
 	r_data c_data%rowtype;
 	ls_seq KRMS_ACTN_T.ACTN_ID%type;
 
