@@ -24,7 +24,6 @@ import edu.mit.kc.common.DbFunctionExecuteService;
 public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	
 	protected final Log LOG = LogFactory.getLog(KcCoiLinkServiceImpl.class);
-	Logger LOGGER;
 
 	private DbFunctionExecuteService dbFunctionExecuteService;
 	private ParameterService parameterService;
@@ -35,7 +34,6 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 
 	public KcCoiLinkServiceImpl() {
 		super();
-		LOGGER = Logger.getLogger(KcCoiLinkServiceImpl.class.getName());
 	}
 
 	public ParameterService getParameterService() {
@@ -71,9 +69,9 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 		
 
 		} catch (NullPointerException e) {
-			LOGGER.log(Level.ALL, e.getMessage(), e);
-			LOGGER.log(Level.ALL,
-					"DBLINK is not accessible or the parameter value returning null");
+			
+			LOG.info(e.getMessage());
+			LOG.info("DBLINK is not accessible or the parameter value returning null");
 		} 
 
 		return "";
@@ -102,15 +100,14 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	
 
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
-			LOGGER.log(Level.ALL, ex.getMessage(), ex);
+			LOG.info(ex.getMessage());
 		} finally {
 			try {
 				if (!result.isEmpty()) {
-					LOGGER.log(Level.INFO, "Function Successfully Invoked");
+					LOG.info("Function "+getDBLink()+":FN_COI_PROP_TRANSITION Successfully Invoked");
 				}
 			} catch (Exception e) {
-				LOGGER.log(Level.ALL, e.getMessage(), e);
+				LOG.info(e.getMessage());
 			}
 		}
 
@@ -143,15 +140,14 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 		result =  getDbFunctionExecuteService().executeFunction("FN_SYNC_AWARD_DISCLOSURE"+this.getDBLink(), paramValues);
 	
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
-			LOGGER.log(Level.ALL, ex.getMessage(), ex);
+			LOG.info(ex.getMessage());
 		} finally {
 			try {
 				if (!result.isEmpty()) {
-					LOGGER.log(Level.INFO, "Function - updateCOIOnLinkIPToAward Successfully Invoked");
+					LOG.info("Function "+getDBLink()+":FN_SYNC_AWARD_DISCLOSURE Successfully Invoked");
 				}
 			} catch (Exception e) {
-				LOGGER.log(Level.ALL, e.getMessage(), e);
+				LOG.info(e.getMessage());
 			}
 		}
 			
@@ -167,7 +163,7 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	 * 			    actionType
 	 * @referenced PL/SQL function FN_SYNC_QNR_FROM_PROP_TO_COI
 	 */
-	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId,char actionType){
+	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId){
 	
 		
 		List<Object> paramValues = new ArrayList<Object>();
@@ -176,22 +172,21 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 		paramValues.add(0, developmentProposalNumber);
 		paramValues.add(1, disclosurePersonId);
 		paramValues.add(2, loggedInUserId);
-		paramValues.add(3, actionType);		
+		paramValues.add(3, "I");		
 		
 		
 		try {
 		 result =  getDbFunctionExecuteService().executeFunction("FN_SYNC_QNR_FROM_PROP_TO_COI"+this.getDBLink(),paramValues);
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
-			LOGGER.log(Level.ALL, ex.getMessage(), ex);
+			LOG.info(ex.getMessage());
 		} finally {
 			try {
 				if (!result.isEmpty()) {
-					LOGGER.log(Level.INFO, "Function Successfully Invoked");
+					LOG.info("Function "+getDBLink()+":FN_SYNC_QNR_FROM_PROP_TO_COI Successfully Invoked");
 			
 				}
 			} catch (Exception e) {
-				LOGGER.log(Level.ALL, e.getMessage(), e);
+				LOG.info(e.getMessage());
 			}
 		}
 	

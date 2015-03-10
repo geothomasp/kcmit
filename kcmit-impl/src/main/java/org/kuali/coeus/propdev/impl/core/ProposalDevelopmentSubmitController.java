@@ -431,17 +431,16 @@ public class ProposalDevelopmentSubmitController extends
                 proposalDevelopmentDocument.getDevelopmentProposal().refresh();
                 getDataObjectService().save(proposalDevelopmentDocument.getDevelopmentProposal());
             }
-          	 try {
+            if (autogenerateInstitutionalProposal()) {
+                generateInstitutionalProposal(proposalDevelopmentForm, isIPProtocolLinkingEnabled);
+            }
+            try {
                	getKcCoiLinkService().updateCOIOnNewIP(proposalDevelopmentForm.getDevelopmentProposal().getProposalNumber(),proposalDevelopmentForm.getProposalDevelopmentDocument().getInstitutionalProposalNumber());
                	
    			} catch (SQLException e) {
    				LOGGER.info(Level.ALL, e);
    				LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
    			}
-    
-            if (autogenerateInstitutionalProposal()) {
-                generateInstitutionalProposal(proposalDevelopmentForm, isIPProtocolLinkingEnabled);
-            }
         }
         
     }
@@ -502,6 +501,7 @@ public class ProposalDevelopmentSubmitController extends
         getGlobalVariableService().getMessageMap().putInfo(KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_VERSIONED, versionNumber, proposalDevelopmentForm.getInstitutionalProposalToVersion());
 
         Long institutionalProposalId = getActiveProposalId(proposalDevelopmentForm.getInstitutionalProposalToVersion());
+        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(institutionalProposalId.toString());
         persistProposalAdminDetails(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber(), institutionalProposalId);
         persistSpecialReviewProtocolFundingSourceLink(institutionalProposalId, isIPProtocolLinkingEnabled);
     }
@@ -513,6 +513,7 @@ public class ProposalDevelopmentSubmitController extends
         getGlobalVariableService().getMessageMap().putInfo(Constants.NO_FIELD,KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_CREATED, proposalNumber);
 
         Long institutionalProposalId = getActiveProposalId(proposalNumber);
+        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(institutionalProposalId.toString());
         persistProposalAdminDetails(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber(), institutionalProposalId);
         persistSpecialReviewProtocolFundingSourceLink(institutionalProposalId, isIPProtocolLinkingEnabled);
     }

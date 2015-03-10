@@ -28,6 +28,6 @@ public interface KcCoiLinkService {
 	 * certification and if the questionnaire answers triggers COI, KC should
 	 * call a function to create / update proposal disclosure in Coeus COI.
  */	
-	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId,char actionType) throws SQLException;;
+	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId) throws SQLException;;
 
 }

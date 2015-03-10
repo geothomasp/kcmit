@@ -586,7 +586,7 @@ public abstract class ProposalDevelopmentControllerBase {
             String proxyId = getGlobalVariableService().getUserSession().getPrincipalId();
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
             	try {            		
-                  	getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId, 'I');
+                  	getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId);
       			} catch (SQLException e) {
       				LOGGER.info(Level.ALL, e);
       				LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
