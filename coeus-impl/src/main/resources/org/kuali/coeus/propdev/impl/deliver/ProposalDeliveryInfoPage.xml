@@ -71,7 +71,7 @@
 				<bean parent="PropDev-DeliveryInfoPage-MailingAddressId"
 					p:colSpan="2" p:order="70" />				
 				<bean parent="Uif-ActionLinkField" p:action.methodToCall="clearMailingNameAddress"
-					p:fieldLabel.labelText="" p:actionLabel="Clear" p:colSpan="2" p:render="@{!#parent.readOnly}"
+					p:fieldLabel.labelText="" p:actionLabel="@{document.developmentProposal.mailingAddressId != null ? 'Clear' : ''}" p:colSpan="2" p:render="@{!#parent.readOnly}"
 					p:order="80" />
 			</list>
 		</property>
@@ -90,7 +90,7 @@
 				p:fieldConversions="rolodexId:mailingAddressId" p:returnByScript="false" p:referencesToRefresh="rolodex">
 				<property name="quickfinderAction">
 					<bean parent="Uif-ActionLink" p:methodToCall="performLookup"
-						p:actionLabel="Change" />
+						p:actionLabel="@{document.developmentProposal.mailingAddressId != null ? 'Change' : 'Add'}" />
 				</property>
 			</bean>
 		</property>
