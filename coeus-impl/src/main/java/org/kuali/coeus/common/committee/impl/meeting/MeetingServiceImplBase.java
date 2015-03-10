@@ -291,12 +291,13 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 && !committeeMembership.getTermEndDate().before(scheduledDate);
         if (isActiveMember) {
             for (CommitteeMembershipRole membershipRole : committeeMembership.getMembershipRoles()) {
-                if (!membershipRole.getStartDate().after(scheduledDate) && !membershipRole.getEndDate().before(scheduledDate)) {
-                    if (membershipRole.getMembershipRoleCode().equals(CommitteeMembershipRole.INACTIVE_ROLE)) {
+                if (membershipRole.getStartDate().after(scheduledDate) && membershipRole.getEndDate().before(scheduledDate)) {
+                	isActiveMember = false;
+                  /*  if (membershipRole.getMembershipRoleCode().equals(CommitteeMembershipRole.INACTIVE_ROLE)) {
                         // Inactive matched, stop here
                         isActiveMember = false;
                         break;
-                    }
+                    }*/
                 }
             }
         }
