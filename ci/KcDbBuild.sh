@@ -52,11 +52,11 @@ echo "spool rolerefreshrun-${tod}.log"
 sqlplus ${usrid}/${pswd}@${sid}  @all_role_rights.sql > logs/rolerefreshrun-${tod}.log
 mail -s "rolerefreshrun-${tod}.log" geot@mit.edu < logs/rolerefreshrun-${tod}.log
 
-cd ${scriptDir}/coi
+cd ${scriptDir}/golive
 mkdir -p logs
-echo "spool coirun-${tod}.log"
-sqlplus ${usrid}/${pswd}@${sid}  @all-coi-snapshot.sql > logs/coirun-${tod}.log
-mail -s "coirun-${tod}.log" geot@mit.edu < logs/coirun-${tod}.log
+echo "spool golive-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid}  @all_go_live.sql > logs/golive-${tod}.log
+mail -s "rolerefreshrun-${tod}.log" geot@mit.edu < logs/golive-${tod}.log
 
 exit;
 
