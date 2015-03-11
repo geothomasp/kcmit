@@ -103,8 +103,10 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         }
         if (proposalPerson != null) {
             result.put("{USER_NAME}",proposalPerson.getUserName());
-            result.put("{PROPOSAL_CERTIFY_USER}",proposalPerson.getCertification().getUpdateUser()); 
-            result.put("{PROPOSAL_CERTIFY_TIME_STAMP}", proposalPerson.getCertification().getDateCertified().toString());        
+            if(proposalPerson.getCertification() != null) {
+                result.put("{PROPOSAL_CERTIFY_USER}",proposalPerson.getCertification().getUpdateUser()); 
+                result.put("{PROPOSAL_CERTIFY_TIME_STAMP}", proposalPerson.getCertification().getDateCertified().toString());        
+            }
         }
         return result;
     }

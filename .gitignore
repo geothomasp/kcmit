@@ -7,3 +7,9 @@
 /target
 /kcmit-db/kcmit-db-sql/target
 kcmit-impl/src/main/resources/META-INF/kcmit-config.xml
+/launch/
+/kcmit-db/kcmit-db-sql/.classpath
+/kcmit-db/kcmit-db-sql/.settings
+/kcmit-db/kcmit-db-xml/.classpath
+/kcmit-db/kcmit-db-xml/.settings
+.settings
