@@ -86,7 +86,6 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
     public ModelAndView saveAttachments(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
        Narrative narrative =form.getProposalDevelopmentAttachmentHelper().getNarrative();
        if(narrative.getObjectId()!=null){
-    	   narrative.setUpdated(true);
     	   form.getProposalDevelopmentAttachmentHelper().setNarrative(narrative);
        }
     	return super.narrativePageSave(form,form.isCanEditView());
@@ -136,7 +135,6 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
             if(object instanceof Narrative) {
             	Narrative narrative = (Narrative) object;
             	narrative.setModuleStatusCode(moduleStatusCode);
-            	narrative.setUpdated(true);
                 getDataObjectService().wrap(object).fetchRelationship("narrativeStatus");
             }
         }
@@ -285,10 +283,6 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
     public ModelAndView saveNarrative(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
         Narrative narrative = form.getProposalDevelopmentAttachmentHelper().getNarrative();
         int selectedLineIndex = Integer.parseInt(form.getProposalDevelopmentAttachmentHelper().getSelectedLineIndex());
-        if(narrative.getObjectId() != null) {
-        	narrative.setUpdated(true);
-        	form.getProposalDevelopmentAttachmentHelper().setNarrative(narrative);
-        }
         narrative.refreshReferenceObject("narrativeType");
         narrative.refreshReferenceObject("narrativeStatus");
         try {
@@ -337,9 +331,6 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=saveBiography")
     public ModelAndView saveBiography(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
         ProposalPersonBiography biography = form.getProposalDevelopmentAttachmentHelper().getBiography();
-        if(biography.getObjectId() != null) {
-        	biography.setUpdated(true);
-        }
         int selectedLineIndex = Integer.parseInt(form.getProposalDevelopmentAttachmentHelper().getSelectedLineIndex());
         biography.setUpdateUser(globalVariableService.getUserSession().getPrincipalName());
         biography.setUpdateTimestamp(getDateTimeService().getCurrentTimestamp());
@@ -363,9 +354,6 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=saveInstituteAttachment")
     public ModelAndView saveInstituteAttachment(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
         Narrative narrative = form.getProposalDevelopmentAttachmentHelper().getInstituteAttachment();
-        if(narrative.getObjectId() != null) {
-        	narrative.setUpdated(true);
-        }
         int selectedLineIndex = Integer.parseInt(form.getProposalDevelopmentAttachmentHelper().getSelectedLineIndex());
         getDataObjectService().wrap(narrative).fetchRelationship("narrativeType");
         try {
