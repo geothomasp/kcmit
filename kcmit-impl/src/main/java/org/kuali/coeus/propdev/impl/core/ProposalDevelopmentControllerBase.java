@@ -559,7 +559,7 @@ public abstract class ProposalDevelopmentControllerBase {
                         person.getQuestionnaireHelper().populateAnswers();
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
                         allCertificationAreNowComplete &= isComplete;
-                        checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete);
+                        checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete,wasComplete);
                     }
                 }
             }
@@ -580,13 +580,17 @@ public abstract class ProposalDevelopmentControllerBase {
         }
 	}
 
-    public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted) {
+    public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean wasComplete) {
         boolean selfCertifyOnly = getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,Constants.PARAMETER_COMPONENT_DOCUMENT,ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
+        String actionType = "I";
+        if(wasComplete){
+        	actionType = "U";
+        }
         if (selfCertifyOnly) {
             String proxyId = getGlobalVariableService().getUserSession().getPrincipalId();
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
-            	try {            		
-                  	getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId);
+            	try {
+                  	getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId,actionType);
       			} catch (SQLException e) {
       				LOGGER.info(Level.ALL, e);
       				LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
