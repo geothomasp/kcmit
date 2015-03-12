@@ -4,6 +4,36 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+	<bean id="Kc-Header-DefaultMenu" parent="Kc-Header-DefaultMenu-parentBean" />
+	<bean id="Kc-Header-DefaultMenu-parentBean" abstract="true"
+		parent="Uif-DropdownToggleMenu" p:toggleCaretClass="">
+		<property name="wrapperCssClasses">
+			<list merge="true">
+				<value>kc-navMenuDropdown</value>
+			</list>
+		</property>
+		<property name="menuGroup">
+			<bean parent="Uif-AppMenuGroup">
+				<property name="layoutManager.defaultItemSizes.smSize"
+					value="4" />
+				<property name="layoutManager.defaultItemSizes.mdSize"
+					value="3" />
+				<property name="items">
+					<list>
+						<bean parent="Kc-Header-Unit-Group1" p:order="10" />
+						<bean parent="Kc-Header-Unit-Group2" p:order="20" />
+						<bean parent="Kc-Header-Unit-Group3" p:order="30" />
+						<bean parent="Kc-Header-Unit-Group4" p:order="40" />
+						<bean parent="Kc-Header-Unit-Group5" p:order="50" />
+						<bean parent="Kc-Header-Unit-Group6" p:order="60" />
+						<bean parent="Kc-Header-Unit-Group7" p:order="70" />
+						<bean parent="Kc-Header-Unit-Group8" p:order="80" />
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
 	<bean id="Kc-Header-Unit-Group7" parent="MITKc-Header-Unit-Group7-parentBean" />
 	<bean id="MITKc-Header-Unit-Group7-parentBean" parent="Kc-Header-Unit-Group7-parentBean"
 		p:headerText="Business Rules">
@@ -107,4 +137,21 @@
 			</list>
 		</property>
 	</bean>
+
+	<bean id="Kc-Header-Unit-Group8" parent="Kc-Header-Unit-Group8-parentBean" />
+	<bean id="Kc-Header-Unit-Group8-parentBean" abstract="true"
+		parent="Uif-MenuList" p:headerText="Sap Feeds">
+		<property name="items">
+			<list>
+
+				<bean parent="Uif-MenuAction" p:actionLabel="Sap Feed Maintenance"
+					p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kc-pd-krad"
+					p:actionUrl.viewId="SapFeed-DefaultView"
+					p:actionUrl.controllerMapping="/sapFeedsCommon"
+					p:actionUrl.methodToCall="retrieveCollectionPage" p:order="10" />
+
+			</list>
+		</property>
+	</bean>
+
 </beans>

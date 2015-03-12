@@ -176,6 +176,12 @@
 			<!-- 	<value>classpath:edu/mit/kc/datadictionary/MitProposalDetailsPage.xml</value> -->
 				<value>classpath:edu/mit/kc/datadictionary/MitNarrativeAttachment.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalSubmitPage.xml</value>
+				
+				<!-- Sap Feeds -->
+				 <value>classpath:edu/mit/kc/sapfeed/SapFeedInitiateView.xml</value>
+                 <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateMasterFeedPage.xml</value>
+                 <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateRolodexFeedPage.xml</value>
+                 <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateSponsorFeedPage.xml</value>
 			</list>
 		</property>
         <property name="databaseRepositoryFilePaths">
@@ -281,6 +287,37 @@
        <property name="dbFunctionExecuteService" ref="dbFunctionExecuteService" />
        <property name="parameterService" ref="parameterService" />
            
+    </bean>
+    
+     <bean id="dbFunctionService" class = "org.kuali.coeus.propdev.impl.sapfeed.DbFunctionServiceImpl">       
+    </bean>
+    
+    <bean id="sapFeedService" class = "org.kuali.coeus.propdev.impl.sapfeed.SapFeedServiceImpl"> 
+       <property name="dbFunctionService" ref="dbFunctionService" />
+      </bean>
+      
+      <bean id="kcCommonControllerService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="kcCommonControllerService" />
+    </bean>
+    
+     <bean id="transactionalDocumentControllerService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="transactionalDocumentControllerService" />
+    </bean>
+    
+    <bean id="collectionControllerService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="collectionControllerService" />
+    </bean>
+    
+    <bean id="modelAndViewService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="modelAndViewService" />
+    </bean>
+    
+     <bean id="navigationControllerService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="navigationControllerService" />
+    </bean>
+    
+     <bean id="globalVariableService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="globalVariableService" />
     </bean>
     
     <bean id="dataObjectService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
