@@ -173,7 +173,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardBudgetDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentType.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentTypeMaintenanceDocument.xml</value>
-				<value>classpath:edu/mit/kc/datadictionary/MitProposalDetailsPage.xml</value>
+			<!-- 	<value>classpath:edu/mit/kc/datadictionary/MitProposalDetailsPage.xml</value> -->
 				<value>classpath:edu/mit/kc/datadictionary/MitNarrativeAttachment.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalSubmitPage.xml</value>
 			</list>
