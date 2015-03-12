@@ -490,6 +490,7 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
         }
         if(institutionalProposal.getAwardType()!=null && developmentProposal.getAnticipatedAwardType()!=null){
         institutionalProposal.getAwardType().setDescription(developmentProposal.getAnticipatedAwardType().getDescription());
+        institutionalProposal.setAwardType(developmentProposal.getAnticipatedAwardType());
         }    
     }
     
