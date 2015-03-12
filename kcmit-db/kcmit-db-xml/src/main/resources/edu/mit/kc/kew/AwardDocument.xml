@@ -66,25 +66,6 @@
 				<routePath>
 					<start name="Initiated" nextNode="PeopleFlows"/>
 					<requests name="PeopleFlows" />
-<!-- 					<start name="Initiated" nextNode="hasSync"/>
-					<split name="hasSync">
-						<branch name="True">
-							<requests name="SyncValidationApproval" nextNode="AwardStandardApprovalInSync"/>
-							<requests name="AwardStandardApprovalInSync" nextNode="ApplySync"/>
-							<requests name="ApplySync" nextNode="SyncFYIs"/>
-							<requests name="SyncFYIs" nextNode="JoinSync"/>
-						</branch>
-						<branch name="False">
-							<split name="isSyncChild" nextNode="JoinSync">
-								<branch name="False">
-									<requests name="AwardStandardApproval" nextNode="JoinSyncChild"/>
-								</branch>
-							</split>
-							<join name="JoinSyncChild"/>
-						</branch>
-					</split>
-					<join name="JoinSync"/>
- -->					
 				</routePath>
 			</routePaths>
 			<routeNodes>
@@ -97,40 +78,6 @@
                     <activationType>R</activationType>
                     <rulesEngine executorClass="org.kuali.kra.award.service.impl.AwardRulesEngineExecutorImpl"/>
                 </requests>
-<!-- 				<split name="hasSync">
-       			   <type>org.kuali.coeus.sys.framework.workflow.SimpleBooleanSplitNode</type>
-        		</split>
-				<split name="isSyncChild">
-       			   <type>org.kuali.coeus.sys.framework.workflow.SimpleBooleanSplitNode</type>
-        		</split>
-				<role name="ApplySync">
-					<activationType>S</activationType>
-					<qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
-					<mandatoryRoute>false</mandatoryRoute>
-				</role>
-				<role name="SyncFYIs">
-					<activationType>S</activationType>
-					<qualifierResolverClass>org.kuali.rice.kew.role.NullQualifierResolver</qualifierResolverClass>
-					<mandatoryRoute>false</mandatoryRoute>				
-				</role>
-				<join name="JoinSync"/>
-				<join name="JoinSyncChild"/>
-				<requests name="SyncValidationApproval">
-					<activationType>S</activationType>
-					<ruleTemplate>RoutedByUserRoleTemplate</ruleTemplate>
-					<mandatoryRoute>true</mandatoryRoute>
-				</requests>
-				<requests name="AwardStandardApproval">
-					<activationType>S</activationType>
-					<ruleTemplate>AwardStandardApproval</ruleTemplate>
-					<mandatoryRoute>false</mandatoryRoute>
-				</requests>
-				<requests name="AwardStandardApprovalInSync">
-					<activationType>S</activationType>
-					<ruleTemplate>AwardStandardApproval</ruleTemplate>
-					<mandatoryRoute>false</mandatoryRoute>
-				</requests>				
- -->
  			</routeNodes>
 		</documentType>
 	</documentTypes>
