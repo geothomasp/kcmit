@@ -660,14 +660,12 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
      */
     public List<AwardPerson> getMultiplePis() {
         List<AwardPerson> multiplePis = new ArrayList<AwardPerson>();
-        if (isSponsorNihMultiplePi()) {
             for (AwardPerson person : projectPersons) {
                 if (person.isMultiplePi()) {
                     multiplePis.add(person);
                 }
             }
             Collections.sort(multiplePis);
-        }
         return multiplePis;
     }
 
