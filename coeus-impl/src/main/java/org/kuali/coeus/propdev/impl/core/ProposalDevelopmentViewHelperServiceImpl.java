@@ -26,6 +26,7 @@ import java.util.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.budget.framework.calculator.BudgetCalculationService;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.custom.DocumentCustomData;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
@@ -66,6 +67,7 @@ import org.kuali.coeus.propdev.impl.abstrct.ProposalAbstract;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.PermissionConstants;
 import org.kuali.kra.krms.KcKrmsConstants.ProposalDevelopment;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.location.AddProposalCongressionalDistrictEvent;
@@ -175,6 +177,10 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     @Autowired
     @Qualifier("budgetCalculationService")
     private BudgetCalculationService budgetCalculationService;
+    
+    @Autowired
+    @Qualifier("kcAuthorizationService")
+    private KcAuthorizationService kraAuthorizationService;
 
     @Override
     public void processBeforeAddLine(ViewModel model, Object addLine, String collectionId, final String collectionPath) {
@@ -960,7 +966,17 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
    	            }
    	        }
    	        return false;
-   	    } 	 
+   	    } 	
+    public boolean isCertQuestView(ProposalPerson proposalPerson){
+    	 String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
+    	 ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) proposalPerson.getDevelopmentProposal().getDocument();
+    	  boolean canViewProposal = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.VIEW_CERTIFICATION);
+      	        if(canViewProposal){
+      	        	return true;
+      	        }else{
+      	        	return false;
+      	        }
+      	    } 
    	
     public String getWizardMaxResults() {
         return getParameterService().getParameterValueAsString(KRADConstants.KRAD_NAMESPACE,
