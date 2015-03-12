@@ -24,6 +24,7 @@ import org.kuali.coeus.common.notification.impl.bo.KcNotification;
 import org.kuali.coeus.common.notification.impl.bo.NotificationTypeRecipient;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
 import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
+import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.framework.compliance.core.SaveDocumentSpecialReviewEvent;
 import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants;
@@ -559,7 +560,8 @@ public abstract class ProposalDevelopmentControllerBase {
                         person.getQuestionnaireHelper().populateAnswers();
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
                         allCertificationAreNowComplete &= isComplete;
-                        checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete,wasComplete);
+                        boolean hasCOIquestions = checkForCOIquestions(answerHeader);
+                        checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete,wasComplete,hasCOIquestions);
                     }
                 }
             }
@@ -580,7 +582,27 @@ public abstract class ProposalDevelopmentControllerBase {
         }
 	}
 
-    public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean wasComplete) {
+	private boolean checkForCOIquestions(AnswerHeader answerHeader ){
+
+		boolean hasCOIquestions = false;
+		String coiCertificationIds = getParameterService().getParameterValueAsString("KC-GEN", "All", "PROP_PERSON_COI_CERTIFY_QID");
+		List<String> coiCertificationIdList = new ArrayList<String>();
+		if(coiCertificationIds!=null){
+			String[] questionIds = coiCertificationIds.split(",");
+			for (String questionid : questionIds){
+				coiCertificationIdList.add(questionid);
+			}
+		}
+		for(Answer answer :answerHeader.getAnswers()){
+			if(coiCertificationIdList.contains(answer.getQuestionId().toString())){
+				hasCOIquestions = true;
+				break;
+			}
+		}
+		return hasCOIquestions;
+	}
+
+    public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean wasComplete,boolean hasCOIquestions) {
         boolean selfCertifyOnly = getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,Constants.PARAMETER_COMPONENT_DOCUMENT,ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
         String actionType = "I";
         if(wasComplete){
@@ -589,12 +611,14 @@ public abstract class ProposalDevelopmentControllerBase {
         if (selfCertifyOnly) {
             String proxyId = getGlobalVariableService().getUserSession().getPrincipalId();
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
-            	try {
-                  	getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId,actionType);
-      			} catch (SQLException e) {
-      				LOGGER.info(Level.ALL, e);
-      				LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
-      			}
+            	if(hasCOIquestions){
+            		try {
+            			getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId,actionType);
+            		} catch (SQLException e) {
+            			LOGGER.info(Level.ALL, e);
+            			LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
+            		}
+            	}
                 ProposalDevelopmentNotificationContext context = new ProposalDevelopmentNotificationContext(developmentProposal,"106","Proposal Person Certification Completed");
                 ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(developmentProposal);
                 KcNotification notification = getKcNotificationService().createNotificationObject(context);
