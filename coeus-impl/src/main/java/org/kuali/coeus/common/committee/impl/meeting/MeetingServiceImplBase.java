@@ -377,7 +377,23 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         }
         return isActiveMember;
     }
-
+    
+    protected boolean isActiveMemberAbsent(CommitteeScheduleAttendanceBase committeeScheduleAttendance,
+    		CommitteeMembershipBase committeeMembership, Date scheduleDate) {
+        boolean isActiveMember = false;   
+            if ((committeeScheduleAttendance.getNonEmployeeFlag() && committeeMembership.getRolodexId() != null && committeeScheduleAttendance
+                    .getPersonId().equals(committeeMembership.getRolodexId().toString()))
+                    || (!committeeScheduleAttendance.getNonEmployeeFlag() && committeeScheduleAttendance.getPersonId()!=null && committeeScheduleAttendance.getPersonId().equals(
+                            committeeMembership.getPersonId()))) {
+                if (!committeeMembership.getTermStartDate().after(scheduleDate)
+                        && !committeeMembership.getTermEndDate().before(scheduleDate)) {
+                    isActiveMember = isActiveMembership(committeeMembership, scheduleDate);
+                }
+            }
+        
+        return isActiveMember;
+    }
+    
 
     @Override
     public void presentOther(MeetingHelperBase meetingHelper, int itemNumber) {
@@ -760,7 +776,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 }
                 else {
                     attendance.setPersonId(committeeMembership.getPersonId());
-                }if(isActiveMember(attendance, committeeMemberships, commSchedule
+                }if(isActiveMemberAbsent(attendance, committeeMembership, commSchedule
                         .getScheduledDate())){
                 attendance.setPersonName(committeeMembership.getPersonName());
                 attendance.setAlternateFlag(false);
