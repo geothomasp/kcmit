@@ -587,7 +587,7 @@
     <bean id="PropDev-PersonnelPage-Questionnaire" parent="PropDev-PersonnelPage-Questionnaire-parentBean" />
     <bean id="PropDev-PersonnelPage-Questionnaire-parentBean"
           abstract="true" parent="Uif-CssGridSection" p:id="personnelQuestionnaire"
-          p:render="@{#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #ViewHelper.canCertifyRequired(#line)}"
+          p:render="@{#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #ViewHelper.canCertifyRequired(#line) or #ViewHelper.isCertQuestView(#line)}"
           p:refreshWhenChangedPropertyNames="document.developmentProposal.proposalPersons[@{#index}].proposalPersonRoleId"
           p:progressiveRenderAndRefresh="true"
           p:headerText="@{(#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #line.questionnaireHelper.answerHeaders[0].label != null) ? #line.questionnaireHelper.answerHeaders[0].label : 'None'}">
@@ -676,6 +676,8 @@
 						<bean parent="Uif-CheckboxControl" />
 					</property>
 				</bean>
+				<bean parent="Uif-InputField" p:propertyName="updateUser" p:order="10"/>
+				<bean parent="Uif-InputField" p:propertyName="createTimestamp" p:order="10"/>
             </list>
         </property>  
           	<property name="footer">
