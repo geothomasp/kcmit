@@ -17,7 +17,11 @@
 
 <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
 
-  	<kul:page lookup="true" showDocumentInfo="false"
+ <%--  	<kul:page lookup="true" showDocumentInfo="false"
+	headerMenuBar="${headerMenu}"
+	headerTitle="Project Documents" docTitle="test docs" transactionalDocument="false"
+	htmlFormAction="awardSharedDoc" showTabButtons="true" headerTabActive="true" > --%>
+	 	<kul:page lookup="true" showDocumentInfo="false"
 	headerMenuBar="${headerMenu}"
 	headerTitle="Project Documents" docTitle="" transactionalDocument="false"
 	htmlFormAction="awardSharedDoc" >
@@ -26,6 +30,11 @@
 <kra-shared:sharedDoc helpParameterNamespace="KC-AWARD" helpParameterDetailType="Document" helpParameterName="awardMedusaHelpUrl" />
 </kul:tabTop>
 <kul:panelFooter />
+
+<%-- <kra-shared:keyPersonMaintenance/>
+<kul:panelFooter />
+
+<kul:panelFooter /> --%>
 <div id="globalbuttons" class="globalbuttons">	    
 	    <html:image src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_close.gif" styleClass="globalbuttons" property="methodToCall.close" title="close" alt="close" onclick="excludeSubmitRestriction=true"/>
 	    

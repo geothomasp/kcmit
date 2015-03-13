@@ -7,17 +7,19 @@
         <form-bean name="KualiForm" type="org.kuali.rice.kns.web.struts.form.KualiForm" />       
     	<!-- End required KNS forms -->
 <!-- Rice content End -->	
-<form-bean name="SharedDocForm" type="edu.mit.kc.award.SharedDocForm" /> 	
+<!--  <form-bean name="SharedDocForm" type="edu.mit.kc.award.SharedDocForm" /> --> <!-- comment this enable other -->
+<form-bean name="SharedDocForm" type="org.kuali.kra.award.AwardForm" />  
     </form-beans>
     <action-mappings>  
           <action path="/sharedDoc*" name="SharedDocForm" input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"  scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
           <forward name="basic" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
+       <!--        <forward name="keyperson" path="/WEB-INF/jsp/award/KeyPersonMaintenanceDoc.jsp" />   enable this-->
           </action> 
-    </action-mappings>
-<!--       <action path="/sharedDoc*" name="AwardForm" input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"  scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
+  
+      <action path="/sharedDoc*" name="AwardForm" input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"  scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
           <forward name="basic" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
           </action> 
-    </action-mappings> -->
+    </action-mappings> 
 
 
     <controller processorClass="org.kuali.coeus.sys.framework.controller.interceptor.KcRequestProcessor" />

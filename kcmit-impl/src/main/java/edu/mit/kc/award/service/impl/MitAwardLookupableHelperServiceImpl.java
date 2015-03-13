@@ -15,33 +15,25 @@
  */
 package edu.mit.kc.award.service.impl;
 
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
-import org.kuali.coeus.common.framework.rolodex.Rolodex;
-import org.kuali.coeus.common.framework.unit.Unit;
 import org.kuali.kra.award.contacts.AwardPerson;
-import org.kuali.kra.award.contacts.AwardUnitContact;
+import org.kuali.kra.award.dao.AwardLookupDao;
 import org.kuali.kra.award.document.AwardDocument;
-import org.kuali.kra.award.document.authorization.AwardDocumentAuthorizer;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.lookup.AwardLookupableHelperServiceImpl;
-import org.kuali.kra.award.dao.AwardLookupDao;
-import org.kuali.kra.lookup.KraLookupableHelperServiceImpl;
+import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;
-import org.kuali.rice.kns.web.ui.Field;
-import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.lookup.CollectionIncomplete;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.UrlFactory;
-
-import java.util.*;
 
 /**
  * This class provides Award lookup support
@@ -69,7 +61,9 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
         List<HtmlData> htmlDataList = super.getCustomActionUrls(businessObject, pkNames);
        AwardDocument document = ((Award) businessObject).getAwardDocument();   
        htmlDataList.add(getSharedDocLink((Award) businessObject, false));
-        if(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "Maintain Keyperson")){// -- if user has kp role then only display the link
+       boolean  isPI = isLoggedInUserPI((Award) businessObject);
+       boolean  isAwardActive = isAwardActive((Award) businessObject);
+       if((KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "Maintain Keyperson") || isPI) && isAwardActive){
             htmlDataList.add(getKeyPersonLink((Award) businessObject, false));}
         return htmlDataList;
     }
@@ -107,5 +101,27 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
     protected String getHtmlActionShared() {
         return "sharedDoc.do";
     }
+    protected String getHtmlActionKPMAintenance() {
+        return "keyPersonMaintenance.do";
+    }
+    public boolean isLoggedInUserPI(Award award){
+    	 String principalId=GlobalVariables.getUserSession().getPrincipalId();    	
+    	       for (AwardPerson person : award.getInvestigators()) {
+    	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+    	                    && StringUtils.equals(principalId, person.getPersonId())) {
+    	                return true;
+    	            }
+    	        }
+    	        return false;
+    	    } 	
+   public boolean isAwardActive(Award award) {
+       String activeParm = getParameterService().getParameterValueAsString(AwardDocument.class, KeyConstants.AWARD_ACTIVE_STATUS_CODES_PARM);
+       for (String activeCode : activeParm.split(",")) {
+           if (StringUtils.equals(award.getAwardStatus().getStatusCode(), activeCode)) {
+               return true;
+           }
+       }
+       return false;
+   }
 
 }
