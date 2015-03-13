@@ -37,6 +37,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.exception.DocumentAuthorizationException;
 import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.DocumentDictionaryService;
@@ -271,6 +272,7 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
            }
 
             ProposalDevelopmentDocumentForm propDevForm = (ProposalDevelopmentDocumentForm) form;
+           try {
             ModelAndView modelAndView = getTransactionalDocumentControllerService().docHandler(form);
             propDevForm.initialize();
             propDevForm.getCustomDataHelper().prepareCustomData();
@@ -311,6 +313,9 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
             }
 
             return modelAndView;
+           }catch (AuthorizationException e) {
+               return getModelAndViewService().getMessageView(form, "Authorization Exception Report", "Error Message: [color=red]"+ e.getMessage() + "[/color]");
+           }
        }
    }
 
