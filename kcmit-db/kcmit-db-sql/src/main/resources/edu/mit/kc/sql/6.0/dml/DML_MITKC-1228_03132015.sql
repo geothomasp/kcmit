@@ -19,7 +19,7 @@ begin
     'PCARRY',
     'Carryforward adjustment',
     19,--Other Operating Expenses
-    'Y',
+    'N',
     sysdate,
     'admin',
     1,
@@ -47,7 +47,7 @@ begin
     'PCLOSE',
     'Closeout adjustment',
     19,----Other Operating Expenses
-    'Y',
+    'N',
     sysdate,
     'admin',
     1,
@@ -75,7 +75,7 @@ begin
     'PINCRT',
     'Increment adjustment',
     19,--Other Operating Expenses
-    'Y',
+    'N',
     sysdate,
     'admin',
     1,
