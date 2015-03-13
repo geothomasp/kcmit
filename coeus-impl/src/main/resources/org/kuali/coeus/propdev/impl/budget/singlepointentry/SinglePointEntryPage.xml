@@ -13,14 +13,11 @@
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="PropBudget-SinglePointEntryPage" parent="PropBudget-SinglePointEntryPage-parentBean" />
-	<bean id="PropBudget-SinglePointEntryPage-parentBean" parent="PropBudget-Page" ><!-- p:fieldBindingObjectPath="budget" -->
+	<bean id="PropBudget-SinglePointEntryPage-parentBean" parent="PropBudget-Page" >
 		<property name="items">
 			<list>
-					<ref bean="PropBudget-PeriodsPageSPE-CollectionGroup" /><!--Header Section --> 
-				<ref bean="PropBudget-SinglePointEntry-TabGroup" /><!--add line collection -->
-				<!-- <bean id="PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog" parent="PropBudget-EditSinglePointEntry-Section"
-            		p:retrieveViaAjax="true"/> -->
-            		<!-- Details section -->            		
+					<ref bean="PropBudget-PeriodsPageSPE-CollectionGroup" />
+					<ref bean="PropBudget-SinglePointEntry-TabGroup" />
             		<bean id="PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog" parent="PropBudget-EditNonPersonnelPeriod-Section"
             		p:retrieveViaAjax="true"/>
             	<bean id="PropBudget-NonPersonnelCostsPage-EditParticipantSupport-Dialog" parent="PropBudget-EditNonPersonnelPeriod-ParticipantSupportSection"
@@ -165,11 +162,11 @@
 
 
 
-	<!-- change this to AddLineItem -->
+	
 	<bean id="PropBudget-SinglePointEntryPage-AssignNonPersonnel"
 		parent="PropBudget-SinglePointEntryPage-AssignNonPersonnel-parentBean" />
 	<bean id="PropBudget-SinglePointEntryPage-AssignNonPersonnel-parentBean"
-		abstract="true" parent="Uif-SecondaryActionButton-Mini" p:actionLabel="Add 45Line-Item..."
+		abstract="true" parent="Uif-SecondaryActionButton-Mini" p:actionLabel="Add Line-Item..."
 		p:refreshId="PropBudget-SinglePointEntryPage-AddNonPersonnel"
 		p:methodToCall="assignSEPLineItemToPeriod" p:render="@{!#parent.readOnly}">
 		<property name="additionalSubmitData">
@@ -404,7 +401,6 @@
 			</bean>
 		</property>
 	</bean>
-	<!-- Details tab 1 ends -->
 		<!-- Details ends -->
 		
 		
