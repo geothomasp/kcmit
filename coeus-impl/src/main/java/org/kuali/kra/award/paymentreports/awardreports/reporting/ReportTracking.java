@@ -118,7 +118,7 @@ public class ReportTracking extends KcPersistableBusinessObjectBase implements C
 
     private transient BusinessObjectService businessObjectService;
     private boolean multiEditSelected;
-
+    private String accountNumber;
 
     public Long getAwardReportTermId() {
         return awardReportTermId;
@@ -529,4 +529,13 @@ public class ReportTracking extends KcPersistableBusinessObjectBase implements C
     public void setAward(Award award) {
         this.award = award;
     }
+    
+//    public String getAccountNumber() {
+//  		return accountNumber;
+//  	}
+//
+//  	public void setAccountNumber(String accountNumber) {
+//  		this.accountNumber = accountNumber;
+//  	}
+
 }
