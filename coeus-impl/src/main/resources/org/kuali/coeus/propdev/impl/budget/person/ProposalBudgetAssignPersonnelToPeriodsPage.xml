@@ -275,8 +275,10 @@
 			 <bean parent="Uif-InputField" p:propertyName="budgetPerson.personName"
                     p:label="Person" p:order="5" >
                       <property name="quickfinder">
-                <bean parent="Uif-QuickFinderByScript" p:dataObjectClassName="org.kuali.coeus.common.framework.person.KcPerson"
+               
+                <bean parent="Uif-QuickFinderByScript" p:dataObjectClassName="org.kuali.coeus.common.budget.framework.personnel.BudgetPerson"
                       p:fieldConversions="fullName:budgetPerson.personName"/>
+          
             </property>
             </bean>		
 				<bean parent="Uif-DataField" p:propertyName="budgetPerson.role"
