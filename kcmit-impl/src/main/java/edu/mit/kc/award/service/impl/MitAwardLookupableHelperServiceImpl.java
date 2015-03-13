@@ -91,7 +91,7 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
     }
     private AnchorHtmlData getKeyPersonLink(Award award, Boolean readOnly) {
         AnchorHtmlData htmlData = new AnchorHtmlData();
-           htmlData.setDisplayText("KeyPerson");
+           htmlData.setDisplayText("Key Person Maintenance");
            Properties parameters = new Properties();
            parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "contact");
            parameters.put(KRADConstants.PARAMETER_COMMAND, KewApiConstants.DOCSEARCH_COMMAND);
