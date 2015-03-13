@@ -33,9 +33,6 @@ import org.kuali.coeus.propdev.impl.attachment.NarrativeAttachment;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
-import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
-import org.kuali.kra.award.contacts.AwardPerson;
-import org.kuali.kra.award.contacts.AwardProjectPersonnelBean;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
@@ -53,7 +50,7 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
 
-//import edu.mit.kc.award.SharedDocForm;
+import edu.mit.kc.award.SharedDocForm;
 import edu.mit.kc.bo.SharedDocumentType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,12 +73,12 @@ public class AwardSharedDocAction extends AwardAction {
 	        return medusaService;
 	    }
 	 public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-/*		 if(form.getClass().getName().equals("org.kuali.kra.award.AwardForm")){ 
+		 if(form.getClass().getName().equals("org.kuali.kra.award.AwardForm")){ 
     		 AwardForm awardForm = (AwardForm) form; 
     		 ActionForward actionForward = super.execute(mapping, form, request, response);
     		 return actionForward;
-    	 }else{*/
-		 AwardForm sharedDocForm=(AwardForm)form;
+    	 }else{
+		 SharedDocForm sharedDocForm=(SharedDocForm)form;
 		 AwardDocument document=sharedDocForm.getAwardDocument();
 		 ActionForward actionForward = super.execute(mapping, form, request, response); 
 		 String currentUser = GlobalVariables.getUserSession().getPrincipalId();
@@ -109,10 +106,9 @@ public class AwardSharedDocAction extends AwardAction {
 									 sharedDocForm.setPropProjectDocView(true);
 			 }}	
 		      
-		 sharedDocForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
+		
 	 return actionForward;
-	// }
-		 }
+	 }}
     public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
      InstitutionalProposalAttachments attachment =null;
@@ -261,16 +257,4 @@ public class AwardSharedDocAction extends AwardAction {
 	  private PermissionService getPermissionService() {
 	        return KimApiServiceLocator.getPermissionService();
 	    }  
-	   //For Project Person Confirm Entry
-	    public ActionForward confirmProjectPerson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-	           throws Exception {    
-	    	return new AwardContactsAction().confirmProjectPerson(mapping, form, request, response);
-	          /*  AwardPerson awardPerson = getProjectPersonnelBean(form).getProjectPersonnel().get(getLineToEdit(request));
-	            getProjectPersonnelBean(form).confirmProjectPeersonEntry(getLineToEdit(request));
-	            return this.confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, awardPerson, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));
-	       */
-	        }
-	    private AwardProjectPersonnelBean getProjectPersonnelBean(ActionForm form) {
-	        return ((AwardForm) form).getProjectPersonnelBean();
-	    }
  }

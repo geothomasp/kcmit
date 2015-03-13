@@ -202,46 +202,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     private boolean kpMaintenanceRole = false;
     private boolean alertMessage = false;   
     
-    //share doc form values
-    private boolean awardProjectDocView;
-    public boolean isAwardProjectDocView() {
-		return awardProjectDocView;
-	}
-
-	public void setAwardProjectDocView(boolean awardProjectDocView) {
-		this.awardProjectDocView = awardProjectDocView;
-	}
-
-	public boolean isIpProjectDocView() {
-		return ipProjectDocView;
-	}
-
-	public void setIpProjectDocView(boolean ipProjectDocView) {
-		this.ipProjectDocView = ipProjectDocView;
-	}
-
-	public boolean isPropProjectDocView() {
-		return propProjectDocView;
-	}
-
-	public void setPropProjectDocView(boolean propProjectDocView) {
-		this.propProjectDocView = propProjectDocView;
-	}
-
-	public boolean isSubAwardProjectDocView() {
-		return subAwardProjectDocView;
-	}
-
-	public void setSubAwardProjectDocView(boolean subAwardProjectDocView) {
-		this.subAwardProjectDocView = subAwardProjectDocView;
-	}
-
-	private boolean ipProjectDocView;
-    private boolean propProjectDocView;
-    private boolean subAwardProjectDocView;
     
-    
-    //sh ends
     public boolean isAlertMessage() {
 		return alertMessage;
 	}

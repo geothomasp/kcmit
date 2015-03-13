@@ -71,7 +71,6 @@ import org.kuali.kra.award.awardhierarchy.sync.service.AwardSyncCreationService;
 import org.kuali.kra.award.awardhierarchy.sync.service.AwardSyncService;
 import org.kuali.kra.award.budget.AwardBudgetService;
 import org.kuali.kra.award.contacts.AwardPerson;
-import org.kuali.kra.award.contacts.AwardProjectPersonnelBean;
 import org.kuali.kra.award.contacts.AwardProjectPersonsSaveRule;
 import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.document.AwardDocument;
@@ -134,7 +133,7 @@ import org.kuali.rice.krad.service.PessimisticLockService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
-//import edu.mit.kc.award.SharedDocForm;
+import edu.mit.kc.award.SharedDocForm;
 import edu.mit.kc.infrastructure.KcMitConstants;
 
 /**
@@ -256,7 +255,7 @@ public class AwardAction extends BudgetParentActionBase {
     }
     
 
-    private void handlePlaceHolderDocumentDoc(AwardForm form, AwardDocument awardDocument) {
+    private void handlePlaceHolderDocumentDoc(SharedDocForm form, AwardDocument awardDocument) {
         if(awardDocument.isPlaceHolderDocument()) {
             Long awardId = form.getPlaceHolderAwardId();
             //If it is a placeholder document, we want to initialize it with the award that the user is viewing
@@ -281,12 +280,12 @@ public class AwardAction extends BudgetParentActionBase {
     }
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {       
-  /*  	SharedDocForm sharedDocForm = new SharedDocForm();
+    	SharedDocForm sharedDocForm = new SharedDocForm();
     	if(form.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
     	    sharedDocForm = (SharedDocForm)form;    	   
         ActionForward actionForward = super.execute(mapping, form, request, response);
         return actionForward;
-        }    else{*/
+        }    else{
         	form.getClass();
         	AwardForm awardForm = (AwardForm)form;
             boolean awardNewStatus=awardForm.isStatusHold();  
@@ -305,7 +304,7 @@ public class AwardAction extends BudgetParentActionBase {
         	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
         }*/
        return actionForward;
-      //  }     
+        }     
 
        
     }   
@@ -1369,7 +1368,7 @@ public class AwardAction extends BudgetParentActionBase {
         handlePlaceHolderDocument(awardForm, retrievedDocument);        
     }
     
-    protected void loadDocumentInFormDoc(HttpServletRequest request, AwardForm sharedForm)
+    protected void loadDocumentInFormDoc(HttpServletRequest request, SharedDocForm sharedForm)
     	    throws WorkflowException {
     	        String docIdRequestParameter = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
     	        AwardDocument retrievedDocument = (AwardDocument) KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(docIdRequestParameter);
@@ -1860,13 +1859,13 @@ public class AwardAction extends BudgetParentActionBase {
     @Override
     protected void populateAuthorizationFields(KualiDocumentFormBase formBase) {
     	AwardDocument awardDocument =null;
-    /*	if(formBase.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
+    	if(formBase.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
     		 SharedDocForm awardForm = (SharedDocForm) formBase; 
     		 awardDocument = awardForm.getAwardDocument();
-    	 }else{*/
+    	 }else{
     		 AwardForm awardForm = (AwardForm) formBase;
     		 awardDocument = awardForm.getAwardDocument();
-    	// }       
+    	 }       
         super.populateAuthorizationFields(formBase);       
         Award award = awardDocument.getAward();
         Map documentActions = formBase.getDocumentActions();
@@ -1984,21 +1983,14 @@ public class AwardAction extends BudgetParentActionBase {
         return forward;
     } 
     
-    /**
-     * This will redirect to the page when clicking on the kp link from search results
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
-     */
     public ActionForward contact(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm) form;
         if (awardForm.getDocument().getDocumentNumber() == null) {
+            //if we are entering this from the search results
             loadDocumentInForm(request, awardForm);
         }
-        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);//MAPPING_AWARD_CONTACTS_PAGE
+
+        return mapping.findForward(Constants.MAPPING_AWARD_CONTACTS_PAGE);
     }
     
    
@@ -2013,8 +2005,8 @@ public class AwardAction extends BudgetParentActionBase {
     */
    public ActionForward sharedDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 	   InstitutionalProposal instProp=null;	   
-	 //SharedDocForm sharedDocForm=(SharedDocForm)form;
-	 AwardForm sharedDocForm = (AwardForm) form;
+	 SharedDocForm sharedDocForm=(SharedDocForm)form;
+	//   AwardForm awardForm = (AwardForm) form;
       
        
       if (sharedDocForm.getDocument().getDocumentNumber() == null) {
@@ -2076,16 +2068,5 @@ public class AwardAction extends BudgetParentActionBase {
          
          awardForm.getAwardDocument().getAward().setAwardSponsorTerms(awardSponsorTermsSortedList);
        
-    }
-    //For Project Person Confirm Entry
-    public ActionForward confirmProjectPerson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {          
-            AwardPerson awardPerson = getProjectPersonnelBean(form).getProjectPersonnel().get(getLineToEdit(request));
-            getProjectPersonnelBean(form).confirmProjectPeersonEntry(getLineToEdit(request));
-            return this.confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, awardPerson, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));
-       
-        }
-    private AwardProjectPersonnelBean getProjectPersonnelBean(ActionForm form) {
-        return ((AwardForm) form).getProjectPersonnelBean();
     }
 }
