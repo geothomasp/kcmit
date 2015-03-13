@@ -82,6 +82,15 @@
 				     </list>
 			       </property>
 		        </bean>
+		        <bean parent="RelationshipDefinition">
+				    <property name="objectAttributeName" value="ospAdministrator" />
+				    <property name="primitiveAttributes">
+				    	<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="lookupOspAdministratorName"
+							      p:targetName="fullName" />
+					    </list>
+				    </property>
+		        </bean>
 	        </list>
         </property>
   </bean> 
@@ -255,7 +264,7 @@
 			<bean p:attributeName="projectPersons.fullName" p:noDirectInquiry="true" parent="FieldDefinition" />
 		    <bean p:attributeName="unitNumber" parent="FieldDefinition" />
 		    <bean p:attributeName="leadUnit.unitName" parent="FieldDefinition" />
-		    <bean p:attributeName="lookupOspAdministratorName" parent="FieldDefinition" />
+		    <bean p:attributeName="lookupOspAdministratorName" p:noDirectInquiry="true" parent="FieldDefinition" />
 		    <bean p:attributeName="awardUnitContacts.awardContactId" parent="FieldDefinition" p:hidden="true" />
 		    <bean p:attributeName="archiveLocation" parent="FieldDefinition" />
 		    <bean p:attributeName="closeoutDate" parent="FieldDefinition" />
