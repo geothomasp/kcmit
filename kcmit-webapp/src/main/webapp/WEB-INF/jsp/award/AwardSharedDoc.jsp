@@ -17,10 +17,15 @@
 
 <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
 
-  	<kul:page lookup="true" showDocumentInfo="false"
-	headerMenuBar="${headerMenu}"
-	headerTitle="Project Documents" docTitle="" transactionalDocument="false"
-	htmlFormAction="awardSharedDoc" >
+	 <kul:documentPage
+	showDocumentInfo="true"
+	htmlFormAction="awardSharedDoc"
+	documentTypeName="AwardDocument"
+	renderMultipart="false"
+	showTabButtons="true"
+	auditCount="0"
+  	headerDispatch="${KualiForm.headerDispatch}"
+  	headerTabActive="basic">
 
 <kul:tabTop tabTitle="Project Documents" defaultOpen="true" tabErrorKey="">
 <kra-shared:sharedDoc helpParameterNamespace="KC-AWARD" helpParameterDetailType="Document" helpParameterName="awardMedusaHelpUrl" />
@@ -33,4 +38,4 @@
 <!-- <kul:documentControls transactionalDocument="true" suppressRoutingControls="true" suppressCancelButton="true" /> -->
 
 	<script type="text/javascript" src="scripts/medusaView.js"></script>	
-	</kul:page> 
+	</kul:documentPage>

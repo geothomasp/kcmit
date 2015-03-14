@@ -93,7 +93,7 @@ import java.util.*;
  * 
  * This class represents the Award Form Struts class.
  */
-public class SharedDocForm extends BudgetVersionFormBase implements MultiLookupForm,Auditable,PermissionsForm {
+public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditable,PermissionsForm {
 
     public static final String SAVE = "save";
     public static final String RELOAD = "reload";
@@ -1194,31 +1194,11 @@ public class SharedDocForm extends BudgetVersionFormBase implements MultiLookupF
         return linkedProposals;
     }
     
+   
+    
     @Override
     public void populateHeaderFields(WorkflowDocument workflowDocument) {
-        // super.populateHeaderFields(workflowDocument);
-
-        AwardDocument awardDocument = getAwardDocument();
         getDocInfo().clear();
-        getDocInfo().add(
-                new HeaderField("DataDictionary.KraAttributeReferenceDummy.attributes.principalInvestigator", awardDocument
-                        .getAward().getPrincipalInvestigatorName()));
-
-        String docIdAndStatus = COLUMN;
-        if (workflowDocument != null) {
-            docIdAndStatus = getAwardDocument().getDocumentNumber() + COLUMN + workflowDocument.getStatus().getLabel();
-        }
-        getDocInfo().add(new HeaderField("DataDictionary.Award.attributes.docIdStatus", docIdAndStatus));
-        String unitName = awardDocument.getAward().getUnitName();
-        if (StringUtils.isNotBlank(unitName) && unitName.length() > NUMBER_30) {
-            unitName = unitName.substring(0, NUMBER_30);
-        }
-        getDocInfo().add(new HeaderField("DataDictionary.AwardPersonUnit.attributes.leadUnit", unitName));
-        getDocInfo().add(new HeaderField("DataDictionary.Award.attributes.awardIdAccount", getAwardIdAccount(awardDocument)));
-
-        setupSponsor(awardDocument);
-        setupLastUpdate(awardDocument);
-
     }
 
     private String getAwardIdAccount(AwardDocument awardDocument) {
@@ -1375,27 +1355,21 @@ public class SharedDocForm extends BudgetVersionFormBase implements MultiLookupF
     
     @Override
     public HeaderNavigation[] getHeaderNavigationTabs() {
-        
-        HeaderNavigation[] navigation = super.getHeaderNavigationTabs();
-        
-        List<HeaderNavigation> resultList = new ArrayList<HeaderNavigation>();
-            //We have to copy the HeaderNavigation elements into a new collection as the 
-            //List returned by DD is it's cached copy of the header navigation list.
-     /*   for (HeaderNavigation nav : navigation) {
-            if (StringUtils.equals(nav.getHeaderTabNavigateTo(),CUSTOM_DATA_NAV_TO)) {
-                boolean displayTab = !this.getCustomDataHelper().getCustomAttributeDocuments().isEmpty();
-                nav.setDisabled(!displayTab);
-                if (displayTab) {
-                    resultList.add(nav);
-                }*/
-       /*     } else {
-                resultList.add(nav);
-            }
-        }*/
-        
-        HeaderNavigation[] result = new HeaderNavigation[resultList.size()];
-        resultList.toArray(result);
-        return result;
+
+    	HeaderNavigation keyPersontab = new HeaderNavigation();
+    	HeaderNavigation sharedDocTab = new HeaderNavigation();
+    	keyPersontab.setHeaderTabNavigateTo("keyperson");
+    	keyPersontab.setHeaderTabDisplayName("Key Person Maintenance");
+    	keyPersontab.setDisabled(false);
+    	sharedDocTab.setHeaderTabNavigateTo("basic");
+    	sharedDocTab.setHeaderTabDisplayName("Shared Doc Form");
+    	sharedDocTab.setDisabled(false);
+    	List<HeaderNavigation> resultList = new ArrayList<HeaderNavigation>();
+    	resultList.add(sharedDocTab);
+    	resultList.add(keyPersontab);
+    	HeaderNavigation[] result = new HeaderNavigation[resultList.size()];
+    	resultList.toArray(result);
+    	return result;
     }
     
     public List<ExtraButton> getExtraActionsButtons() {
