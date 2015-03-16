@@ -175,6 +175,7 @@ public class BudgetExpensesAuditRule extends BudgetAuditRuleBase {
 	}
 	
 	protected boolean verifyPersonnelDetails(Budget budget, BudgetPersonnelDetails budgetPersonnelDetails) {
+        boolean passed = true;
 		boolean salaryEffectiveAfterStartDate = budgetPersonnelDetails.isPersonSalaryEffectiveDateAfterStartDate();
 		boolean personSalaryNotDefined = budgetPersonnelDetails.isPersonBaseSalaryZero();
         if (salaryEffectiveAfterStartDate || personSalaryNotDefined) {
@@ -183,16 +184,16 @@ public class BudgetExpensesAuditRule extends BudgetAuditRuleBase {
             BudgetConstants.BudgetAuditRules budgetProjectPersonnelRule = BudgetConstants.BudgetAuditRules.PROJECT_PERSONNEL;
 			List<AuditError> auditErrors = getAuditErrors(budgetProjectPersonnelRule, " Budget Period "+ budgetPeriod.getBudgetPeriod(), false);
 			String errorKey = budgetProjectPersonnelRule.getPageId();
-			if(salaryEffectiveAfterStartDate) {
+			if (salaryEffectiveAfterStartDate) {
 	             auditErrors.add(new AuditError(errorKey, KeyConstants.WARNING_EFFDT_AFTER_PERIOD_START_DATE,
 	            		 budgetProjectPersonnelRule.getPageId(), new String[]{budgetPerson.getPersonName()}));
-			}else {
+                passed = false;
+			} else {
 	            auditErrors.add(new AuditError(errorKey, KeyConstants.WARNING_BASE_SALARY_ZERO, budgetProjectPersonnelRule.getPageId(), 
 	            		new String[]{budgetPerson.getPersonName()}));
 			}
-	        return false;
         }
-        return true;
+        return passed;
 	}
 	
 	protected BudgetExpenseService getBudgetExpenseService() {
