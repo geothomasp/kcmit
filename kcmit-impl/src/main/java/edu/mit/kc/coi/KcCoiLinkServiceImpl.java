@@ -156,7 +156,7 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 	 * 			    actionType
 	 * @referenced PL/SQL function FN_SYNC_QNR_FROM_PROP_TO_COI
 	 */
-	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId,String actionType){
+	public void updateCOIOnPDCerificationComplete(String developmentProposalNumber,String disclosurePersonId,String loggedInUserId){
 	
 		
 		List<Object> paramValues = new ArrayList<Object>();
@@ -165,8 +165,6 @@ public class KcCoiLinkServiceImpl implements KcCoiLinkService{
 		paramValues.add(0, developmentProposalNumber);
 		paramValues.add(1, disclosurePersonId);
 		paramValues.add(2, loggedInUserId);
-		paramValues.add(3, actionType);		
-		
 		
 		try {
 		 result =  getDbFunctionExecuteService().executeFunction("FN_SYNC_QNR_FROM_PROP_TO_COI"+this.getDBLink(),paramValues);
