@@ -1983,14 +1983,14 @@ public class AwardAction extends BudgetParentActionBase {
         return forward;
     } 
     
-    public ActionForward contact(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AwardForm awardForm = (AwardForm) form;
-        if (awardForm.getDocument().getDocumentNumber() == null) {
-            //if we are entering this from the search results
-            loadDocumentInForm(request, awardForm);
-        }
-
-        return mapping.findForward(Constants.MAPPING_AWARD_CONTACTS_PAGE);
+    public ActionForward keyperson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SharedDocForm sharedDocForm=(SharedDocForm)form;
+          
+           
+          if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+               loadDocumentInFormDoc(request, sharedDocForm);
+           }
+        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
     }
     
    

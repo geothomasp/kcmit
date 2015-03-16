@@ -69,7 +69,9 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
         List<HtmlData> htmlDataList = super.getCustomActionUrls(businessObject, pkNames);
        AwardDocument document = ((Award) businessObject).getAwardDocument();   
        htmlDataList.add(getSharedDocLink((Award) businessObject, false));
-        if(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "Maintain Keyperson")){// -- if user has kp role then only display the link
+       boolean  isPI = isLoggedInUserPI((Award) businessObject);
+       boolean  isAwardActive = isAwardActive((Award) businessObject);
+   if((KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "Maintain Keyperson") || isPI) && isAwardActive){
             htmlDataList.add(getKeyPersonLink((Award) businessObject, false));}
         return htmlDataList;
     }
@@ -93,19 +95,21 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
         AnchorHtmlData htmlData = new AnchorHtmlData();
            htmlData.setDisplayText("Key Person Maintenance");
            Properties parameters = new Properties();
-           parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "contact");
+           parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "keyperson");//contact
            parameters.put(KRADConstants.PARAMETER_COMMAND, KewApiConstants.DOCSEARCH_COMMAND);
            parameters.put(KRADConstants.DOCUMENT_TYPE_NAME, getDocumentTypeName());
            parameters.put("viewDocument", readOnly.toString());
            parameters.put("docId", award.getAwardDocument().getDocumentNumber());
            parameters.put("docOpenedFromAwardSearch", "true");
            parameters.put("placeHolderAwardId", award.getAwardId().toString());
-           String href  = UrlFactory.parameterizeUrl("../"+getHtmlAction(), parameters);
+           String href  = UrlFactory.parameterizeUrl("../"+getHtmlActionKeyPerson(), parameters);
            htmlData.setHref(href);
            return htmlData;
     }
     protected String getHtmlActionShared() {
         return "sharedDoc.do";
     }
-
+    protected String getHtmlActionKeyPerson() {
+        return "keyperson.do";
+    }
 }
