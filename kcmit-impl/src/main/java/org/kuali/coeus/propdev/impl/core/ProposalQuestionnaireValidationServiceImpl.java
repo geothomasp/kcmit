@@ -35,26 +35,36 @@ public class ProposalQuestionnaireValidationServiceImpl implements ProposalQuest
     
     private static final String PROPOSAL_SUBMIT_PAGE_ID = "PropDev-SubmitPage-ProposalSummary";
     private static final String GENERIC_ERROR_KEY = "error.generic";
+    private static final String ERROR_PI_STATUS = "error.proposal.person.pi.status";
     
 	@Override
 	public void executeProposalQuestionnaireValidation(DevelopmentProposal developmentProposal) {
 		Map<Long, List<ProposalQuestionnaireValidation>> questionnaireValidationMessages = getProposalQuestionnaireValidationMapping();
 		for(ProposalPerson proposalPerson : developmentProposal.getProposalPersons()) {
+			checkPIStatus(proposalPerson);
 			List<AnswerHeader> answerHeaders = getProposalQuestionnaireAnswerHeaders(developmentProposal, proposalPerson);
 			buildValidationMessages(answerHeaders, questionnaireValidationMessages, proposalPerson);
 		}
 	}
 
+	protected void checkPIStatus(ProposalPerson proposalPerson) {
+		if((proposalPerson.isPrincipalInvestigator() || proposalPerson.isCoInvestigator()) && 
+				!proposalPerson.isInvestigator()) {
+        	getGlobalVariableService().getMessageMap().putError(PROPOSAL_SUBMIT_PAGE_ID, ERROR_PI_STATUS, new String[]{proposalPerson.getProposalPersonRoleId(), proposalPerson.getLastName()});
+		}
+	}
+			
 	protected void buildValidationMessages(List<AnswerHeader> answerHeaders, Map<Long, List<ProposalQuestionnaireValidation>> questionnaireValidationMessages,
 			ProposalPerson proposalPerson) {
 		for(AnswerHeader answerHeader : answerHeaders) {
-			Long questionnaireId = answerHeader.getQuestionnaireId();
+			Long questionnaireId = Long.parseLong(answerHeader.getQuestionnaire().getQuestionnaireSeqId());
 			List<ProposalQuestionnaireValidation> proposalQuestionnaireValidations = questionnaireValidationMessages.get(questionnaireId);
 			if(proposalQuestionnaireValidations != null) {
 				List<Answer> questionAnswers = answerHeader.getAnswers();
 				for(ProposalQuestionnaireValidation proposalQuestionnaireValidation : proposalQuestionnaireValidations) {
 					for(Answer answer : questionAnswers) {
-						if(answer.getQuestionId().equals(proposalQuestionnaireValidation.getQuestionId()) && 
+						Long questionId = answer.getQuestion().getQuestionSeqId().longValue();
+						if(questionId.equals(proposalQuestionnaireValidation.getQuestionId()) && 
 								answer.getAnswer().equalsIgnoreCase(proposalQuestionnaireValidation.getAnswer())) {
 							String validationMessage = proposalQuestionnaireValidation.getValidationMessage().concat(getAdditionalMessage(proposalPerson));
 	                    	getGlobalVariableService().getMessageMap().putError(PROPOSAL_SUBMIT_PAGE_ID, GENERIC_ERROR_KEY, validationMessage);
