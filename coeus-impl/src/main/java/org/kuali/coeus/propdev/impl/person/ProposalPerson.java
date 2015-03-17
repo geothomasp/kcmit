@@ -55,6 +55,7 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -377,6 +378,9 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     private CitizenshipType citizenshipType;
 
     @Transient
+    private boolean selectedPerson;
+
+    @Transient
     private Boolean active = true;
 
     @ManyToOne(targetEntity = Unit.class, cascade = { CascadeType.REFRESH })
@@ -400,6 +404,9 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     
     @Transient
     private transient PropAwardPersonRoleService propAwardPersonRoleService;
+    
+    @Transient
+    private Timestamp createTimestamp;
  
     public boolean isMoveDownAllowed() {
         return moveDownAllowed;
@@ -1767,4 +1774,19 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     public void setSummerEffort(ScaleTwoDecimal summerEffort) {
         this.summerEffort = summerEffort;
     }
+	public boolean isSelectedPerson() {
+		return selectedPerson;
+	}
+
+	public void setSelectedPerson(boolean selectedPerson) {
+		this.selectedPerson = selectedPerson;
+	}
+
+	public Timestamp getCreateTimestamp() {
+		return createTimestamp;
+	}
+
+	public void setCreateTimestamp(Timestamp createTimestamp) {
+		this.createTimestamp = createTimestamp;
+	}
 }

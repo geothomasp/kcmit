@@ -31,6 +31,7 @@ import org.kuali.coeus.common.framework.print.stream.xml.XmlStream;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.kra.coi.CoiDisclosure;
 import org.kuali.kra.iacuc.IacucProtocol;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.irb.Protocol;
 import org.kuali.kra.printing.schema.*;
 import org.kuali.kra.printing.schema.QuestionnaireDocument.Questionnaire;
@@ -45,6 +46,7 @@ import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.ModuleQuestionnaireBean;
 import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kns.document.MaintenanceDocumentBase;
@@ -119,6 +121,10 @@ public class QuestionnaireXmlStream implements XmlStream {
     @Autowired
     @Qualifier("xmlObjectSerializerService")
     private XmlObjectSerializerService xmlObjectSerializerService;
+    
+    @Autowired
+    @Qualifier("parameterService")
+    private ParameterService parameterService;
 
    /**
      * This method generates XML committee report. It uses data passed in
@@ -222,8 +228,10 @@ public class QuestionnaireXmlStream implements XmlStream {
                 String moduleSubcode = moduleQuestionnaireBean.getModuleSubItemCode();
                 if (moduleCode.equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE)  && "0".equals(moduleSubcode)) {
                     setDevProposalInfo((DevelopmentProposal) printableBusinessObject,questionnaireType);
-                } else if (moduleCode.equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE)  
-                        && CoeusSubModule.PROPOSAL_PERSON_CERTIFICATION.equals(moduleSubcode)) {
+                } else if (moduleCode.equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE) && (getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+                		"MODULE_SUB_ITEM_CODE_PI_CERTIFICATION").equals(moduleSubcode) || getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+                		"MODULE_SUB_ITEM_CODE_COI_CERTIFICATION").equals(moduleSubcode) || getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+                				"MODULE_SUB_ITEM_CODE_KP_CERTIFICATION").equals(moduleSubcode))) {
                     ProposalPerson person = (ProposalPerson) printableBusinessObject;
                     setDevProposalInfo(person,questionnaireType);
                 } else if (moduleCode.equals(CoeusModule.IRB_MODULE_CODE)) {
@@ -459,7 +467,17 @@ public class QuestionnaireXmlStream implements XmlStream {
             ProposalPerson person = (ProposalPerson) printableBusinessObject;
             moduleItemCode = CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE;
             moduleItemKey = person.getUniqueId();
-            moduleSubItemCode = CoeusSubModule.PROPOSAL_PERSON_CERTIFICATION;
+            
+            if(person.getProposalPersonRoleId().equals(Constants.PRINCIPAL_INVESTIGATOR_ROLE)){
+            	moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+        	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
+        	}else if(person.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)){
+        		moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+        	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_COI_CERTIFICATION"); 
+        	}else if(person.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)){
+        		moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+        	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_KP_CERTIFICATION"); 
+        	}
             moduleSubItemKey = "0";
         } else if (printableBusinessObject instanceof CoiDisclosure) {
             CoiDisclosure disclosure = (CoiDisclosure) printableBusinessObject;
@@ -942,5 +960,20 @@ public class QuestionnaireXmlStream implements XmlStream {
 
     public void setXmlObjectSerializerService(XmlObjectSerializerService xmlObjectSerializerService) {
         this.xmlObjectSerializerService = xmlObjectSerializerService;
+    }
+    
+    /**
+     * Gets the parameterService attribute value.
+     * @return Returns the parameterService.
+     */
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+    /**
+     * Sets the parameterService attribute value.
+     * @param parameterService The parameterService to set.
+     */
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 }

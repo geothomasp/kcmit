@@ -272,6 +272,15 @@
 	<bean id="PropBudget-EditPersonnelPeriod-Section-Details-parent" abstract="true" parent="Uif-CssGridSection-2FieldLabelColumn">
 		<property name="items">
 			<list>
+			 <bean parent="Uif-InputField" p:propertyName="budgetPerson.personName"
+                    p:label="Person" p:order="5" >
+                      <property name="quickfinder">
+               
+                <bean parent="Uif-QuickFinderByScript" p:dataObjectClassName="org.kuali.coeus.common.budget.framework.personnel.BudgetPerson"
+                      p:fieldConversions="fullName:budgetPerson.personName"/>
+          
+            </property>
+            </bean>		
 				<bean parent="Uif-DataField" p:propertyName="budgetPerson.role"
 					p:label="Role" p:order="10"/>
  				<bean parent="Uif-MessageField" p:messageText="@{addProjectPersonnelHelper.budgetPersonnelDetail.budgetPerson?.appointmentType?.description}"

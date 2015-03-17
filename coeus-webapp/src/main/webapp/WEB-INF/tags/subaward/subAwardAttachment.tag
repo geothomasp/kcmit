@@ -117,6 +117,16 @@
 			 </c:if> 
 			 
 			<c:forEach var="attachment" items="${KualiForm.document.subAwardList[0].subAwardAttachments}" varStatus="itrStatus">
+				<c:set var="count" value="${itrStatus.index}"/>
+			<c:set var="modify" value="${KualiForm.document.subAwardList[0].subAwardAttachments[count].modifyAttachment}"/>
+			<c:choose>
+			   <c:when test="${modify!=true}">
+	             <c:set var="readOnly" value="true"/>
+	           </c:when>
+		       <c:otherwise>
+		         <c:set var="readOnly" value="false"/>
+		       </c:otherwise>
+		    </c:choose>
 				<tr>
 	         		<td>
 	         			<div align="center">
@@ -125,12 +135,12 @@
 	         		</td>
 	         		<td align="left" valign="middle">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].subAwardAttachmentTypeCode" attributeEntry="${subAwardAttachmentAttributes['subAwardAttachmentTypeCode']}" readOnly="true" readOnlyAlternateDisplay ="${subAwardAttachments.typeAttachment.description}"/>
+	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].subAwardAttachmentTypeCode" attributeEntry="${subAwardAttachmentAttributes['subAwardAttachmentTypeCode']}" readOnly="${readOnly}" readOnlyAlternateDisplay ="${subAwardAttachments.typeAttachment.description}"/>
 		            	</div>
 					</td>
 					<td align="left" valign="middle">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].description" attributeEntry="${subAwardAttachmentAttributes.description}" readOnly="true"/>
+	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].description" attributeEntry="${subAwardAttachmentAttributes.description}" readOnly="${readOnly}"/>
 		            	</div>
 					</td>
 	       			<td align="left" valign="middle">
@@ -159,10 +169,26 @@
 					</td>
 					<td align="center" valign="middle">
 						<div align="center">
-							<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+							
+						   <c:choose>
+							<c:when test="${subAwardAttachmentFormBean.disableAttachmentRemovalIndicator == true}">
+								<c:if test="${KualiForm.document.subAwardList[0].subAwardAttachments[itrStatus.index].documentStatusCode != 'V'}"> 
+								<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 								alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
-								<c:if test="${!readOnly}">
+								<html:image property="methodToCall.voidAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-void.gif' styleClass="tinybutton"
+									   alt="Void Attachment"/>
+							     </c:if> 
+							    <html:image property="methodToCall.modifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-modify.gif' styleClass="tinybutton"
+									   alt="Modify Attachment"/>
+						    </c:when>
+						   <c:otherwise>
+						   <html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
+								alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
+								
 								    <html:image property="methodToCall.deleteAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif' styleClass="tinybutton"
 									   alt="Delete Attachment"/>
@@ -170,7 +196,10 @@
 												onclick="javascript: showHide('instFileDiv${itrStatus.index}','replaceInstDiv${itrStatus.index}') ; return false"  
 												src='${ConfigProperties.kra.externalizable.images.url}tinybutton-replace.gif' styleClass="tinybutton"
 												property="methodToCall.replaceNarrativeAttachment.line${itrStatus.index}.anchor${currentTabIndex};return false" />
-							    </c:if>
+							</c:otherwise>    
+						   </c:choose>
+							    
+							    
 						</div>
 					</td>
 	         	</tr>

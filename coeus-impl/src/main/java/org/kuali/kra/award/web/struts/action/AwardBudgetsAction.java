@@ -203,6 +203,9 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
             String routeHeaderId = budgetDocument.getDocumentHeader().getWorkflowDocument().getDocumentId();
             Budget budget = budgetDocument.getBudget();
             String forward = buildForwardUrl(routeHeaderId);
+            if (budget.getActivityTypeCode().equals("x")) {
+                budget.setActivityTypeCode(KcServiceLocator.getService(BudgetService.class).getActivityTypeForBudget(budget));
+            }
             if (!budget.getActivityTypeCode().equals(newestAward.getActivityTypeCode()) || budget.isRateClassTypesReloaded()) {
                 budget.setActivityTypeCode(newestAward.getActivityTypeCode());
                 forward = forward.replace("awardBudgetParameters.do?", "awardBudgetParameters.do?syncBudgetRate=Y&");
@@ -307,9 +310,13 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
     
     private void copyBudget(ActionForm form, HttpServletRequest request, boolean copyPeriodOneOnly) throws WorkflowException {
         AwardForm awardForm = (AwardForm) form;
-        AwardDocument awardDoc = awardForm.getAwardDocument();
         Budget budgetToCopy = getSelectedVersion(awardForm, request);
-        copyBudget(awardDoc.getBudgetParent(), budgetToCopy, copyPeriodOneOnly);
+        DocumentService documentService = KcServiceLocator.getService(DocumentService.class);
+        AwardBudgetDocument awardBudgetDocument = (AwardBudgetDocument) documentService.getByDocumentHeaderId(budgetToCopy.getDocumentNumber());
+        
+        AwardBudgetDocument  awardBudgetDocumentCopy = getAwardBudgetService().copyBudgetVersion(awardBudgetDocument, copyPeriodOneOnly);
+        
+        awardForm.getAwardDocument().getBudgetParent().getBudgets().add(awardBudgetDocumentCopy.getBudget());
     }
     
     private StrutsConfirmation syncBudgetRateConfirmationQuestion(ActionMapping mapping, ActionForm form,

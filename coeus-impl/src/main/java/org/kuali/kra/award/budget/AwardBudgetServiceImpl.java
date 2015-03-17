@@ -44,6 +44,7 @@ import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
 import org.kuali.coeus.common.budget.framework.core.BudgetParent;
 import org.kuali.coeus.common.budget.framework.core.BudgetParentDocument;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItemCalculatedAmount;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPerson;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
@@ -94,11 +95,9 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         saveDocument(awardBudgetDocument);
     }
     
-    /**
-     * Need to move this to AwardBudgetService service
-     */
-    @SuppressWarnings("unchecked")
-    protected AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException {
+    
+    @Override
+    public AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException {
         AwardDocument awardDocument = (AwardDocument)budgetDocument.getBudget().getBudgetParent().getDocument();
 		String parentDocumentNumber = awardDocument.getDocumentNumber();
         budgetDocument.toCopy();
@@ -153,8 +152,9 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         WorkflowDocument workFlowDocument = getWorkflowDocument(awardBudgetDocument);
         if(workFlowDocument.isFinal()){
             processStatusChange(awardBudgetDocument, KeyConstants.AWARD_BUDGET_STATUS_TO_BE_POSTED);
+            saveDocument(awardBudgetDocument);
         }
-        saveDocument(awardBudgetDocument);
+        
     }
 
     @Override
@@ -340,11 +340,12 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         if(awardBudget.getOhRatesNonEditable()){
             awardBudget.setOhRateClassCode(getAwardParameterValue(Constants.AWARD_BUDGET_DEFAULT_FNA_RATE_CLASS_CODE));
             awardBudget.setUrRateClassCode(getAwardParameterValue( Constants.AWARD_BUDGET_DEFAULT_UNDERRECOVERY_RATE_CLASS_CODE));
+//            awardBudget.setOhRateTypeCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_OVERHEAD_RATE_TYPE_CODE));
         }else{
             awardBudget.setOhRateClassCode(getBudgetParameterValue(Constants.BUDGET_DEFAULT_OVERHEAD_RATE_CODE));
             awardBudget.setUrRateClassCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_UNDERRECOVERY_RATE_CODE));
+            awardBudget.setOhRateTypeCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_OVERHEAD_RATE_TYPE_CODE));
         }
-        awardBudget.setOhRateTypeCode(getBudgetParameterValue( Constants.BUDGET_DEFAULT_OVERHEAD_RATE_TYPE_CODE));
         awardBudget.setModularBudgetFlag(parameterService.getParameterValueAsBoolean(Budget.class, Constants.BUDGET_DEFAULT_MODULAR_FLAG));
         awardBudget.setAwardBudgetStatusCode(getAwardParameterValue( KeyConstants.AWARD_BUDGET_STATUS_IN_PROGRESS));
         // do not want the Budget adjustment doc number to be copied over to the new budget.
@@ -812,7 +813,7 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
                 budget.getBudgetSummaryTotals() == null ||
                 budget.getBudgetSummaryTotals().get("personnelFringeTotals") == null ||
                 budgetPeriod == null ||
-                CollectionUtils.validIndexForList(budgetPeriod.getBudgetPeriod() - 1, budget.getBudgetSummaryTotals().get("personnelFringeTotals"))) {
+                !CollectionUtils.validIndexForList(budgetPeriod.getBudgetPeriod() - 1, budget.getBudgetSummaryTotals().get("personnelFringeTotals"))) {
             return ScaleTwoDecimal.ZERO;
         }
         return budget.getBudgetSummaryTotals().get("personnelFringeTotals").get(budgetPeriod.getBudgetPeriod() - 1);
@@ -838,15 +839,21 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
         for (BudgetPeriod awardBudgetPeriod : awardBudgetPeriods) {
             AwardBudgetPeriodExt budgetPeriod = (AwardBudgetPeriodExt)awardBudgetPeriod;
             ScaleTwoDecimal periodFringeTotal = getPeriodFringeTotal(budgetPeriod, budget);
-            if(!periodFringeTotal.equals(ScaleTwoDecimal.ZERO) || !budgetPeriod.getTotalFringeAmount().equals(ScaleTwoDecimal.ZERO)){
-                budgetPeriod.setTotalDirectCost(budgetPeriod.getTotalDirectCost().subtract(periodFringeTotal).add(budgetPeriod.getTotalFringeAmount()));
-                budgetPeriod.setTotalCost(budgetPeriod.getTotalDirectCost().add(budgetPeriod.getTotalIndirectCost()));
-            }
+            ScaleTwoDecimal prevPeriodFringeTotal = budgetPeriod.getPrevTotalFringeAmount();
+            ScaleTwoDecimal totalFringeAmount = budgetPeriod.getTotalFringeAmount();
+            ScaleTwoDecimal fringeAmountDiff = totalFringeAmount.subtract(prevPeriodFringeTotal);
+        	ScaleTwoDecimal totalDirect = budgetPeriod.getTotalDirectCost().add(fringeAmountDiff);
+        	budgetPeriod.setPrevTotalFringeAmount(totalFringeAmount);
+			if(!totalDirect.equals(budgetPeriod.getTotalDirectCost())){
+				budgetPeriod.setTotalDirectCost(totalDirect);
+			}
+            budgetPeriod.setTotalCost(budgetPeriod.getTotalDirectCost().add(budgetPeriod.getTotalIndirectCost()));
         }
         setBudgetCostsFromPeriods(budget);
     }
     
-    public void populateSummaryCalcAmounts(Budget budget,BudgetPeriod budgetPeriod) {
+
+	public void populateSummaryCalcAmounts(Budget budget,BudgetPeriod budgetPeriod) {
         AwardBudgetPeriodExt awardBudgetPeriod = (AwardBudgetPeriodExt)budgetPeriod;
         List<AwardBudgetPeriodSummaryCalculatedAmount> awardBudgetPeriodFringeAmounts = awardBudgetPeriod.getAwardBudgetPeriodFringeAmounts();
         awardBudgetPeriodFringeAmounts.clear();

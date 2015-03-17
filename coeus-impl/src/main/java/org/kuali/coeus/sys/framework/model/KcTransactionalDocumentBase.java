@@ -43,6 +43,7 @@ import org.kuali.rice.krad.exception.ValidationException;
 import org.kuali.rice.krad.rules.rule.event.DocumentEvent;
 import org.kuali.rice.krad.util.ErrorMessage;
 import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.LegacyDataFramework;
 
 import javax.persistence.*;
@@ -185,7 +186,9 @@ public abstract class KcTransactionalDocumentBase extends TransactionalDocumentB
 
     @Override
     public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
+    	 if (!KRADConstants.SYSTEM_USER.equals(updateUser)) {
+             this.updateUser = StringUtils.substring(updateUser, 0, UPDATE_USER_LENGTH);
+         }
     }
 
     @Override
@@ -195,7 +198,7 @@ public abstract class KcTransactionalDocumentBase extends TransactionalDocumentB
 
     @Override
     public void setUpdateUserSet(boolean updateUserSet) {
-        this.updateUserSet = updateUserSet;
+    	   this.updateUserSet = updateUserSet;
     }
 
     public void setDocumentNextvalues(List<DocumentNextvalue> documentNextvalues) {

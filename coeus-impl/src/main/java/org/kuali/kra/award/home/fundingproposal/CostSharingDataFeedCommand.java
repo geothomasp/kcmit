@@ -70,6 +70,8 @@ class CostSharingDataFeedCommand extends ProposalDataFeedCommandBase {
         awardCostShare.setCommitmentAmount(ipCostShare.getAmount());
         awardCostShare.setSource(ipCostShare.getSourceAccount());
         awardCostShare.setProjectPeriod(ipCostShare.getProjectPeriod());
+        awardCostShare.setUnitNumber(ipCostShare.getUnit());
+
         
         return awardCostShare;
     }

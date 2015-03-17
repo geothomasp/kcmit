@@ -38,6 +38,10 @@ public class ModifyAwardBudgetAuthorizer extends BudgetAuthorizer {
     public boolean isAuthorized(String userId, Task task) {
             AwardBudgetTask budgetTask = (AwardBudgetTask) task;
             AwardBudgetDocument budgetDocument = budgetTask.getAwardBudgetDocument();
+            if(budgetDocument.getAwardBudget().getAwardBudgetStatusCode().equals(Constants.BUDGET_STATUS_CODE_REJECTED)){
+            	 return !budgetDocument.isViewOnly() && 
+                         hasUnitPermission(userId, budgetDocument.getLeadUnitNumber(), Constants.MODULE_NAMESPACE_AWARD_BUDGET, AwardPermissionConstants.MODIFY_AWARD_BUDGET.getAwardPermission());
+            }
             return !budgetDocument.isViewOnly() && !kraWorkflowService.isInWorkflow(budgetDocument) && 
                     hasUnitPermission(userId, budgetDocument.getLeadUnitNumber(), Constants.MODULE_NAMESPACE_AWARD_BUDGET, AwardPermissionConstants.MODIFY_AWARD_BUDGET.getAwardPermission());
     }

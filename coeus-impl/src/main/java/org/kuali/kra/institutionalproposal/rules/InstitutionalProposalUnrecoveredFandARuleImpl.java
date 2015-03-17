@@ -173,8 +173,7 @@ public class InstitutionalProposalUnrecoveredFandARuleImpl extends KcTransaction
                     ObjectUtils.equals(a.getIndirectcostRateTypeCode(), institutionalProposalUnrecoveredFandA.getIndirectcostRateTypeCode()) &&
                     ObjectUtils.equals(a.getApplicableIndirectcostRate(), institutionalProposalUnrecoveredFandA.getApplicableIndirectcostRate()) &&
                     ObjectUtils.equals(a.getOnCampusFlag(), institutionalProposalUnrecoveredFandA.getOnCampusFlag()) &&
-                    StringUtils.equals(a.getSourceAccount(), institutionalProposalUnrecoveredFandA.getSourceAccount()) &&
-                    ObjectUtils.equals(a.getAmount(), institutionalProposalUnrecoveredFandA.getAmount())) {
+                    StringUtils.equals(a.getSourceAccount(), institutionalProposalUnrecoveredFandA.getSourceAccount()) ) {
                 noDuplicates = false;
                 this.reportError(Constants.IP_UNRECOVERED_FNA_ACTION_PROPERTY_KEY + ".fiscalYear", KeyConstants.ERROR_PROPOSAL_UFNA_DUPLICATE_ROW);
 

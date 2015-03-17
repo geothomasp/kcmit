@@ -60,6 +60,7 @@
                 <ref bean="ReportTracking-lastUpdateDate" />
                 <ref bean="ReportTracking-versionNumber" />
                 <ref bean="ReportTracking-multiEditSelected"/>
+                <ref bean="ReportTracking-accountNumber"/>      
             </list>
         </property>
     </bean>
@@ -401,7 +402,36 @@
         <property name="shortLabel" value="Last Updated Date" />
         <property name="summary" value="Last Updated Date" />
         <property name="description" value="Last Updated Date" />
-    </bean>    
+    </bean>  
+      
+	<!-- <bean id="ReportTracking-accountNumber" parent="ReportTracking-accountNumber-parentBean" />
+    <bean id="ReportTracking-accountNumber-parentBean" abstract="true" parent="Award-accountNumber"/>  -->
+    
+        <bean id="ReportTracking-accountNumber" parent="ReportTracking-accountNumber-parentBean" />
+    <bean id="ReportTracking-accountNumber-parentBean" abstract="true" parent="Award-accountNumber">
+		<property name="name" value="award.accountNumber" />
+		<property name="label" value="Account ID" />
+		<property name="shortLabel" value="Account ID" />
+		<property name="validationPattern">
+			<bean p:allowWhitespace="true" parent="AnyCharacterValidationPattern" />
+		</property>
+    <property name="validCharactersConstraint">
+      <bean parent="AnyCharacterPatternConstraint">
+        <property name="allowWhitespace" value="true"/>
+      </bean>
+    </property>
+		<property name="control">
+			<bean p:size="30" parent="TextControlDefinition" />
+		</property>
+    <property name="controlField">
+      <bean p:size="30" parent="Uif-TextControl"/>
+    </property>
+		<property name="summary" value="Account ID" />
+		<property name="description" value="Account ID" />    
+    </bean>
+    
+    
+    
     
     <!-- Business Object Lookup Definition -->
     <bean id="ReportTracking-lookupDefinition" parent="ReportTracking-lookupDefinition-parentBean" />
@@ -417,6 +447,7 @@
         <property name="lookupFields" >
             <list>
         <bean parent="FieldDefinition" p:attributeName="awardNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="award.accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="piName"/>
         <bean parent="FieldDefinition" p:attributeName="dueDate"/>
         <bean parent="FieldDefinition" p:attributeName="reportClassCode"/>
@@ -438,6 +469,7 @@
         <property name="resultFields" >
             <list>
         <bean parent="FieldDefinition" p:attributeName="awardNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="award.accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="piName"/>
         <bean parent="FieldDefinition" p:attributeName="dueDate"/>
         <bean parent="FieldDefinition" p:attributeName="reportClass.description"/>
@@ -467,6 +499,7 @@
     <property name="criteriaFields">
       <list>
         <bean p:propertyName="awardNumber" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="award.accountNumber" parent="Uif-LookupCriteriaInputField"/>
         <bean p:propertyName="piName" parent="Uif-LookupCriteriaInputField"/>
         <bean p:propertyName="dueDate" parent="Uif-LookupCriteriaInputField"/>
         <bean p:propertyName="reportClassCode" parent="Uif-LookupCriteriaInputField"/>
@@ -488,6 +521,7 @@
     <property name="resultFields">
       <list>
         <bean p:propertyName="awardNumber" parent="Uif-DataField"/>
+        <bean p:propertyName="award.accountNumber" parent="Uif-DataField"/>
         <bean p:propertyName="piName" parent="Uif-DataField"/>
         <bean p:propertyName="dueDate" parent="Uif-DataField"/>
         <bean p:propertyName="reportClass.description" parent="Uif-DataField"/>

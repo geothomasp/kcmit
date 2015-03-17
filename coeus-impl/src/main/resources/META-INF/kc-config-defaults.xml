@@ -134,7 +134,7 @@
 	<param name="KualiExceptionHandlerAction.EXCEPTION_INCIDENT_REPORT_SERVICE">knsExceptionIncidentService</param>
 	<param name="MailMessage.from">admin@kuali.org</param>
 	<param name="KualiExceptionIncidentServiceImpl.additionalExceptionNameList"></param>
-	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST"></param>
+	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST">kc-mit-dev@mit.edu</param>
 	<!-- End of Exception Incident handling and reporting -->
 
 	<!-- Turn off KEW use of quartz db to avoid db clear issues -->

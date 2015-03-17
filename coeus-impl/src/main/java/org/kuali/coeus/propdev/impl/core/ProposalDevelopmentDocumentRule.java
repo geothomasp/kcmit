@@ -462,7 +462,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         }
         boolean retval = true;
 
-        retval &= processAttachmentAuditRules((ProposalDevelopmentDocument)document);
+        retval &= new ProposalDevelopmentPersonnelAttachmentsAuditRule().processRunAuditBusinessRules(document);
 
         retval &= new CustomDataRule().processRules(new AuditProposalCustomDataEvent((KcTransactionalDocumentBase)document));
         

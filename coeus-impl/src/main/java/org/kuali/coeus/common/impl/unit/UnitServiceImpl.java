@@ -45,6 +45,7 @@ public class UnitServiceImpl implements UnitService {
     private static final String SEPARATOR = ";1;";
     private static final String DASH = "-";
     private static final String UNIT_NUMBER = "unitNumber";
+    int numberOfUnits = 0;
     
     @Autowired
     @Qualifier("unitLookupDao")
@@ -220,6 +221,7 @@ public class UnitServiceImpl implements UnitService {
 
     protected String getSubUnits (int parentIdx, Unit unit, int level) {
         String subUnits="";
+        numberOfUnits = parentIdx;
         level--;
         for (Unit unit1 : getSubUnits(unit.getUnitNumber())) {
             String subUnit = parentIdx + DASH + unit1.getUnitNumber()+KRADConstants.BLANK_SPACE+COLUMN+KRADConstants.BLANK_SPACE+unit1.getUnitName();

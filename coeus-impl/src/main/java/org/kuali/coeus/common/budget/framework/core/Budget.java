@@ -166,6 +166,9 @@ public class Budget extends AbstractBudget implements BudgetContract {
     private List<BudgetPeriod> budgetPeriods;
     
     @Transient
+    private List<BudgetLineItem> sepLineItems;
+    
+    @Transient
     private List<Period> budgetSummaryDetails;
     
     @Transient
@@ -263,6 +266,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
         budgetRates = new ArrayList<BudgetRate>();
         budgetLaRates = new ArrayList<BudgetLaRate>();
         budgetPeriods = new ArrayList<BudgetPeriod>();
+     sepLineItems = new ArrayList<BudgetLineItem>();
         budgetPersonnelDetailsList = new ArrayList<BudgetPersonnelDetails>();
         budgetUnrecoveredFandAs = new ArrayList<BudgetUnrecoveredFandA>();
         instituteRates = new ArrayList<InstituteRate>();
@@ -275,6 +279,13 @@ public class Budget extends AbstractBudget implements BudgetContract {
         budgetSubAwards = new ArrayList<BudgetSubAwards>();
         budgetSummaryDetails = new ArrayList<Period>();
         setOnOffCampusFlag("D");
+        //sepLineItems = new
+        //setLineItems();
+    }
+    
+    public void setLineItems(){
+    	//sepLineItems = new ArrayList<BudgetLineItem>();
+    	sepLineItems.addAll(getBudgetLineItems());
     }
 
     /**
@@ -1786,7 +1797,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
 		}
 		return budgetPersonnelDetailsList;
 	}
-
+//test data
 	public List<BudgetLineItem> getBudgetLineItems() {
 		String personnelBudgetCategoryTypeCode = getBudgetCalculationService().getPersonnelBudgetCategoryTypeCode();
 		List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();
@@ -1832,4 +1843,15 @@ public class Budget extends AbstractBudget implements BudgetContract {
     public void setCreateUser(String createUser) {
         this.createUser = createUser;
     }
+
+	public List<BudgetLineItem> getSepLineItems() {
+		return sepLineItems;
+	}
+
+	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
+		this.sepLineItems = sepLineItems;
+	}
+
+
+	
 }

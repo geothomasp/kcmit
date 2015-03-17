@@ -32,7 +32,6 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.springframework.util.StringUtils;
-
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -271,9 +270,10 @@ public class AwardHierarchyUIServiceImpl implements AwardHierarchyUIService {
     public String getSubAwardHierarchiesForTreeView(String awardNumber, String currentAwardNumber, String currentSequenceNumber) throws ParseException {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for (AwardHierarchy ah : getChildrenNodes(awardNumber)) {
-            AwardHierarchyNode aNode = getAwardHierarchyNode(ah.getAwardNumber(), currentAwardNumber, currentSequenceNumber);
-            sb.append(buildJavascriptRecord(ah.getAwardNumber(), aNode));
+        List<AwardHierarchy> awardHierarchyList = getChildrenNodes(awardNumber);
+        for (AwardHierarchy awardHierarchy : awardHierarchyList) {
+            AwardHierarchyNode aNode = getAwardHierarchyNode(awardHierarchy.getAwardNumber(), currentAwardNumber, currentSequenceNumber,awardHierarchy);
+            sb.append(buildJavascriptRecord(awardHierarchy.getAwardNumber(), aNode));
             sb.append(",");
         }
         //removing trailing ,
@@ -335,9 +335,10 @@ public class AwardHierarchyUIServiceImpl implements AwardHierarchyUIService {
         return true;
     }
     
-    protected AwardHierarchyNode getAwardHierarchyNode(String awardNumber, String currentAwardNumber, String currentSequenceNumber) {
+    protected AwardHierarchyNode getAwardHierarchyNode(String awardNumber, String currentAwardNumber, String currentSequenceNumber,AwardHierarchy hierarchy) {
         AwardHierarchyNode returnVal = null;
-        AwardHierarchy hierarchy = awardHierarchyService.loadAwardHierarchy(awardNumber);
+
+      //  AwardHierarchy hierarchy = awardHierarchyService.loadAwardHierarchy(awardNumber);
         if(canUseExistingTMSessionObject(awardNumber)){ 
             awardHierarchyNodes = ((TimeAndMoneyDocument)GlobalVariables.getUserSession().retrieveObject(
                     GlobalVariables.getUserSession().getKualiSessionId() + Constants.TIME_AND_MONEY_DOCUMENT_STRING_FOR_SESSION)).getAwardHierarchyNodes();   
@@ -347,6 +348,7 @@ public class AwardHierarchyUIServiceImpl implements AwardHierarchyUIService {
         }
             return returnVal;
     }
+    
     
     protected Map<String, AwardHierarchyNode> getAwardHierarchyNodes(String awardNumber, String currentAwardNumber, String currentSequenceNumber){
         if(awardHierarchyNodes==null || awardHierarchyNodes.size()==0 || StringUtils.endsWithIgnoreCase(LAST_5_CHARS_OF_ROOT, awardNumber.substring(8))){            

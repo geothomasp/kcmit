@@ -873,8 +873,14 @@ public abstract class AwardBaseStream implements XmlStream {
     						.getSequenceNumber());
     			}
     			if (awardComment.getCommentTypeCode() != null) {
-    				commentDetailsType.setCommentCode(Integer.valueOf(awardComment
-    						.getCommentTypeCode()));
+    				String cmtTypecode=awardComment.getCommentTypeCode()==null?"":awardComment.getCommentTypeCode();
+    				int commentCode=0;
+    				try{
+    					commentCode=Integer.parseInt(cmtTypecode);        				
+    				}catch(Exception e){
+    					LOG.error(e.getMessage(), e);
+    				}
+    				commentDetailsType.setCommentCode(commentCode);
     				commentType.setDescription(getCommentTypeDesc(awardComment
     						.getCommentTypeCode()));
     			}

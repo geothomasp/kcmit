@@ -43,7 +43,9 @@ public class ProposalLogMergeAction extends KualiAction {
         final String redirectUrl          = String.format(PAGE_ENTRY_REDIRECT_URL_FORMAT, applicationUrl, proposalLogParameter);
 
         request.getSession().setAttribute("proposalLogNumber", proposalLogMergeForm.getProposalLogNumber());
-        return new ActionForward(redirectUrl, true);
+        response.sendRedirect("kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kra.institutionalproposal.home.InstitutionalProposal&docFormKey=88888888&includeCustomActionUrls=true&returnLocation="
+                + applicationUrl + "/mergeProposalLog.do&hideReturnLink=true");
+        return null;
     }
     
     public ActionForward mergeToInstitutionalProposal(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {

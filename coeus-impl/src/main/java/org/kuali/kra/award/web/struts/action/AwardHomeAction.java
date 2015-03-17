@@ -438,7 +438,7 @@ public class AwardHomeAction extends AwardAction {
         
         AwardForm awardForm = ((AwardForm)form);
         AwardDocument awardDocument = awardForm.getAwardDocument();
-        Award award = awardDocument.getAward();
+        Award award = awardDocument.getAward(); 
         ActionForward forward;
         
         AwardDocument parentSyncAward = getAwardSyncService().getAwardLockingHierarchyForSync(awardDocument, GlobalVariables.getUserSession().getPrincipalId()); 
@@ -450,10 +450,11 @@ public class AwardHomeAction extends AwardAction {
         if(getTimeAndMoneyExistenceService().validateTimeAndMoneyRule(award, awardForm.getAwardHierarchyBean().getRootNode().getAwardNumber())) {
             VersionHistory foundPending = findPendingVersion(award);
             cleanUpUserSession();
-            if(foundPending != null) {
+            if(foundPending != null) {            	
                 Object question = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
                 forward = question == null ? showPromptForEditingPendingVersion(mapping, form, request, response) :
                                              processPromptForEditingPendingVersionResponse(mapping, request, response, awardForm, foundPending);
+               
             } else {
                 forward = createAndSaveNewAwardVersion(response, awardForm, awardDocument, award);
             }    

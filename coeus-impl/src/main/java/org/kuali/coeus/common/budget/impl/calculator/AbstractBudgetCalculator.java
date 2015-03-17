@@ -32,6 +32,9 @@ import org.kuali.coeus.common.budget.framework.rate.BudgetLaRate;
 import org.kuali.coeus.common.budget.framework.rate.ValidCeRateType;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.kra.award.budget.AwardBudgetExt;
+import org.kuali.kra.award.budget.AwardFnARatesValuesFinder;
+import org.kuali.kra.award.commitments.AwardFandaRate;
 import org.kuali.kra.award.commitments.FandaRateType;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.CostElement;
@@ -692,7 +695,7 @@ public abstract class AbstractBudgetCalculator {
     }
 
     private Equals equalsOverHeadRateClassCode() {
-        return new Equals("rateClassCode", "" + budget.getOhRateClassCode());
+		return new Equals("rateClassCode", "" + budget.getOhRateClassCode());
     }
 
     private NotEquals notEqualsOverHeadRateClassType() {
@@ -728,18 +731,19 @@ public abstract class AbstractBudgetCalculator {
         for (ValidCeRateType validCeRateType : rateTypes) {
             validCeRateType.refreshNonUpdateableReferences();
             String rateClassType = validCeRateType.getRateClass().getRateClassTypeCode();
-            if(rateClassType.equals(RateClassType.OVERHEAD.getRateClassType()) && 
+            RateType ohRateType = validCeRateType.getRateType();
+			if(rateClassType.equals(RateClassType.OVERHEAD.getRateClassType()) && 
                     !budget.getBudgetParent().isProposalBudget()){
-                addOHBudgetLineItemCalculatedAmountForAward( validCeRateType.getRateClassCode(), validCeRateType.getRateType(), 
-                        validCeRateType.getRateClass().getRateClassTypeCode());
+        		addOHBudgetLineItemCalculatedAmountForAward( validCeRateType.getRateClassCode(), ohRateType, 
+                    validCeRateType.getRateClass().getRateClassTypeCode());
             }else{
-                addBudgetLineItemCalculatedAmount( validCeRateType.getRateClassCode(), validCeRateType.getRateType(), 
+                addBudgetLineItemCalculatedAmount( validCeRateType.getRateClassCode(), ohRateType, 
                                             validCeRateType.getRateClass().getRateClassTypeCode());
             }
         }
     }
 
-    private void addOHBudgetLineItemCalculatedAmountForAward(String rateClassCode, 
+	private void addOHBudgetLineItemCalculatedAmountForAward(String rateClassCode, 
             RateType rateType, String rateClassType) {
         QueryList<BudgetRate> budgetRates = new QueryList<BudgetRate>(budget.getBudgetRates());
         Equals eqOhRateClassType = new Equals("rateClassType",rateClassType);
@@ -750,19 +754,21 @@ public abstract class AbstractBudgetCalculator {
             BudgetRate awardBudgetRate = filteredBudgetRates.get(0);
             awardBudgetRate.setBudget(budget);
             if(awardBudgetRate.getNonEditableRateFlag()){
-                AbstractBudgetCalculatedAmount budgetCalculatedAmount = getNewCalculatedAmountInstance();
-                budgetCalculatedAmount.setBudgetId(budgetLineItem.getBudgetId());
-                budgetCalculatedAmount.setBudgetPeriod(budgetLineItem.getBudgetPeriod());
-                budgetCalculatedAmount.setBudgetPeriodId(budgetLineItem.getBudgetPeriodId());
-                budgetCalculatedAmount.setLineItemNumber(budgetLineItem.getLineItemNumber());
-                budgetCalculatedAmount.setRateClassType(rateClassType);
-                budgetCalculatedAmount.setRateClassCode(awardBudgetRate.getRateClassCode());
-                budgetCalculatedAmount.setRateTypeCode(awardBudgetRate.getRateTypeCode());
-                budgetCalculatedAmount.setApplyRateFlag(true);
-                budgetCalculatedAmount.setRateTypeDescription(getAwardRateTypeDescription(awardBudgetRate.getRateTypeCode()));
-                budgetCalculatedAmount.setRateClass(awardBudgetRate.getRateClass());
-                addCalculatedAmount(budgetCalculatedAmount);
-            }else{
+            	if(awardBudgetRate.getRateTypeCode().equals(rateType.getRateTypeCode())){
+	                AbstractBudgetCalculatedAmount budgetCalculatedAmount = getNewCalculatedAmountInstance();
+	                budgetCalculatedAmount.setBudgetId(budgetLineItem.getBudgetId());
+	                budgetCalculatedAmount.setBudgetPeriod(budgetLineItem.getBudgetPeriod());
+	                budgetCalculatedAmount.setBudgetPeriodId(budgetLineItem.getBudgetPeriodId());
+	                budgetCalculatedAmount.setLineItemNumber(budgetLineItem.getLineItemNumber());
+	                budgetCalculatedAmount.setRateClassType(rateClassType);
+	                budgetCalculatedAmount.setRateClassCode(awardBudgetRate.getRateClassCode());
+	                budgetCalculatedAmount.setRateTypeCode(awardBudgetRate.getRateTypeCode());
+	                budgetCalculatedAmount.setApplyRateFlag(true);
+	                budgetCalculatedAmount.setRateTypeDescription(getAwardRateTypeDescription(awardBudgetRate.getRateTypeCode()));
+	                budgetCalculatedAmount.setRateClass(awardBudgetRate.getRateClass());
+	                addCalculatedAmount(budgetCalculatedAmount);
+            	}
+            }else {
                 addBudgetLineItemCalculatedAmount( rateClassCode, rateType, rateClassType);
             }
         }
@@ -821,7 +827,7 @@ public abstract class AbstractBudgetCalculator {
         validCeQMap.put("costElement", budgetLineItem.getCostElement());
         budgetLineItem.getCostElementBO().refreshReferenceObject("validCeRateTypes");
 
-        QueryList<ValidCeRateType> qValidCeRateTypes = createQueryList(budgetLineItem.getCostElementBO().getValidCeRateTypes());
+        //QueryList<ValidCeRateType> qValidCeRateTypes = createQueryList(budgetLineItem.getCostElementBO().getValidCeRateTypes());
         setInflationRateOnLineItem(budgetLineItem);
 
         setValidCeRateTypeCalculatedAmounts(budgetLineItem);

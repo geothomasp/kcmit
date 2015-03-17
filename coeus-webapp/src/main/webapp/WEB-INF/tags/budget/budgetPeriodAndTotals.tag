@@ -183,7 +183,7 @@
 						</c:choose>
    				    	<kul:multipleValueLookup boClassName="org.kuali.coeus.common.budget.framework.period.BudgetPeriod"
    				    							anchor="${tabKey}" 
-   				    							lookupParameters="document.parentDocument.award.awardNumber:budgetParentId"
+   				    							lookupParameters="document.awardBudget.budgetParent.awardNumber:budgetParentId"
    				    							lookedUpCollectionName="${status.index}" autoSearch="yes" />						
 						</kra:section>
 					</div>

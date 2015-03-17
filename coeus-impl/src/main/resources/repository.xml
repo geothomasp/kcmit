@@ -1544,5 +1544,18 @@
 		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+	</class-descriptor>	
+	
+	<class-descriptor class="org.kuali.coeus.common.training.TrainingModules" table="TRAINING_MODULES">	
+	   <!--  <field-descriptor name="trainingModulesId" column="TRAINING_MODULES_ID" jdbc-type="INTEGER" primarykey="true"/> -->
+	   <field-descriptor name="trainingModulesId" column="TRAINING_MODULES_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true"/>
+		<field-descriptor name="trainingCode" column="TRAINING_CODE" jdbc-type="VARCHAR"/>
+		<field-descriptor name="moduleCode" column="MODULE_CODE" jdbc-type="VARCHAR" />
+		<field-descriptor name="subModuleCode" column="SUB_MODULE_CODE" jdbc-type="VARCHAR" />
+		<field-descriptor name="description" column="DESCRIPTION" jdbc-type="VARCHAR" />
+		<field-descriptor name="updateTimeStamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />		
 	</class-descriptor>		
 </descriptor-repository>

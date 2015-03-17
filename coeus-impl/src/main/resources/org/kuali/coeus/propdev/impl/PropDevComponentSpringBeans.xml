@@ -114,6 +114,7 @@
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/person/ProposalBudgetAssignPersonnelToPeriodsPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/nonpersonnel/ProposalBudgetBudgetNotesPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/nonpersonnel/ProposalBudgetNonPersonnelCostsPage.xml</value>
+         		<value>classpath:org/kuali/coeus/propdev/impl/budget/singlepointentry/SinglePointEntryPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/nonpersonnel/ProposalBudgetLineItemShared.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/subaward/ProposalBudgetSubawardsPage.xml</value>
                 <value>classpath:org/kuali/coeus/propdev/impl/budget/modular/ProposalBudgetModularPage.xml</value>
@@ -163,7 +164,12 @@
     <bean id="proposalRoleTypeServiceCallback" parent="kcCoreCallbackService"
           p:callbackService-ref="proposalRoleTypeService"
           p:localServiceName="proposalRoleTypeService"
-          p:serviceInterface="org.kuali.rice.kim.framework.role.RoleTypeService"/>
+          p:serviceInterface="org.kuali.rice.kim.framework.role.RoleTypeService"/> 
+          
+    	<bean id="proposalPiTypeDerivedRoleTypeServiceCallback" parent="kcCoreCallbackService" 
+		p:callbackService-ref="proposalPiTypeDerivedRoleTypeService" 
+		p:localServiceName="proposalPiTypeDerivedRoleTypeService" 
+		p:serviceInterface="org.kuali.rice.kim.framework.role.RoleTypeService"/>
 
     <bean id="proposalTypeValuesFinder" class="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder">
         <property name="businessObjectClass" value="org.kuali.coeus.common.framework.type.ProposalType"/>

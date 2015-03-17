@@ -291,12 +291,13 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 && !committeeMembership.getTermEndDate().before(scheduledDate);
         if (isActiveMember) {
             for (CommitteeMembershipRole membershipRole : committeeMembership.getMembershipRoles()) {
-                if (!membershipRole.getStartDate().after(scheduledDate) && !membershipRole.getEndDate().before(scheduledDate)) {
-                    if (membershipRole.getMembershipRoleCode().equals(CommitteeMembershipRole.INACTIVE_ROLE)) {
+                if (membershipRole.getStartDate().after(scheduledDate) && membershipRole.getEndDate().before(scheduledDate)) {
+                	isActiveMember = false;
+                  /*  if (membershipRole.getMembershipRoleCode().equals(CommitteeMembershipRole.INACTIVE_ROLE)) {
                         // Inactive matched, stop here
                         isActiveMember = false;
                         break;
-                    }
+                    }*/
                 }
             }
         }
@@ -366,7 +367,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         for (CommitteeMembershipBase committeeMembership : committeeMemberships) {
             if ((committeeScheduleAttendance.getNonEmployeeFlag() && committeeMembership.getRolodexId() != null && committeeScheduleAttendance
                     .getPersonId().equals(committeeMembership.getRolodexId().toString()))
-                    || (!committeeScheduleAttendance.getNonEmployeeFlag() && committeeScheduleAttendance.getPersonId().equals(
+                    || (!committeeScheduleAttendance.getNonEmployeeFlag() && committeeScheduleAttendance.getPersonId()!=null && committeeScheduleAttendance.getPersonId().equals(
                             committeeMembership.getPersonId()))) {
                 if (!committeeMembership.getTermStartDate().after(scheduleDate)
                         && !committeeMembership.getTermEndDate().before(scheduleDate)) {
@@ -376,7 +377,23 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         }
         return isActiveMember;
     }
-
+    
+    protected boolean isActiveMemberAbsent(CommitteeScheduleAttendanceBase committeeScheduleAttendance,
+    		CommitteeMembershipBase committeeMembership, Date scheduleDate) {
+        boolean isActiveMember = false;   
+            if ((committeeScheduleAttendance.getNonEmployeeFlag() && committeeMembership.getRolodexId() != null && committeeScheduleAttendance
+                    .getPersonId().equals(committeeMembership.getRolodexId().toString()))
+                    || (!committeeScheduleAttendance.getNonEmployeeFlag() && committeeScheduleAttendance.getPersonId()!=null && committeeScheduleAttendance.getPersonId().equals(
+                            committeeMembership.getPersonId()))) {
+                if (!committeeMembership.getTermStartDate().after(scheduleDate)
+                        && !committeeMembership.getTermEndDate().before(scheduleDate)) {
+                    isActiveMember = isActiveMembership(committeeMembership, scheduleDate);
+                }
+            }
+        
+        return isActiveMember;
+    }
+    
 
     @Override
     public void presentOther(MeetingHelperBase meetingHelper, int itemNumber) {
@@ -732,12 +749,13 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 meetingHelper.getOtherPresentBeans().add(otherPresentBean);
                 otherPresentBean.setAttendance(committeeScheduleAttendance);
             }
-            else {
+            else {if(isActiveMember(committeeScheduleAttendance, committeeMemberships, commSchedule
+                        .getScheduledDate())){
                 MemberPresentBean memberPresentBean = new MemberPresentBean();
                 memberPresentBean.setAttendance(committeeScheduleAttendance);
                 meetingHelper.getMemberPresentBeans().add(memberPresentBean);
             }
-        }
+        }}
     }
 
     /*
@@ -758,14 +776,15 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 }
                 else {
                     attendance.setPersonId(committeeMembership.getPersonId());
-                }
+                }if(isActiveMemberAbsent(attendance, committeeMembership, commSchedule
+                        .getScheduledDate())){
                 attendance.setPersonName(committeeMembership.getPersonName());
                 attendance.setAlternateFlag(false);
                 attendance.setNonEmployeeFlag(StringUtils.isBlank(committeeMembership.getPersonId()));
                 memberAbsentBean.setAttendance(attendance);
                 meetingHelper.getMemberAbsentBeans().add(memberAbsentBean);
             }
-        }
+        }}
 
     }
 

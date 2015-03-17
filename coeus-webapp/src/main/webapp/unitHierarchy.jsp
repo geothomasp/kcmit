@@ -97,7 +97,7 @@ body {
 <html:image property="methodToCall.collapseAllUnitHierarchy" src='${ConfigProperties.kr.externalizable.images.url}tinybutton-collapseall.gif' styleClass="tinybutton" alt="Collapse All"/>
 
 <!--  initial data here -->
-<input type="hidden" id = "units" name="units"   value="${UnitHierarchyForm.units}"/>
+<input type="hidden" id = "units" name="units"   value="${fn:escapeXml(UnitHierarchyForm.units)}"/>
 <input type="hidden" id = "selectedUnitNumber" name="selectedUnitNumber"  />
 <c:set var="dept" value="${UnitHierarchyForm.initialUnitDepth}"/>
 

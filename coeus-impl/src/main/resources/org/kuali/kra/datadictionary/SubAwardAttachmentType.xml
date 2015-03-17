@@ -47,7 +47,7 @@
 		<property name="shortLabel" value="Subaward Attachment Type Code"/>
 		<property name="maxLength" value="3"/>
 		<property name="validationPattern">
-			<bean parent="NumericValidationPattern"/>
+			<bean parent="AnyCharacterValidationPattern"/>
 		</property>
 		<property name="control">
 			<bean p:size="10" parent="TextControlDefinition"/>

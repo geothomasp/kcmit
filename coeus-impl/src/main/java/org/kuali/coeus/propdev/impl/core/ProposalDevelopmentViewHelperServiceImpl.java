@@ -26,6 +26,7 @@ import java.util.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.budget.framework.calculator.BudgetCalculationService;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.custom.DocumentCustomData;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
@@ -68,6 +69,8 @@ import org.kuali.coeus.propdev.impl.abstrct.ProposalAbstract;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.PermissionConstants;
+import org.kuali.kra.krms.KcKrmsConstants.ProposalDevelopment;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.location.AddProposalCongressionalDistrictEvent;
 import org.kuali.coeus.propdev.impl.location.CongressionalDistrict;
@@ -89,6 +92,8 @@ import org.kuali.rice.krad.service.LookupService;
 import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.uif.UifConstants;
 import org.kuali.rice.krad.uif.UifParameters;
+import org.kuali.rice.krad.uif.component.Component;
+import org.kuali.rice.krad.uif.container.Group;
 import org.kuali.rice.krad.uif.element.Action;
 import org.kuali.rice.krad.uif.lifecycle.ViewLifecycle;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
@@ -105,6 +110,8 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     private static final long serialVersionUID = -5122498699317873886L;
     private static final Logger LOG = Logger.getLogger(ProposalDevelopmentViewHelperServiceImpl.class);
     private static final String PARENT_PROPOSAL_TYPE_CODE = "PRDV";
+    private static final String PARAMETER_DELIMITER = ",";
+    private static final String SPONSOR_HEIRARCHY= "COIHierarchyRequiringKPs";
     @Autowired
     @Qualifier("dateTimeService")
     private DateTimeService dateTimeService;
@@ -173,6 +180,10 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     @Autowired
     @Qualifier("budgetCalculationService")
     private BudgetCalculationService budgetCalculationService;
+    
+    @Autowired
+    @Qualifier("kcAuthorizationService")
+    private KcAuthorizationService kraAuthorizationService;
 
     @Autowired
     @Qualifier("kcPersonService")
@@ -883,6 +894,11 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
 		return displayKeywords() &&
                 getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,ParameterConstants.DOCUMENT_COMPONENT,ProposalDevelopmentService.SUMMARY_KEYWORDS_INDICATOR);
 	}
+	
+	public boolean isDetailsPageKeywordsEnabled() {
+		return "TRUE".equalsIgnoreCase(getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,ParameterConstants.DOCUMENT_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY));
+
+	}
 
     public boolean isSummaryBudgetPanelEnabled(DevelopmentProposal developmentProposal) {
         return getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT, ParameterConstants.DOCUMENT_COMPONENT, ProposalDevelopmentService.BUDGET_SUMMARY_INDICATOR) &&
@@ -942,6 +958,56 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         }
         return true;
     }
+    public boolean canCertifyRequired(ProposalPerson proposalPerson){
+    
+            String value = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
+           List<String> newRoles=Arrays.asList(value.split(PARAMETER_DELIMITER));     
+           String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+           String principalId=getGlobalVariableService().getUserSession().getPrincipalId();
+          if (proposalPerson.isInvestigator() && proposalPerson.isPrincipalInvestigator()
+                  && StringUtils.equals(principalId, proposalPerson.getPersonId())) {
+              return true;
+          }
+           
+        if (proposalPerson.getProposalPersonRoleId().equals("KP")){
+        	for(String projectRole:newRoles){
+        	if(proposalPerson.getProjectRole().equals(projectRole)) {
+            return false;
+        	}}
+        	if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
+        	return true;
+        	}
+        	if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy)) {
+				return true;
+			}}
+        if(isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal()))
+        {
+     	   return true;
+     	   }  
+        return true;       		
+        	
+    }
+    public boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal){
+   	 String principalId=getGlobalVariableService().getUserSession().getPrincipalId();    	
+   	       for (ProposalPerson person : developmentProposal.getInvestigators()) {
+   	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+   	                    && StringUtils.equals(principalId, person.getPersonId())) {
+   	                return true;
+   	            }
+   	        }
+   	        return false;
+   	    } 	
+    public boolean isCertQuestView(ProposalPerson proposalPerson){
+    	 String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
+    	 ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) proposalPerson.getDevelopmentProposal().getDocument();
+    	  boolean canViewProposal = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.VIEW_CERTIFICATION);
+      	        if(canViewProposal){
+      	        	return true;
+      	        }else{
+      	        	return false;
+      	        }
+      	    } 
+   	
     public String getWizardMaxResults() {
         return getParameterService().getParameterValueAsString(KRADConstants.KRAD_NAMESPACE,
                 KRADConstants.DetailTypes.LOOKUP_PARM_DETAIL_TYPE,
@@ -1037,7 +1103,21 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         form.setDefaultOpenTab("");
         return openTab;
     }
+  public boolean isKeyPersonCustomData(
+			DevelopmentProposal developmentProposal) {
+		try {
+			List<CustomAttributeDocValue> customDataList = developmentProposal
+					.getProposalDocument().getCustomDataList();
+			for (CustomAttributeDocValue attributeDocValue : customDataList) {
+				if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("PCK")&& attributeDocValue.getCustomAttribute().getValue().equals("Y")) {
+					return true;
+				}
+			}
+		} catch (Exception exception) {
 
+		}
+		return false;
+	}
     public String getPropPersonName(String personId) {
         if (StringUtils.isNotEmpty(personId)) {
             Person person= getPersonService().getPerson(personId);

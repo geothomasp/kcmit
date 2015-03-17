@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.BudgetContainer;
 import org.kuali.coeus.common.budget.framework.income.BudgetPeriodIncomeTotal;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationWrapper;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.propdev.impl.budget.ProposalDevelopmentBudgetExt;
 import org.kuali.coeus.propdev.impl.budget.modular.BudgetModularSummary;
 import org.kuali.coeus.propdev.impl.budget.nonpersonnel.AddProjectBudgetLineItemHelper;
@@ -37,13 +38,18 @@ import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.Auditable;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
+<<<<<<< HEAD
 import org.kuali.kra.authorization.KraAuthorizationConstants;
 import org.kuali.rice.kim.api.identity.Person;
+=======
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+>>>>>>> coeus-6.0.0-s15-r
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.document.authorization.PessimisticLock;
 import org.kuali.rice.krad.uif.component.Component;
 import org.kuali.rice.krad.uif.element.Action;
 import org.kuali.rice.krad.uif.element.ToggleMenu;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.form.UifFormBase;
 
 public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, Auditable, SelectableBudget {
@@ -64,6 +70,8 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
     private List<DevelopmentProposal> hierarchyDevelopmentProposals;
     private boolean submitBudgetIndicator;
 
+    private List<BudgetLineItem> sepLineItems;
+    private List<BudgetLineItem> budgetLineItems;
     public void initialize() {
     	editableBudgetLineItems = new HashMap<String,List<String>>();
     	addProjectPersonnelHelper = new AddProjectPersonnelHelper();
@@ -71,7 +79,11 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
         budgetJustificationWrapper = new BudgetJustificationWrapper (budget.getBudgetJustification());
         dataValidationItems = new ArrayList<DataValidationItem>();
     }
-
+    //commented permission check for SPE
+   /* public boolean isSPEEnabled() {
+		return KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-PD", "Single Point Entry");
+	}*/
+    
     public ProposalDevelopmentBudgetExt getBudget() {
 		return budget;
 	}
@@ -235,7 +247,6 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
 		this.viewOnly = viewOnly;
 	}
 
-
     public List<DevelopmentProposal> getHierarchyDevelopmentProposals() {
         return hierarchyDevelopmentProposals;
     }
@@ -268,4 +279,20 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
     public GlobalVariableService getGlobalVariableService() {
         return KcServiceLocator.getService(GlobalVariableService.class);
     }
+	public List<BudgetLineItem> getSepLineItems() {
+		return sepLineItems;
+	}
+
+	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
+		this.sepLineItems = sepLineItems;
+	}
+
+	public List<BudgetLineItem> getBudgetLineItems() {
+		return budgetLineItems;
+	}
+
+	public void setBudgetLineItems(List<BudgetLineItem> budgetLineItems) {
+		this.budgetLineItems = budgetLineItems;
+	}
+
 }

@@ -20,18 +20,25 @@ package org.kuali.kra.subaward.web.struts.action;
 
 import static org.kuali.kra.infrastructure.Constants.MAPPING_BASIC;
 
+import java.util.List;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.framework.attachment.AttachmentFile;
+import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.kra.award.AwardForm;
+import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.subaward.bo.SubAward;
 import org.kuali.kra.subaward.bo.SubAwardAttachments;
 import org.kuali.kra.subaward.bo.SubAwardReports;
 import org.kuali.kra.subaward.document.SubAwardDocument;
@@ -39,6 +46,7 @@ import org.kuali.kra.subaward.subawardrule.SubAwardDocumentRule;
 import org.kuali.kra.subaward.subawardrule.events.AddSubAwardAttachmentEvent;
 import org.kuali.kra.subaward.SubAwardForm;
 import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 public class SubAwardTemplateInformationAction extends SubAwardAction {
     
@@ -54,6 +62,17 @@ public class SubAwardTemplateInformationAction extends SubAwardAction {
        ActionForward forward = super.execute(mapping, form, request, response);
          return forward;
      }
+    
+    @Override
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SubAwardForm subAwardForm = (SubAwardForm) form;
+        SubAward subAward = subAwardForm.getSubAwardDocument().getSubAward();
+        setModifyAttachments(subAward);
+        ActionForward forward = super.save(mapping, form, request, response);
+            return forward;
+       
+    }
+
     
     @Override
     protected KualiRuleService getKualiRuleService() {
@@ -236,5 +255,45 @@ public class SubAwardTemplateInformationAction extends SubAwardAction {
           getSubAwardReportList().remove(selectedLineNumber);
           return mapping.findForward(Constants.MAPPING_BASIC);
       }
+      
+      public ActionForward modifyAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+              HttpServletResponse response) throws Exception {  
+    	  SubAwardForm subAwardForm = (SubAwardForm) form;
+          SubAwardDocument subAwardDocument = subAwardForm.getSubAwardDocument();
+          int modifyAttachment = getSelectedLine(request);
+          subAwardDocument.getSubAwardList().get(0).getSubAwardAttachments().get(modifyAttachment).setModifyAttachment(true);
+          return mapping.findForward(Constants.MAPPING_BASIC);
+      }
+      
+      public ActionForward voidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+              HttpServletResponse response) throws Exception {
+      	
+    	  SubAwardForm subAwardForm = (SubAwardForm) form;
+          SubAwardDocument subAwardDocument = subAwardForm.getSubAwardDocument();
+          int voidAttachment = getSelectedLine(request);
+          subAwardDocument.getSubAward().getSubAwardAttachments().get(voidAttachment).setDocumentStatusCode("V");
+      	  getBusinessObjectService().save(subAwardDocument.getSubAward().getSubAwardAttachments().get(voidAttachment));
+          return mapping.findForward(Constants.MAPPING_BASIC);
+      }
+      
+      public void setModifyAttachments(SubAward subAward) {
+          boolean valid=true;
+          List<SubAwardAttachments> subAwardAttachments= subAward.getSubAwardAttachments();
+          for ( SubAwardAttachments subAwardAttachment : subAwardAttachments ) {
+          	if( StringUtils.isBlank(subAwardAttachment.getSubAwardAttachmentTypeCode())) {
+                  valid = false;
+              }
+              if (StringUtils.isBlank(subAwardAttachment.getDescription()) ) {
+                  valid = false;
+              }
+          }
+          if(valid) {
+          	List<SubAwardAttachments> subAwardAttachmentsList= subAward.getSubAwardAttachments();
+       	    for (SubAwardAttachments subAwardAttachment : subAwardAttachmentsList) {
+       		  subAwardAttachment.setModifyAttachment(false); 
+            }
+          }
+           
+       }
 
 }

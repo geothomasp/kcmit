@@ -135,6 +135,7 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
             if(!isActive){
                 return false;
             }
+            //return super.appliesTo();
             boolean canApply = false;
             for (Map.Entry<String, String> agendaQualifier : environment.getSelectionCriteria().getAgendaQualifiers().entrySet()) {
                 if(!canApply){
