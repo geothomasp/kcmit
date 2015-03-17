@@ -230,4 +230,44 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         }
         return isValid;
     }
+    
+    private boolean validateCostShareUnit(String unitNumber) {
+        boolean valid = true;
+            
+            //check if the unit is valid
+        MessageMap errorMap = GlobalVariables.getMessageMap();
+           
+            
+            if (StringUtils.isNotEmpty(unitNumber)) {
+            	UnitService unitService = KcServiceLocator.getService(UnitService.class);
+            	
+            	if (unitService.getUnit(unitNumber) == null) {
+                	valid = false;
+                	errorMap.putError("unitNumber", KeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+                //    this.reportError(fieldStarter + ".unitNumber", IUKeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+           	}       
+            } else {
+            	valid = false;
+                this.reportError(fieldStarter + ".unitNumber", KeyConstants.ERROR_REQUIRED_COST_SHARE_UNIT, unitNumber);
+            	
+            }
+           
+   
+        return valid;
+    }
+
+    private boolean validateNotEmptyUnit(String unitNumber) {
+        boolean valid = true;
+            
+            //check if the unit is valid           
+            
+            if (StringUtils.isEmpty(unitNumber)) {
+            	valid = false;
+                this.reportError(fieldStarter + ".unitNumber", KeyConstants.ERROR_REQUIRED_COST_SHARE_UNIT, unitNumber);
+            	
+            }
+            
+        
+        return valid;
+    }
 }
