@@ -67,6 +67,8 @@ public class InstitutionalProposalAddCostShareRuleImpl extends CostShareRuleRese
         
         isValid &= validateSourceAccount(institutionalProposalCostShare.getSourceAccount());
         
+        isValid &=validateCostShareUnit(institutionalProposalCostShare.getUnit());
+        
         return isValid;
     }
     
@@ -158,4 +160,31 @@ public class InstitutionalProposalAddCostShareRuleImpl extends CostShareRuleRese
         
         return isValid;
     }
+    
+    private boolean validateCostShareUnit(String unitNumber) {
+        boolean valid = true;
+           
+            //check if the unit is valid
+        MessageMap errorMap = GlobalVariables.getMessageMap();
+           
+           
+            if (StringUtils.isNotEmpty(unitNumber)) {
+            	UnitService unitService = KcServiceLocator.getService(UnitService.class);
+           	
+            	if (unitService.getUnit(unitNumber) == null) {
+                	valid = false;
+                //	errorMap.putError("unitNumber", IUKeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+                    this.reportError(fieldStarter + ".unit", KeyConstants.ERROR_INVALID_COST_SHARE_UNIT, unitNumber);
+            	}       
+            } else {
+                if (displayNullFieldErrors) {
+            	  valid = false;
+                  this.reportError(fieldStarter + ".unit", KeyConstants.ERROR_REQUIRED_COST_SHARE_UNIT, unitNumber);
+                }
+           }
+            /* IU Customization Ends */
+            
+        
+        return valid;
+   }
 }

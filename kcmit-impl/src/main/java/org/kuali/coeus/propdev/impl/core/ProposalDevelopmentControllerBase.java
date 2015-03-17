@@ -374,9 +374,17 @@ public abstract class ProposalDevelopmentControllerBase {
      }
      
      protected ModelAndView navigate(ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	 if (form.getDevelopmentProposal().getS2sOpportunity() != null && !getProposalDevelopmentService().isGrantsGovEnabledForProposal(form.getDevelopmentProposal())) {
+             ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).clearOpportunity(form.getDevelopmentProposal());
+         }
          populateAdHocRecipients(form.getProposalDevelopmentDocument());
          String navigateToPageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
          boolean canEdit = form.isCanEditView();
+         if (isNavigateToDeliveryInfoPage(navigateToPageId)) {
+             if (form.getDevelopmentProposal().getS2sOpportunity() != null) {
+                 getGlobalVariableService().getMessageMap().putInfo(ProposalDevelopmentConstants.KradConstants.DELIVERY_INFO_PAGE, KeyConstants.DELIVERY_INFO_NOT_NEEDED);
+             }
+         }
          if (isNavigateAwayFromAttachment(navigateToPageId, form.getPageId())) {
              prepareLocks(form);
              return narrativePageSave(form, canEdit);
@@ -429,6 +437,7 @@ public abstract class ProposalDevelopmentControllerBase {
                 form.setDocument(document);
                 return save(form);
             } else {
+            	form.setCanEditView(canEdit);
                 return getModelAndViewService().getModelAndView(form);
             }
 
@@ -455,6 +464,10 @@ public abstract class ProposalDevelopmentControllerBase {
         return StringUtils.equals(pageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID) &&
                 !StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID);
      }
+    
+    protected boolean isNavigateToDeliveryInfoPage(String navigateToPageId) {
+        return StringUtils.equals(navigateToPageId, ProposalDevelopmentConstants.KradConstants.DELIVERY_INFO_PAGE);
+    }
 
     protected void releasePessimisticLocks(DocumentFormBase form) {
         Document document = form.getDocument();
