@@ -12,3 +12,9 @@ kcmit-impl/src/main/resources/META-INF/kcmit-config.xml
 /kcmit-db/kcmit-db-xml/.classpath
 /kcmit-db/kcmit-db-xml/.settings
 .settings
+.DS_Store
+/kcmit-db/.DS_Store
+/kcmit-db/kcmit-db-sql/.DS_Store
+/kcmit-db/kcmit-db-sql/src/.DS_Store
+/kcmit-db/kcmit-db-sql/src/main/resources/.DS_Store
+

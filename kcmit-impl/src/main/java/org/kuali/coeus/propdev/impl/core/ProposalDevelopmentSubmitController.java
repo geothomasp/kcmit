@@ -69,6 +69,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.coeus.sys.impl.validation.DataValidationItem;
+
 import edu.mit.kc.coi.KcCoiLinkService;
 
 @Controller
@@ -155,6 +157,10 @@ public class ProposalDevelopmentSubmitController extends
     @Qualifier("kcWorkflowService")
     private KcWorkflowService kcWorkflowService;
 
+    @Autowired
+    @Qualifier("proposalQuestionnaireValidationService")
+    private ProposalQuestionnaireValidationService proposalQuestionnaireValidationService;
+    
     private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
 
     public KcCoiLinkService kcCoiLinkService;
@@ -241,8 +247,10 @@ public class ProposalDevelopmentSubmitController extends
     @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-SubmitPage"})
     public ModelAndView navigateToSubmit(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception{
         ((ProposalDevelopmentViewHelperServiceImpl) form.getViewHelperService()).prepareSummaryPage(form);
-        return super.navigate(form,result,request,response);
-    }
+        ModelAndView modelView = super.navigate(form,result,request,response);
+        getProposalQuestionnaireValidationService().executeProposalQuestionnaireValidation(form.getDevelopmentProposal());
+       return modelView;
+     }
 
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=blanketApprove")
@@ -857,4 +865,13 @@ public class ProposalDevelopmentSubmitController extends
     public void setKcWorkflowService(KcWorkflowService kcWorkflowService) {
         this.kcWorkflowService = kcWorkflowService;
     }
+
+	public ProposalQuestionnaireValidationService getProposalQuestionnaireValidationService() {
+		return proposalQuestionnaireValidationService;
+	}
+
+	public void setProposalQuestionnaireValidationService(
+			ProposalQuestionnaireValidationService proposalQuestionnaireValidationService) {
+		this.proposalQuestionnaireValidationService = proposalQuestionnaireValidationService;
+	}
 }
