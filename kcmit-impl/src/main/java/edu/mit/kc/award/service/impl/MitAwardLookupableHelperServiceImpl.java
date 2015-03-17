@@ -27,6 +27,7 @@ import org.kuali.kra.award.document.authorization.AwardDocumentAuthorizer;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.lookup.AwardLookupableHelperServiceImpl;
 import org.kuali.kra.award.dao.AwardLookupDao;
+import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.lookup.KraLookupableHelperServiceImpl;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kim.api.identity.Person;
@@ -112,4 +113,23 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
     protected String getHtmlActionKeyPerson() {
         return "keyperson.do";
     }
+    public boolean isLoggedInUserPI(Award award){
+   	 String principalId=GlobalVariables.getUserSession().getPrincipalId();    	
+   	       for (AwardPerson person : award.getInvestigators()) {
+   	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+   	                    && StringUtils.equals(principalId, person.getPersonId())) {
+   	                return true;
+   	            }
+   	        }
+   	        return false;
+   	    } 	
+  public boolean isAwardActive(Award award) {
+      String activeParm = getParameterService().getParameterValueAsString(AwardDocument.class, KeyConstants.AWARD_ACTIVE_STATUS_CODES_PARM);
+      for (String activeCode : activeParm.split(",")) {
+          if (StringUtils.equals(award.getAwardStatus().getStatusCode(), activeCode)) {
+              return true;
+          }
+      }
+      return false;
+  }
 }
