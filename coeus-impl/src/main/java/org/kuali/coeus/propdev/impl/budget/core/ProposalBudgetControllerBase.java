@@ -170,6 +170,7 @@ public abstract class ProposalBudgetControllerBase {
     public ModelAndView save(ProposalBudgetForm form) {
         if (form.isCanEditView()) {
         	saveBudget(form);
+        }
     	budgetService.calculateBudgetOnSave(form.getBudget());
     	form.setBudget(getDataObjectService().save(form.getBudget()));
        	getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());

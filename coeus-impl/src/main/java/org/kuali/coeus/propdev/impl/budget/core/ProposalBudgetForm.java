@@ -38,12 +38,9 @@ import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.Auditable;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
-<<<<<<< HEAD
 import org.kuali.kra.authorization.KraAuthorizationConstants;
 import org.kuali.rice.kim.api.identity.Person;
-=======
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
->>>>>>> coeus-6.0.0-s15-r
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.document.authorization.PessimisticLock;
 import org.kuali.rice.krad.uif.component.Component;
