@@ -192,8 +192,8 @@
         <javaagent.output.dir>${project.build.directory}/javaagent</javaagent.output.dir>
         <javaagent.arg>-javaagent:${javaagent.output.dir}/spring-instrument.jar</javaagent.arg>
 
-        <enforcer.phase>validate</enforcer.phase>
-
+<!--         <enforcer.phase>validate</enforcer.phase>
+ -->
         <require.maven.version>3.0</require.maven.version>
 
         <project.encoding>UTF-8</project.encoding>
@@ -465,6 +465,9 @@
                                             <exclude>commons-collections:commons-collections</exclude>
                                             <exclude>commons-fileupload:commons-fileupload</exclude>
                                             <exclude>org.apache.ws.security:wss4j</exclude>
+                                            <exclude>org.springframework:spring-expression</exclude>
+                                            <exclude>org.codehaus.woodstox:woodstox-core-asl</exclude>
+                                            <exclude>xalan:serializer</exclude>
                                         </excludes>
 
                                         <includes>
