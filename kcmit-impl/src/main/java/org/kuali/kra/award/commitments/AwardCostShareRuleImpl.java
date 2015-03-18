@@ -15,13 +15,17 @@
  */
 package org.kuali.kra.award.commitments;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kra.bo.CostShareType;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.common.framework.costshare.CostShareRuleResearchDocumentBase;
+import org.kuali.coeus.common.framework.unit.UnitService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 import edu.mit.kc.infrastructure.KcMitConstants;
 

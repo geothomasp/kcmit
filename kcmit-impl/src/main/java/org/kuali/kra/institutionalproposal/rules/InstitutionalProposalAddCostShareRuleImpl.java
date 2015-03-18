@@ -19,10 +19,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.bo.CostShareType;
 import org.kuali.coeus.common.framework.costshare.CostShareRuleResearchDocumentBase;
+import org.kuali.coeus.common.framework.unit.UnitService;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposalCostShare;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+
 import edu.mit.kc.infrastructure.KcMitConstants;
 
 
