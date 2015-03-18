@@ -36,6 +36,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.data.DataObjectService;
+import org.kuali.rice.krad.uif.UifConstants;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
@@ -149,6 +150,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
        getDataObjectService().save(newProposalPerson);
        Collections.sort(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons(), new ProposalPersonRoleComparator());
        form.getAddKeyPersonHelper().reset();
+       form.setAjaxReturnType(UifConstants.AjaxReturnTypes.UPDATEPAGE.getKey());
        return getRefreshControllerService().refresh(form);
    }
 
