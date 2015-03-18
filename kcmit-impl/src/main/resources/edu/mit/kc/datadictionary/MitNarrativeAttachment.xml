@@ -25,8 +25,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+<!-- 
 	<bean id="NarrativeAttachment-data" parent="MIT-NarrativeAttachment-data-parentBean" />
 	<bean id="MIT-NarrativeAttachment-data-parentBean" parent="NarrativeAttachment-data-parentBean">
 		<property name="required" value="false" />
 	</bean>
+	
+	 -->
+	
 </beans>

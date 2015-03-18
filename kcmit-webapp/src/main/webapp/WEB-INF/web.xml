@@ -18,6 +18,11 @@
         <param-value>classpath:KcMitBootstrapSpringBeans.xml</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>web.bootstrap.config.file</param-name>
+        <param-value>classpath:META-INF/kc-config.xml</param-value>
+    </context-param>
+
     <filter>
         <filter-name>HttpRequestLogger</filter-name>
         <filter-class>org.kuali.rice.core.RequestLoggingFilter</filter-class>
