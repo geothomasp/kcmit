@@ -1,0 +1,97 @@
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row updated.
+
+
+1 row updated.
+
+
+1 row updated.
+
+
+0 rows updated.
+
+
+0 rows updated.
+
+
+0 rows updated.
+
+
+Table altered.
+
+
+Table altered.
+
+
+1 row created.
+
+
+Table altered.
+
+
+Table created.
+
+
+Table altered.
+
+
+76970 rows updated.
+
+INSERT INTO FILE_DATA (SELECT FILE_DATA_ID, NARRATIVE_DATA FROM NARRATIVE_ATTACHMENT)
+            *
+ERROR at line 1:
+ORA-01691: unable to extend lob segment KCSO.SYS_LOB0000131596C00002$$ by 8192 
+in tablespace KCSO_DATA_TS01 
+
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+12934 rows updated.
+
+
+12934 rows created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+14 rows deleted.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Commit complete.
+
