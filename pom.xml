@@ -1,26 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-   - Kuali Coeus, a comprehensive research administration system for higher education.
-   - 
-   - Copyright 2005-2015 Kuali, Inc.
-   - 
-   - This program is free software: you can redistribute it and/or modify
-   - it under the terms of the GNU Affero General Public License as
-   - published by the Free Software Foundation, either version 3 of the
-   - License, or (at your option) any later version.
-   - 
-   - This program is distributed in the hope that it will be useful,
-   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   - GNU Affero General Public License for more details.
-   - 
-   - You should have received a copy of the GNU Affero General Public License
-   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
- -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+<modelVersion>4.0.0</modelVersion>
+  
  <groupId>edu.mit.kc</groupId>
   <artifactId>kcmit</artifactId>
   <version>6.0.1.1</version>
@@ -45,22 +28,13 @@
          <module>kcmit-webapp</module>
   </modules>
 
-    <licenses>
-        <license>
-            <name>GNU Affero General Public License, Version 3</name>
-            <url>${kuali.agpl3.license.url}</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-
     <properties>
         <!--dependency versions-->
         <aopalliance.version>1.0</aopalliance.version>
         <avalon-framework.version>4.3.1</avalon-framework.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <cglib-nodep.version>3.1</cglib-nodep.version>
-        <coeus-api-all.version>6.0.0.1</coeus-api-all.version>
+        <coeus-api.version>6.0.1</coeus-api.version>
         <coeus-s2sgen.version>6.0.1</coeus-s2sgen.version>
         <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
         <commons-codec.version>1.9</commons-codec.version>
@@ -111,10 +85,10 @@
         <opensaml.version>2.6.1</opensaml.version>
         <oracle.groupId>com.oracle</oracle.groupId>
         <oracle.artifactId>ojdbc6</oracle.artifactId>
-        <oracle.version>10.2.0.3.0</oracle.version>
+        <oracle.version>11.2.0.4.0</oracle.version>
+        <org.eclipse.persistence.oracle.version>2.6.0-M3</org.eclipse.persistence.oracle.version>
         <org.eclipse.birt.runtime.version>4.4.0</org.eclipse.birt.runtime.version>
         <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
-        <org.eclipse.persistence.oracle.version>2.6.0-M3</org.eclipse.persistence.oracle.version>
         <pdfbox.version>1.8.6</pdfbox.version>
         <quartz.version>1.8.4</quartz.version>
         <rice.version>2.5.3.0-kckualico</rice.version>
@@ -125,7 +99,6 @@
         <struts.version>1.3.10</struts.version>
         <validation-api.version>1.0.0.GA</validation-api.version>
         <velocity.version>1.7</velocity.version>
-        <wss4j.version>1.6.18</wss4j.version>
         <xalan.version>2.7.2</xalan.version>
         <xercesImpl.version>2.11.0</xercesImpl.version>
         <xml-apis.version>1.4.01</xml-apis.version>
@@ -133,7 +106,6 @@
         <xmlsec.version>1.5.6</xmlsec.version>
         <xstream.version>1.2.2</xstream.version>
         <extra-enforcer-rules.version>1.0-beta-2</extra-enforcer-rules.version>
-        <cas-client-core.version>3.3.3</cas-client-core.version>
 
         <!-- plugin versions -->
         <cxf-codegen-plugin.version>${cxf.version}</cxf-codegen-plugin.version>
@@ -159,7 +131,6 @@
         <maven-war-plugin.version>2.5</maven-war-plugin.version>
         <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
         <tomcat7-maven-plugin.version>${tomcat-maven-plugin.version}</tomcat7-maven-plugin.version>
-        <wagon.s3.version>1.2.1</wagon.s3.version>
         <xmlbeans-maven-plugin.version>2.3.3</xmlbeans-maven-plugin.version>
 
         <db.groupId>${mysql.groupId}</db.groupId>
@@ -192,8 +163,8 @@
         <javaagent.output.dir>${project.build.directory}/javaagent</javaagent.output.dir>
         <javaagent.arg>-javaagent:${javaagent.output.dir}/spring-instrument.jar</javaagent.arg>
 
-<!--         <enforcer.phase>validate</enforcer.phase>
- -->
+        <enforcer.phase>validate</enforcer.phase>
+
         <require.maven.version>3.0</require.maven.version>
 
         <project.encoding>UTF-8</project.encoding>
@@ -209,7 +180,6 @@
 
         <!-- defaults to dev unless overriden -->
         <build.environment>dev</build.environment>
-        <build.spring.profiles.active></build.spring.profiles.active>
 
         <!-- This is used in the licenses section as well as the jar/war plugins -->
         <kuali.agpl3.license.url>http://www.gnu.org/licenses/agpl-3.0.txt</kuali.agpl3.license.url>
@@ -219,21 +189,6 @@
         <error_prone_core.version>1.1.2</error_prone_core.version>
         <plexus-compiler-javac.version>2.3</plexus-compiler-javac.version>
         <plexus-compiler-javac-errorprone.version>2.3</plexus-compiler-javac-errorprone.version>
-
-        <scm.connection>scm:git:git://github.com/kuali/kc.git</scm.connection>
-        <scm.developerConnection>scm:git:git@github.com:kuali/kc.git</scm.developerConnection>
-        <scm.url>https://github.com/kuali/kc</scm.url>
-
-        <issueManagement.system>github</issueManagement.system>
-        <issueManagement.url>https://github.com/kuali/kc/issues</issueManagement.url>
-
-        <dm.snapshotRepository.id>kuali.snapshot</dm.snapshotRepository.id>
-        <dm.snapshotRepository.name>Main Kuali Repository</dm.snapshotRepository.name>
-        <dm.snapshotRepository.url>scp://test.kuali.org:/opt/m2/repository</dm.snapshotRepository.url>
-
-        <dm.repository.id>kuali.snapshot</dm.repository.id>
-        <dm.repository.name>Kuali Snapshot Repository</dm.repository.name>
-        <dm.repository.url>s3://maven.kuali.org/snapshot</dm.repository.url>
     </properties>
 
     <build>
@@ -262,7 +217,7 @@
                         <target>${project.compile.target}</target>
                         <fork>true</fork>
                         <meminitial>512m</meminitial>
-                        <maxmem>2048m</maxmem>
+                        <maxmem>1024m</maxmem>
                     </configuration>
                 </plugin>
 
@@ -464,10 +419,6 @@
 
                                             <exclude>commons-collections:commons-collections</exclude>
                                             <exclude>commons-fileupload:commons-fileupload</exclude>
-                                            <exclude>org.apache.ws.security:wss4j</exclude>
-                                            <exclude>org.springframework:spring-expression</exclude>
-                                            <exclude>org.codehaus.woodstox:woodstox-core-asl</exclude>
-                                            <exclude>xalan:serializer</exclude>
                                         </excludes>
 
                                         <includes>
@@ -480,11 +431,10 @@
                                             <include>commons-collections:commons-collections:${commons-collections.version}:jar:runtime</include>
                                             <!-- some versions of commons-fileupload have security exploits... only allow a specific version -->
                                             <include>commons-fileupload:commons-fileupload:${commons-fileupload.version}</include>
-                                            <include>org.apache.ws.security:wss4j:${wss4j.version}</include>
                                         </includes>
                                     </bannedDependencies>
                                 </rules>
-                                <fail>true</fail>
+                                <fail>false</fail>
                             </configuration>
                         </execution>
                     </executions>
@@ -679,7 +629,7 @@
                                     <licenseMerge>CDDL - Version 1.0|CDDL|CDDL 1.0|CDDL License|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|Common Development and Distribution License (CDDL) v1.0</licenseMerge>
                                     <licenseMerge>CDDL - Version 1.1|CDDL 1.1</licenseMerge>
                                     <licenseMerge>CDDL - Version 1.1 / GNU General Public License - Version 2|CDDL v1.1 / GPL v2 dual license|CDDL + GPLv2 with classpath exception</licenseMerge>
-                                    <licenseMerge>Educational Community License - Version 2.0|Educational Community License, Version 2.0</licenseMerge>
+                                    <licenseMerge>Educational Community License - Version 2.0|GNU Affero General Public License, Version 3</licenseMerge>
                                     <licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|lgpl|license.txt|GNU General Public Library|GNU Lesser General Public Licence|LGPL</licenseMerge>
                                     <licenseMerge>GNU Lesser General Public License - Version 2.1|GNU Lesser General Public License Version 2.1|LGPL 2.1|LGPL, version 2.1</licenseMerge>
                                     <licenseMerge>GNU Lesser General Public License - Version 3|GNU Lesser General Public License v3.0|GNU Lesser General Public License - Version 3.0</licenseMerge>
@@ -720,13 +670,6 @@
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.kuali.maven.wagons</groupId>
-                <artifactId>maven-s3-wagon</artifactId>
-                <version>${wagon.s3.version}</version>
-            </extension>
-        </extensions>
     </build>
 
     <dependencyManagement>
@@ -1150,22 +1093,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.ws.security</groupId>
-                <artifactId>wss4j</artifactId>
-                <version>${wss4j.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk14</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>
                 <version>${velocity.version}</version>
@@ -1496,13 +1423,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.jasig.cas.client</groupId>
-                <artifactId>cas-client-core</artifactId>
-                <version>${cas-client-core.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>org.jmock</groupId>
                 <artifactId>jmock</artifactId>
                 <version>${jmock.version}</version>
@@ -1532,7 +1452,7 @@
             <dependency>
                 <groupId>org.kuali.coeus</groupId>
                 <artifactId>coeus-api-all</artifactId>
-                <version>${coeus-api-all.version}</version>
+                <version>${coeus-api.version}</version>
             </dependency>
 
             <dependency>
@@ -1836,7 +1756,6 @@
                 <artifactId>rice-legacy-web</artifactId>
                 <version>${rice.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
@@ -1963,7 +1882,6 @@
                 <artifactId>spring-webmvc</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springmodules</groupId>
                 <artifactId>spring-modules-ojb</artifactId>
@@ -2003,123 +1921,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
         </dependencies>
-        
     </dependencyManagement>
 
+
     <profiles>
-        <profile>
-            <id>grm</id>
-            <!-- comment out activation section to turn this profile off permanently
-            <activation>
-                <property>
-                    <name>!grm.off</name>
-                </property>
-            </activation>-->
-
-            <properties>
-                <build.spring.profiles.active>grm</build.spring.profiles.active>
-
-                <rsmart.cx.token.auth.version>1.0.7</rsmart.cx.token.auth.version>
-                <rsmart.hr.rest.version>1.0-SNAPSHOT</rsmart.hr.rest.version>
-                <kc-sql.version>6.0.1-SNAPSHOT</kc-sql.version>
-
-                <scm.connection>scm:git:git://github.com/kualico/kc.git</scm.connection>
-                <scm.developerConnection>scm:git:git@github.com:kualico/kc.git</scm.developerConnection>
-                <scm.url>https://github.com/kualico/kc</scm.url>
-
-                <issueManagement.system>github</issueManagement.system>
-                <issueManagement.url>https://github.com/kualico/kc/issues</issueManagement.url>
-
-                <dm.snapshotRepository.id>rsmart.snapshot.repo</dm.snapshotRepository.id>
-                <dm.snapshotRepository.name>rsmart snapshot repository</dm.snapshotRepository.name>
-                <dm.snapshotRepository.url>s3://rsmart-dev/artifacts/maven/snapshot</dm.snapshotRepository.url>
-
-                <dm.repository.id>rsmart.release.repo</dm.repository.id>
-                <dm.repository.name>rsmart release repository</dm.repository.name>
-                <dm.repository.url>s3://rsmart-dev/artifacts/maven/release</dm.repository.url>
-            </properties>
-
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.rsmart</groupId>
-                        <artifactId>tokenauth</artifactId>
-                        <version>${rsmart.cx.token.auth.version}</version>
-                        <scope>runtime</scope>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>commons-logging</groupId>
-                                <artifactId>commons-logging</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>log4j</groupId>
-                                <artifactId>log4j</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>co.kuali</groupId>
-                        <artifactId>kc-sql</artifactId>
-                        <version>${kc-sql.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>com.rsmart.kuali</groupId>
-                        <artifactId>kc_hr_rest</artifactId>
-                        <version>${rsmart.hr.rest.version}</version>
-                        <scope>runtime</scope>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>log4j</groupId>
-                                <artifactId>log4j</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>org.codehaus.jackson</groupId>
-                                <artifactId>jackson-core-asl</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>asm</groupId>
-                                <artifactId>asm</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-
-                </dependencies>
-            </dependencyManagement>
-
-            <repositories>
-                <repository>
-                    <id>rsmart-dev</id>
-                    <name>rSmart Nexus Repository Manager</name>
-                    <url>https://nexus.rsmart.com/nexus/content/groups/public/</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                </repository>
-            </repositories>
-
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>rsmart-dev</id>
-                    <name>rSmart Nexus Repository Manager</name>
-                    <url>https://nexus.rsmart.com/nexus/content/groups/public/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-
         <profile>
             <id>oracle</id>
             <properties>
@@ -2127,19 +1933,9 @@
                 <db.artifactId>${oracle.artifactId}</db.artifactId>
                 <db.version>${oracle.version}</db.version>
             </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.persistence</groupId>
-                        <artifactId>org.eclipse.persistence.oracle</artifactId>
-                        <version>${org.eclipse.persistence.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
         </profile>
 
-        <!-- enables the error prone compiler for strict compilation -->
+        <!-- enables the error prone compiler for strict compilation-->
         <profile>
             <id>error-prone</id>
             <build>
@@ -2222,7 +2018,7 @@
     <repositories>
         <repository>
             <id>kuali.nexus</id>
-            <name>Kuali Nexus Repository Manager</name>
+            <name>Nexus Repository Manager</name>
             <url>http://nexus.kuali.org/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
@@ -2236,7 +2032,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>kuali.nexus</id>
-            <name>Kuali Nexus Repository Manager</name>
+            <name>Nexus Repository Manager</name>
             <url>http://nexus.kuali.org/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
@@ -2248,27 +2044,30 @@
     </pluginRepositories>
 
     <scm>
-        <connection>${scm.connection}</connection>
-        <developerConnection>${scm.developerConnection}</developerConnection>
-        <url>${scm.url}</url>
+        <connection>scm:git:git@github.com:kuali/kc.git</connection>
+        <developerConnection>scm:git:git@github.com:kuali/kc.git</developerConnection>
+        <url>https://github.com/kuali/kc</url>
     </scm>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>${dm.snapshotRepository.id}</id>
-            <name>${dm.snapshotRepository.name}</name>
-            <url>${dm.snapshotRepository.url}</url>
-        </snapshotRepository>
-        <repository>
-            <id>${dm.repository.id}</id>
-            <name>${dm.repository.name}</name>
-            <url>${dm.repository.url}</url>
-        </repository>
-    </distributionManagement>
-
     <issueManagement>
-        <system>${issueManagement.system}</system>
-        <url>${issueManagement.url}</url>
+        <system>Jira</system>
+        <url>https://jira.kuali.org</url>
     </issueManagement>
 
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://db.kc.kuali.org</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <sendOnError>true</sendOnError>
+                <sendOnFailure>true</sendOnFailure>
+                <sendOnSuccess>true</sendOnSuccess>
+                <sendOnWarning>true</sendOnWarning>
+                <configuration>
+                    <address>jenkins@127.0.0.1</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
 </project>
