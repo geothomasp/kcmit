@@ -18,7 +18,7 @@ public final class ProposalQuestionnaireValidation extends  KcPersistableBusines
     @Column(name = "QUESTION_ID")
     private Long questionId;
 
-    @Column(name = "QUESTIONNAIRE_IDS")
+    @Column(name = "QUESTIONNAIRE_ID")
     private Long questionnaireId;
 
     @Column(name = "ANSWER")

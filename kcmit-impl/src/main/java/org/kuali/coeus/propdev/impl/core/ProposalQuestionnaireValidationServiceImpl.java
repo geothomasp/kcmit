@@ -65,7 +65,7 @@ public class ProposalQuestionnaireValidationServiceImpl implements ProposalQuest
 					for(Answer answer : questionAnswers) {
 						Long questionId = answer.getQuestion().getQuestionSeqId().longValue();
 						if(questionId.equals(proposalQuestionnaireValidation.getQuestionId()) && 
-								answer.getAnswer().equalsIgnoreCase(proposalQuestionnaireValidation.getAnswer())) {
+								answer.getAnswer() != null && answer.getAnswer().equalsIgnoreCase(proposalQuestionnaireValidation.getAnswer())) {
 							String validationMessage = proposalQuestionnaireValidation.getValidationMessage().concat(getAdditionalMessage(proposalPerson));
 	                    	getGlobalVariableService().getMessageMap().putError(PROPOSAL_SUBMIT_PAGE_ID, GENERIC_ERROR_KEY, validationMessage);
 	                    	break;
