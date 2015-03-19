@@ -463,11 +463,7 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 		BudgetPeriod currentTabBudgetPeriod = form.getAddProjectPersonnelHelper().getCurrentTabBudgetPeriod();
 	    BudgetLineItem budgetLineItem = form.getAddProjectPersonnelHelper().getBudgetLineItem();
 	    getBudgetCalculationService().applyToLaterPeriods(budget, currentTabBudgetPeriod, budgetLineItem);
-<<<<<<< HEAD
 		return super.save(form);
-=======
-		return getModelAndViewService().getModelAndView(form);
->>>>>>> RESKC-228:add inflation rate info to add budget line item modals
 	}
 
 	@Transactional @RequestMapping(params="methodToCall=deletePersonnelLineItem")
