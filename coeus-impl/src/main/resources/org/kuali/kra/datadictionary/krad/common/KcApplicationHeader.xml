@@ -130,6 +130,7 @@ Portions of Kuali are copyrighted by other parties as described in the [link='@{
           parent="Uif-ListGroup" p:layoutManager.additionalCssClasses="nav,pull-right">
         <property name="items">
             <list>
+				<bean parent="Uif-Message" p:messageText="@{#ConfigProperties['version']} " />
                 <bean parent="Uif-Link" p:href="@{#ConfigProperties['feedback.link.url']}"
                       p:wrapperCssClasses="pull-right" p:target="_new"
                       p:render="@{#ConfigProperties['feedback.link.url'] != ''}"
