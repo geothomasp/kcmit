@@ -1,7 +1,9 @@
 create or replace
 function fn_generate_sap_feed
-					(as_path VARCHAR2,
-					as_update_user VARCHAR2)
+					(as_path in VARCHAR2,
+					as_update_user in VARCHAR2,
+					as_batch_id in number,
+					as_ld_now in date)
 return number is
 li_feed_id 					SAP_FEED_DETAILS.FEED_ID%TYPE;
 award_number 				SAP_FEED_DETAILS.AWARD_NUMBER%TYPE;
@@ -63,9 +65,13 @@ begin
 		--return;
 	END IF;
 	-- Modified with COEUSDEV-563:Award Sync to Parent is not triggering SAP feed
-	SELECT seq_sap_batch_id.NEXTVAL, sysdate
+	
+	/*SELECT seq_sap_batch_id.NEXTVAL, sysdate
 	INTO li_batch_id, ld_now
 	FROM DUAL;
+	*/
+	ld_now 		:= as_ld_now;
+	li_batch_id := as_batch_id;
 	-- COEUSDEV-563:End
 
 --dbms_output.put_line('sel from dual');

@@ -2813,7 +2813,7 @@ select * from coeus_degree@warehouse_coeus.mit.edu
 commit
 /
 delete from PERSON_DEGREE
-where update_user = 'OSPA'
+where update_user = 'KCSO'
 /
 insert into PERSON_DEGREE 
 select SEQ_PERSON_DEGREE.NEXTVAL, 
