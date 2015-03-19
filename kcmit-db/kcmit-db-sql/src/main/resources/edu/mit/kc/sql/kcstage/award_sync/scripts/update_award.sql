@@ -91,12 +91,24 @@ IF ls_cfda_number IS NOT NULL AND li_cfda_lenght >0 THEN
 SELECT SUBSTR(trim(ls_cfda_number),1,2)||'.'||SUBSTR(trim(ls_cfda_number),3)INTO ls_cfda_number FROM DUAL;
 END IF;
 --
-	BEGIN
-	SELECT UNIT_NUMBER INTO ls_lead_unit_num FROM OSP$AWARD_UNITS WHERE LEAD_UNIT_FLAG='Y' AND MIT_AWARD_NUMBER=r_awd_upd.MIT_AWARD_NUMBER AND SEQUENCE_NUMBER=r_awd_upd.SEQUENCE_NUMBER;
-        EXCEPTION
+	
+	
+	BEGIN			
+			select b.unit_number INTO ls_lead_unit_num from osp$award_units@coeus.kuali b
+			where b.lead_unit_flag = 'Y'
+			and   b.mit_award_number = r_awd_upd.MIT_AWARD_NUMBER
+			and   b.sequence_number = ( select max(s1.sequence_number) 
+										from osp$award_units@coeus.kuali s1
+										where s1.mit_award_number = r_awd_upd.MIT_AWARD_NUMBER
+										and   s1.sequence_number <= r_awd_upd.SEQUENCE_NUMBER
+									  )
+			and rownum < 2;
+			
+	EXCEPTION
 	WHEN OTHERS THEN
-	ls_lead_unit_num:=NULL;
+		ls_lead_unit_num:=NULL;
 	END;
+	
 	
 li_orig_seq:=r_awd_upd.SEQUENCE_NUMBER;
 
