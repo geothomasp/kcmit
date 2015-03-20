@@ -40,9 +40,7 @@
 
 		<div class="tab-container" align="center">
 			<h3>
-				<!--  <span class="subhead-left">Key Personnel and Credit Split************</span> -->
-				<!--  <span class="subhead-right"><kul:help businessObjectClassName="org.kuali.kra.award.contacts.AwardPersonCreditSplit" altText="help"/></span> -->
-			</h3>
+				</h3>
 				<kul:innerTab tabTitle="Key Personnel" parentTab="Key Personnel and Credit Split" defaultOpen="true" 
             tabErrorKey="projectPersonnelBean.contactRoleCode*,projectPersonnelBean.newAwardContact*,document.awardList[0].projectPersons,projectPersonnelBean.projectPersonnel[*"
             auditCluster="contactsAuditErrors,contactsAuditWarnings" tabAuditKey="document.awardList[0].projectPerson*">
@@ -288,13 +286,13 @@
 										</c:if>
 									</c:if>
 								</c:if>
-						
+						 <c:if test="${!readOnly}">
 										<html:image
 											property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 											src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif'
 											styleClass="tinybutton" />
 								
- <c:if test="${!readOnly}">
+
 									<c:if test="${KualiForm.syncMode}">
 	    							<html:image property="methodToCall.syncProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 	    								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif' alt="sync" styleClass="tinybutton" disabled="${readOnly}"/>

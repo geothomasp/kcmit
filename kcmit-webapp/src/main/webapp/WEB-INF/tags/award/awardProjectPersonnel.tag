@@ -286,13 +286,13 @@
 										
 									</c:if>
 	</c:if>
-								
+								 <c:if test="${!readOnly}">
 										<html:image
 											property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 											src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif'
 											styleClass="tinybutton" />
 								
- <c:if test="${!readOnly}">
+
 									<c:if test="${KualiForm.syncMode}">
 	    							<html:image property="methodToCall.syncProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 	    								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif' alt="sync" styleClass="tinybutton" disabled="${readOnly}"/>
