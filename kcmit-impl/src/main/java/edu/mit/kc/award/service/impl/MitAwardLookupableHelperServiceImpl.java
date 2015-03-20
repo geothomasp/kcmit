@@ -69,11 +69,11 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
     public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
         List<HtmlData> htmlDataList = super.getCustomActionUrls(businessObject, pkNames);
        AwardDocument document = ((Award) businessObject).getAwardDocument();   
-       htmlDataList.add(getSharedDocLink((Award) businessObject, false));
        boolean  isPI = isLoggedInUserPI((Award) businessObject);
        boolean  isAwardActive = isAwardActive((Award) businessObject);
    if((KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", "Maintain Keyperson") || isPI) && isAwardActive){
             htmlDataList.add(getKeyPersonLink((Award) businessObject, false));}
+   htmlDataList.add(getSharedDocLink((Award) businessObject, false));
         return htmlDataList;
     }
         

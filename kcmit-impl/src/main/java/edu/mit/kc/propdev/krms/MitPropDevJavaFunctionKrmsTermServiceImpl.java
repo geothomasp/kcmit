@@ -11,8 +11,10 @@ import java.util.Map;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
+import org.kuali.coeus.common.budget.framework.personnel.AppointmentType;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
 import org.kuali.coeus.common.framework.org.OrganizationYnq;
+import org.kuali.coeus.common.framework.person.attr.PersonAppointment;
 import org.kuali.coeus.common.framework.sponsor.hierarchy.SponsorHierarchy;
 import org.kuali.coeus.common.impl.krms.KcKrmsJavaFunctionTermServiceBase;
 import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
@@ -1081,4 +1083,34 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 		}
 		return false;
 	}
+	 /**	 
+     * MITKC-200
+     * This method is to check if ALL CO-PIS HAVE PI STATUS
+     * fn_co_i_appoint_type_rule 
+     */
+    public String coiAppointmentTypeRule(DevelopmentProposal developmentProposal) {
+        List<ProposalPerson> people = developmentProposal.getProposalPersons();
+        List<AppointmentType> appointmentTypes = (List<AppointmentType>)getBusinessObjectService().findAll(AppointmentType.class);
+        for (ProposalPerson person : people) {
+        	
+        	 if (person.isCoInvestigator() //&& person.isInvestigator()
+             		&& person.getPerson() != null && person.getPerson().getExtendedAttributes() != null) {
+                List<PersonAppointment> appointments = person.getPerson().getExtendedAttributes().getPersonAppointments();
+                for(PersonAppointment personAppointment : appointments) {
+                    if(isAppointmentTypeEqualsJobTitle(appointmentTypes, personAppointment.getJobTitle())) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+        return FALSE;
+    }
+    private boolean isAppointmentTypeEqualsJobTitle(List<AppointmentType> appointmentTypes, String jobTitle) {
+        for(AppointmentType appointmentType : appointmentTypes) {
+            if(appointmentType.getDescription().equalsIgnoreCase(jobTitle)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
