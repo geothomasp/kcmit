@@ -150,13 +150,14 @@
     	        	<td class="infoline">
                         ${KualiForm.valueFinderResultDoNotCache}
     	        		<div align="center">
-    		        		<kul:htmlControlAttribute property="projectPersonnelBean.contactRoleCode" 
-    	                									attributeEntry="${awardPersonAttributes.contactRoleCode}" onchange="proposalRoleChange(this, 400);"/><br/>
+    	        		${awardPersonAttributes.contactRoleCode.keyLabelMap.KP}
+    	        	<html:hidden property="projectPersonnelBean.contactRoleCode" value="KP" />
+    		        <br/>
     	                	<span class="keypersononly">
     	                	<div class="ignoreMeFromWarningOnAddRow">
     					    *<kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" />
     					    </div>
-    					    <span class="noscriptonly">(Required for Key Persons only)</span>
+    					    <span>(Required for Key Persons)</span>
     					    <div class="ignoreMeFromWarningOnAddRow"> 
     				         <kul:htmlControlAttribute property="projectPersonnelBean.newAwardContact.keyPersonRole" 
     										           attributeEntry="${awardPersonAttributes.keyPersonRole}"/>
@@ -240,8 +241,9 @@
     	                <td valign="middle">
     	                	${KualiForm.valueFinderResultDoNotCache}
     	                	<div align="center">
-    	                	 	<kul:htmlControlAttribute property="projectPersonnelBean.projectPersonnel[${awardContactRowStatus.index}].contactRoleCode" 
-    	                			attributeEntry="${awardPersonAttributes.contactRoleCode}" onchange="proposalRoleChange(this, 400);"/><br/>
+    	                	${awardPersonAttributes.contactRoleCode.keyLabelMap.KP}
+    	        	<html:hidden property="projectPersonnelBean.contactRoleCode" value="KP" />
+    	      <br/>
 	
    	                			<span class="keypersononly">
 	    					    	*<kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" />
