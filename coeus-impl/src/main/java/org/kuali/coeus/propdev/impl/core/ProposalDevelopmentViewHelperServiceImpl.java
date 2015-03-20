@@ -961,12 +961,20 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     public boolean canCertifyRequired(ProposalPerson proposalPerson){
     
             String value = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
+            String modSubCodeCoi= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+            		"MODULE_SUB_ITEM_CODE_COI_CERTIFICATION");
            List<String> newRoles=Arrays.asList(value.split(PARAMETER_DELIMITER));     
            String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
            String principalId=getGlobalVariableService().getUserSession().getPrincipalId();
           if (proposalPerson.isInvestigator() && proposalPerson.isPrincipalInvestigator()
                   && StringUtils.equals(principalId, proposalPerson.getPersonId())) {
               return true;
+          } if (proposalPerson.getProposalPersonRoleId().equals("COI")){
+        	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modSubCodeCoi)){
+        		  return true;
+        	  }else{
+        		  return false;
+        	  }
           }
            
         if (proposalPerson.getProposalPersonRoleId().equals("KP")){
@@ -999,10 +1007,16 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
    	    } 	
     public boolean isCertQuestView(ProposalPerson proposalPerson){
     	 String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
+    	 String modDubCodePi=(getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
+         		"MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"));
     	 ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) proposalPerson.getDevelopmentProposal().getDocument();
     	  boolean canViewProposal = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.VIEW_CERTIFICATION);
       	        if(canViewProposal){
-      	        	return true;
+      	        	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modDubCodePi)){
+      	        		return false;	
+      	        	}else{
+      	        		return true;
+      	        	}      	        	
       	        }else{
       	        	return false;
       	        }
