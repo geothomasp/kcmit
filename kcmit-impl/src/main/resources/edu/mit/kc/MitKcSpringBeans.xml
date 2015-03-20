@@ -169,7 +169,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/RoleCentralMap.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/docs/RoleCentralMapMaintenanceDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalDevelopmentDocument.xml</value>
-				<value>classpath:edu/mit/kc/datadictionary/MITKcApplicationHeader.xml</value>
+			<!-- 	<value>classpath:edu/mit/kc/datadictionary/MITKcApplicationHeader.xml</value> -->
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardBudgetDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentType.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/SharedDocumentTypeMaintenanceDocument.xml</value>
@@ -177,6 +177,9 @@
 				<value>classpath:edu/mit/kc/datadictionary/MitNarrativeAttachment.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MitProposalSubmitPage.xml</value>
 				
+					<value>classpath:edu/mit/kc/datadictionary/MITLandingPageView.xml</value>
+					<value>classpath:edu/mit/kc/datadictionary/MITHomePage.xml</value>
+			
 				<!-- Sap Feeds -->
 				 <value>classpath:edu/mit/kc/sapfeed/SapFeedInitiateView.xml</value>
                  <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateMasterFeedPage.xml</value>
