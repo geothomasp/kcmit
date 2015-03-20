@@ -316,7 +316,7 @@
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-PrimaryActionButton-Mini" p:actionLabel="Notify @{#lp.fullName}" p:methodToCall="sendCertificationNotification"
-                                              p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}] and !#empty(#lp.versionNumber) and #ViewHelper.canCertifyRequired(#line) and !#parent.readOnly and #ViewHelper.renderQuestionnaire(#line)}"
+                                              p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}] and !#empty(#lp.versionNumber) and #ViewHelper.canCertifyRequired(#line) and !#parent.readOnly}"
                                               p:order="10"/>
                                         <bean parent="Uif-ActionLink" p:iconClass="icon-arrow-up" p:render="@{#line.moveUpAllowed}"
                                               p:actionLabel="" p:methodToCall="movePersonUp" p:order="20"/>
@@ -633,16 +633,16 @@
           p:headerText="@{(#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #line.questionnaireHelper.answerHeaders[0].label != null) ? #line.questionnaireHelper.answerHeaders[0].label : 'None'}">
         <property name="items">
             <list>
-                <bean parent="PropDev-PersonnelPage-KeyPersonCertificationToggle"
+              <!--   <bean parent="PropDev-PersonnelPage-KeyPersonCertificationToggle"
                       p:render="@{!#line.getRole().getCertificationRequired()}"
-                      p:order="10"/>
+                      p:order="10"/> -->
                 <bean parent="Uif-Message" p:messageText="[color=red]Proposal is a Child in Proposal Hierarchy. Certifications must take place in the Parent proposal.[/color]"
                       p:render="@{document.developmentProposal.isChild()}"
-                      p:order="20" />
+                      p:order="10" />
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="clearAnswers" p:actionLabel="Clear All Answers"
                       p:actionParameters="personNumber:@{(#line.proposalPersonNumber)}"
                       p:render="@{!#parent.readOnly and #ViewHelper.renderQuestionnaire(#line) and !document.developmentProposal.isChild()}"
-                      p:order="30">
+                      p:order="20">
                     <property name="confirmationDialog">
                         <bean parent="Uif-DialogGroup-OkCancel" p:promptText="Are you sure you want to clear all the answers?"/>
                     </property>
@@ -651,7 +651,7 @@
                 <bean parent="Questionnaire-QuestionsGroup" p:propertyName="questionnaireHelper.answerHeaders[0].questions"
                       p:render="@{#ViewHelper.renderQuestionnaire(#line)}"
                       p:readOnly="@{document.developmentProposal.isChild() or #ViewHelper.isCertQuestView(#line)}"
-                      p:order="40" />
+                      p:order="30" />
             </list>
         </property>
     </bean>

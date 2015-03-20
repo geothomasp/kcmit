@@ -865,7 +865,7 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         if (proposalPerson.getRole().getCertificationRequired()){
             return true;
         }
-        else if (proposalPerson.getOptInCertificationStatus()){
+       else if (proposalPerson.getRoleCode().equals(Constants.KEY_PERSON_ROLE)){
             return true;
         }
 
