@@ -31,6 +31,7 @@ import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPerson;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonSalaryDetails;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonService;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelBudgetService;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetSavePersonnelPeriodEvent;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetSaveProjectPersonnelEvent;
@@ -42,6 +43,9 @@ import org.kuali.coeus.common.view.wizard.framework.WizardControllerService;
 import org.kuali.coeus.common.view.wizard.framework.WizardResultsDto;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetControllerBase;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetForm;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.web.form.DialogResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +69,14 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 	@Qualifier("budgetPersonService")
 	private BudgetPersonService budgetPersonService;
 	
+	@Autowired
+	@Qualifier("budgetPersonnelBudgetService")
+	BudgetPersonnelBudgetService budgetPersonnelBudgetService;
+
+    @Autowired
+    @Qualifier("parameterService")
+    private ParameterService parameterService;
+
 	private static final String EDIT_PROJECT_PERSONNEL_DIALOG_ID = "PropBudget-EditPersonnel-Section";
 	private static final String EDIT_PERSONNEL_PERIOD_DIALOG_ID = "PropBudget-EditPersonnelPeriod-Section";
 	private static final String EDIT_LINE_ITEM_DETAILS_DIALOG_ID = "PropBudget-AssignPersonnelToPeriodsPage-DetailsAndRates";
@@ -191,11 +203,16 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
         		setBudgetPeriodStartDateAndEndDateOnLineItems(form, budgetPeriod);
         		form.getAddProjectPersonnelHelper().getBudgetLineItem().setBudget(budget);
         		form.getAddProjectPersonnelHelper().getBudgetPersonnelDetail().setBudget(budget);
+                form.getAddProjectPersonnelHelper().getBudgetPersonnelDetail().setPeriodTypeCode(getDefualtPeriodTypeCode());
         		modelAndView = getModelAndViewService().showDialog(ADD_PERSONNEL_PERIOD_DIALOG_ID, true, form);
             }
         }
 		return modelAndView;
 	}
+
+    protected String getDefualtPeriodTypeCode() {
+        return getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_BUDGET, ParameterConstants.DOCUMENT_COMPONENT,Constants.BUDGET_PERSON_DETAILS_DEFAULT_PERIODTYPE);
+    }
 	
 	private void setBudgetPeriodStartDateAndEndDateOnLineItems(ProposalBudgetForm form, BudgetPeriod budgetPeriod) {
 		form.getAddProjectPersonnelHelper().getBudgetLineItem().setStartDate(budgetPeriod.getStartDate());
@@ -486,4 +503,20 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 		this.budgetPersonService = budgetPersonService;
 	}
 
+	public BudgetPersonnelBudgetService getBudgetPersonnelBudgetService() {
+		return budgetPersonnelBudgetService;
+	}
+
+	public void setBudgetPersonnelBudgetService(
+			BudgetPersonnelBudgetService budgetPersonnelBudgetService) {
+		this.budgetPersonnelBudgetService = budgetPersonnelBudgetService;
+	}
+
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
 }
