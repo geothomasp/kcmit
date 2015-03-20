@@ -563,7 +563,6 @@
                     <property name="detailCols">
                         <list>
                             <value>awardNumber</value>
-                            <value>award.accountNumber</value>
                             <value>leadUnitNumber</value>
                             <value>leadUnit.unitName</value>
                             <value>reportStatus.description</value>
@@ -605,7 +604,7 @@
                     <property name="viewName" value="Sponsor View" />
                     <property name="groupByDisplayCols">
                         <list>
-                            <value>sponsor.sponsorName</value>                            
+                            <value>sponsor.sponsorName</value>
                         </list>
                     </property>
                     <property name="detailCols">
@@ -637,7 +636,6 @@
                     <property name="detailCols">
                         <list>
                             <value>awardNumber</value>
-                            <value>award.accountNumber</value>
                             <value>leadUnitNumber</value>
                             <value>leadUnit.unitName</value>
                             <value>reportStatus.description</value>
@@ -654,8 +652,7 @@
         <property name="allFields">
             <list>
                 <value>awardNumber</value>
-                <value>award.accountNumber</value>
-                <value>piName</value>                   
+                <value>piName</value>
                 <value>leadUnitNumber</value>
                 <value>leadUnit.unitName</value>
                 <value>reportClass.description</value>

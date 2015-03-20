@@ -56,7 +56,6 @@ public class ReportTrackingSearchViews {
         displayViewConversions.put("reportStatus.description", "statusCode");
         displayViewConversions.put("sponsor.sponsorName", "sponsorCode");
         displayViewConversions.put("leadUnit.unitName", "leadUnitNumber");
-        displayViewConversions.put("award.accountNumber", "awardNumber");
         
     }
     
