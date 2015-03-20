@@ -27,6 +27,9 @@
 	</kul:tabTop>
 	<kul:panelFooter />
 	<div id="globalbuttons" class="globalbuttons">
+		
+	      	<html:image src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_save.gif" styleClass="globalbuttons" property="methodToCall.save" styleId="save" title="save" alt="save"/>
+	    	
 		<html:image
 			src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_close.gif"
 			styleClass="globalbuttons" property="methodToCall.close"

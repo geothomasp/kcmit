@@ -8,23 +8,26 @@
     	<!-- End required KNS forms -->
 <!-- Rice content End -->	
 <form-bean name="SharedDocForm" type="edu.mit.kc.award.SharedDocForm" /> 	
-<form-bean name="KeyPersonForm" type="org.kuali.kra.award.AwardForm" />
+
     </form-beans>
-    <action-mappings>  
-          <action path="/sharedDoc*" name="SharedDocForm" input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"  scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
-          <forward name="basic" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
-          </action>
-          
-         
-          <action path="/keyperson*" name="SharedDocForm" input="/WEB-INF/jsp/award/KeyPerson.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"  scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
-          <forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
-          </action>
-                    
+    <action-mappings>
+    
+	<action path="/sharedDoc*" name="SharedDocForm"
+		input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"
+		scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
+		<forward name="basic" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
+	</action>
+	
+	<action path="/keyperson*" name="SharedDocForm"
+		input="/WEB-INF/jsp/award/KeyPerson.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"
+		scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
+		<forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
+	</action>
+	
     </action-mappings>
-
-
 
     <controller processorClass="org.kuali.coeus.sys.framework.controller.interceptor.KcRequestProcessor" />
     <message-resources factory="org.kuali.rice.kns.web.struts.action.KualiPropertyMessageResourcesFactory" parameter="" /> 
     <plug-in className="org.kuali.coeus.sys.framework.controller.GlobalFormatterRegistry" />
+    
 </struts-config>

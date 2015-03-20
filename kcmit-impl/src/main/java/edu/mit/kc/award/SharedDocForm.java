@@ -15,17 +15,26 @@
  */
 package edu.mit.kc.award;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.coeus.common.framework.medusa.MedusaBean;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
 import org.kuali.coeus.common.notification.impl.NotificationHelper;
 import org.kuali.coeus.common.permissions.impl.web.struts.form.PermissionsForm;
-import org.kuali.coeus.sys.framework.validation.Auditable;
 import org.kuali.coeus.sys.framework.model.MultiLookupForm;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.coeus.sys.framework.validation.Auditable;
 import org.kuali.kra.authorization.KraAuthorizationConstants;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.AwardTemplateSyncScope;
@@ -37,8 +46,11 @@ import org.kuali.kra.award.budget.AwardBudgetLimitsBean;
 import org.kuali.kra.award.budget.BudgetLimitSummaryHelper;
 import org.kuali.kra.award.commitments.AwardFandaRate;
 import org.kuali.kra.award.commitments.CostShareFormHelper;
-import org.kuali.kra.award.contacts.*;
-import org.kuali.kra.award.customdata.CustomDataHelper;
+import org.kuali.kra.award.contacts.AwardCentralAdminContactsBean;
+import org.kuali.kra.award.contacts.AwardCreditSplitBean;
+import org.kuali.kra.award.contacts.AwardProjectPersonnelBean;
+import org.kuali.kra.award.contacts.AwardSponsorContactsBean;
+import org.kuali.kra.award.contacts.AwardUnitContactsBean;
 import org.kuali.kra.award.detailsdates.DetailsAndDatesFormHelper;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
@@ -62,14 +74,11 @@ import org.kuali.kra.award.paymentreports.specialapproval.foreigntravel.Approved
 import org.kuali.kra.award.permissions.PermissionsHelper;
 import org.kuali.kra.award.printing.AwardPrintNotice;
 import org.kuali.kra.award.printing.AwardTransactionSelectorBean;
+import org.kuali.kra.award.service.AwardHierarchyUIService;
 import org.kuali.kra.award.specialreview.SpecialReviewHelper;
 import org.kuali.kra.award.web.struts.action.SponsorTermFormHelper;
-import org.kuali.kra.infrastructure.Constants;
-import org.kuali.coeus.common.framework.medusa.MedusaBean;
-import org.kuali.kra.award.service.AwardHierarchyUIService;
 import org.kuali.kra.external.award.web.AccountCreationPresentationHelper;
-import org.kuali.coeus.common.budget.framework.core.BudgetVersionFormBase;
-import org.kuali.coeus.common.framework.custom.CustomDataDocumentForm;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
@@ -85,9 +94,6 @@ import org.kuali.rice.kns.web.ui.HeaderField;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.mit.kc.award.contacts.AwardPersonRemove;
-
-import java.text.ParseException;
-import java.util.*;
 
 /**
  * 
@@ -134,7 +140,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     private SponsorTermFormHelper sponsorTermFormHelper;
     private ApprovedSubawardFormHelper approvedSubawardFormHelper;
     private DetailsAndDatesFormHelper detailsAndDatesFormHelper;
-    //private AwardDirectFandADistributionBean awardDirectFandADistributionBean;
     private AwardCloseoutBean awardCloseoutBean;
     
     private ReportClass reportClassForPaymentsAndInvoices;
@@ -148,8 +153,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     private AwardBudgetLimitsBean awardBudgetLimitsBean;
     
     private boolean auditActivated;
-    //private boolean awardInMultipleNodeHierarchy;
-  //  private CustomDataHelper customDataHelper = new CustomDataHelper(this);
     private PermissionsHelper permissionsHelper;
     private SpecialReviewHelper specialReviewHelper;
     private NotificationHelper<AwardNotificationContext> notificationHelper;
@@ -164,8 +167,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     private String rootAwardNumber;
     private boolean validPrompt;
     private boolean statusHold;
-    
-  //  SharedDoc Variables
     
     private boolean awardProjectDocView;
     private boolean ipProjectDocView;
@@ -256,51 +257,32 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
      * 
      * This method initialize all form variables
      */
-    public void initialize() {
-        //newAwardCostShare = new AwardCostShare();
-        newAwardFandaRate = new AwardFandaRate(); 
-        //setNewSponsorTerms(new ArrayList<SponsorTerm>());
-        awardCommentHistoryByType = new ArrayList<AwardComment>();
-/*        costShareFormHelper = new CostShareFormHelper(this);
-        centralAdminContactsBean = new AwardCentralAdminContactsBean(this);
-        sponsorTermFormHelper = new SponsorTermFormHelper(this);
-        approvedSubawardFormHelper = new ApprovedSubawardFormHelper(this);
-        approvedEquipmentBean = new ApprovedEquipmentBean(this);
-        paymentScheduleBean = new PaymentScheduleBean(this);
-        approvedForeignTravelBean = new ApprovedForeignTravelBean(this);
-        projectPersonnelBean = new AwardProjectPersonnelBean(this);
-        unitContactsBean = new AwardUnitContactsBean(this);
-        sponsorContactsBean = new AwardSponsorContactsBean(this);
-        detailsAndDatesFormHelper = new DetailsAndDatesFormHelper(this);
-        awardReportsBean = new AwardReportsBean(this);
-        awardNotepadBean = new AwardNotepadBean(this);
-        awardAttachmentFormBean = new AwardAttachmentFormBean(this);*/
-        //awardDirectFandADistributionBean = new AwardDirectFandADistributionBean(this);
-   /*     setPermissionsHelper(new PermissionsHelper(this));
-        setSpecialReviewHelper(new SpecialReviewHelper(this));
-        setNotificationHelper(new NotificationHelper());*/
-        //sponsorTermTypes = new ArrayList<KeyValue>();
-       /* awardCreditSplitBean = new AwardCreditSplitBean(this);
-        awardCommentBean = new AwardCommentBean(this);
-        awardCloseoutBean = new AwardCloseoutBean(this);
-        awardHierarchyNodes = new TreeMap<String, AwardHierarchy>();
-        fundingProposalBean = new AwardFundingProposalBean(this);*/
-        awardPrintNotice = new AwardPrintNotice();
-        awardPrintChangeReport = new AwardTransactionSelectorBean();
-        buildReportTrackingBeans();
-      /*  awardHierarchyBean = new AwardHierarchyBean(this);*/
-        medusaBean = new MedusaBean();
-        //sync
-        syncRequiresConfirmationMap = null;
-        currentSyncScopes = null;
-
-        syncMode = false;
-       // awardSyncBean = new AwardSyncBean(this);
-        setDirectIndirectViewEnabled(getParameterService().getParameterValueAsString(Constants.PARAMETER_MODULE_AWARD, ParameterConstants.DOCUMENT_COMPONENT, "ENABLE_AWD_ANT_OBL_DIRECT_INDIRECT_COST"));
-        budgetLimitSummary = new BudgetLimitSummaryHelper();
-       // awardBudgetLimitsBean = new AwardBudgetLimitsBean(this);
-        accountCreationHelper = new AccountCreationPresentationHelper();
-    }
+	public void initialize() {
+		newAwardFandaRate = new AwardFandaRate();
+		awardCommentHistoryByType = new ArrayList<AwardComment>();
+		centralAdminContactsBean = new AwardCentralAdminContactsBean(this);
+		projectPersonnelBean = new AwardProjectPersonnelBean(this);
+		unitContactsBean = new AwardUnitContactsBean(this);
+		sponsorContactsBean = new AwardSponsorContactsBean(this);
+		detailsAndDatesFormHelper = new DetailsAndDatesFormHelper(this);
+		awardReportsBean = new AwardReportsBean(this);
+		setPermissionsHelper(new PermissionsHelper(this));
+		awardCreditSplitBean = new AwardCreditSplitBean(this);
+		awardCommentBean = new AwardCommentBean(this);
+		awardHierarchyNodes = new TreeMap<String, AwardHierarchy>();
+		awardPrintNotice = new AwardPrintNotice();
+		awardPrintChangeReport = new AwardTransactionSelectorBean();
+		buildReportTrackingBeans();
+		awardHierarchyBean = new AwardHierarchyBean(this);
+		medusaBean = new MedusaBean();
+		syncRequiresConfirmationMap = null;
+		currentSyncScopes = null;
+		syncMode = false;
+		awardSyncBean = new AwardSyncBean(this);
+		setDirectIndirectViewEnabled(getParameterService().getParameterValueAsString(Constants.PARAMETER_MODULE_AWARD,ParameterConstants.DOCUMENT_COMPONENT,"ENABLE_AWD_ANT_OBL_DIRECT_INDIRECT_COST"));
+		budgetLimitSummary = new BudgetLimitSummaryHelper();
+		accountCreationHelper = new AccountCreationPresentationHelper();
+	}
     
     public void buildReportTrackingBeans() {
         reportTrackingBeans = new ArrayList<ReportTrackingBean>();
@@ -571,14 +553,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
         return getAwardDocument().getAward().isAwardHasAssociatedTandMOrIsVersioned();
     }
 
-//    /**
-//     * Sets the awardInMultipleNodeHierarchy attribute value.
-//     * @param awardInMultipleNodeHierarchy The awardInMultipleNodeHierarchy to set.
-//     */
-//    public void setAwardInMultipleNodeHierarchy(boolean awardInMultipleNodeHierarchy) {
-//        this.awardInMultipleNodeHierarchy = awardInMultipleNodeHierarchy;
-//    }
-    
     /**
      * Gets the indexOfAwardAmountInfoWithHighestTransactionId attribute. 
      * @return Returns the indexOfAwardAmountInfoWithHighestTransactionId.
@@ -657,19 +631,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
         return "award";
     }
     
-  /*  @Override
-    public CustomDataHelper getCustomDataHelper() {
-        return customDataHelper;
-    }
-
-    *//**
-     * This method sets the custom data helper
-     * @param customDataHelper
-     *//*
-    public void setCustomDataHelper(CustomDataHelper customDataHelper) {
-        this.customDataHelper = customDataHelper;
-    }
-*/
     /**
      * Sets the awardAuditActivated attribute value.
      * @param awardAuditActivated The awardAuditActivated to set.
@@ -682,22 +643,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     public AwardCreditSplitBean getAwardCreditSplitBean() {
         return awardCreditSplitBean;
     }
-    
-//    /**
-//     * Gets the awardDirectFandADistributionBean attribute. 
-//     * @return Returns the awardDirectFandADistributionBean.
-//     */
-//    public AwardDirectFandADistributionBean getAwardDirectFandADistributionBean() {
-//        return awardDirectFandADistributionBean;
-//    }
-//
-//    /**
-//     * Sets the awardDirectFandADistributionBean attribute value.
-//     * @param awardDirectFandADistributionBean The awardDirectFandADistributionBean to set.
-//     */
-//    public void setAwardDirectFandADistributionBean(AwardDirectFandADistributionBean awardDirectFandADistributionBean) {
-//        this.awardDirectFandADistributionBean = awardDirectFandADistributionBean;
-//    }
 
     /**
      * @param awardCreditSplitBean
