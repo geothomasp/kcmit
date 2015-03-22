@@ -355,7 +355,7 @@ public class BudgetPersonnelBudgetServiceImpl implements BudgetPersonnelBudgetSe
         return quantity;
     }
     
-    protected void addPersonnelToPeriod(BudgetPeriod budgetPeriod, BudgetLineItem budgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetail) {
+    public void addPersonnelToPeriod(BudgetPeriod budgetPeriod, BudgetLineItem budgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetail) {
     	Budget budget = budgetPeriod.getBudget();
         copyLineItemToPersonnelDetails(budgetLineItem, newBudgetPersonnelDetail);
         newBudgetPersonnelDetail.setPersonNumber(budget.getNextValue(Constants.BUDGET_PERSON_LINE_NUMBER));

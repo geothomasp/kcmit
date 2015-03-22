@@ -56,4 +56,6 @@ public interface BudgetPersonnelBudgetService {
     
     public void refreshBudgetPersonnelLineItemReferences(BudgetPersonnelDetails newBudgetPersonnelDetail);
     
+    public void addPersonnelToPeriod(BudgetPeriod budgetPeriod, BudgetLineItem budgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetail);
+    
 }

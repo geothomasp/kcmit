@@ -58,10 +58,6 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 	@Qualifier("budgetPersonService")
 	private BudgetPersonService budgetPersonService;
 	
-	@Autowired
-	@Qualifier("budgetPersonnelBudgetService")
-	BudgetPersonnelBudgetService budgetPersonnelBudgetService;
-
 	private static final String EDIT_PROJECT_PERSONNEL_DIALOG_ID = "PropBudget-EditPersonnel-Section";
 	private static final String EDIT_PERSONNEL_PERIOD_DIALOG_ID = "PropBudget-EditPersonnelPeriod-Section";
 	private static final String EDIT_LINE_ITEM_DETAILS_DIALOG_ID = "PropBudget-AssignPersonnelToPeriodsPage-DetailsAndRates";
@@ -237,7 +233,7 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 		if(!isSummaryPersonnel(newBudgetPersonnelDetail)) {
 			getBudgetPersonnelBudgetService().refreshBudgetPersonnelLineItemReferences(newBudgetPersonnelDetail);
 		}
-		boolean rulePassed = isAddRulePassed(budget, currentTabBudgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail);
+		boolean rulePassed = isAddBudgetPersonnelRulePassed(budget, currentTabBudgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail);
 		if(rulePassed) {
 			getBudgetPersonnelBudgetService().addBudgetPersonnelToPeriod(currentTabBudgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail);
 		    getBudgetCalculationService().calculateBudgetPeriod(budget, currentTabBudgetPeriod);
@@ -281,11 +277,6 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 		return getKcBusinessRulesEngine().applyRules(new BudgetSavePersonnelPeriodEvent(budget, budgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail, 
 				editLineIndex, "addProjectPersonnelHelper.budgetPersonnelDetail."));
 	}
-
-    private boolean isAddRulePassed(Budget budget, BudgetPeriod budgetPeriod, BudgetLineItem newBudgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetail) {
-        return getKcBusinessRulesEngine().applyRules(new BudgetAddPersonnelPeriodEvent(budget, budgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail,
-                "addProjectPersonnelHelper.budgetPersonnelDetail."));
-    }
 
     private boolean isProjectPersonnelDeleteRulePassed(Budget budget, BudgetPerson budgetPerson) {
         return getKcBusinessRulesEngine().applyRules(new DeleteBudgetPersonEvent(budget, budgetPerson, 
@@ -449,15 +440,6 @@ public class ProposalBudgetProjectPersonnelController extends ProposalBudgetCont
 
 	public void setBudgetPersonService(BudgetPersonService budgetPersonService) {
 		this.budgetPersonService = budgetPersonService;
-	}
-
-	public BudgetPersonnelBudgetService getBudgetPersonnelBudgetService() {
-		return budgetPersonnelBudgetService;
-	}
-
-	public void setBudgetPersonnelBudgetService(
-			BudgetPersonnelBudgetService budgetPersonnelBudgetService) {
-		this.budgetPersonnelBudgetService = budgetPersonnelBudgetService;
 	}
 
 }

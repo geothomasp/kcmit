@@ -82,6 +82,7 @@
 	<bean id="PropBudget-SinglePointEntry-TabGroup-parentBean"
 		abstract="true" parent="Kc-DynamicTabSection"
 		p:tabCollectionPropertyName="budget.budgetPeriods"
+		p:setFieldBindingObjectPath = "true"
 		p:expressionProperties="budgetPeriod:budgetPeriod,budgetPeriodId:budgetPeriodId"
 		p:idSuffixPropertyName="budgetPeriod" p:header.headerText="Single Point Entry">
 		<property name="groupPrototype">
@@ -105,10 +106,26 @@
 	<bean id="PropBudget-SinglePointEntry-PeriodTab-parentBean"
 		abstract="true" parent="Uif-TableCollectionSection" p:headerText="Period @{#budgetPeriod} "
 		p:collectionObjectClass="org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem"
-		p:propertyName="budget.sepLineItems" p:addWithDialog="false"
+		p:propertyName="budgetLineItems" p:addWithDialog="false"
 		p:renderAddLine="true" p:layoutManager.renderSequenceField="false"
-		p:renderInactiveToggleButton="false" p:layoutManager.richTable.render="true"><!-- sepLineItems -->
-		
+		p:renderInactiveToggleButton="false" p:layoutManager.richTable.render="true">
+   		<property name="addLineActions">
+        	<list>
+            	<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addSPELineItemToPeriod" p:actionLabel="Add"
+            		  p:performClientSideValidation="true" p:render="@{!#parent.readOnly}">
+					<property name="additionalSubmitData">
+						<map>
+							<entry key="budgetPeriod" value="@{#budgetPeriod}" />
+						</map>
+					</property>
+            	</bean>
+        	</list>
+    	</property>
+		<property name="filters">
+			<list>
+				<bean parent="Uif-ConditionalCollectionFilter" p:expression="@{#line.budgetPeriod.toString() == #budgetPeriod}"/>
+			</list>
+		</property>
 		<property name="layoutManager.richTable.templateOptions">
 			<map>
 				<entry key="sDom" value="tip" />
@@ -117,15 +134,14 @@
 				<entry key="bInfo" value="false" />
 			</map>
 		</property>
-		<!-- Input lines -->
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="startDate"
-					p:order="10" p:required="false" />
+					p:order="10" p:required="true" />
 				<bean parent="Uif-InputField" p:propertyName="endDate" p:order="20"
-					p:required="false" />
+					p:required="true" />
 				<bean parent="Uif-InputField" p:propertyName="costElement"
-					p:label="Object Code Name" p:order="30" p:required="false" />
+					p:label="Object Code Name" p:order="30" p:required="true" />
 				<bean parent="Uif-InputField" p:propertyName="lineItemCost"
 					p:label="Total Base Cost" p:order="40" p:required="false" />
 				<bean parent="Uif-InputField" p:propertyName="quantity"
@@ -134,10 +150,9 @@
 					p:order="60" p:required="false" />
 			</list>
 		</property>
-		<!-- buttons and line actions starts -->
 		<property name="lineActions">
 			<list>
-				<bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="editSepNonPersonnelPeriodDetails"
+				<bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="editSPENonPersonnelPeriodDetails"
 					p:actionLabel="Details" p:order="10" p:render="true">
 					<property name="additionalSubmitData">
 						<map>
@@ -146,7 +161,7 @@
 					</property>
 				</bean>
 				<bean parent="Uif-DeleteLineAction-IconOnly" p:order="20"
-					p:methodToCall="deleteSEPBudgetLineItem" p:iconClass="icon-trash"
+					p:methodToCall="deleteBudgetLineItem" p:iconClass="icon-trash"
 					p:render="@{!#parent.readOnly}">
 					<property name="additionalSubmitData">
 						<map>
@@ -156,11 +171,7 @@
 				</bean>
 			</list>
 		</property>
-		<!-- buttons and line actions ends -->
 	</bean>
-	<!--add line collection  ends -->
-
-
 
 	
 	<bean id="PropBudget-SinglePointEntryPage-AssignNonPersonnel"

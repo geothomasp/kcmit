@@ -266,7 +266,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
         budgetRates = new ArrayList<BudgetRate>();
         budgetLaRates = new ArrayList<BudgetLaRate>();
         budgetPeriods = new ArrayList<BudgetPeriod>();
-     sepLineItems = new ArrayList<BudgetLineItem>();
+        sepLineItems = new ArrayList<BudgetLineItem>();
         budgetPersonnelDetailsList = new ArrayList<BudgetPersonnelDetails>();
         budgetUnrecoveredFandAs = new ArrayList<BudgetUnrecoveredFandA>();
         instituteRates = new ArrayList<InstituteRate>();
@@ -1797,7 +1797,7 @@ public class Budget extends AbstractBudget implements BudgetContract {
 		}
 		return budgetPersonnelDetailsList;
 	}
-//test data
+
 	public List<BudgetLineItem> getBudgetLineItems() {
 		String personnelBudgetCategoryTypeCode = getBudgetCalculationService().getPersonnelBudgetCategoryTypeCode();
 		List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();
@@ -1806,6 +1806,16 @@ public class Budget extends AbstractBudget implements BudgetContract {
 				if(!budgetLineItem.getBudgetCategory().getBudgetCategoryTypeCode().equalsIgnoreCase(personnelBudgetCategoryTypeCode)) {
 					budgetLineItems.add(budgetLineItem);
 		    	}
+		    }
+		}
+		return budgetLineItems;
+	}
+
+	public List<BudgetLineItem> getAllBudgetLineItems() {
+		List<BudgetLineItem> budgetLineItems = new ArrayList<BudgetLineItem>();
+		for(BudgetPeriod budgetPeriod : getBudgetPeriods()) {
+		    for(BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
+				budgetLineItems.add(budgetLineItem);
 		    }
 		}
 		return budgetLineItems;

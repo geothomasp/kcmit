@@ -36,6 +36,8 @@ import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationService;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetAddPersonnelPeriodEvent;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelBudgetService;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
 import org.kuali.coeus.common.budget.framework.summary.BudgetSummaryService;
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
@@ -144,6 +146,10 @@ public abstract class ProposalBudgetControllerBase {
     @Qualifier("budgetSummaryService")
     private BudgetSummaryService budgetSummaryService;
 
+	@Autowired
+	@Qualifier("budgetPersonnelBudgetService")
+	BudgetPersonnelBudgetService budgetPersonnelBudgetService;
+	
     protected UifFormBase createInitialForm(HttpServletRequest request) {
         return new ProposalBudgetForm();
     }
@@ -280,6 +286,11 @@ public abstract class ProposalBudgetControllerBase {
             || !StringUtils.equalsIgnoreCase(originalBudget.getUrRateClassCode(), currentBudget.getUrRateClassCode()));
     }
     
+    protected boolean isAddBudgetPersonnelRulePassed(Budget budget, BudgetPeriod budgetPeriod, BudgetLineItem newBudgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetail) {
+        return getKcBusinessRulesEngine().applyRules(new BudgetAddPersonnelPeriodEvent(budget, budgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail,
+                "addProjectPersonnelHelper.budgetPersonnelDetail."));
+    }
+	
 	public DataObjectService getDataObjectService() {
 		return dataObjectService;
 	}
@@ -433,4 +444,12 @@ public abstract class ProposalBudgetControllerBase {
 		this.budgetSummaryService = budgetSummaryService;
 	}
 
+	public BudgetPersonnelBudgetService getBudgetPersonnelBudgetService() {
+		return budgetPersonnelBudgetService;
+	}
+
+	public void setBudgetPersonnelBudgetService(
+			BudgetPersonnelBudgetService budgetPersonnelBudgetService) {
+		this.budgetPersonnelBudgetService = budgetPersonnelBudgetService;
+	}
 }

@@ -19,12 +19,6 @@
 package org.kuali.coeus.propdev.impl.budget.nonpersonnel;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
@@ -33,6 +27,7 @@ import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetDirectCostLimi
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetPeriodCostLimitEvent;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetControllerBase;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetForm;
@@ -41,7 +36,6 @@ import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.web.form.DialogResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,8 +54,10 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	
 	protected static final String ADD_NONPERSONNEL_PERIOD_DIALOG_ID_SEP = "PropBudget-SinglePointEntryPage-AddNonPersonnel-Dialog";
 	
-	private static final String EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SEP= "PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog";
+	private static final String EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SPE= "PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog";
 	private static final String EDIT_NONPERSONNEL_PARTICIPANT_DIALOG_ID_SEP = "PropBudget-SinglePointEntryPage-EditParticipantSupport-Dialog";
+	
+	private boolean budgetSinglePointEntry = false;
 	
 	@Transactional @RequestMapping(params="methodToCall=assignLineItemToPeriod")
 	public ModelAndView assignLineItemToPeriod(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
@@ -82,24 +78,50 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
         }
  		return modelAndView;
 	}
-	@Transactional @RequestMapping(params="methodToCall=assignSEPLineItemToPeriod")
-	public ModelAndView assignSEPLineItemToPeriod(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
-		ModelAndView modelAndView = getModelAndViewService().getModelAndView(form);
+	@Transactional @RequestMapping(params="methodToCall=addSPELineItemToPeriod")
+	public ModelAndView addSPELineItemToPeriod(@RequestParam("budgetPeriod") String budgetPeriod, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+		setBudgetSinglePointEntry(true);
+		int budgetPeriodIndex = Integer.parseInt(budgetPeriod) - 1;
+		String newLineItemPath = "budget.budgetPeriods_" + budgetPeriodIndex + "_.budgetLineItems";
 		Budget budget = form.getBudget();
-        Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
-		BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
-        DialogResponse dialogResponse = form.getDialogResponse(CONFIRM_PERIOD_CHANGES_DIALOG_ID);
-        if(dialogResponse == null && budgetPeriod.getBudgetPeriod() > 1 && !isBudgetLineItemExists(budget)) {
-        	modelAndView = getModelAndViewService().showDialog(CONFIRM_PERIOD_CHANGES_DIALOG_ID, true, form);
-        }else {
-            boolean confirmResetDefault = dialogResponse == null ? true : dialogResponse.getResponseAsBoolean();
-            if(confirmResetDefault) {
-        		form.getAddProjectBudgetLineItemHelper().reset();
-        		form.getAddProjectBudgetLineItemHelper().setCurrentTabBudgetPeriod(budgetPeriod);
-        		modelAndView = getModelAndViewService().showDialog(ADD_NONPERSONNEL_PERIOD_DIALOG_ID_SEP, true, form);
-             }
+        BudgetLineItem newBudgetLineItem = ((BudgetLineItem)form.getNewCollectionLines().get(newLineItemPath));
+		newBudgetLineItem.setBudget(budget);
+		BudgetPeriod currentTabBudgetPeriod = budget.getBudgetPeriods().get(budgetPeriodIndex);
+        getBudgetService().populateNewBudgetLineItem(newBudgetLineItem, currentTabBudgetPeriod);
+        boolean rulePassed = isValidBudgetLineItem(budget, newBudgetLineItem, currentTabBudgetPeriod);
+        if(rulePassed) {
+            getBudgetCalculationService().populateCalculatedAmount(budget, newBudgetLineItem);
+            getBudgetService().recalculateBudgetPeriod(budget, currentTabBudgetPeriod);
+            getCollectionControllerService().addLine(form);
+            getDataObjectService().save(budget);
+    	    validateBudgetExpenses(budget, currentTabBudgetPeriod);
+            form.setAjaxReturnType("update-page");
         }
- 		return modelAndView;
+        return getModelAndViewService().getModelAndView(form);
+	}
+	
+	protected boolean isValidBudgetLineItem(Budget budget, BudgetLineItem newBudgetLineItem, BudgetPeriod budgetPeriod) {
+        boolean rulePassed = true;
+        if(isPersonnelLineItem(newBudgetLineItem)) {
+        	BudgetPersonnelDetails newBudgetPersonnelDetail = getNewPersonnelLineItem(budget, budgetPeriod, newBudgetLineItem);
+        	rulePassed = isAddBudgetPersonnelRulePassed(budget, budgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail);
+        }
+		return rulePassed;
+	}
+	
+	protected BudgetPersonnelDetails getNewPersonnelLineItem(Budget budget, BudgetPeriod budgetPeriod, BudgetLineItem newBudgetLineItem) {
+		BudgetPersonnelDetails newBudgetPersonnelDetail = new BudgetPersonnelDetails();
+		newBudgetPersonnelDetail.setPersonSequenceNumber(BudgetConstants.BudgetPerson.SUMMARYPERSON.getPersonSequenceNumber());
+		newBudgetPersonnelDetail.setStartDate(newBudgetLineItem.getStartDate());
+		newBudgetPersonnelDetail.setEndDate(newBudgetLineItem.getEndDate());
+		newBudgetPersonnelDetail.setBudgetLineItem(newBudgetLineItem);
+		return newBudgetPersonnelDetail;
+	}
+	
+	protected boolean isPersonnelLineItem(BudgetLineItem budgetLineItem) {
+		String personnelBudgetCategoryTypeCode = getBudgetCalculationService().getPersonnelBudgetCategoryTypeCode();
+		refreshCostElement(budgetLineItem);
+		return budgetLineItem.getBudgetCategory().getBudgetCategoryTypeCode().equalsIgnoreCase(personnelBudgetCategoryTypeCode);
 	}
 
 	@Transactional @RequestMapping(params="methodToCall=addLineItemToPeriod")
@@ -110,8 +132,8 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 		newBudgetLineItem.setBudget(budget);
         getBudgetService().populateNewBudgetLineItem(newBudgetLineItem, currentTabBudgetPeriod);
         getBudgetCalculationService().populateCalculatedAmount(budget, newBudgetLineItem);
-        currentTabBudgetPeriod.getBudgetLineItems().add(newBudgetLineItem);            
         getBudgetService().recalculateBudgetPeriod(budget, currentTabBudgetPeriod);
+        currentTabBudgetPeriod.getBudgetLineItems().add(newBudgetLineItem);            
         getDataObjectService().save(budget);
 		form.getAddProjectBudgetLineItemHelper().reset();
 	    validateBudgetExpenses(budget, currentTabBudgetPeriod);
@@ -135,23 +157,21 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    }
     	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PERIOD_DIALOG_ID, true, form);
 	}
-	@Transactional @RequestMapping(params="methodToCall=editSepNonPersonnelPeriodDetails")
-	public ModelAndView editSepNonPersonnelPeriodDetails(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+	@Transactional @RequestMapping(params="methodToCall=editSPENonPersonnelPeriodDetails")
+	public ModelAndView editSPENonPersonnelPeriodDetails(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
 	    Budget budget = form.getBudget();
 	    String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
         if (StringUtils.isNotEmpty(selectedLine)) {
 		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
 		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
         	form.getAddProjectBudgetLineItemHelper().reset();
-        	BudgetLineItem editBudgetLineItem = form.getBudget().getSepLineItems().get(Integer.parseInt(selectedLine));
-        	String editLineIndex = Integer.toString(form.getBudget().getSepLineItems().indexOf(editBudgetLineItem));//set the same in budgetPriod
-        	
-		    form.getAddProjectBudgetLineItemHelper().setBudgetLineItem(getDataObjectService().copyInstance(editBudgetLineItem));
+        	BudgetLineItem editBudgetLineItem = form.getBudget().getBudgetLineItems().get(Integer.parseInt(selectedLine));
+        	String editLineIndex = Integer.toString(form.getBudget().getBudgetLineItems().indexOf(editBudgetLineItem));
+ 		    form.getAddProjectBudgetLineItemHelper().setBudgetLineItem(getDataObjectService().copyInstance(editBudgetLineItem));
 		    form.getAddProjectBudgetLineItemHelper().setEditLineIndex(editLineIndex);
 		    form.getAddProjectBudgetLineItemHelper().setCurrentTabBudgetPeriod(budgetPeriod);
-		    //form.getAddProjectBudgetLineItemHelper().setBudgetCategoryTypeCode(editBudgetLineItem.getBudgetCategory().getBudgetCategoryTypeCode());
 	    }
-    	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SEP, true, form);
+    	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SPE, true, form);
 	}
 	@Transactional @RequestMapping(params="methodToCall=deleteBudgetLineItem")
 	public ModelAndView deleteBudgetLineItem(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
@@ -162,27 +182,6 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
 		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
 		    budgetPeriod.getBudgetLineItems().remove(deletedBudgetLineItem);
-		    budget.getSepLineItems().remove(deletedBudgetLineItem);
-		    validateBudgetExpenses(budget, budgetPeriod);
-		    form.setAjaxReturnType("update-page");
-	    }
-		return getModelAndViewService().getModelAndView(form);
-	}
-	
-	@Transactional @RequestMapping(params="methodToCall=deleteSEPBudgetLineItem")
-	public ModelAndView deleteSEPBudgetLineItem(@RequestParam("budgetPeriodId") String budgetPeriodId, @ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
-	    Budget budget = form.getBudget();
-	    String selectedLine = form.getActionParamaterValue(UifParameters.SELECTED_LINE_INDEX);
-        if (StringUtils.isNotEmpty(selectedLine)) {
-        	//BudgetLineItem deletedBudgetLineItem = form.getBudget().getBudgetLineItems().get(Integer.parseInt(selectedLine));
-        	
-        	BudgetLineItem deletedBudgetLineItem = form.getBudget().getSepLineItems().get(Integer.parseInt(selectedLine));
-        	
-        	
-		    Long currentTabBudgetPeriodId = Long.parseLong(budgetPeriodId);
-		    BudgetPeriod budgetPeriod = getBudgetPeriod(currentTabBudgetPeriodId, budget);
-		    budgetPeriod.getBudgetLineItems().remove(deletedBudgetLineItem);
-		    budget.getSepLineItems().remove(deletedBudgetLineItem);
 		    validateBudgetExpenses(budget, budgetPeriod);
 		    form.setAjaxReturnType("update-page");
 	    }
@@ -201,6 +200,9 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	protected void validateBudgetExpenses(Budget budget, BudgetPeriod budgetPeriod) {
 	    getBudgetCalculationService().calculateBudgetPeriod(budget, budgetPeriod);
 	    String errorPath = BudgetConstants.BudgetAuditRules.NON_PERSONNEL_COSTS.getPageId();
+	    if(budgetSinglePointEntry) {
+	    	errorPath = BudgetConstants.BudgetAuditRules.SPE_LINEITEM_COSTS.getPageId();
+	    }
 		getKcBusinessRulesEngine().applyRules(new BudgetExpensesRuleEvent(budget, errorPath));
 	}
 	
@@ -327,13 +329,17 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 			budgetLineItem.getCostElementBO().setBudgetCategory(budgetLineItem.getBudgetCategory());
 			budgetLineItem.getCostElementBO().setBudgetCategoryCode(budgetLineItem.getBudgetCategoryCode());
 		} else if (costElementChanged(budgetLineItem)) {
-			getDataObjectService().wrap(budgetLineItem).fetchRelationship("costElementBO");
-			budgetLineItem.setBudgetCategoryCode(budgetLineItem.getCostElementBO().getBudgetCategoryCode());
-			budgetLineItem.setBudgetCategory(budgetLineItem.getCostElementBO().getBudgetCategory());
+			refreshCostElement(budgetLineItem);
 		}
 		//if both changed then one has to win because the category code is in multiple places
 	}
 
+	protected void refreshCostElement(BudgetLineItem budgetLineItem) {
+		getDataObjectService().wrap(budgetLineItem).fetchRelationship("costElementBO");
+		budgetLineItem.setBudgetCategoryCode(budgetLineItem.getCostElementBO().getBudgetCategoryCode());
+		budgetLineItem.setBudgetCategory(budgetLineItem.getCostElementBO().getBudgetCategory());
+	}
+	
 	protected boolean costElementChanged(BudgetLineItem budgetLineItem) {
 		return !budgetLineItem.getCostElement().equals(budgetLineItem.getCostElementBO().getCostElement());
 	}
@@ -380,5 +386,11 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 		Budget budget = form.getBudget();
 		BudgetPeriod currentTabBudgetPeriod = form.getAddProjectBudgetLineItemHelper().getCurrentTabBudgetPeriod();
         getBudgetService().recalculateBudgetPeriod(budget, currentTabBudgetPeriod);
+	}
+	public boolean isBudgetSinglePointEntry() {
+		return budgetSinglePointEntry;
+	}
+	public void setBudgetSinglePointEntry(boolean budgetSinglePointEntry) {
+		this.budgetSinglePointEntry = budgetSinglePointEntry;
 	}
 }

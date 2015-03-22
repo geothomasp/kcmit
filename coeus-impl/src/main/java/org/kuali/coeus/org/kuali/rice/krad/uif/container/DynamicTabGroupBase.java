@@ -26,6 +26,7 @@ import java.util.Map;
 import org.kuali.rice.krad.datadictionary.parse.BeanTag;
 import org.kuali.rice.krad.datadictionary.parse.BeanTags;
 import org.kuali.rice.krad.uif.component.Component;
+import org.kuali.rice.krad.uif.container.CollectionGroup;
 import org.kuali.rice.krad.uif.container.Group;
 import org.kuali.rice.krad.uif.container.TabGroup;
 import org.kuali.rice.krad.uif.util.ComponentUtils;
@@ -80,11 +81,11 @@ public class DynamicTabGroupBase extends TabGroup implements DynamicTabGroup {
 	        	}
 	        	ContextUtils.pushAllToContextDeep(newGroup, tabContext);
         	}
-        	if (setFieldBindingObjectPath) {
-        		newGroup.setFieldBindingObjectPath(tabCollectionPropertyName + "[" + index + "]");
-        	}
-        	
-        	items.add(newGroup);
+        	if (setFieldBindingObjectPath && newGroup instanceof CollectionGroup) {
+        		((CollectionGroup)newGroup).getBindingInfo().setBindingObjectPath(tabCollectionPropertyName + "[" + index + "]");
+        	} else if (setFieldBindingObjectPath) { 
+        		 newGroup.setFieldBindingObjectPath(tabCollectionPropertyName + "[" + index + "]");  
+        	}        	items.add(newGroup);
             index ++;
         }
         setItems(items);
