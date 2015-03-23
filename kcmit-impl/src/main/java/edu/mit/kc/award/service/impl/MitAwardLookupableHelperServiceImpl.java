@@ -153,7 +153,7 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
 		if (unboundedResults instanceof CollectionIncomplete) {
 			filteredResults = new CollectionIncomplete<Award>(filteredResults, ((CollectionIncomplete) unboundedResults).getActualSizeIfTruncated());
 		}
-		if (!StringUtils.isEmpty(ospAdministratorName) && !filteredResults.isEmpty() && filteredResults != null) {
+		if (!StringUtils.isEmpty(ospAdministratorName) && filteredResults != null && !filteredResults.isEmpty()) {
 			List<Award> filteredOspAdmins = new ArrayList<Award>();
 			ospAdministratorName = ospAdministratorName.replace("?", ".?").replace("*", ".*?");
 			for (Award ospAdmin : filteredResults) {
