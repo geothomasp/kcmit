@@ -3,5 +3,5 @@
 @rolodex.sql
 @unit.sql
 @award_budget.sql
-@krms/krms_tbls.sql
+@krms/krms.sql
 /
