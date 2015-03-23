@@ -132,4 +132,38 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
       }
       return false;
   }
+  
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	@Override
+	public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
+		String ospAdministratorName = fieldValues.get("lookupOspAdministratorName");
+		fieldValues.remove("lookupOspAdministratorName");
+
+		boolean usePrimaryKeys = getLookupService().allPrimaryKeyValuesPresentAndNotWildcard(Award.class, fieldValues);
+
+		setBackLocation(fieldValues.get(KRADConstants.BACK_LOCATION));
+		setDocFormKey(fieldValues.get(KRADConstants.DOC_FORM_KEY));
+		setReferencesToRefresh(fieldValues.get(KRADConstants.REFERENCES_TO_REFRESH));
+
+		List<Award> unboundedResults = (List<Award>) getAwardLookupDao().getAwardSearchResults(fieldValues, usePrimaryKeys);
+
+		List<Award> filteredResults = new ArrayList<Award>();
+
+		filteredResults = (List<Award>) filterForPermissions(unboundedResults);
+		if (unboundedResults instanceof CollectionIncomplete) {
+			filteredResults = new CollectionIncomplete<Award>(filteredResults, ((CollectionIncomplete) unboundedResults).getActualSizeIfTruncated());
+		}
+		if (!StringUtils.isEmpty(ospAdministratorName) && !filteredResults.isEmpty() && filteredResults != null) {
+			List<Award> filteredOspAdmins = new ArrayList<Award>();
+			ospAdministratorName = ospAdministratorName.replace("?", ".?").replace("*", ".*?");
+			for (Award ospAdmin : filteredResults) {
+				String ospAdminName = ospAdmin.getOspAdministratorName();
+				if (ospAdminName != null && ospAdminName.matches(ospAdministratorName)) {
+					filteredOspAdmins.add(ospAdmin);
+				}
+			}
+			return filteredOspAdmins;
+		}
+		return filteredResults;
+	}
 }
