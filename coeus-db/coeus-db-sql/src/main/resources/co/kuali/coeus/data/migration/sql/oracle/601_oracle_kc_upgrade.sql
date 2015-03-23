@@ -31,4 +31,3 @@ spool KC-RELEASE-6_0_1-Upgrade-ORACLE-Install.log
 @./kc/bootstrap/V601_026__KRACOEUS-8839.sql
 
 commit;
-exit

@@ -30,4 +30,3 @@ spool KR-RELEASE-6_0_1-Upgrade-ORACLE-Install.log
 @./rice/bootstrap/V601_021__sponsor_kfs_int.sql
 @./rice/bootstrap/V601_023__KRACOEUS-8767.sql
 commit;
-exit
