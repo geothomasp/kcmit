@@ -1,7 +1,6 @@
 package edu.mit.kc.dashboard;
 
 import edu.mit.kc.dashboard.bo.DashboardMenuItem;
-import edu.mit.kc.workloadbalancing.bo.WlAbsentee;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;

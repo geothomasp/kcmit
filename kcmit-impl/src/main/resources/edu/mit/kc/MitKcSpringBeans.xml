@@ -404,4 +404,5 @@
      <bean id="documentDictionaryService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="documentDictionaryService" />
      </bean>
+     	<bean id="dashboardMenuService" class="edu.mit.kc.dashboard.DashboardMenuService"/>
 </beans>
