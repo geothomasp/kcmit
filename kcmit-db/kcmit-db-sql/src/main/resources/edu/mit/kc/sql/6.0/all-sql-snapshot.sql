@@ -1,3 +1,5 @@
+set define off
+/
 select 'running ddl snapshot' from dual
 /
 @all-ddl-snapshot.sql
