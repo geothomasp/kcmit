@@ -103,7 +103,7 @@
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="requestedStartDateInitial"
-					p:colSpan="6" p:fieldLabel.render="false">
+					p:colSpan="3" p:fieldLabel.render="false">
 					<property name="control">
 						<bean parent="Uif-DateControlOnFocus" p:watermarkText="mm/dd/yyyy" />
 					</property>
@@ -114,7 +114,7 @@
 					</property>
 				</bean>
 				<bean parent="Uif-InputField" p:propertyName="requestedEndDateInitial"
-					p:colSpan="6" p:fieldLabel.render="false">
+					p:colSpan="2" p:fieldLabel.render="false">
 					<property name="control">
 						<bean parent="Uif-DateControlOnFocus" p:watermarkText="mm/dd/yyyy" />
 					</property>
