@@ -254,6 +254,11 @@ public interface MitPropDevJavaFunctionKrmsTermService {
  * @return 'true' if keyperson is certified
  */
 public String isKeyPersonCertifyValid(DevelopmentProposal developmentProposal);
+/**	 
+ * This method is to check if ALL CO-PIS HAVE PI STATUS
+ * fn_co_i_appoint_type_rule 
+ */
+public String coiAppointmentTypeRule(DevelopmentProposal developmentProposal);
 
 
 }
