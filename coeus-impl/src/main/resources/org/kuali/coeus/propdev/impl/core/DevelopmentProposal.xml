@@ -866,10 +866,10 @@
     </property>
 		<property name="required" value="false" />
 		<property name="control">
-			<bean parent="TextareaControlDefinition" p:rows="3" p:cols="40" />
+			<bean parent="TextControlDefinition" p:size="20" />
 		</property>
     <property name="controlField">
-      <bean p:rows="3" p:cols="40" parent="Uif-TextAreaControl"/>
+        <bean p:size="20" parent="Uif-TextControl"/>
     </property>
 		<property name="summary" value="Mail Description" />
     <property name="description" value="Any information that will assist in the delivery of the proposal."/>
