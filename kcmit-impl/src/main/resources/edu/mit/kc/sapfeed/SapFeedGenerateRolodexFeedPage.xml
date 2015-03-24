@@ -38,8 +38,9 @@
 
 		<property name="items">
 			<list>
+				<bean parent="PreviousFeed-Link" p:order="10" />
 				<bean parent="Uif-InputField" p:propertyName="path"
-					p:label="Target Environment" p:order="10">
+					p:label="Target Environment" p:order="20">
 					<property name="control">
 						<bean parent="Uif-VerticalRadioControl">
 
@@ -63,6 +64,24 @@
 						<bean parent="Uif-PrimaryActionButton" p:actionLabel="Generate Feed"
 							p:methodToCall="generateRolodex" p:order="10"
 							p:dialogDismissOption="REQUEST" />
+
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="PreviousFeed-Link" parent="PreviousFeed-Link-parent" />
+	<bean id="PreviousFeed-Link-parent" parent="Uif-DropdownToggleMenu"
+		p:toggleText="PreviousFeed" p:toggleCaretClass="">
+		<property name="menuGroup">
+			<bean parent="Uif-DropdownTable">
+				<property name="items">
+					<list>
+						<bean parent="Uif-MessageField" p:label="Date" p:messageText="" />
+						<bean parent="Uif-MessageField" p:label="By" p:messageText="" />
+						<bean parent="Uif-MessageField" p:label="Note"
+							p:messageText="Sponsor information has not changed since the last feed."
+							p:render="@{pageId eq 'SapFeed-GenerateSponsorFeed'}" />
 
 					</list>
 				</property>

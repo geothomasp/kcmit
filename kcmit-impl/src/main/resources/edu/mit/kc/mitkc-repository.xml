@@ -152,4 +152,28 @@
 	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
 	</class-descriptor>
     
+   <class-descriptor class="org.kuali.coeus.propdev.impl.sapfeed.SapFeedDetails" table="SAP_FEED_DETAILS">	
+	    <field-descriptor name="feedId" column="FEED_ID" jdbc-type="INTEGER" primarykey="true" autoincrement="true" sequence-name="SEQ_SAP_FEED_ID"/>
+		<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR"/>
+		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER" />
+		<field-descriptor name="feedType" column="FEED_TYPE" jdbc-type="VARCHAR" />
+		<field-descriptor name="feedStatus" column="FEED_STATUS" jdbc-type="VARCHAR" />
+		<field-descriptor name="batchId" column="BATCH_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="tranId" column="TRANSACTION_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />		
+	</class-descriptor>	
+	
+	<class-descriptor class="org.kuali.coeus.propdev.impl.sapfeed.TempSapSponsorDetails" table="TEMP_SAP_SPON_CD">	
+	    <field-descriptor name="sponsorCode" column="SPONSOR_CODE" jdbc-type="VARCHAR" primarykey="true" autoincrement="true" />
+		<field-descriptor name="sponsorName" column="SPONSOR_NAME" jdbc-type="VARCHAR"/>
+		<field-descriptor name="adminActivityCode" column="ADMIN_ACTIVITY_CODE" jdbc-type="VARCHAR" />
+		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />		
+	</class-descriptor>	
+    
 </descriptor-repository>

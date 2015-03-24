@@ -179,7 +179,8 @@
 				
 					<value>classpath:edu/mit/kc/datadictionary/MITLandingPageView.xml</value>
 					<value>classpath:edu/mit/kc/datadictionary/MITHomePage.xml</value>
-			
+				
+
 				<!-- Sap Feeds -->
 				 <value>classpath:edu/mit/kc/sapfeed/SapFeedInitiateView.xml</value>
                  <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateMasterFeedPage.xml</value>
@@ -297,6 +298,9 @@
     
     <bean id="sapFeedService" class = "org.kuali.coeus.propdev.impl.sapfeed.SapFeedServiceImpl"> 
        <property name="dbFunctionService" ref="dbFunctionService" />
+        <property name="businessObjectService" ref="businessObjectService" />
+          <property name="dataObjectService" ref="dataObjectService" />
+        
       </bean>
       
       <bean id="kcCommonControllerService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">

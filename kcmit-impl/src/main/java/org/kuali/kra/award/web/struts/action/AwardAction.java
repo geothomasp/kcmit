@@ -53,6 +53,8 @@ import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedDetails;
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
@@ -162,6 +164,7 @@ public class AwardAction extends BudgetParentActionBase {
     private transient ReportTrackingService reportTrackingService;
     private transient KcNotificationService notificationService;
     private transient SubAwardService subAwardService;
+    private SapFeedService sapFeedService;
     TimeAndMoneyAwardDateSaveRuleImpl timeAndMoneyAwardDateSaveRuleImpl;
     
     private static final Log LOG = LogFactory.getLog( AwardAction.class );
@@ -380,6 +383,8 @@ public class AwardAction extends BudgetParentActionBase {
         AwardForm awardForm = (AwardForm) form;
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
         
+        updatingSapFeedDetails(awardForm);
+        
         if(getTimeAndMoneyExistenceService().validateTimeAndMoneyRule(awardForm.getAwardDocument().getAward(), awardForm.getAwardHierarchyBean().getRootNode().getAwardNumber())){
             forward = super.route(mapping, form, request, response);
             populateAwardHierarchy(awardForm);
@@ -479,6 +484,8 @@ public class AwardAction extends BudgetParentActionBase {
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
         AwardForm awardForm = (AwardForm) form;
 
+       
+       
         Award award = awardForm.getAwardDocument().getAward();
         checkAwardNumber(award);
         String userId = GlobalVariables.getUserSession().getPrincipalName();
@@ -500,6 +507,8 @@ public class AwardAction extends BudgetParentActionBase {
         }
 
         forward = super.save(mapping, form, request, response);
+        
+      
         if (awardForm.getMethodToCall().equals("save") && awardForm.isAuditActivated()) {
             forward = mapping.findForward(Constants.MAPPING_AWARD_ACTIONS_PAGE);
         }
@@ -1906,8 +1915,22 @@ public class AwardAction extends BudgetParentActionBase {
     protected void setSubAwardDetails(Award award){
         award.setSubAwardList(getSubAwardService().getLinkedSubAwards(award));
     }
+    
+    
 
-    protected KcNotificationService getNotificationService() {
+    public SapFeedService getSapFeedService() {
+    	
+    	 if (sapFeedService == null) {
+    		 sapFeedService = KcServiceLocator.getService(SapFeedService.class);
+         }
+		return sapFeedService;
+	}
+
+	public void setSapFeedService(SapFeedService sapFeedService) {
+		this.sapFeedService = sapFeedService;
+	}
+
+	protected KcNotificationService getNotificationService() {
         if (notificationService == null) {
             notificationService = KcServiceLocator.getService(KcNotificationService.class);
         }
@@ -2072,4 +2095,31 @@ public class AwardAction extends BudgetParentActionBase {
          awardForm.getAwardDocument().getAward().setAwardSponsorTerms(awardSponsorTermsSortedList);
        
     }
+    
+	public void updatingSapFeedDetails(AwardForm form) {
+		String feedType = "N";
+		String feedStatus = "P";
+		String newAwardNumber = form.getAwardDocument().getAward().getAwardNumber();
+		Integer newSequenceNumber = form.getAwardDocument().getAward().getSequenceNumber();
+
+		BusinessObjectService businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
+		HashMap<String, String> fieldValues = new HashMap<String, String>();
+		fieldValues.put("awardNumber", newAwardNumber);
+		// Get sapfeed details
+		List<SapFeedDetails> sapFeedDetails =  (List<SapFeedDetails>) businessObjectService.findMatching(SapFeedDetails.class, fieldValues);
+		for(SapFeedDetails sapFeedDetail:sapFeedDetails)
+		{
+		if (sapFeedDetail == null) {
+			feedType = "N";
+		}
+		else if (sapFeedDetail.getSequenceNumber() == newSequenceNumber && sapFeedDetail.getFeedStatus() == "P") {
+			feedStatus = "F";
+		} else {
+			feedType = "C";
+		}
+		}
+		getSapFeedService().insertSapFeedDetails(newAwardNumber, newSequenceNumber, feedType,feedStatus);
+	}
+    
+  
 }

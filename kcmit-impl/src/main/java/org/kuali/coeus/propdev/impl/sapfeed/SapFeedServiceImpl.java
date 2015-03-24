@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.rice.krad.data.DataObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -12,11 +14,20 @@ import org.springframework.stereotype.Component;
 public class SapFeedServiceImpl implements SapFeedService
 
 {
-
+	private static final String DEFAULT_TRANSACTION_ID= "9999999999";
+	
 	@Autowired
 	@Qualifier("dbFunctionService")
 	private DbFunctionService dbFunctionService;
+	
+	@Autowired
+    @Qualifier("dataObjectService")
+	private DataObjectService dataObjectService;
 
+	@Autowired
+	@Qualifier("businessObjectService")
+    private BusinessObjectService businessObjectService;
+	
 	@Override
 	public String generateMasterFeed(String path, String user)
 			throws SQLException, NullPointerException {
@@ -66,6 +77,19 @@ public class SapFeedServiceImpl implements SapFeedService
 		}
 
 	}
+	
+	public void insertSapFeedDetails(String awardNumber, Integer sequenceNumber, String feedType,String feedStatus)
+	{
+		SapFeedDetails sapFeedDetails=new SapFeedDetails();
+		sapFeedDetails.setAwardNumber(awardNumber);
+    	sapFeedDetails.setSequenceNumber(sequenceNumber);
+    	sapFeedDetails.setFeedType(feedType);
+    	sapFeedDetails.setFeedStatus(feedStatus);
+    	sapFeedDetails.setTranId(DEFAULT_TRANSACTION_ID);
+    	sapFeedDetails = getBusinessObjectService().save(sapFeedDetails);
+    	
+	}
+	 
 
 	public DbFunctionService getDbFunctionService() {
 		if (dbFunctionService == null) {
@@ -78,4 +102,33 @@ public class SapFeedServiceImpl implements SapFeedService
 	public void setDbFunctionService(DbFunctionService dbFunctionService) {
 		this.dbFunctionService = dbFunctionService;
 	}
+	
+	
+	
+	public BusinessObjectService getBusinessObjectService() {
+		
+		if (businessObjectService == null) {
+			businessObjectService = KcServiceLocator
+					.getService(BusinessObjectService.class);
+		}
+		return businessObjectService;
+	}
+
+	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+		this.businessObjectService = businessObjectService;
+	}
+
+	
+	public DataObjectService getDataObjectService() {
+		
+		if (dataObjectService == null) {
+			dataObjectService = KcServiceLocator.getService(DataObjectService.class);
+		}
+		return dataObjectService;
+	}
+
+	public void setDataObjectService(DataObjectService dataObjectService) {
+		this.dataObjectService = dataObjectService;
+	}
+	
 }
