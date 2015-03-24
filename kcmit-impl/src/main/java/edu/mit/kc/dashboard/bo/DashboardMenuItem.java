@@ -21,8 +21,8 @@ public class DashboardMenuItem extends KcPersistableBusinessObjectBase {
     @Column(name = "MENU_ACTION")
     private String menuAction;
 
-    @Column(name = "OSP_ONLY_FLAG")
-    private String ospOnlyFlag;
+    @Column(name = "MENU_TYPE_FLAG")
+    private String menuTypeFlag;
 
     @Column(name = "ACTIVE")
     private String active;
@@ -30,6 +30,23 @@ public class DashboardMenuItem extends KcPersistableBusinessObjectBase {
     @Transient
     private String menuItemFormatted;
 
+    private enum MenuTypeIndicator {
+        UNKNOWN ("UNKNOWN", "(No Defined)"),
+        OSP_ONLY ("O", "(OSP Only)"),
+        ADMIN_ONLY("A", "(Admin Only)");
+
+        private String code;
+        private String description;
+
+        private MenuTypeIndicator(String code, String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        public String getCode() { return code; }
+        public String getDescription() { return description; }
+    };
+ 
     public String getId() {
         return id;
     }
@@ -40,8 +57,14 @@ public class DashboardMenuItem extends KcPersistableBusinessObjectBase {
 
     public String getMenuItemFormatted() {
         if (StringUtils.isNotBlank(menuItem)) {
-            if (ospOnlyFlag.equals("Y")) {
-                menuItemFormatted = menuItem + "<span class='osp-ind'>(OSP)</span>";
+            if (menuTypeFlag != null) {
+            	String menuIndicator = MenuTypeIndicator.UNKNOWN.getDescription();
+            	for (MenuTypeIndicator menuTypeIndicator : MenuTypeIndicator.values()) {
+            		if(menuTypeFlag.equalsIgnoreCase(menuTypeIndicator.getCode())) {
+            			menuIndicator = menuTypeIndicator.getDescription();
+            		}
+            	}
+                menuItemFormatted = menuItem + "<span class='osp-ind'>" + menuIndicator + "</span>";
             } else {
                 menuItemFormatted = menuItem;
             }
@@ -70,12 +93,12 @@ public class DashboardMenuItem extends KcPersistableBusinessObjectBase {
         this.menuAction = menuAction;
     }
 
-    public String getOspOnlyFlag() {
-        return ospOnlyFlag;
+    public String getMenuTypeFlag() {
+        return menuTypeFlag;
     }
 
-    public void setOspOnlyFlag(String ospOnlyFlag) {
-        this.ospOnlyFlag = ospOnlyFlag;
+    public void setMenuTypeFlag(String menuTypeFlag) {
+        this.menuTypeFlag = menuTypeFlag;
     }
 
     public String getActive() {

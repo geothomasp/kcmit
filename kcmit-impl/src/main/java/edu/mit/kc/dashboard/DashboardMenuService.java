@@ -59,12 +59,7 @@ public class DashboardMenuService {
         private String href;
 
         public DashboardMenuItemSuggestion (DashboardMenuItem item) throws Exception {
-            if (item.getOspOnlyFlag().equals("Y")) {
-                this.setLabel(item.getMenuItem() + "<span class='osp-ind'>(OSP)</span>");
-            } else {
-                this.setLabel(item.getMenuItem());
-            }
-
+            this.setLabel(item.getMenuItemFormatted());
             this.setValue(item.getMenuItem());
 
             String href = appUrl + item.getMenuAction().replace(APP_URL_TOKEN, URLEncoder.encode(appUrl, "UTF-8"));
