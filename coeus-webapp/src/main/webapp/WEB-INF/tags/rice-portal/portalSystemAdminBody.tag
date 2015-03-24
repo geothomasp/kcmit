@@ -33,4 +33,5 @@
       <administrationChannel:workflow />
       <administrationChannel:sendNotification />
       <administrationChannel:serviceBus />
+      <administrationChannel:workloadBalance />
 </td>
