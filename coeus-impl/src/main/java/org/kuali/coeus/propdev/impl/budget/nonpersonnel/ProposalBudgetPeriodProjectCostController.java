@@ -269,7 +269,7 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    setEditedBudgetLineItem(form);
 	    getBudgetCalculationService().applyToLaterPeriods(budget,currentTabBudgetPeriod,budgetLineItem);
 	    validateBudgetExpenses(budget, currentTabBudgetPeriod);
-		return getModelAndViewService().getModelAndView(form);
+		return super.save(form);
 	}
 	
 	private void setEditedBudgetLineItem(ProposalBudgetForm form) {
