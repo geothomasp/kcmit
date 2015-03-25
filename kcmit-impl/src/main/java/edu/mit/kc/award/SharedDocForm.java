@@ -212,7 +212,17 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     private boolean kpMaintenanceRole = false;
     private boolean alertMessage = false;   
     
+ private String tabHeader;
     
+    
+    public String getTabHeader() {
+		return tabHeader;
+	}
+
+	public void setTabHeader(String tabHeader) {
+		this.tabHeader = tabHeader;
+	}
+
     public boolean isAlertMessage() {
 		return alertMessage;
 	}
