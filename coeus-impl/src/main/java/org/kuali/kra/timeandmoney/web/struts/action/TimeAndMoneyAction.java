@@ -339,6 +339,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 }
             }
             if (needToSaveAward) {
+            	award.setAllowUpdateTimestampToBeReset(false);
                 getBusinessObjectService().save(award);
             }
         }

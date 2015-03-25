@@ -24,7 +24,7 @@ htmlFormAction="currentOrPendingReport">
     		<span>Print</span>
         </h3>
        
-	    <kra:printReports requestUri="/currentOrPendingReport.do"/>
+	    <kra:printReports requestUri='/currentOrPendingReport.do'/>
     </div> 
 </kul:page>
 
