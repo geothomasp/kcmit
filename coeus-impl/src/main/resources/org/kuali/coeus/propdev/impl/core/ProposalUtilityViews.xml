@@ -186,14 +186,14 @@
                               p:messageText="@{document.developmentProposal.sponsorName}" p:order="50" /> 
                          <bean parent="Uif-MessageField" p:label="Deadline Date" p:labelLeft="true"
                               p:messageText="@{document.developmentProposal.deadlineDate}" p:order="60" />
-                        <bean parent="Uif-SecondaryActionButton" p:actionLabel="Print" p:order="70">
+                        <bean parent="Uif-SecondaryActionButton" p:actionLabel="Print" p:order="70" p:render= "@{proposalPersonQuestionnaireHelper.validCertUser}">
                             <property name="actionUrl">
                                 <bean parent="Uif-Url"
                                       p:href="../kc-pd-krad/proposalDevelopment?methodToCall=printQuestionnaire&amp;formKey=@{formKey}&amp;helper=proposalPersonQuestionnaireHelper&amp;index=0"/>
                             </property>
                         </bean>
                         <bean parent="Questionnaire-QuestionsGroup" p:propertyName="proposalPersonQuestionnaireHelper.answerHeaders[0].questions"
-                              p:order="80" />
+                             p:render= "@{proposalPersonQuestionnaireHelper.validCertUser}" p:order="80" />
                     </list>
                 </property>
                 <property name="footer">
@@ -202,7 +202,7 @@
                             <list>
                                 <bean parent="Uif-SecondaryActionButton" p:actionLabel="Cancel" p:methodToCall="returnToHub" p:order="10"/>
                                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Certify Answers" p:methodToCall="certifyAnswers"
-                                      p:order="20"/>
+                                      p:order="20" p:render= "@{proposalPersonQuestionnaireHelper.validCertUser}"/>
                             </list>
                         </property>
                     </bean>
@@ -234,10 +234,10 @@
                         </bean>
                         <bean parent="Uif-MessageField" p:label="Initiator" p:labelLeft="true"
                               p:messageText="@{documentInitiatorNetworkId}" p:order="40" />
-                        <bean parent="Uif-MessageField" p:label="Status" p:labelLeft="true"
-                              p:messageText="@{#ViewHelper.getProposalStatusForDisplay(document.developmentProposal)}"
-                              p:order="50" />
-                        <bean parent="PropDev-DocumentHeader-MoreInfo" p:order="60" />
+                        <!-- <bean parent="Uif-MessageField" p:label="Status" p:labelLeft="true"
+                              p:messageText="@{#ViewHelper.getProposalStatusForDRviewisplay(document.developmentProposal)}"
+                              p:order="50" /> -->
+                        <bean parent="PropDev-DocumentHeader-MoreInfo" p:order="50" />
                     </list>
                 </property>
             </bean>
