@@ -93,6 +93,17 @@ public class AwardSharedDocAction extends AwardAction {
     		 return actionForward;
     	 }else{
 		 SharedDocForm sharedDocForm=(SharedDocForm)form;
+		 if(sharedDocForm.getMethodToCall().equalsIgnoreCase("headerTab")){
+			 if((sharedDocForm.getNavigateTo() != null) && (sharedDocForm.getNavigateTo().equalsIgnoreCase("basics"))){
+				 sharedDocForm.setTabHeader("basic");
+			 }else if((sharedDocForm.getNavigateTo() != null) && (sharedDocForm.getNavigateTo().equalsIgnoreCase("basic"))){
+				 sharedDocForm.setTabHeader("basics");
+			 }else if(mapping.getPath().equalsIgnoreCase("/awardSharedDoc")){
+				 sharedDocForm.setTabHeader("basic");
+			 }
+			 else{
+			 sharedDocForm.setTabHeader("basics");}
+		 }
 		 AwardDocument document=sharedDocForm.getAwardDocument();
 		 ActionForward actionForward = super.execute(mapping, form, request, response); 
 		 String currentUser = GlobalVariables.getUserSession().getPrincipalId();
@@ -469,4 +480,28 @@ public class AwardSharedDocAction extends AwardAction {
 	 	 sharedDocForm.getMedusaBean().generateParentNodes();
 	        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
 	    }
+	    public ActionForward headerTab(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	    	SharedDocForm sharedDocForm=(SharedDocForm)form;
+	    	          if(sharedDocForm.getTabHeader().equalsIgnoreCase("basic")){
+	    	          if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+	    	               loadDocumentInFormDoc(request, sharedDocForm);
+	    	               sharedDocForm.getAwardDocument().getAward().getAwardId();
+	    	           }
+	    	       
+	    	        return mapping.findForward("basic");//("keyperson");//(Constants.MAPPING_AWARD_CONTACTS_PAGE); Constants.MAPPING_AWARD_BASIC
+	    	          }else{
+	    	        InstitutionalProposal instProp=null;	   
+	    	
+	    	      if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+	    	           //if we are entering this from the search results
+	    	           loadDocumentInFormDoc(request, sharedDocForm);
+	    	       }
+	    	   
+	    		 sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
+	    		 sharedDocForm.getMedusaBean().setModuleName("award");
+	    		 sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
+	    		 sharedDocForm.getMedusaBean().generateParentNodes();
+	    	       return mapping.findForward("basics");
+	    	          }
+	    	   }
  }

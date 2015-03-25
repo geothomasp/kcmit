@@ -1303,10 +1303,10 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
 
     	HeaderNavigation keyPersontab = new HeaderNavigation();
     	HeaderNavigation sharedDocTab = new HeaderNavigation();
-    	keyPersontab.setHeaderTabNavigateTo("keyperson");
+    	keyPersontab.setHeaderTabNavigateTo("basic");
     	keyPersontab.setHeaderTabDisplayName("Key Person Maintenance");
     	keyPersontab.setDisabled(false);
-    	sharedDocTab.setHeaderTabNavigateTo("basic");
+    	sharedDocTab.setHeaderTabNavigateTo("basics");
     	sharedDocTab.setHeaderTabDisplayName("Shared Doc Form");
     	sharedDocTab.setDisabled(false);
     	List<HeaderNavigation> resultList = new ArrayList<HeaderNavigation>();

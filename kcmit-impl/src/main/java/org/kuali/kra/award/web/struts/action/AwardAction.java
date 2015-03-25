@@ -288,7 +288,14 @@ public class AwardAction extends BudgetParentActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {       
     	SharedDocForm sharedDocForm = new SharedDocForm();
     	if(form.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
-    	    sharedDocForm = (SharedDocForm)form;    	   
+    	    sharedDocForm = (SharedDocForm)form;    	
+    	    if(sharedDocForm.getMethodToCall().equalsIgnoreCase("headerTab")){
+    	    	if(mapping.getPath().equalsIgnoreCase("/keyperson")){
+    	    	sharedDocForm.setNavigateTo("basics");	}else{
+    	    		sharedDocForm.setNavigateTo("basic");
+    	    	}
+    	    	
+    	    }
         ActionForward actionForward = super.execute(mapping, form, request, response);
         return actionForward;
         }    else{
@@ -2016,7 +2023,7 @@ public class AwardAction extends BudgetParentActionBase {
           if (sharedDocForm.getDocument().getDocumentNumber() == null) {
                loadDocumentInFormDoc(request, sharedDocForm);
            }
-        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
+        return mapping.findForward("basic");//(Constants.MAPPING_AWARD_BASIC);
     }
     
    

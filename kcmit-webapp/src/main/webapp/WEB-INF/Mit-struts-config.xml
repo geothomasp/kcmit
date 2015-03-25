@@ -15,13 +15,15 @@
 	<action path="/sharedDoc*" name="SharedDocForm"
 		input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"
 		scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
-		<forward name="basic" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
+		  <forward name="basics" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
+          <forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
 	</action>
 	
 	<action path="/keyperson*" name="SharedDocForm"
 		input="/WEB-INF/jsp/award/KeyPerson.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"
 		scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
-		<forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
+		  <forward name="basics" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
+          <forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
 	</action>
 	
     </action-mappings>
