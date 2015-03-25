@@ -607,7 +607,7 @@ public abstract class ProposalDevelopmentControllerBase {
 			}
 		}
 		for(Answer answer :answerHeader.getAnswers()){
-			if(coiCertificationIdList.contains(answer.getQuestionId().toString())){
+			if(coiCertificationIdList.contains(answer.getQuestionSeqId().toString())){
 				hasCOIquestions = true;
 				break;
 			}
