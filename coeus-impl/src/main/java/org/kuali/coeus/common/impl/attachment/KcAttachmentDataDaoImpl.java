@@ -30,9 +30,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import javax.sql.rowset.serial.SerialBlob;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -91,7 +91,11 @@ public class KcAttachmentDataDaoImpl implements KcAttachmentDataDao {
         	try (PreparedStatement stmt = connection.prepareStatement("insert into file_data (id, data) values (?, ?)")) {
 	        	String newId = UUID.randomUUID().toString();
 	        	stmt.setString(1, newId);
-	        	stmt.setBinaryStream(2, new ByteArrayInputStream(attachmentData),attachmentData.length);
+                try (ByteArrayInputStream is = new ByteArrayInputStream(attachmentData)) {
+                    stmt.setBinaryStream(2,is,attachmentData.length);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 	        	stmt.executeUpdate();
 
                 if (LOG.isDebugEnabled()) {
