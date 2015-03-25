@@ -64,9 +64,9 @@
       <th>Total Period</th>
       <th style="text-align: center;" rowspan="6">
         <div class="medusaStatusBox">
-          <div><span class="heading">Cost Sharing</span><span class="value"><input type="checkbox" disabled="true" ${node.bo.costSharingIndicator eq "1 " ? "checked='checked'" : ""}/></span></div>
-          <div><span class="heading">IDC Rates</span><span class="value"><input type="checkbox" disabled="true" ${node.bo.idcRateIndicator eq "1 " ? "checked='checked'" : ""}/></span></div>
-          <div><span class="heading">Special Review</span><span class="value"><input type="checkbox" disabled="true" ${node.bo.specialReviewIndicator eq "1 " ? "checked='checked'" : ""}/></span></div>
+          <div><span class="heading">Cost Sharing</span><span class="value"><input type="checkbox" disabled="true" ${node.bo.costSharingIndicator eq "1" ? "checked='checked'" : ""}/></span></div>
+          <div><span class="heading">IDC Rates</span><span class="value"><input type="checkbox" disabled="true" ${node.bo.idcRateIndicator eq "1" ? "checked='checked'" : ""}/></span></div>
+          <div><span class="heading">Special Review</span><span class="value"><input type="checkbox" disabled="true" ${node.bo.specialReviewIndicator eq "1" ? "checked='checked'" : ""}/></span></div>
         </div>
       </th>
     </tr>
