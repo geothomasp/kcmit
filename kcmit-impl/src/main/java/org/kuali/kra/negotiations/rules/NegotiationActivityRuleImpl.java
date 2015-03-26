@@ -71,11 +71,6 @@ public class NegotiationActivityRuleImpl implements NegotiationActivityAddRule {
             result = false;
             errorReporter.reportError(START_DATE_PROPERTY, KeyConstants.ERROR_REQUIRED, "Activity Start Date (Activity Start Date)");
         }
-        if (activity.getStartDate() != null && negotiation.getNegotiationStartDate() != null 
-                && activity.getStartDate().compareTo(negotiation.getNegotiationStartDate()) < 0) {
-            result = false;
-            errorReporter.reportError(START_DATE_PROPERTY, KeyConstants.NEGOTIATION_ACTIVITY_START_BEFORE_NEGOTIATION);
-        }
         if (activity.getStartDate() != null && activity.getEndDate() != null
                 && activity.getStartDate().compareTo(activity.getEndDate()) > 0) {
             result = false;
