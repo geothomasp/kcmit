@@ -18,7 +18,7 @@
  */
 package org.kuali.kra.award.web.struts.action;
 
-import static org.kuali.kra.infrastructure.KeyConstants.AWARD_ATTACHMENT_TYPE_CODE_REQUIRED;
+
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -26,25 +26,23 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.framework.attachment.AttachmentFile;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
-import org.kuali.kra.award.AwardDocumentRule;
+
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncPendingChangeBean;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
-import org.kuali.kra.award.notesandattachments.attachments.AwardAttachmentFormBean;
+
 import org.kuali.kra.award.notesandattachments.notes.AwardNoteAddEvent;
 import org.kuali.kra.award.notesandattachments.notes.AwardNoteEventBase.ErrorType;
 import org.kuali.kra.award.notesandattachments.notes.AwardNotepadBean;
 import org.kuali.kra.award.rule.event.AddAwardAttachmentEvent;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
-import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
-import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocument;
-import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
+
 import org.kuali.kra.award.service.impl.AwardCommentServiceImpl;
-import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
+
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
