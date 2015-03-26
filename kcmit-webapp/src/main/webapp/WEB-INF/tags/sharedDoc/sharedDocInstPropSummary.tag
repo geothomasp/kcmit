@@ -16,6 +16,7 @@
      <c:set var="viewSharedDoc" value="${KualiForm.ipProjectDocView}" />
       <c:if test="${viewSharedDoc}">
     <c:forEach items="${node.bo.instProposalAttachments}" var="ipAttachment" varStatus="itrStatus">
+    <c:if test="${ipAttachment.documentStatusCode == 'A'}">
       <tr>
         <td style="text-align: center;" colspan="2">
            <c:out value="${ipAttachment.comments}"/>
@@ -36,6 +37,7 @@
 		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
         </td>
       </tr>
+      </c:if>
     </c:forEach>
     </c:if>
   </table>

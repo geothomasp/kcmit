@@ -122,6 +122,7 @@ import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
@@ -226,6 +227,13 @@ public class AwardAction extends BudgetParentActionBase {
         }
         awardForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
         
+        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award")) {
+        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachmentform != null) {
+    			awardAttachmentform.setMaintainInstituteProposal(true);
+    		}
+        }
         String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
                 ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
     	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
@@ -2126,6 +2134,10 @@ public class AwardAction extends BudgetParentActionBase {
 		}
 		}
 		getSapFeedService().insertSapFeedDetails(newAwardNumber, newSequenceNumber, feedType,feedStatus);
+	}
+	
+	private PermissionService getPermissionService() {
+        return KimApiServiceLocator.getPermissionService();
 	}
     
   
