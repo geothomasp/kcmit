@@ -534,7 +534,7 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
             transactionTypeDescription = "None";
         }
         return "Award Version " + versionNumber + ", " + transactionTypeDescription + ", notice date: " + noticeDate + 
-            ", updated " + getUpdateTimeAndUser(award) + ". Comments:" + (award.getAwardCurrentActionComments().getComments() == null ? "None." : award.getAwardCurrentActionComments().getComments());
+            ", updated " +getUpdateTimeAndUser(award) + ". Comments:" + (award.getAwardCurrentActionComments().getComments() == null ? "None." : award.getAwardCurrentActionComments().getComments());
     }
     
     protected String getUpdateTimeAndUser(Award award) {

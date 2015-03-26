@@ -191,7 +191,8 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
 
     @Autowired
     @Qualifier("kcFileService")
-    private KcFileService kcFileService;
+    private KcFileService kcFileService;    
+ 
 
     @Override
     public void processBeforeAddLine(ViewModel model, Object addLine, String collectionId, final String collectionPath) {
@@ -959,18 +960,20 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         return true;
     }
     public boolean canCertifyRequired(ProposalPerson proposalPerson){
-    
+    	String principalId=getGlobalVariableService().getUserSession().getPrincipalId();
             String value = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
             String modSubCodeCoi= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
             		"MODULE_SUB_ITEM_CODE_COI_CERTIFICATION");
+            ProposalDevelopmentDocument document=proposalPerson.getDevelopmentProposal().getProposalDocument();
+        boolean canCertify = kraAuthorizationService.hasPermission(principalId, document, PermissionConstants.CERTIFY); 
            List<String> newRoles=Arrays.asList(value.split(PARAMETER_DELIMITER));     
            String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
-           String principalId=getGlobalVariableService().getUserSession().getPrincipalId();
+           
           if (proposalPerson.isInvestigator() && proposalPerson.isPrincipalInvestigator()
                   && StringUtils.equals(principalId, proposalPerson.getPersonId())) {
               return true;
           } if (proposalPerson.getProposalPersonRoleId().equals("COI")){
-        	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modSubCodeCoi)){
+        	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modSubCodeCoi)||canCertify){
         		  return true;
         	  }else{
         		  return false;

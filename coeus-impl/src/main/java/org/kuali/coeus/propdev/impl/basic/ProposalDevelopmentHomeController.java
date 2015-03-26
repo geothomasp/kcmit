@@ -100,7 +100,8 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
                                     @RequestParam(value="userName",required = false) String userName) throws Exception {
         ProposalDevelopmentDocument document = null;
         boolean isDeleted = false;
-
+        // String UserIdInv=form.getProposalPersonQuestionnaireHelper().getProposalPerson().getPerson().getUserName(); 
+         String principalName=getGlobalVariableService().getUserSession().getPrincipalName();
         if (!ObjectUtils.isNull(form.getDocId())) {
             document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
             isDeleted = document.isProposalDeleted();
@@ -127,10 +128,15 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
 
             if (StringUtils.isNotEmpty(userName)) {
                 for (ProposalPerson person : form.getDevelopmentProposal().getProposalPersons()) {
-                    if (StringUtils.equals(person.getUserName(),userName)) {
+                    if (StringUtils.equals(person.getUserName(),userName)) {               
                         form.setProposalPersonQuestionnaireHelper(person.getQuestionnaireHelper());
+                       if(userName.equalsIgnoreCase(principalName)){
+                        form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
                         break;
-                    }
+                        }else{                        	
+                        	 form.getProposalPersonQuestionnaireHelper().setValidCertUser(false);
+                        	 break;
+                    }}
                 }
             }
 

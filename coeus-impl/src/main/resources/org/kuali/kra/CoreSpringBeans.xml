@@ -960,6 +960,19 @@
                 <value>classpath:org/kuali/kra/datadictionary/krad/common/DummyLoginOverrides.xml</value>
                 <value>classpath:org/kuali/coeus/common/impl/training/TrainingModules.xml</value>
                 <value>classpath:org/kuali/coeus/common/impl/training/TrainingModulesMaintenanceDocument.xml</value>
+                
+                <value>classpath:edu/mit/kc/workloadbalancing/datadictionary/WlAbsentee.xml</value>
+               <value>classpath:edu/mit/kc/workloadbalancing/datadictionary/WlCapacity.xml</value>
+               <value>classpath:edu/mit/kc/workloadbalancing/datadictionary/WlFlexibility.xml</value>
+               <value>classpath:edu/mit/kc/workloadbalancing/datadictionary/WlSimHeader.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadLineItemTable.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadBalancingPage.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadBalancingView.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadBalancingComponents.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadAbsenteeComponents.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadSimulationComponents.xml</value>
+                <value>classpath:edu/mit/kc/workloadbalancing/WorkloadUnitComponents.xml</value>
+
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">

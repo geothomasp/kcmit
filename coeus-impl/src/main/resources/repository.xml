@@ -1558,4 +1558,26 @@
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />		
 	</class-descriptor>		
+	
+	<class-descriptor class="edu.mit.kc.workloadbalancing.bo.WlCapacity" table="WL_CAPACITY">
+	    <field-descriptor name="capacityId" column="WLCAPACITY_ID" jdbc-type="VARCHAR" primarykey="true" autoincrement="true"/>
+		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR"/>
+		<field-descriptor name="capacity" column="CAPACITY" jdbc-type="INTEGER" />
+	</class-descriptor>
+
+	<class-descriptor class="edu.mit.kc.workloadbalancing.bo.WlFlexibility" table="WL_FLEXIBILITY">
+	    <field-descriptor name="flexibilityId" column="FLEXIBILITY_ID" jdbc-type="VARCHAR" primarykey="true" autoincrement="true"/>
+		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR"/>
+		<field-descriptor name="sponsorGroup" column="SPONSOR_GROUP" jdbc-type="VARCHAR" />
+		<field-descriptor name="flexibility" column="FLEXIBILITY" jdbc-type="DECIMAL"  />
+	</class-descriptor>
+
+	<class-descriptor class="edu.mit.kc.workloadbalancing.bo.WlAbsentee" table="WL_ABSENTEE">
+	    <field-descriptor name="absenteeId" column="ABSENTEE_ID" jdbc-type="VARCHAR" primarykey="true" autoincrement="true"/>
+		<field-descriptor name="personId" column="PERSON_ID" jdbc-type="VARCHAR"/>
+		<field-descriptor name="leaveStartDate" column="LEAVE_START_DATE" jdbc-type="DATE"  />
+		<field-descriptor name="leaveEndDate" column="LEAVE_END_DATE" jdbc-type="DATE"  />
+	</class-descriptor>
+
+	
 </descriptor-repository>

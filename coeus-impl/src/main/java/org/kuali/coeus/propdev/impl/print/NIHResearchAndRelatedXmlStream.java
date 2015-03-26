@@ -1827,7 +1827,7 @@ public class NIHResearchAndRelatedXmlStream extends
                 fundingMonths = fundingMonths.divide(new ScaleTwoDecimal(100).bigDecimalValue(), RoundingMode.HALF_UP);
             }
         }
-        return fundingMonths.setScale(0);
+        return fundingMonths.setScale(0, RoundingMode.HALF_UP);
     }
 
     public ParameterService getParameterService() {

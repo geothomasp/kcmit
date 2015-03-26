@@ -66,6 +66,8 @@ public class ProposalPersonQuestionnaireHelper extends QuestionnaireHelperBase {
         return Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT;
     }
     
+    private boolean validCertUser;
+    
     @Override
     public void populateAnswers() {
         super.populateAnswers();
@@ -96,4 +98,14 @@ public class ProposalPersonQuestionnaireHelper extends QuestionnaireHelperBase {
     public void setQuestionnaireService(QuestionnaireService questionnaireService) {
         this.questionnaireService = questionnaireService;
     }
+
+
+	public boolean isValidCertUser() {
+		return validCertUser;
+	}
+
+
+	public void setValidCertUser(boolean validCertUser) {
+		this.validCertUser = validCertUser;
+	}
 }

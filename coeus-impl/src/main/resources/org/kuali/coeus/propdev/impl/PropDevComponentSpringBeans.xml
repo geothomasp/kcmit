@@ -130,6 +130,8 @@
             </list>
         </property>
     </bean>
+
+    <bean id="sponsorHierarchyDao" class="org.kuali.coeus.common.impl.sponsor.hierarchy.SponsorHierarchyDaoOjb" parent="platformAwareDao" />
     
     <!-- Load Business Rules for this module -->
     <bean id="propDevKcBusinessRulesHandler" class="org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesHandler"/>
