@@ -24,6 +24,7 @@
 	<kul:tabTop tabTitle="Project Documents" defaultOpen="true"
 		tabErrorKey="">
 		<kra-shared:awardKeyPersonnel />
+		<html:hidden property="navigateFlag" value="keyperson" />
 	</kul:tabTop>
 	<kul:panelFooter />
 	<div id="globalbuttons" class="globalbuttons">

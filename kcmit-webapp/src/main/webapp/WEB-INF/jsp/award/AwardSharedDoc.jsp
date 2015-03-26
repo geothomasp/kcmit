@@ -19,7 +19,7 @@
 
 	 <kul:documentPage
 	showDocumentInfo="true"
-	htmlFormAction="awardSharedDoc"
+	htmlFormAction="sharedDoc"
 	documentTypeName="AwardDocument"
 	renderMultipart="false"
 	showTabButtons="true"
@@ -29,6 +29,7 @@
 
 <kul:tabTop tabTitle="Project Documents" defaultOpen="true" tabErrorKey="">
 <kra-shared:sharedDoc helpParameterNamespace="KC-AWARD" helpParameterDetailType="Document" helpParameterName="awardMedusaHelpUrl" />
+	<html:hidden property="navigateFlag" value="awardSharedDoc" />
 </kul:tabTop>
 <kul:panelFooter />
 <div id="globalbuttons" class="globalbuttons">	    

@@ -149,16 +149,17 @@
                         ${KualiForm.valueFinderResultDoNotCache}
     	        		<div align="center">
     	        		${awardPersonAttributes.contactRoleCode.keyLabelMap.KP}
-    	        	<html:hidden property="projectPersonnelBean.contactRoleCode" value="KP" />
+    	        	<html:text property="projectPersonnelBean.contactRoleCode" value="KP" />
+    	        		
     		        <br/>
-    	                	<span class="keypersononly">
-    	                	<div class="ignoreMeFromWarningOnAddRow">
+    	                	<span>
+    	                	<div>
     					    *<kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" />
-    					    </div>
+    					    
     					    <span>(Required for Key Persons)</span>
-    					    <div class="ignoreMeFromWarningOnAddRow"> 
-    				         <kul:htmlControlAttribute property="projectPersonnelBean.newAwardContact.keyPersonRole" 
-    										           attributeEntry="${awardPersonAttributes.keyPersonRole}"/>
+    				<html:text property="projectPersonnelBean.newAwardContact.keyPersonRole" value="keyPersonRole" /> 
+    				   <%--   <kul:htmlControlAttribute property="projectPersonnelBean.newAwardContact.keyPersonRole" 
+    										           attributeEntry="${awardPersonAttributes.keyPersonRole}"/>  --%>
     						</div>				           
     					    </span>
                         <script type="text/javascript">

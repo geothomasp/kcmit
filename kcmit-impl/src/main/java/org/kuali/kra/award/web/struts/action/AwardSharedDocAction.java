@@ -75,10 +75,7 @@ public class AwardSharedDocAction extends AwardAction {
 	
 	private static final String PROJECT_PERSON_PREFIX = ".personIndex";
     private static final String LINE_SUFFIX = ".line";
-    /* private static final String CONFIRM_SYNC_UNIT_CONTACTS = "confirmSyncUnitContacts";
-    private static final String CONFIRM_SYNC_UNIT_DETAILS = "confirmSyncUnitDetails";
-    private static final String ADD_SYNC_UNIT_DETAILS = "addSyncUnitDetails";
-    private static final String CONFIRM_SYNC_UNIT_CONTACTS_KEY = "confirmSyncUnitContactsKey";*/
+
 	
     
 	 protected  MedusaService getMedusaService (){
@@ -93,17 +90,7 @@ public class AwardSharedDocAction extends AwardAction {
     		 return actionForward;
     	 }else{
 		 SharedDocForm sharedDocForm=(SharedDocForm)form;
-		 if(sharedDocForm.getMethodToCall().equalsIgnoreCase("headerTab")){
-			 if((sharedDocForm.getNavigateTo() != null) && (sharedDocForm.getNavigateTo().equalsIgnoreCase("basics"))){
-				 sharedDocForm.setTabHeader("basic");
-			 }else if((sharedDocForm.getNavigateTo() != null) && (sharedDocForm.getNavigateTo().equalsIgnoreCase("basic"))){
-				 sharedDocForm.setTabHeader("basics");
-			 }else if(mapping.getPath().equalsIgnoreCase("/awardSharedDoc")){
-				 sharedDocForm.setTabHeader("basic");
-			 }
-			 else{
-			 sharedDocForm.setTabHeader("basics");}
-		 }
+	
 		 AwardDocument document=sharedDocForm.getAwardDocument();
 		 ActionForward actionForward = super.execute(mapping, form, request, response); 
 		 String currentUser = GlobalVariables.getUserSession().getPrincipalId();
@@ -167,7 +154,7 @@ public class AwardSharedDocAction extends AwardAction {
     public ActionForward viewAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
         AwardForm awardForm = (AwardForm) form;  
-       // SharedDocForm sharedForm = (SharedDocForm) form;  
+       
         AwardAttachment attachment=null;
         Award award=null;
       Long awardId=null;
@@ -188,15 +175,7 @@ public class AwardSharedDocAction extends AwardAction {
         if (attachment == null) {
         	return mapping.findForward(Constants.MAPPING_BASIC);
         }
-    /*    for(SharedDocumentType sharedDocType:sharedDocTypeNew){
-        if(sharedDocType.getModuleCode()==1 && attachment.getAwardAttachmentType().getTypeCode()==sharedDocType.getDocumentTypeCode().toString()){
-            final AttachmentFile file = attachment.getFile();
-            this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
-            return RESPONSE_ALREADY_HANDLED;
-        }
-        	
-        }
-        return mapping.findForward(Constants.MAPPING_BASIC);*/
+   
         final AttachmentFile file = attachment.getFile();
         this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
         return RESPONSE_ALREADY_HANDLED;
@@ -224,14 +203,7 @@ public class AwardSharedDocAction extends AwardAction {
        if (attachment == null) {
             return mapping.findForward(Constants.MAPPING_BASIC);
         }
-    /*   for(SharedDocumentType sharedDocType:sharedDocTypeNew){
-       if(sharedDocType.getModuleCode()==3 && attachment.getNarrativeType().getCode()==sharedDocType.getDocumentTypeCode().toString()){
-        final NarrativeAttachment file = attachment.getNarrativeAttachment();
-       this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
-        return RESPONSE_ALREADY_HANDLED;
-    }
-       }
-       return mapping.findForward(Constants.MAPPING_BASIC);*/
+   
        final NarrativeAttachment file = attachment.getNarrativeAttachment();
        this.streamToResponse(file.getData(), getValidHeaderString(file.getName()),  getValidHeaderString(file.getType()), response);
         return RESPONSE_ALREADY_HANDLED;
@@ -480,28 +452,36 @@ public class AwardSharedDocAction extends AwardAction {
 	 	 sharedDocForm.getMedusaBean().generateParentNodes();
 	        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
 	    }
-	    public ActionForward headerTab(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    	SharedDocForm sharedDocForm=(SharedDocForm)form;
-	    	          if(sharedDocForm.getTabHeader().equalsIgnoreCase("basic")){
-	    	          if (sharedDocForm.getDocument().getDocumentNumber() == null) {
-	    	               loadDocumentInFormDoc(request, sharedDocForm);
-	    	               sharedDocForm.getAwardDocument().getAward().getAwardId();
-	    	           }
-	    	       
-	    	        return mapping.findForward("basic");//("keyperson");//(Constants.MAPPING_AWARD_CONTACTS_PAGE); Constants.MAPPING_AWARD_BASIC
-	    	          }else{
-	    	        InstitutionalProposal instProp=null;	   
-	    	
-	    	      if (sharedDocForm.getDocument().getDocumentNumber() == null) {
-	    	           //if we are entering this from the search results
-	    	           loadDocumentInFormDoc(request, sharedDocForm);
-	    	       }
-	    	   
-	    		 sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
-	    		 sharedDocForm.getMedusaBean().setModuleName("award");
-	    		 sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
-	    		 sharedDocForm.getMedusaBean().generateParentNodes();
-	    	       return mapping.findForward("basics");
-	    	          }
-	    	   }
+	    public ActionForward headerTab(ActionMapping mapping, ActionForm form,HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			
+			SharedDocForm sharedDocForm = (SharedDocForm) form;
+			
+			if (sharedDocForm.getNavigateFlag() != null ){
+				if(sharedDocForm.getNavigateFlag().equalsIgnoreCase("keyperson")) {
+				InstitutionalProposal instProp = null;
+
+				if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+					loadDocumentInFormDoc(request, sharedDocForm);
+				}
+
+				sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
+				sharedDocForm.getMedusaBean().setModuleName("award");
+				sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
+				sharedDocForm.getMedusaBean().generateParentNodes();
+		
+				return mapping.findForward("basics");
+			   }
+			if (sharedDocForm.getNavigateFlag().equalsIgnoreCase("awardSharedDoc")) {
+				
+				if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+					loadDocumentInFormDoc(request, sharedDocForm);
+					sharedDocForm.getAwardDocument().getAward().getAwardId();
+				}
+				return mapping.findForward("basic");
+			   }
+			}
+			return null;
+			
+		}
  }
