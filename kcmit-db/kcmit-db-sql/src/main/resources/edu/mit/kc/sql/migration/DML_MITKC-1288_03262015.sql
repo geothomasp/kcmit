@@ -185,3 +185,16 @@ WHERE UPDATE_USER <>'admin'
 /
 commit
 /
+UPDATE AWARD_UNIT_CONTACTS t1 SET t1.unit_administrator_type_code = ( select t2.KC_UNIT_ADMIN_TYP_CD from TMP_MAPPING_UNIT_ADMIN_TYP_CD t2
+																		where t2.COEUS_UNIT_ADMIN_TYP_CD = t1.unit_administrator_type_code
+																	)
+WHERE t1.unit_administrator_type_code in ( select COEUS_UNIT_ADMIN_TYP_CD from TMP_MAPPING_UNIT_ADMIN_TYP_CD )                                  
+/
+UPDATE PROPOSAL_UNIT_CONTACTS t1 SET t1.unit_administrator_type_code = ( select t2.KC_UNIT_ADMIN_TYP_CD from TMP_MAPPING_UNIT_ADMIN_TYP_CD t2
+																		where t2.COEUS_UNIT_ADMIN_TYP_CD = t1.unit_administrator_type_code
+																	)
+WHERE t1.unit_administrator_type_code in ( select COEUS_UNIT_ADMIN_TYP_CD from TMP_MAPPING_UNIT_ADMIN_TYP_CD )
+/
+commit
+/
+
