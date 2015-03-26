@@ -37,7 +37,7 @@
 
 		<property name="items">
 			<list>
-				<bean parent="PreviousFeed-Link" p:order="10" />
+				<bean parent="PreviousFeed-SponsorLink" p:order="10" />
 				<bean parent="Uif-InputField" p:propertyName="path"
 					p:label="Target Environment" p:order="20">
 					<property name="control">
@@ -66,4 +66,22 @@
 		</property>
 	</bean>
 
+	<bean id="PreviousFeed-SponsorLink" parent="PreviousFeed-SponsorLink-parent" />
+	<bean id="PreviousFeed-SponsorLink-parent" parent="Uif-DropdownToggleMenu"
+		p:toggleText="PreviousFeed" p:toggleCaretClass="">
+		<property name="menuGroup">
+			<bean parent="Uif-DropdownTable">
+				<property name="items">
+					<list>
+						<bean parent="Uif-MessageField" p:label="Date" p:messageText="@{#lp.sponsorFeedDate eq null ? '' : #lp.sponsorFeedDate }" />
+						<bean parent="Uif-MessageField" p:label="By" p:messageText="@{#lp.sponsorFeedUser eq null ? '' : #lp.sponsorFeedUser }" />
+						<bean parent="Uif-MessageField" p:label="Note"
+							p:messageText="Sponsor information has not changed since the last feed."
+							p:render="@{#lp.sponsordatachanged}" />
+
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
 </beans>

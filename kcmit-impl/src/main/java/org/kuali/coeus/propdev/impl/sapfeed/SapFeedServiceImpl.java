@@ -38,9 +38,12 @@ public class SapFeedServiceImpl implements SapFeedService
 		String resultMaster = "";
 		try {
 
-			return resultMaster = getDbFunctionService().executeFunction(
+			 resultMaster = getDbFunctionService().executeFunction(
 					"fn_generate_sap_feed", paramValues);
+		return resultMaster;
 		} catch (Exception ex) {
+		
+			ex.printStackTrace();
 			return resultMaster;
 		}
 	}
@@ -56,6 +59,7 @@ public class SapFeedServiceImpl implements SapFeedService
 			return resultRolodex = getDbFunctionService().executeFunction(
 					"fn_generate_rolodex_feed", paramValues);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			return resultRolodex;
 
 		}
@@ -73,6 +77,7 @@ public class SapFeedServiceImpl implements SapFeedService
 					"fn_generate_sponsor_feed", paramValues);
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			return resultSponsor;
 		}
 

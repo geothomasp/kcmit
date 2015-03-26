@@ -175,5 +175,14 @@
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />		
 	</class-descriptor>	
-    
+	
+	<class-descriptor class="org.kuali.coeus.propdev.impl.sapfeed.SapFeedBatchDetails" table="SAP_FEED_BATCH_LIST">	
+	    <field-descriptor name="sapFeedBatchId" column="SAP_FEED_BATCH_ID" jdbc-type="BIGINT" primarykey="true"  />
+		<field-descriptor name="batchId" column="BATCH_ID" jdbc-type="BIGINT"/>
+		<field-descriptor name="batchFileName" column="BATCH_FILE_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="batchTimeStamp" column="BATCH_TIMESTAMP" jdbc-type="TIMESTAMP" />
+		<field-descriptor name="noOfRecords" column="NO_OF_RECORDS" jdbc-type="BIGINT" />
+	</class-descriptor>	
+	
+	
 </descriptor-repository>

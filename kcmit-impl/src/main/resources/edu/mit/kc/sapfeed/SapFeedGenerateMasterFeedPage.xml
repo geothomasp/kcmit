@@ -111,8 +111,22 @@
 
 	<bean id="FeedGenerated-DialogGroup" parent="Uif-DialogGroup"
 		p:dialogCssClass="modal-lg" p:headerText="Feed Generated"
-		p:retrieveViaAjax="true"
-		p:promptText="A feed has been generated for @{#lp.path == 'P' ? 'Production' : 'Test'} .">
+		p:retrieveViaAjax="true">
+		<property name="items">
+			<list>
+				<bean parent="Uif-Message"
+					p:messageText="A feed has been generated for @{#lp.path == 'P' ? 'Production' : 'Test'} ."
+					p:style="font-size: medium;" p:order="10" />
+				<bean parent="Uif-Message" p:messageText="Batch File :@{#lp.batchFileName}"
+					p:order="10" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
+				<bean parent="Uif-Message" p:messageText="Records Fed:@{#lp.fedInRecords}"
+					p:order="20" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
+
+				<bean parent="Uif-Message" p:messageText="Records in Error:@{#lp.errorInRecords}"
+					p:order="30" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
+			</list>
+		</property>
+
 		<property name="footer.items">
 			<list>
 				<bean parent="Uif-DialogDismissButton" p:actionLabel="Close"
@@ -124,6 +138,17 @@
 	<bean id="FeedError-DialogGroup" parent="Uif-DialogGroup"
 		p:dialogCssClass="modal-lg" p:headerText="Error" p:retrieveViaAjax="true"
 		p:promptText="Invalid Path for @{#lp.path == 'P' ? 'Production' : 'Test'} .">
+		<property name="footer.items">
+			<list>
+				<bean parent="Uif-DialogDismissButton" p:actionLabel="Close"
+					p:order="10" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="FeedCommonError-DialogGroup" parent="Uif-DialogGroup"
+		p:dialogCssClass="modal-lg" p:headerText="Error" p:retrieveViaAjax="true"
+		p:promptText="Failed to Generate Feed for @{#lp.path == 'P' ? 'Production' : 'Test'} .">
 		<property name="footer.items">
 			<list>
 				<bean parent="Uif-DialogDismissButton" p:actionLabel="Close"

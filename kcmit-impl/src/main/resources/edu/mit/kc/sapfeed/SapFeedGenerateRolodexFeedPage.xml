@@ -56,7 +56,6 @@
 				</bean>
 			</list>
 		</property>
-
 		<property name="footer">
 			<bean parent="Uif-DialogFooter">
 				<property name="items">
@@ -77,16 +76,12 @@
 			<bean parent="Uif-DropdownTable">
 				<property name="items">
 					<list>
-						<bean parent="Uif-MessageField" p:label="Date" p:messageText="" />
-						<bean parent="Uif-MessageField" p:label="By" p:messageText="" />
-						<bean parent="Uif-MessageField" p:label="Note"
-							p:messageText="Sponsor information has not changed since the last feed."
-							p:render="@{pageId eq 'SapFeed-GenerateSponsorFeed'}" />
-
+						<bean parent="Uif-MessageField" p:label="Date" p:messageText="@{#lp.rolodexFeedDate eq null ? '' : #lp.rolodexFeedDate }" />
+						<bean parent="Uif-MessageField" p:label="By" p:messageText="@{#lp.rolodexFeedUser eq null ? '' : #lp.rolodexFeedUser }" />
 					</list>
 				</property>
 			</bean>
 		</property>
-	</bean>
+	 </bean>
 
 </beans>
