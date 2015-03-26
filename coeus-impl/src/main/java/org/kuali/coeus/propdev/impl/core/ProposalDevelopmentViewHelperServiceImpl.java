@@ -972,15 +972,15 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
           if (proposalPerson.isInvestigator() && proposalPerson.isPrincipalInvestigator()
                   && StringUtils.equals(principalId, proposalPerson.getPersonId())) {
               return true;
-          } if (proposalPerson.getProposalPersonRoleId().equals("COI")){
+          } if (proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)){
         	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modSubCodeCoi)||canCertify){
         		  return true;
         	  }else{
         		  return false;
-        	  }
+        	  } 
           }
            
-        if (proposalPerson.getProposalPersonRoleId().equals("KP")){
+        if (proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)){
         	for(String projectRole:newRoles){
         	if(proposalPerson.getProjectRole().equals(projectRole)) {
             return false;
