@@ -18,6 +18,7 @@ package org.kuali.coeus.propdev.impl.workloadbalancing;
 
 import edu.mit.kc.workloadbalancing.bo.*;
 import edu.mit.kc.workloadbalancing.core.WorkloadForm;
+import edu.mit.kc.workloadbalancing.sim.WorkloadSimulatorService;
 import edu.mit.kc.workloadbalancing.util.WorkloadUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.coeus.common.framework.person.KcPerson;
@@ -25,6 +26,7 @@ import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.unit.Unit;
 import org.kuali.coeus.common.framework.unit.admin.UnitAdministrator;
 import org.kuali.coeus.common.impl.sponsor.hierarchy.SponsorHierarchyDao;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.criteria.QueryResults;
 import org.kuali.rice.krad.data.PersistenceOption;
@@ -373,6 +375,12 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
         if (!form.isSimulationMode()) {
             newCapacity = getDataObjectService().save(newCapacity, PersistenceOption.FLUSH);
         }
+        
+        WlSimHeader wlSimHeader = new WlSimHeader();
+		wlSimHeader.setStatusCode("2");
+		wlSimHeader.setSimId("15");
+		
+		wlSimHeader = getDataObjectService().save(wlSimHeader,PersistenceOption.FLUSH);
 
         workloadLineItem.setWlflexibilityList(new ArrayList<WlFlexibility>());
 
@@ -794,7 +802,7 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
     @RequestMapping(params = "methodToCall=runSimulation")
     public ModelAndView runSimulation(@ModelAttribute("KualiForm") WorkloadForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        // TODO blank method to wire in run simulation
+        KcServiceLocator.getService(WorkloadSimulatorService.class).simulateWorkload(Integer.parseInt(form.getSimulation().getSimId()), form.getSimulation().getStartDate(),  form.getSimulation().getEndDate());
         return getRefreshControllerService().refresh(form);
     }
 
