@@ -1,4 +1,7 @@
 
+DELETE FROM DASH_BOARD_MENU_ITEMS
+/
+
 INSERT INTO DASH_BOARD_MENU_ITEMS (DASH_BOARD_MENU_ITEM_ID, MENU_ITEM, MENU_ACTION, MENU_TYPE_FLAG, ACTIVE, UPDATE_TIMESTAMP, UPDATE_USER, VER_NBR, OBJ_ID)
 VALUES (SEQ_DASH_BOARD_MENU_ITEM_ID.NEXTVAL, 'Create Proposal', '/kc-pd-krad/proposalDevelopment?methodToCall=docHandler&command=initiate&viewId=PropDev-InitiateView', NULL, 'Y', sysdate, 'admin', 1, sys_guid())
 /
