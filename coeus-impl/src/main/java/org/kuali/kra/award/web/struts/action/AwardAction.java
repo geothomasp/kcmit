@@ -93,6 +93,8 @@ import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.permission.PermissionService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
@@ -187,6 +189,14 @@ public class AwardAction extends BudgetParentActionBase {
             setBooleanAwardHasTandMOrIsVersioned(awardDocument.getAward());
             setSubAwardDetails(awardDocument.getAward());
             handlePlaceHolderDocument(awardForm, awardDocument);
+        }
+        
+        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award")) {
+        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachmentform != null) {
+    			awardAttachmentform.setMaintainInstituteProposal(true);
+    		}
         }
         
         String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
@@ -1883,5 +1893,9 @@ public class AwardAction extends BudgetParentActionBase {
     @Override
     public ActionForward takeSuperUserActions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         return superUserActionHelper(SuperUserAction.TAKE_SUPER_USER_ACTIONS, mapping, form, request, response);
+    }
+    
+    private PermissionService getPermissionService() {
+        return KimApiServiceLocator.getPermissionService();
     }
 }

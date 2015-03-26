@@ -60,6 +60,8 @@ import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.permission.PermissionService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
@@ -117,6 +119,7 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
                                 String printAttachmentTypeInclusion=KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.MODULE_NAMESPACE_SUBAWARD, ParameterConstants.DOCUMENT_COMPONENT, Constants.PARAMETER_PRINT_ATTACHMENT_TYPE_INCLUSION);
                                 String[] attachmentTypeCode=printAttachmentTypeInclusion.split("\\,");
                                 for(int typeCode=0;typeCode<attachmentTypeCode.length;typeCode++) {
+                                  if(subAwardAttachments.getSubAwardAttachmentTypeCode() != null) {
                                     if(subAwardAttachments.getSubAwardAttachmentTypeCode().equals(attachmentTypeCode[typeCode])) {
                                         String[] fileNameSplit=subAwardAttachments.getFileName().toString().split("\\.pdf");
                                         SubAwardPrintingService printService = KcServiceLocator.getService(SubAwardPrintingService.class);
@@ -124,6 +127,7 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
                                             subAwardAttachments.setFileNameSplit(fileNameSplit[0]);
                                             }
                                      }
+                                  }
                                  }
                              }
                             SubAwardAttachmentType subAwardAttachmentTypeValue =  KcServiceLocator.getService(BusinessObjectService.class).findBySinglePrimaryKey(SubAwardAttachmentType.class, subAwardAttachments.getSubAwardAttachmentTypeCode());
@@ -155,6 +159,15 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
         SubAward subAward = KcServiceLocator.getService(
                 SubAwardService.class).getAmountInfo(subAwardDocument.getSubAward());
         subAwardForm.getSubAwardDocument().setSubAward(subAward);
+        
+        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
+        	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
+    		if(subAwardAttachmentform != null) {
+    			subAwardAttachmentform.setMaintainInstituteProposal(true);
+    		}
+        }
+        
         String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
                 ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
     	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
@@ -633,4 +646,9 @@ public ActionForward blanketApprove(ActionMapping mapping,
       
       return  mapping.findForward(Constants.MAPPING_BASIC);
   }
+ 
+ private PermissionService getPermissionService() {
+     return KimApiServiceLocator.getPermissionService();
+ }
+ 
 }

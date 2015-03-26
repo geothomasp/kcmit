@@ -18,12 +18,15 @@
  */
 package org.kuali.kra.award.web.struts.action;
 
+import static org.kuali.kra.infrastructure.KeyConstants.AWARD_ATTACHMENT_TYPE_CODE_REQUIRED;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.framework.attachment.AttachmentFile;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
+import org.kuali.kra.award.AwardDocumentRule;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncPendingChangeBean;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
@@ -42,6 +45,7 @@ import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocumen
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
 import org.kuali.kra.award.service.impl.AwardCommentServiceImpl;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +60,9 @@ public class AwardNotesAndAttachmentsAction extends AwardAction {
     private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
     private static final String CONFIRM_DELETE_ATTACHMENT = "confirmDeleteAttachment";
     private static final String CONFIRM_DELETE_ATTACHMENT_KEY = "confirmDeleteAttachmentKey";
+    private static final String CONFIRM_VOID_ATTACHMENT = "confirmVoidAttachment";
+    
+    private static final String CONFIRM_VOID_ATTACHMENT_KEY = "confirmVoidAttachmentKey";
     private static final String EMPTY_STRING = "";
     
     private AwardNotepadBean awardNotepadBean;
@@ -311,6 +318,48 @@ public class AwardNotesAndAttachmentsAction extends AwardAction {
     	AwardForm awardForm = (AwardForm) form;
         AwardDocument awardDocument = awardForm.getAwardDocument();
         int voidAttachment = getLineToEdit(request);
+        return confirm(buildVoidAttachmentConfirmationQuestion(mapping, form, request, response,
+        		voidAttachment), CONFIRM_VOID_ATTACHMENT, "");
+      
+    }
+    
+    public ActionForward applyModifyAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+    	AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+        int voidAttachment = getLineToEdit(request);
+        boolean valid=true;
+        AwardAttachment awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean().getNewAttachment();
+        if (awardDocument.getAward().getAwardAttachments().get(voidAttachment).getTypeCode()== null) {
+            GlobalVariables.getMessageMap().putError("document.awardList[0].awardAttachments["+voidAttachment+"].typeCode", KeyConstants.AWARD_ATTACHMENT_TYPE_CODE_REQUIRED);
+            valid = false;
+        }
+        else {
+        	awardDocument.getAward().getAwardAttachments().get(voidAttachment).setModifyAttachment(false);
+        	getBusinessObjectService().save(awardDocument.getAward().getAwardAttachments().get(voidAttachment));
+        }
+        	
+        return mapping.findForward(Constants.MAPPING_BASIC);
+    }
+    
+    
+
+
+    private StrutsConfirmation buildVoidAttachmentConfirmationQuestion(ActionMapping mapping, ActionForm form,
+           HttpServletRequest request, HttpServletResponse response, int voidAttachment) throws Exception {
+    	AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+        AwardAttachment attachment = awardDocument.getAward().getAwardAttachments().get(voidAttachment);
+       
+       return buildParameterizedConfirmationQuestion(mapping, form, request, response, CONFIRM_VOID_ATTACHMENT_KEY,
+               KeyConstants.QUESTION_VOID_ATTACHMENT,"","");
+   }
+    
+    public ActionForward confirmVoidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+    	AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+        int voidAttachment = getSelectedLine(request);
         awardDocument.getAward().getAwardAttachments().get(voidAttachment).setDocumentStatusCode("V");
     	getBusinessObjectService().save(awardDocument.getAward().getAwardAttachments().get(voidAttachment));
         return mapping.findForward(Constants.MAPPING_BASIC);

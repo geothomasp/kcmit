@@ -41,5 +41,16 @@ public class InstitutionalProposalAddAttachmentRuleImpl extends KcTransactionalD
         return valid;
     }
     
+    @Override
+    public boolean processAddInstitutionalProposalAttachment(InstitutionalProposalAddAttachmentRuleEvent institutionalProposalRuleEvent,int i) {
+        InstitutionalProposalAttachments proposalAttachment = institutionalProposalRuleEvent.getInstitutionalProposalDocument().getInstitutionalProposal().getInstProposalAttachment(i);
+        boolean valid=true;
+        if( proposalAttachment.getAttachmentTypeCode()  == null ) {
+            valid = false;
+            reportError("document.institutionalProposalList[0].instProposalAttachments["+i+"].attachmentTypeCode", KeyConstants.INSTITUTIONAL_PROPOSAL_ATTACHMENT_TYPE_CODE_REQUIRED);
+        }
+         return valid;
+    }
+    
     
 }

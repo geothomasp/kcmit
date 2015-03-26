@@ -447,7 +447,8 @@ public final class KeyConstants {
     public static final String QUESTION_SYNC_PANEL = "document.question.syncPanel.text";
     public static final String QUESTION_SYNC_FULL = "document.question.syncAll.text";
     public static final String QUESTION_SYNC_PANEL_TO_EMPTY = "document.question.syncPanelToEmpty.text";
-      
+     
+    public static final String QUESTION_VOID_ATTACHMENT = "document.question.voidAttachment.text";
     //Award Attachments
     public static final String QUESTION_DELETE_ATTACHMENT = "document.question.deleteAttachment.text";
     public static final String AWARD_ATTACHMENT_TYPE_CODE_REQUIRED = "error.awardNotesAndAttachments.attachment.typeRequired";

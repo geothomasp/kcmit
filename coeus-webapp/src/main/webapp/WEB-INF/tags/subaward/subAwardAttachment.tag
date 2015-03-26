@@ -17,9 +17,21 @@
    - along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
+
+<style type="text/css">
+.voidShadeEnable td{
+opacity:.6;
+}
+
+.voidShadeDisable td{
+opacity:1;
+}
+
+</style>
 <c:set var="subAwardAttachmentAttributes" value="${DataDictionary.SubAwardAttachments.attributes}" />
 <c:set var="subAwardAttachmentFormBean" value="${KualiForm.subAwardAttachmentFormBean}" />
 <c:set var="action" value="subAwardTemplateInformation" />
+<c:set var="readOnly" value="${not KualiForm.editingMode['fullEntry']}" scope="request" />
 <c:set var="attachments" value="${KualiForm.document.subAwardList[0].subAwardAttachments}"/>
 
 <kul:tab tabTitle="Attachments" tabItemCount="${fn:length(attachments)}" defaultOpen="false" tabErrorKey="subAwardAttachmentFormBean.newAttachment*,document.subAwardList[0].subAwardAttachments*" transparentBackground="false" useRiceAuditMode="true">
@@ -68,6 +80,7 @@
                 <c:if test="${!readOnly}">
                 <tbody class="addline">
 	             <tr>
+	             <c:if test="${!readOnly}">
 	                <td align="center" valign="middle" class="infoline">
 	                	<div align="center">
 	                		Add:
@@ -112,6 +125,7 @@
 							src="${ConfigProperties.kra.externalizable.images.url}tinybutton-add1.gif" styleClass="tinybutton addButton"/>
 						</div>
 					</td>
+				</c:if>
 				</tr>
 				</tbody>
 			 </c:if> 
@@ -121,13 +135,17 @@
 			<c:set var="modify" value="${KualiForm.document.subAwardList[0].subAwardAttachments[count].modifyAttachment}"/>
 			<c:choose>
 			   <c:when test="${modify!=true}">
-	             <c:set var="readOnly" value="true"/>
+	             <c:set var="activeModify" value="true"/>
 	           </c:when>
 		       <c:otherwise>
-		         <c:set var="readOnly" value="false"/>
+		         <c:set var="activeModify" value="false"/>
 		       </c:otherwise>
 		    </c:choose>
-				<tr>
+				<c:set var="voidShade" value="voidShadeDisable"/>
+		    <c:if test="${KualiForm.document.subAwardList[0].subAwardAttachments[itrStatus.index].documentStatusCode == 'V' && !modify}">
+		    <c:set var="voidShade" value="voidShadeEnable"/>
+		    </c:if>
+				<tr class="${voidShade}">
 	         		<td>
 	         			<div align="center">
 	                		${itrStatus.index + 1}
@@ -135,17 +153,17 @@
 	         		</td>
 	         		<td align="left" valign="middle">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].subAwardAttachmentTypeCode" attributeEntry="${subAwardAttachmentAttributes['subAwardAttachmentTypeCode']}" readOnly="${readOnly}" readOnlyAlternateDisplay ="${subAwardAttachments.typeAttachment.description}"/>
+	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].subAwardAttachmentTypeCode" attributeEntry="${subAwardAttachmentAttributes['subAwardAttachmentTypeCode']}" readOnly="${activeModify}" readOnlyAlternateDisplay ="${subAwardAttachments.typeAttachment.description}"/>
 		            	</div>
 					</td>
 					<td align="left" valign="middle">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].description" attributeEntry="${subAwardAttachmentAttributes.description}" readOnly="${readOnly}"/>
+	                		<kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].description" attributeEntry="${subAwardAttachmentAttributes.description}" readOnly="${activeModify}"/>
 		            	</div>
 					</td>
 	       			<td align="left" valign="middle">
 	           			<div id="replaceInstDiv${itrStatus.index}" style="display:block;">
-	           			<c:if test="${attachment.fileName!=null}"> 
+	           			<c:if test="${!readOnly || attachment.fileName!=null}"> 
 							<kra:fileicon attachment="${attachment}" />
 							 </c:if> 
 					       <kul:htmlControlAttribute property="document.subAwardList[0].subAwardAttachments[${itrStatus.index}].fileName" 
@@ -170,20 +188,35 @@
 					<td align="center" valign="middle">
 						<div align="center">
 							
+						   <c:if test="${!readOnly}">
 						   <c:choose>
-							<c:when test="${subAwardAttachmentFormBean.disableAttachmentRemovalIndicator == true}">
+						   <c:when test="${subAwardAttachmentFormBean.disableAttachmentRemovalIndicator == true}">
 								<c:if test="${KualiForm.document.subAwardList[0].subAwardAttachments[itrStatus.index].documentStatusCode != 'V'}"> 
 								<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 								alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
+								<c:if test="${subAwardAttachmentFormBean.maintainInstituteProposal == true}">
 								<html:image property="methodToCall.voidAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-void.gif' styleClass="tinybutton"
 									   alt="Void Attachment"/>
-							     </c:if> 
-							    <html:image property="methodToCall.modifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+							    </c:if> 
+							    </c:if>
+							    <c:if test="${subAwardAttachmentFormBean.maintainInstituteProposal == true}">
+							    <c:choose>
+							        <c:when test="${!modify}">
+							        <html:image property="methodToCall.modifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-modify.gif' styleClass="tinybutton"
 									   alt="Modify Attachment"/>
-						    </c:when>
+							        </c:when>
+							       <c:otherwise>
+								   <c:if test="${!readOnly}">
+            	                   <html:image property="methodToCall.applyModifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+						           src="${ConfigProperties.kra.externalizable.images.url}tinybutton-apply.gif" styleClass="tinybutton"/>
+            	                  </c:if>
+            	                  </c:otherwise>
+            	                 </c:choose>
+            	                 </c:if>
+            	              </c:when>
 						   <c:otherwise>
 						   <html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
@@ -198,9 +231,9 @@
 												property="methodToCall.replaceNarrativeAttachment.line${itrStatus.index}.anchor${currentTabIndex};return false" />
 							</c:otherwise>    
 						   </c:choose>
-							    
-							    
-						</div>
+						   </c:if>
+						   
+					</div>
 					</td>
 	         	</tr>
 			</c:forEach> 

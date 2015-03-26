@@ -47,6 +47,8 @@ public class SubAwardAttachmentFormBean implements Serializable {
     
     private boolean disableAttachmentRemovalIndicator=false;
     
+    private boolean maintainInstituteProposal=false;
+    
     
     /**
      * Gets the newReport attribute. 
@@ -68,7 +70,15 @@ public class SubAwardAttachmentFormBean implements Serializable {
         this.newReport = newReport;
     }
 
-    public SubAwardAttachmentFormBean(final SubAwardForm form) {
+    public boolean isMaintainInstituteProposal() {
+		return maintainInstituteProposal;
+	}
+
+	public void setMaintainInstituteProposal(boolean maintainInstituteProposal) {
+		this.maintainInstituteProposal = maintainInstituteProposal;
+	}
+
+	public SubAwardAttachmentFormBean(final SubAwardForm form) {
         this.form = form;
     }
 

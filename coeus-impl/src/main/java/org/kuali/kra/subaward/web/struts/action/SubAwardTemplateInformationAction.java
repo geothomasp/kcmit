@@ -19,6 +19,7 @@
 package org.kuali.kra.subaward.web.struts.action;
 
 import static org.kuali.kra.infrastructure.Constants.MAPPING_BASIC;
+import static org.kuali.kra.infrastructure.KeyConstants.SUBAWARD_ATTACHMENT_DESCRIPTION_REQUIRED;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.document.AwardDocument;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.subaward.bo.SubAward;
@@ -54,6 +56,8 @@ public class SubAwardTemplateInformationAction extends SubAwardAction {
     private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
     private static final String CONFIRM_DELETE_ATTACHMENT_KEY = "confirmDeleteAttachmentKey";
     private static final String CONFIRM_DELETE_ATTACHMENT = "confirmDeleteAttachment";
+    private static final String CONFIRM_VOID_ATTACHMENT = "confirmVoidAttachment";
+    private static final String CONFIRM_VOID_ATTACHMENT_KEY = "confirmVoidAttachmentKey";
     
     
     public ActionForward execute(ActionMapping mapping, ActionForm form,
@@ -268,6 +272,55 @@ public class SubAwardTemplateInformationAction extends SubAwardAction {
       public ActionForward voidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
               HttpServletResponse response) throws Exception {
       	
+    	  SubAwardForm subAwardForm = (SubAwardForm) form;
+          SubAwardDocument subAwardDocument = subAwardForm.getSubAwardDocument();
+          int voidAttachment = getSelectedLine(request);
+          return confirm(buildVoidAttachmentConfirmationQuestion(mapping, form, request, response,
+            		voidAttachment), CONFIRM_VOID_ATTACHMENT, "");
+         
+          
+      }
+      
+      
+      public ActionForward applyModifyAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+              HttpServletResponse response) throws Exception {
+    	  SubAwardForm subAwardForm = (SubAwardForm) form;
+          SubAwardDocument subAwardDocument = subAwardForm.getSubAwardDocument();
+          int voidAttachment = getLineToEdit(request);
+          boolean valid=true;
+          SubAwardAttachments subAwardAttachment = ((SubAwardForm) form).getSubAwardAttachmentFormBean().getNewAttachment();
+          if (subAwardDocument.getSubAward().getSubAwardAttachments().get(voidAttachment).getSubAwardAttachmentTypeCode()== null) {
+              GlobalVariables.getMessageMap().putError("document.subAwardList[0].subAwardAttachments["+voidAttachment+"].subAwardAttachmentTypeCode", KeyConstants.SUBAWARD_ATTACHMENT_TYPE_CODE_REQUIRED);
+              valid = false;
+          }
+          if(subAwardDocument.getSubAward().getSubAwardAttachments().get(voidAttachment).getDescription()== null){
+        	  GlobalVariables.getMessageMap().putError("document.subAwardList[0].subAwardAttachments["+voidAttachment+"].description", KeyConstants.SUBAWARD_ATTACHMENT_DESCRIPTION_REQUIRED);
+              valid = false;
+          }
+          if(!valid) {
+        	  super.save(mapping, subAwardForm, request, response);
+          }
+          else {
+        	subAwardDocument.getSubAward().getSubAwardAttachments().get(voidAttachment).setModifyAttachment(false);
+          	getBusinessObjectService().save(subAwardDocument.getSubAward().getSubAwardAttachments().get(voidAttachment));
+          }
+          	
+          return mapping.findForward(Constants.MAPPING_BASIC);
+      }
+      
+      
+
+
+      private StrutsConfirmation buildVoidAttachmentConfirmationQuestion(ActionMapping mapping, ActionForm form,
+             HttpServletRequest request, HttpServletResponse response, int voidAttachment) throws Exception {
+    	  SubAwardForm subAwardForm = (SubAwardForm) form;
+          SubAwardDocument subAwardDocument = subAwardForm.getSubAwardDocument();
+          return buildParameterizedConfirmationQuestion(mapping, form, request, response, CONFIRM_VOID_ATTACHMENT_KEY,
+                 KeyConstants.QUESTION_VOID_ATTACHMENT,"","");
+     }
+      
+      public ActionForward confirmVoidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+              HttpServletResponse response) throws Exception {
     	  SubAwardForm subAwardForm = (SubAwardForm) form;
           SubAwardDocument subAwardDocument = subAwardForm.getSubAwardDocument();
           int voidAttachment = getSelectedLine(request);

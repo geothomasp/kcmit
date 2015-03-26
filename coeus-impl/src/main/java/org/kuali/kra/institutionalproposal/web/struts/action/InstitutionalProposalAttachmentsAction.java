@@ -42,7 +42,9 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
 	
 	private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
     private static final String CONFIRM_DELETE_ATTACHMENT = "confirmDeleteAttachment";
+    private static final String CONFIRM_VOID_ATTACHMENT = "confirmVoidAttachment";
     private static final String CONFIRM_DELETE_ATTACHMENT_KEY = "confirmDeleteAttachmentKey";
+    private static final String CONFIRM_VOID_ATTACHMENT_KEY = "confirmVoidAttachmentKey";
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -121,15 +123,29 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
         return mapping.findForward(Constants.MAPPING_BASIC);
     }
     
+    public ActionForward applyModifyAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+    	InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm) form;
+        InstitutionalProposalDocument intitutionalProposalDocument = institutionalProposalForm.getInstitutionalProposalDocument();
+        int voidAttachment = getSelectedLine(request);
+        InstitutionalProposalAttachments instProposalAttachment = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean().getNewAttachment();
+    	String errorPath = "institutionalProposal";
+        InstitutionalProposalAddAttachmentRuleEvent event = new InstitutionalProposalAddAttachmentRuleEvent(errorPath, intitutionalProposalDocument, instProposalAttachment);
+        if(new InstitutionalProposalAddAttachmentRuleImpl().processAddInstitutionalProposalAttachment(event,voidAttachment)){
+        	intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment).setModifyAttachment(false);
+        	getBusinessObjectService().save(intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment));
+        }
+        return mapping.findForward(Constants.MAPPING_BASIC);
+    }
+    
     public ActionForward voidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
     	InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm) form;
         InstitutionalProposalDocument intitutionalProposalDocument = institutionalProposalForm.getInstitutionalProposalDocument();
         int voidAttachment = getSelectedLine(request);
-        intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment).setDocumentStatusCode("V");
-        getBusinessObjectService().save(intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment));
-        return mapping.findForward(Constants.MAPPING_BASIC);
-    }
+        return confirm(buildVoidAttachmentConfirmationQuestion(mapping, form, request, response,
+        		voidAttachment), CONFIRM_VOID_ATTACHMENT, "");
+   }
     
     /**
      * This method is used to delete InstitutionalProposal Attachment
@@ -160,6 +176,16 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
                 KeyConstants.QUESTION_DELETE_ATTACHMENT, "Institutional Proposal Attachment", attachment.getAttachmentTitle());
     }
    
+   private StrutsConfirmation buildVoidAttachmentConfirmationQuestion(ActionMapping mapping, ActionForm form,
+           HttpServletRequest request, HttpServletResponse response, int deleteAttachment) throws Exception {
+       InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm) form;
+       InstitutionalProposalDocument intitutionalProposalDocument = institutionalProposalForm.getInstitutionalProposalDocument();
+       InstitutionalProposalAttachments attachment = intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(deleteAttachment);
+       
+       return buildParameterizedConfirmationQuestion(mapping, form, request, response, CONFIRM_VOID_ATTACHMENT_KEY,
+               KeyConstants.QUESTION_VOID_ATTACHMENT,"","");
+   }
+   
    public ActionForward confirmDeleteAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
            HttpServletResponse response) throws Exception {
 	   InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm) form;
@@ -167,6 +193,16 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
        int delAttachment = getLineToDelete(request);
        getBusinessObjectService().delete(intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(delAttachment));
        intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().remove(delAttachment);
+       return mapping.findForward(Constants.MAPPING_BASIC);
+   }
+   
+   public ActionForward confirmVoidAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+           HttpServletResponse response) throws Exception {
+	   InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm) form;
+       InstitutionalProposalDocument intitutionalProposalDocument = institutionalProposalForm.getInstitutionalProposalDocument();
+       int voidAttachment = getSelectedLine(request);
+       intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment).setDocumentStatusCode("V");
+       getBusinessObjectService().save(intitutionalProposalDocument.getInstitutionalProposal().getInstProposalAttachments().get(voidAttachment));
        return mapping.findForward(Constants.MAPPING_BASIC);
    }
     
