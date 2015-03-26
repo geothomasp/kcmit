@@ -5,6 +5,8 @@ import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.rice.krad.data.jpa.PortableSequenceGenerator;
 
 import javax.persistence.*;
+
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -21,16 +23,24 @@ public class WlSimHeader extends KcPersistableBusinessObjectBase {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "SIM_START_DATE")
-    private Timestamp startDate;
-
-    @Column(name = "SIM_END_DATE")
-    private Timestamp endDate;
-
     @Column(name = "SIM_RUN_STATUS_CODE")
     private String statusCode;
+    
+	
+    @Column(name = "SIM_START_DATE")
+	private Date startDate;
+	
+	
+	
+    @Column(name = "SIM_END_DATE")
+	private Date endDate;
+   
+	public WlSimHeader(){
+		
+	}
+	
 
-    @OneToMany
+	@OneToMany
     @JoinColumn(name = "SIM_ID", referencedColumnName = "SIM_ID", insertable = true, updatable = true)
     List<WlSimFlexibility> flexibilities;
 
@@ -56,22 +66,6 @@ public class WlSimHeader extends KcPersistableBusinessObjectBase {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
-
-    public Timestamp getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Timestamp endDate) {
-        this.endDate = endDate;
     }
 
     public String getStatusCode() {
@@ -102,7 +96,24 @@ public class WlSimHeader extends KcPersistableBusinessObjectBase {
         return capacities;
     }
 
-    public void setCapacities(List<WlSimCapacity> capacities) {
+	public void setCapacities(List<WlSimCapacity> capacities) {
         this.capacities = capacities;
     }
+    
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 }
