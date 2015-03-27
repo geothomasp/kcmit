@@ -20,27 +20,40 @@
 
 	<bean id="SapFeed-GenerateRolodexFeed" parent="SapFeed-GenerateRolodexFeed-parentBean" />
 	<bean id="SapFeed-GenerateRolodexFeed-parentBean" parent="Uif-Page"
-		p:header.headerText="Generate Rolodex Feed">
+		>
 		<property name="items">
 			<list>
-				<ref bean="SapFeed-TargetEnvironment-RolodexList" />
+			  	<bean parent="SapFeed-Rolodex-Header" />
+				<ref bean="SapFeed-TargetEnvironment-RolodexList"  />
 			</list>
 		</property>
 		<property name="header">
 			<bean parent="Uif-PageHeader" />
 		</property>
 	</bean>
+	
+	<bean id="SapFeed-Rolodex-Header" parent="SapFeed-Rolodex-Header-parentBean"/>
+    <bean id="SapFeed-Rolodex-Header-parentBean" abstract="true" 
+         parent="Uif-HorizontalBoxSection" >
+        <property name="items">
+            <list>
+                 <bean parent="Uif-Message" p:messageText="Generate Rolodex Feed"
+					 p:style="font-size: 25px; " />
+			     <bean parent="PreviousFeed-Link"  p:style="margin-left:340px; padding-top:12px" />
+		   </list>
+		</property>
+	</bean>
 
 
 	<bean id="SapFeed-TargetEnvironment-RolodexList" parent="SapFeed-TargetEnvironment-RolodexList-parentBean" />
 	<bean id="SapFeed-TargetEnvironment-RolodexList-parentBean"
-		parent="Uif-VerticalBoxGroup">
+		parent="Uif-VerticalBoxGroup" p:additionalCssClasses="well,well-raised,well-form,col-md-8">
 
 		<property name="items">
 			<list>
-				<bean parent="PreviousFeed-Link" p:order="10" />
+				
 				<bean parent="Uif-InputField" p:propertyName="path"
-					p:label="Target Environment" p:order="20">
+					p:label="Target Environment" p:order="10">
 					<property name="control">
 						<bean parent="Uif-VerticalRadioControl">
 
@@ -73,7 +86,7 @@
 	<bean id="PreviousFeed-Link-parent" parent="Uif-DropdownToggleMenu"
 		p:toggleText="PreviousFeed" p:toggleCaretClass="">
 		<property name="menuGroup">
-			<bean parent="Uif-DropdownTable">
+			<bean parent="Uif-DropdownTable" p:additionalCssClasses="feed-detail,uif-table-pos">
 				<property name="items">
 					<list>
 						<bean parent="Uif-MessageField" p:label="Date" p:messageText="@{#lp.rolodexFeedDate eq null ? '' : #lp.rolodexFeedDate }" />

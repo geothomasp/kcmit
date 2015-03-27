@@ -32,10 +32,10 @@
 		</property>
 		<property name="additionalCssFiles">
 			<list>
-				<value>css/common/inlineEdit.css</value>
-				<value>css/propdev/person.css</value>
-				<value>css/propdev/budget.css</value>
-				<value>css/common/lineItemTable.css</value>
+				<value>css/wells.less</value>
+				<value>css/alerts.less</value>
+				<value>css/close.less</value>
+				<value>css/sapfeeds.css</value>
 			</list>
 		</property>
 

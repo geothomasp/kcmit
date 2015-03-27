@@ -20,9 +20,10 @@
 
 	<bean id="SapFeed-GenerateSponsorFeed" parent="SapFeed-GenerateSponsorFeed-parentBean" />
 	<bean id="SapFeed-GenerateSponsorFeed-parentBean" parent="Uif-Page"
-		p:header.headerText="Generate Sponsor Feed">
+		>
 		<property name="items">
 			<list>
+			    <bean parent="SapFeed-Sponsor-Header"   />
 				<ref bean="SapFeed-TargetEnvironment-SponsorList" />
 			</list>
 		</property>
@@ -30,16 +31,28 @@
 			<bean parent="Uif-PageHeader" />
 		</property>
 	</bean>
+	
+	<bean id="SapFeed-Sponsor-Header" parent="SapFeed-Sponsor-Header-parentBean"/>
+    <bean id="SapFeed-Sponsor-Header-parentBean" abstract="true" 
+         parent="Uif-HorizontalBoxSection" >
+        <property name="items">
+            <list>
+                 <bean parent="Uif-Message" p:messageText="Generate Sponsor Feed"
+					 p:style="font-size: 25px; " />
+			     <bean parent="PreviousFeed-SponsorLink"  p:style="margin-left:340px; padding-top:12px" />
+		   </list>
+		</property>
+	</bean>
 
 	<bean id="SapFeed-TargetEnvironment-SponsorList" parent="SapFeed-TargetEnvironment-SponsorList-parentBean" />
 	<bean id="SapFeed-TargetEnvironment-SponsorList-parentBean"
-		parent="Uif-VerticalBoxGroup">
+		parent="Uif-VerticalBoxGroup" p:additionalCssClasses="well,well-raised,well-form,col-md-8">
 
 		<property name="items">
 			<list>
-				<bean parent="PreviousFeed-SponsorLink" p:order="10" />
+			
 				<bean parent="Uif-InputField" p:propertyName="path"
-					p:label="Target Environment" p:order="20">
+					p:label="Target Environment" p:order="10">
 					<property name="control">
 						<bean parent="Uif-VerticalRadioControl">
 							<property name="options">
@@ -70,7 +83,7 @@
 	<bean id="PreviousFeed-SponsorLink-parent" parent="Uif-DropdownToggleMenu"
 		p:toggleText="PreviousFeed" p:toggleCaretClass="">
 		<property name="menuGroup">
-			<bean parent="Uif-DropdownTable">
+			<bean parent="Uif-DropdownTable" p:additionalCssClasses="feed-detail,uif-table-pos">
 				<property name="items">
 					<list>
 						<bean parent="Uif-MessageField" p:label="Date" p:messageText="@{#lp.sponsorFeedDate eq null ? '' : #lp.sponsorFeedDate }" />
