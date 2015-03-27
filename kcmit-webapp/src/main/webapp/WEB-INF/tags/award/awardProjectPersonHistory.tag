@@ -38,7 +38,7 @@
 					</c:if>&nbsp;
 					${removalHistoryValues.updateUserConfirm}</td>
 					
-					<td width="15%"><fmt:formatDate value="${removalHistoryValues.updateTimestamp}" pattern="MM/dd/yyyy HH:mm:ss a"/>${removalHistoryValues.updateUser}</td>
+					<td width="15%"><fmt:formatDate value="${removalHistoryValues.updateTimestamp}" pattern="MM/dd/yyyy HH:mm:ss a"/>&nbsp; ${removalHistoryValues.updateUser}</td>
 				</tr>
 			</c:forEach>
 		</c:if>

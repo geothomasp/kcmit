@@ -313,7 +313,7 @@
     	            </tr>
     	            <tr>
     	            	<td colspan="6">&nbsp;
-    	            		<%-- <kra-a:awardProjectPersonnelUnits awardContact="${awardContact}" awardPersonIndex="${awardContactRowStatus.index}" /> --%>
+    	            	   <kra-a:awardProjectPersonnelUnits awardContact="${awardContact}" awardPersonIndex="${awardContactRowStatus.index}" />
     	            	</td>
     	            </tr>
     	            <tr>

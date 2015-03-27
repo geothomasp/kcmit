@@ -27,7 +27,7 @@
 <c:set var="awardPersonAttributes" value="${DataDictionary.AwardPerson.attributes}" />
 <c:set var="keyPersonRoleConstant" value="<%=org.kuali.kra.infrastructure.Constants.KEY_PERSON_ROLE%>" />
 <c:set var="coiRoleConstant" value="<%=org.kuali.kra.infrastructure.Constants.CO_INVESTIGATOR_ROLE%>" />
-<c:set var="kpMaintenance"	value="${KualiForm.kpMaintenanceRole}" />
+<%-- <c:set var="kpMaintenance"	value="${KualiForm.kpMaintenanceRole}" /> --%>
 <%-- kra:section permission="modifyAward" --%>
 				
 <kul:tab tabTitle="Key Personnel and Credit Split" tabItemCount="${KualiForm.projectPersonnelBean.projectPersonnelCount}" defaultOpen="false" 
@@ -46,11 +46,11 @@
     				<th scope="row" width="5%">&nbsp;</th>
     				<th width="15%">*Person</th>
     				<th width="15%">Unit</th>
-    				<th width="15%">*Project Role</th>
-    				<th width="12%">Office Phone</th>
+    				<th width="20%">*Project Role</th>
+    				<th width="15%">Office Phone</th>
     				<th width="15%">Email</th>
     				<th width="10%">Confirm Timestamp</th>
-    				<th width="23%"><div align="center">Actions</div></th>
+    				<th width="15%"><div align="center">Actions</div></th>
     			
     			</tr>
     			
@@ -192,7 +192,7 @@
     	        	</td>
     	        	<td>
     	        	&nbsp;
-    	        	</td>
+    	        	</td> 
     	        	<td class="infoline">
     	        		<div align="center">
     	        			<html:image property="methodToCall.addProjectPerson" src="${ConfigProperties.kr.externalizable.images.url}tinybutton-add1.gif" title="Add Contact" alt="Add Contact" styleClass="tinybutton addButton" />
@@ -261,7 +261,7 @@
     							${awardContact.emailAddress}&nbsp;
     						</div> 
     					</td>
-    	                  <td valign="middle">
+    	              <td valign="middle">
     	                	<div align="center">                	
     							<c:if test='${awardContact.roleCode == "KP"}'>           	
     							<c:if test='${awardContact.confirmed == true}'> 
@@ -269,36 +269,22 @@
    								</c:if>
    								</c:if>
     						</div> 
-    					</td>
+    					</td> 
     					<td>
     						<div align="center">
-    						 <%--  <c:if test="${!readOnly}"> --%>
-    						 
-    						 									<c:if test='${kpMaintenance == "true"}'>
-									
-									<c:if test='${awardContact.roleCode == "KP"}'>
-										<c:if test='${awardContact.confirmed == false}'>
-											<html:image
-												property="methodToCall.confirmProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
-												src='${ConfigProperties.kra.externalizable.images.url}tinybutton-confirm1.gif'
-												styleClass="tinybutton" />
-										</c:if>
-										
-									</c:if>
-	</c:if>
-								 <c:if test="${!readOnly}">
-										<html:image
-											property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
-											src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif'
-											styleClass="tinybutton" />
-								
+    						  <c:if test="${!readOnly}">
 
-									<c:if test="${KualiForm.syncMode}">
+    							<html:image property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
+    							src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif' styleClass="tinybutton"/>
+
+
+
+    							<c:if test="${KualiForm.syncMode}">
 	    							<html:image property="methodToCall.syncProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 	    								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif' alt="sync" styleClass="tinybutton" disabled="${readOnly}"/>
     							</c:if>
-    						  </c:if>					  
-    						  
+    						  </c:if>
+
     						  <c:if test="${readOnly}">&nbsp;</c:if>
     						</div>
     	                </td>
@@ -328,9 +314,8 @@
 	    	<kra-a:creditSplit/>
 	    </c:if>	 
 	     
-	   <%--  <c:if test='${kpMaintenance == "true"}'>   --%>
-	    <kra-a:awardProjectPersonHistory/>
-	
+	<kra-a:awardProjectPersonHistory/> 
+
 	        
     </div>    
 </kul:tab>

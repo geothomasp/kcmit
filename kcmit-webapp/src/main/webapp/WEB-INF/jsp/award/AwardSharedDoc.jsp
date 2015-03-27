@@ -25,7 +25,7 @@
 	showTabButtons="true"
 	auditCount="0"
   	headerDispatch="${KualiForm.headerDispatch}"
-  	headerTabActive="basic">
+  	headerTabActive="sharedDoc">
 
 <kul:tabTop tabTitle="Project Documents" defaultOpen="true" tabErrorKey="">
 <kra-shared:sharedDoc helpParameterNamespace="KC-AWARD" helpParameterDetailType="Document" helpParameterName="awardMedusaHelpUrl" />

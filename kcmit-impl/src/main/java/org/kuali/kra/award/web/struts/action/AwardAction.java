@@ -296,7 +296,8 @@ public class AwardAction extends BudgetParentActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {       
     	SharedDocForm sharedDocForm = new SharedDocForm();
     	if(form.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
-    	    sharedDocForm = (SharedDocForm)form;    	
+    	    sharedDocForm = (SharedDocForm)form;  
+
         ActionForward actionForward = super.execute(mapping, form, request, response);
         return actionForward;
         }    else{

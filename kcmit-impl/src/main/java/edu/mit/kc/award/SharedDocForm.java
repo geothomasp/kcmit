@@ -217,7 +217,6 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
  private String navigateFlag;
  
  public String getNavigateFlag() {
- 	System.out.println("navigateFlag= "+navigateFlag);
 	return navigateFlag;
 }
 

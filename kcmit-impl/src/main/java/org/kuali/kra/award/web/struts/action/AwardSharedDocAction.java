@@ -37,6 +37,7 @@ import org.kuali.coeus.common.framework.medusa.MedusaService;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.attachment.NarrativeAttachment;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
@@ -47,6 +48,7 @@ import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
@@ -484,4 +486,52 @@ public class AwardSharedDocAction extends AwardAction {
 			return null;
 			
 		}
+	    //for unit details
+	    public ActionForward addUnitDetails(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	            throws Exception {
+	            AwardForm awardForm = (AwardForm) form;
+	            AwardPerson person = awardForm.getProjectPersonnelBean().getProjectPersonnel().get(getSelectedLine(request));
+	            awardForm.getProjectPersonnelBean().addUnitDetails(person);
+	            return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
+	        }
+	        
+	        public ActionForward removeUnitDetails(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	            throws Exception {
+	            AwardForm awardForm = (AwardForm) form;
+	            AwardPerson person = awardForm.getProjectPersonnelBean().getProjectPersonnel().get(getSelectedLine(request));
+	            awardForm.getProjectPersonnelBean().removeUnitDetails(person);
+	            return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
+	        }
+	        private static final String CONFIRM_SYNC_UNIT_DETAILS = "confirmSyncUnitDetails";
+	        private static final String ADD_SYNC_UNIT_DETAILS = "addSyncUnitDetails";
+	        private static final String CONFIRM_SYNC_UNIT_CONTACTS_KEY = "confirmSyncUnitContactsKey";
+	        public ActionForward addNewProjectPersonUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
+                    throws Exception {       
+Award award = ((AwardForm)form).getAwardDocument().getAward();
+AwardPersonUnit newPersonUnit = getProjectPersonnelBean(form).getNewAwardPersonUnit(getSelectedLine(request));
+
+if( newPersonUnit.isLeadUnit() && award.getLeadUnit() != null){
+return confirm(buildSyncUnitDetailsConfirmationQuestion(mapping, form, request, response), CONFIRM_SYNC_UNIT_DETAILS, ADD_SYNC_UNIT_DETAILS);
+}
+else
+{
+AwardPersonUnit unit = getProjectPersonnelBean(form).addNewProjectPersonUnit(getSelectedLine(request));
+if (unit != null) {
+return confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, unit, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));       
+} else {
+return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
+}
+}
+}
+	        
+	        private StrutsConfirmation buildSyncUnitDetailsConfirmationQuestion(ActionMapping mapping, ActionForm form,
+	                HttpServletRequest request, HttpServletResponse response) throws Exception {        
+	                
+	            return buildParameterizedConfirmationQuestion(mapping, form, request, response, CONFIRM_SYNC_UNIT_CONTACTS_KEY,
+	                    KeyConstants.QUESTION_SYNC_UNIT_CONTACTS);
+	            
+	        }
+	        
+
+	        
  }
