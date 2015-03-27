@@ -44,7 +44,7 @@ public class BudgetPersonnelPeriodRule {
     public KcEventResult validateAddBudgetPersonnelPeriod(BudgetAddPersonnelPeriodEvent event) {
     	KcEventResult result = new KcEventResult();
     	result.getMessageMap().addToErrorPath(event.getErrorPath());
-        verifyProjectPersonnel(event.getBudgetLineItem(), event.getBudgetPersonnelDetails(), event.getBudgetPeriod().getBudgetLineItems(), result);
+        verifyProjectPersonnel(event, result);
     	verifyPersonnelEffortAndCharged(event.getBudgetPersonnelDetails(), result);
     	verifyPersonnelDates(event.getBudgetPersonnelDetails(),event.getBudgetPeriod(), result);
     	result.getMessageMap().removeFromErrorPath(event.getErrorPath());
@@ -65,8 +65,10 @@ public class BudgetPersonnelPeriodRule {
         return result;
     }
 
-    protected void verifyProjectPersonnel(BudgetLineItem newBudgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetails, List<BudgetLineItem> budgetLineItemList , 
-    		KcEventResult result) {
+    protected void verifyProjectPersonnel(BudgetAddPersonnelPeriodEvent event, KcEventResult result) {
+    	BudgetLineItem newBudgetLineItem = event.getBudgetLineItem(); 
+    	BudgetPersonnelDetails newBudgetPersonnelDetails = event.getBudgetPersonnelDetails(); 
+    	List<BudgetLineItem> budgetLineItemList = event.getBudgetPeriod().getBudgetLineItems();
     	String newBudgetCategoryTypeCode = newBudgetLineItem.getBudgetCategory().getBudgetCategoryTypeCode();
         for(BudgetLineItem budgetLineItem : budgetLineItemList) {
         	String existingBudgetCategoryTypeCode = budgetLineItem.getBudgetCategory().getBudgetCategoryTypeCode();
@@ -74,10 +76,10 @@ public class BudgetPersonnelPeriodRule {
                 if(newBudgetLineItem.getCostElement().equalsIgnoreCase(budgetLineItem.getCostElement()) && 
                         StringUtils.equals(newBudgetLineItem.getGroupName(), budgetLineItem.getGroupName())) {
                 	if(isSummaryPerson(newBudgetPersonnelDetails)) {
-                		addSummaryPersonnelLineItemErrorMessage(budgetLineItem, result);
+                		addSummaryPersonnelLineItemErrorMessage(budgetLineItem, event, result);
                     	break;
                 	}else {
-                		verifyPersonnel(budgetLineItem, newBudgetLineItem, newBudgetPersonnelDetails, result);
+                		verifyPersonnel(budgetLineItem, newBudgetLineItem, newBudgetPersonnelDetails, event, result);
                 		if(!result.getSuccess()) {
                         	break;
                 		}
@@ -98,14 +100,15 @@ public class BudgetPersonnelPeriodRule {
      * @param budgetLineItem
      * @param result
      */
-    protected void addSummaryPersonnelLineItemErrorMessage(BudgetLineItem budgetLineItem, KcEventResult result) {
+    protected void addSummaryPersonnelLineItemErrorMessage(BudgetLineItem budgetLineItem, BudgetAddPersonnelPeriodEvent event, KcEventResult result) {
         //Summary is already added and user is attempting to add a second summary
+    	String errorKey = event.getErrorKeyPerson() != null ? event.getErrorKeyPerson() : "personSequenceNumber";
         if(budgetLineItem.getBudgetPersonnelDetailsList().isEmpty()) {
-            result.getMessageMap().putError("personSequenceNumber", KeyConstants.ERROR_SUMMARY_LINEITEM_EXISTS);
+            result.getMessageMap().putError(errorKey, KeyConstants.ERROR_SUMMARY_LINEITEM_EXISTS);
             result.setSuccess(false);
         }else {
             //Condition where Personnel are already added for the line item
-            result.getMessageMap().putError("personSequenceNumber", KeyConstants.ERROR_PERSONNEL_EXISTS);
+            result.getMessageMap().putError(errorKey, KeyConstants.ERROR_PERSONNEL_EXISTS);
             result.setSuccess(false);
         }
     }
@@ -119,9 +122,10 @@ public class BudgetPersonnelPeriodRule {
      * @param newBudgetPersonnelDetails
      * @param result
      */
-    protected void verifyPersonnel(BudgetLineItem budgetLineItem, BudgetLineItem newBudgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetails, KcEventResult result) {
+    protected void verifyPersonnel(BudgetLineItem budgetLineItem, BudgetLineItem newBudgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetails, BudgetAddPersonnelPeriodEvent event, KcEventResult result) {
+    	String errorKey = event.getErrorKeyPerson() != null ? event.getErrorKeyPerson() : "personSequenceNumber";
         if(budgetLineItem.getBudgetPersonnelDetailsList().isEmpty()) {
-            result.getMessageMap().putError("personSequenceNumber", KeyConstants.ERROR_SUMMARY_LINEITEM_EXISTS);
+            result.getMessageMap().putError(errorKey, KeyConstants.ERROR_SUMMARY_LINEITEM_EXISTS);
             result.setSuccess(false);
         }else {
             List<BudgetPersonnelDetails> budgetPersonnelDetails = getBudgetPersonnelDetails(budgetLineItem, newBudgetPersonnelDetails);

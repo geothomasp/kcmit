@@ -86,7 +86,6 @@
 		p:expressionProperties="budgetPeriod:budgetPeriod,budgetPeriodId:budgetPeriodId"
 		p:idSuffixPropertyName="budgetPeriod" p:header.headerText="Single Point Entry">
 		<property name="groupPrototype">
-	
 			<bean id="PropBudget-SinglePointEntry-LineItemDetails" parent="PropBudget-SinglePointEntry-PeriodTab" />
 		</property>
 		<property name="header.lowerGroup">
@@ -137,23 +136,23 @@
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="startDate"
-					p:order="10" p:required="true" />
+					p:order="10" p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="endDate" p:order="20"
-					p:required="true" />
+					p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="costElement"
-					p:label="Object Code Name" p:order="30" p:required="true" />
+					p:label="Object Code Name" p:order="30" p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="lineItemCost"
-					p:label="Total Base Cost" p:order="40" p:required="false" />
+					p:label="Total Base Cost" p:order="40" p:required="false" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="quantity"
-					p:order="50" p:required="false" />
+					p:order="50" p:required="false" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="lineItemDescription"
-					p:order="60" p:required="false" />
+					p:order="60" p:required="false" p:readOnly="@{#line.personnelLineItem}"/>
 			</list>
 		</property>
 		<property name="lineActions">
 			<list>
-				<bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="editSPENonPersonnelPeriodDetails"
-					p:actionLabel="Details" p:order="10" p:render="true">
+				<bean parent="Uif-SecondaryActionButton-Mini" p:methodToCall="editSPELineItemDetails"
+					p:actionLabel="Details" p:order="10" p:render="@{!#line.personnelLineItem}">
 					<property name="additionalSubmitData">
 						<map>
 							<entry key="budgetPeriodId" value="@{#budgetPeriodId}" />
@@ -161,8 +160,8 @@
 					</property>
 				</bean>
 				<bean parent="Uif-DeleteLineAction-IconOnly" p:order="20"
-					p:methodToCall="deleteBudgetLineItem" p:iconClass="icon-trash"
-					p:render="@{!#parent.readOnly}">
+					p:methodToCall="deleteSPEBudgetLineItem" p:iconClass="icon-trash"
+					p:render="@{!#parent.readOnly and !#line.personnelLineItem}">
 					<property name="additionalSubmitData">
 						<map>
 							<entry key="budgetPeriodId" value="@{#budgetPeriodId}" />
@@ -195,6 +194,7 @@
 
 	<bean id="PropBudget-EditNonPersonnelPeriod-Section" parent="PropBudget-EditNonPersonnelPeriod-Section-parent" />
 	<bean id="PropBudget-EditNonPersonnelPeriod-Section-parent" p:fieldBindingObjectPath="addProjectBudgetLineItemHelper" abstract="true" parent="Uif-DialogGroup" 
+		p:readOnly="@{#parent.readOnly}"
         p:onHideDialogScript="jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog'));});"
 		p:headerText="Edit Assigned Cost Element" p:enterKeyAction="@DEFAULT">
 		<property name="items">
@@ -208,7 +208,7 @@
 			<bean parent="Uif-FooterBase">
 				<property name="items">
 					<list>
-						<bean parent="Uif-PrimaryActionButton" p:actionLabel="Save Changes" p:methodToCall="saveBudgetLineItem"
+						<bean parent="Uif-PrimaryActionButton" p:actionLabel="Save Changes" p:methodToCall="saveSPEBudgetLineItem"
 							p:ajaxReturnType="update-page" 	
                       		p:actionParameters="@{T(org.kuali.rice.krad.uif.UifParameters).SELECTED_COLLECTION_PATH}:budget.budgetLineItems,
                       		@{T(org.kuali.rice.krad.uif.UifParameters).SELECTED_COLLECTION_ID}:PropBudget-NonPersonnelCosts-LineItemDetails,
@@ -240,11 +240,11 @@
 		<property name="items">
 			<list>
 				<bean parent="PropBudget-EditNonPersonnelCosts-Details-Tab"
-					p:headerText="Details" p:order="10" />
+					p:headerText="Details" p:order="10"/>
 				<bean parent="PropBudget-NonPersonnelCosts-CostSharing-Tab"
-					p:headerText="Cost Sharing" p:order="20" />
+					p:headerText="Cost Sharing" p:order="20"/>
 				<bean parent="PropBudget-NonPersonnelCosts-Rates-Tab"
-					p:headerText="Rates" p:order="30" />
+					p:headerText="Rates" p:order="30"/>
 			</list>
 		</property>
 	</bean>

@@ -35,6 +35,7 @@ import org.kuali.coeus.common.budget.framework.core.CostElement;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetJustificationService;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.SaveBudgetLineItemEvent;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetAddPersonnelPeriodEvent;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelBudgetService;
@@ -286,11 +287,16 @@ public abstract class ProposalBudgetControllerBase {
             || !StringUtils.equalsIgnoreCase(originalBudget.getUrRateClassCode(), currentBudget.getUrRateClassCode()));
     }
     
-    protected boolean isAddBudgetPersonnelRulePassed(Budget budget, BudgetPeriod budgetPeriod, BudgetLineItem newBudgetLineItem, BudgetPersonnelDetails newBudgetPersonnelDetail) {
+    protected boolean isAddBudgetPersonnelRulePassed(Budget budget, BudgetPeriod budgetPeriod, BudgetLineItem newBudgetLineItem, 
+    		BudgetPersonnelDetails newBudgetPersonnelDetail, String errorPath) {
         return getKcBusinessRulesEngine().applyRules(new BudgetAddPersonnelPeriodEvent(budget, budgetPeriod, newBudgetLineItem, newBudgetPersonnelDetail,
-                "addProjectPersonnelHelper.budgetPersonnelDetail."));
+                errorPath));
     }
 	
+    protected boolean isSaveBudgetLineItemRulePassed(Budget budget, BudgetPeriod budgetPeriod, BudgetLineItem newBudgetLineItem, String errorPath) {
+        return getKcBusinessRulesEngine().applyRules(new SaveBudgetLineItemEvent(budget, errorPath, newBudgetLineItem, budgetPeriod));
+    }
+    
 	public DataObjectService getDataObjectService() {
 		return dataObjectService;
 	}

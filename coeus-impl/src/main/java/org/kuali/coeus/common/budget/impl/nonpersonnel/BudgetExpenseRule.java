@@ -30,6 +30,7 @@ import org.kuali.coeus.common.budget.framework.core.SaveBudgetEvent;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.ApplyToPeriodsBudgetEvent;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetFormulatedCostDetail;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.SaveBudgetLineItemEvent;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRule;
 import org.kuali.coeus.common.framework.ruleengine.KcEventMethod;
@@ -140,6 +141,11 @@ public class BudgetExpenseRule {
     	return processCheckLineItemDates(event.getBudgetPeriod(), event.getBudgetLineItem(), event.getErrorPath());
     }
 
+    @KcEventMethod
+    public boolean processCheckLineItemDates(SaveBudgetLineItemEvent event) {
+    	return processCheckLineItemDates(event.getBudgetPeriod(), event.getBudgetLineItem(), event.getErrorPath());
+    }
+    
     /**
      * This method is checks individual line item start and end dates for validity and proper ordering.
      * 
@@ -170,7 +176,7 @@ public class BudgetExpenseRule {
         }
 
         if (currentBudgetPeriod.getEndDate().compareTo(budgetLineItem.getEndDate()) < 0) {
-            errorMap.putError(errorPath = ".endDate", KeyConstants.ERROR_LINE_ITEM_END_DATE, new String[] { "can not be after",
+            errorMap.putError(errorPath + ".endDate", KeyConstants.ERROR_LINE_ITEM_END_DATE, new String[] { "can not be after",
                     "end date" });
             valid = false;
         }
@@ -185,7 +191,7 @@ public class BudgetExpenseRule {
             valid = false;
         }
         if (currentBudgetPeriod.getEndDate().compareTo(budgetLineItem.getStartDate()) < 0) {
-            errorMap.putError(errorPath = ".startDate", KeyConstants.ERROR_LINE_ITEM_START_DATE, new String[] { "can not be after",
+            errorMap.putError(errorPath + ".startDate", KeyConstants.ERROR_LINE_ITEM_START_DATE, new String[] { "can not be after",
                     "end date" });
             valid = false;
         }

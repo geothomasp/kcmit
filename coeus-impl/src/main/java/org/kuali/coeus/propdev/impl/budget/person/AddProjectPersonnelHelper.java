@@ -36,6 +36,7 @@ public class AddProjectPersonnelHelper extends AddProjectBudgetLineItemHelper {
     private DataObjectService dataObjectService;
     private List<TbnPerson> tbnPersons;
     private BudgetPersonnelDetails budgetPersonnelDetail;
+    private BudgetPersonnelDetails editBudgetPersonnelDetail;
     private String budgetPersonGroupName;
     
     public AddProjectPersonnelHelper() {
@@ -51,6 +52,7 @@ public class AddProjectPersonnelHelper extends AddProjectBudgetLineItemHelper {
     private void initPersonDetails() {
         editBudgetPerson = new BudgetPerson();
         budgetPersonnelDetail = new BudgetPersonnelDetails();
+        editBudgetPersonnelDetail = new BudgetPersonnelDetails();
         budgetPersonGroupName="";
         tbnPersons = new ArrayList<TbnPerson>();
     }
@@ -113,6 +115,15 @@ public class AddProjectPersonnelHelper extends AddProjectBudgetLineItemHelper {
 		getDataObjectService().wrap(getBudgetPersonnelDetail()).fetchRelationship("budgetPerson");
 		BudgetPerson budgetPerson = getBudgetPersonnelDetail().getBudgetPerson();
 		return budgetPerson != null ? budgetPerson.getAppointmentType().getDescription() : "";
+	}
+
+	public BudgetPersonnelDetails getEditBudgetPersonnelDetail() {
+		return editBudgetPersonnelDetail;
+	}
+
+	public void setEditBudgetPersonnelDetail(
+			BudgetPersonnelDetails editBudgetPersonnelDetail) {
+		this.editBudgetPersonnelDetail = editBudgetPersonnelDetail;
 	}
 
 }
