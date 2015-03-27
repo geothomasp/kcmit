@@ -200,7 +200,8 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     public  Collection<AwardPersonRemove> awardPersonRemovalHistory = new ArrayList<AwardPersonRemove>();
     private AccountCreationPresentationHelper accountCreationHelper;
     private boolean kpMaintenanceRole = false;
-    private boolean alertMessage = false;   
+    private boolean alertMessage = false;
+    private boolean displayKeywordPanel=false;
     
     
     public boolean isAlertMessage() {
@@ -1507,5 +1508,13 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
 
 	public void setStatusHold(boolean statusHold) {
 		this.statusHold = statusHold;
+	}
+
+	public boolean isDisplayKeywordPanel() {
+		return displayKeywordPanel;
+	}
+
+	public void setDisplayKeywordPanel(boolean displayKeywordPanel) {
+		this.displayKeywordPanel = displayKeywordPanel;
 	}
 }
