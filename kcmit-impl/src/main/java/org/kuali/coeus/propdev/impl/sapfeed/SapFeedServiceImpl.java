@@ -39,7 +39,7 @@ public class SapFeedServiceImpl implements SapFeedService
 		try {
 
 			 resultMaster = getDbFunctionService().executeFunction(
-					"fn_generate_sap_feed", paramValues);
+					"fn_generate_master_sap_feed", paramValues);
 		return resultMaster;
 		} catch (Exception ex) {
 		

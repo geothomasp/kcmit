@@ -5,12 +5,22 @@
 --user directory 
 --create or replace directory DIR_KC_SAP_FEED as '/u01/app/oracle/oradata'
 --grant read, write on directory DIR_KC_SAP_FEED to km60010215
+set serveroutput on;
 
 DECLARE
 li_ret number;
 BEGIN
 
-li_ret:=fn_generate_master_sap_feed('DIR_KC_SAP_FEED','admin');
+li_ret:=fn_generate_master_sap_feed('TEST','admin');
+dbms_output.put_line(li_ret);
+end;
+/
+
+DECLARE
+li_ret number;
+BEGIN
+
+li_ret:=fn_generate_rolodex_feed('TEST','admin');
 dbms_output.put_line(li_ret);
 end;
 /
@@ -18,15 +28,7 @@ DECLARE
 li_ret number;
 BEGIN
 
-li_ret:=fn_generate_rolodex_feed('DIR_KC_SAP_FEED','admin');
-dbms_output.put_line(li_ret);
-end;
-/
-DECLARE
-li_ret number;
-BEGIN
-
-li_ret:=fn_generate_sponsor_feed('DIR_KC_SAP_FEED','admin');
+li_ret:=fn_generate_sponsor_feed('TEST','admin');
 dbms_output.put_line(li_ret);
 end;
 /
