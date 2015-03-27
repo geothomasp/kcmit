@@ -149,7 +149,7 @@
                         ${KualiForm.valueFinderResultDoNotCache}
     	        		<div align="center">
     	        		${awardPersonAttributes.contactRoleCode.keyLabelMap.KP}
-    	        	<html:text property="projectPersonnelBean.contactRoleCode" value="KP" />
+    	        	<html:text property="projectPersonnelBean.contactRoleCode" value="KP"  style="display: none;"/>
     	        		
     		        <br/>
     	                	<span>
@@ -157,7 +157,7 @@
     					    *<kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" />
     					    
     					    <span>(Required for Key Persons)</span>
-    				<html:text property="projectPersonnelBean.newAwardContact.keyPersonRole" value="keyPersonRole" /> 
+    				<html:text property="projectPersonnelBean.newAwardContact.keyPersonRole" value="" /> 
     				   <%--   <kul:htmlControlAttribute property="projectPersonnelBean.newAwardContact.keyPersonRole" 
     										           attributeEntry="${awardPersonAttributes.keyPersonRole}"/>  --%>
     						</div>				           
