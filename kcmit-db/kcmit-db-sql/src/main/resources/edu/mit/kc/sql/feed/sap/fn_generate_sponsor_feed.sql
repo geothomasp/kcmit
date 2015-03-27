@@ -1,5 +1,5 @@
 create or replace
-function fn_generate_sponsor_feed (as_path in varchar2) return number is
+function fn_generate_sponsor_feed (as_path in varchar2, as_user in VARCHAR2) return number is
 
 lrec_feed       						TEMP_SAP_SPON_CD%ROWTYPE;
 ls_filename 							VARCHAR2(120);
@@ -146,6 +146,8 @@ UTL_fILE.Put_Line(control_file, ls_control_line);
 
 UTL_fILE.fclose(control_file);
 
+UPDATE krcr_parm_t SET VAL = as_user WHERE  parm_nm = 'SAP_FEED_SPONSOR_FEED_USER';
+UPDATE krcr_parm_t SET VAL = sysdate WHERE  parm_nm = 'SAP_FEED_SPONSOR_FEED_DATE';
 
 COMMIT;
 

@@ -46,11 +46,11 @@
     				<th scope="row" width="5%">&nbsp;</th>
     				<th width="15%">*Person</th>
     				<th width="15%">Unit</th>
-    				<th width="20%">*Project Role</th>
-    				<th width="15%">Office Phone</th>
+    				<th width="15%">*Project Role</th>
+    				<th width="12%">Office Phone</th>
     				<th width="15%">Email</th>
     				<th width="10%">Confirm Timestamp</th>
-    				<th width="15%"><div align="center">Actions</div></th>
+    				<th width="23%"><div align="center">Actions</div></th>
     			
     			</tr>
     			
