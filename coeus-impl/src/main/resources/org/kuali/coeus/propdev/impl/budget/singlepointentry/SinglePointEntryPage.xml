@@ -18,7 +18,7 @@
 			<list>
 					<ref bean="PropBudget-PeriodsPageSPE-CollectionGroup" />
 					<ref bean="PropBudget-SinglePointEntry-TabGroup" />
-            		<bean id="PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog" parent="PropBudget-EditNonPersonnelPeriod-Section"
+            		<bean id="PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog" parent="PropBudget-EditSPELineItemPeriod-Section"
             		p:retrieveViaAjax="true"/>
             	<bean id="PropBudget-NonPersonnelCostsPage-EditParticipantSupport-Dialog" parent="PropBudget-EditNonPersonnelPeriod-ParticipantSupportSection"
             		p:retrieveViaAjax="true"/>
@@ -192,8 +192,8 @@
 		<bean id="PropBudget-ConfirmPeriodChangesDialog" parent="Uif-DialogGroup-YesNo"
 		p:promptText="You are about to enter costs in a later period. Doing so will prevent you from using the generate all periods function to auto-calculate later periods. Do you wish to continue?"/>
 
-	<bean id="PropBudget-EditNonPersonnelPeriod-Section" parent="PropBudget-EditNonPersonnelPeriod-Section-parent" />
-	<bean id="PropBudget-EditNonPersonnelPeriod-Section-parent" p:fieldBindingObjectPath="addProjectBudgetLineItemHelper" abstract="true" parent="Uif-DialogGroup" 
+	<bean id="PropBudget-EditSPELineItemPeriod-Section" parent="PropBudget-EditSPELineItemPeriod-Section-parent" />
+	<bean id="PropBudget-EditSPELineItemPeriod-Section-parent" p:fieldBindingObjectPath="addProjectBudgetLineItemHelper" abstract="true" parent="Uif-DialogGroup" 
 		p:readOnly="@{#parent.readOnly}"
         p:onHideDialogScript="jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog'));});"
 		p:headerText="Edit Assigned Cost Element" p:enterKeyAction="@DEFAULT">
@@ -201,7 +201,7 @@
 			<list>
 				<bean parent="Uif-DataField" p:fieldLabel.labelText=" " p:propertyName="budgetLineItem.lineItemDescription"
 					p:style="font-weight: bold; font-size: larger;" p:order="10"/>
-				<bean parent="PropBudget-EditNonPersonnelCosts-Details-TabSection" p:order="20"/>
+				<bean parent="PropBudget-EditSPELineItemCosts-Details-TabSection" p:order="20"/>
 			</list>
 		</property>
 		<property name="footer">
@@ -236,10 +236,10 @@
 		</property>
 	</bean>
 	
-	<bean id="PropBudget-EditNonPersonnelCosts-Details-TabSection" parent="PropBudget-NonPersonnelCosts-Details-TabSection-parentBean">
+	<bean id="PropBudget-EditSPELineItemCosts-Details-TabSection" parent="PropBudget-SPELineItemCosts-Details-TabSection-parentBean">
 		<property name="items">
 			<list>
-				<bean parent="PropBudget-EditNonPersonnelCosts-Details-Tab"
+				<bean parent="PropBudget-EditSPELineItemCosts-Details-Tab"
 					p:headerText="Details" p:order="10"/>
 				<bean parent="PropBudget-NonPersonnelCosts-CostSharing-Tab"
 					p:headerText="Cost Sharing" p:order="20"/>
@@ -248,17 +248,17 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="PropBudget-EditNonPersonnelCosts-Details-Tab" parent="PropBudget-NonPersonnelCosts-Details-Tab-parentBean">
+	<bean id="PropBudget-EditSPELineItemCosts-Details-Tab" parent="PropBudget-SPELineItemCosts-Details-Tab-parentBean">
 		<property name="items">
 			<list>
-				<ref bean="PropBudget-NonPersonnelCosts-LineItem-DateFieldSection"/>
+				<ref bean="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection"/>
 				<ref bean="PropBudget-EditNonPersonnelCosts-LineItem-ObjectFieldSection"/>
-				<ref bean="PropBudget-NonPersonnelCosts-LineItem-ApplyRateFieldSection"/>
+				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection"/>
 			</list>
 		</property>
 	</bean>
 	
-	<bean id="PropBudget-EditNonPersonnelCosts-LineItem-ObjectFieldSection" parent="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection-parentBean">
+	<bean id="PropBudget-EditNonPersonnelCosts-LineItem-ObjectFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean">
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.budgetCategoryCode"
@@ -283,8 +283,8 @@
 		</property>
 	</bean>
 
-	<bean id="PropBudget-NonPersonnelCosts-Details-TabSection" parent="PropBudget-NonPersonnelCosts-Details-TabSection-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-Details-TabSection-parentBean" parent="Uif-TabSection">
+	<bean id="PropBudget-SPELineItemCosts-Details-TabSection" parent="PropBudget-SPELineItemCosts-Details-TabSection-parentBean" />
+	<bean id="PropBudget-SPELineItemCosts-Details-TabSection-parentBean" parent="Uif-TabSection">
 		<property name="items">
 			<list>
 				<bean parent="PropBudget-NonPersonnelCosts-Details-Tab"
@@ -297,13 +297,13 @@
 		</property>
 	</bean>
 
-	<bean id="PropBudget-NonPersonnelCosts-Details-Tab" parent="PropBudget-NonPersonnelCosts-Details-Tab-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-Details-Tab-parentBean" abstract="true" parent="Uif-VerticalBoxSubSection">
+	<bean id="PropBudget-NonPersonnelCosts-Details-Tab" parent="PropBudget-SPELineItemCosts-Details-Tab-parentBean" />
+	<bean id="PropBudget-SPELineItemCosts-Details-Tab-parentBean" abstract="true" parent="Uif-VerticalBoxSubSection">
 		<property name="items">
 			<list>
-				<ref bean="PropBudget-NonPersonnelCosts-LineItem-DateFieldSection"/>
-				<ref bean="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection"/>
-				<ref bean="PropBudget-NonPersonnelCosts-LineItem-ApplyRateFieldSection"/>
+				<ref bean="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection"/>
+				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection"/>
+				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection"/>
 			</list>
 		</property>
 	</bean>
@@ -333,8 +333,8 @@
 
 	<bean id="PropBudget-NonPersonnelCosts-Rates-Tab" parent="PropBudget-BudgetLineItem-Rates" />
 
-	<bean id="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection" parent="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
+	<bean id="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean" />
+	<bean id="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="budgetCategoryTypeCode"
@@ -359,8 +359,8 @@
 		</property>
 	</bean>
 
-	<bean id="PropBudget-NonPersonnelCosts-LineItem-DateFieldSection" parent="PropBudget-NonPersonnelCosts-LineItem-DateFieldSection-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-LineItem-DateFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
+	<bean id="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection-parentBean" />
+	<bean id="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.startDate"
@@ -371,8 +371,8 @@
 		</property>
 	</bean>
 
-	<bean id="PropBudget-NonPersonnelCosts-LineItem-ApplyRateFieldSection" parent="PropBudget-NonPersonnelCosts-LineItem-ApplyRateFieldSection-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-LineItem-ApplyRateFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
+	<bean id="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection-parentBean" />
+	<bean id="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.applyInRateFlag"
