@@ -358,10 +358,20 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         }  
         
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-        if(getPermissionService().hasPermission(currentUser, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")) {
+        if(hasPermission("MAINTAIN_INST_PROPOSAL_DOC") || 
+        		hasPermission("Create Institutional Proposal") ||
+        		     hasPermission("Edit Institutional Proposal")) {
         	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
     		if(instProposalAttachmentform != null) {
     			instProposalAttachmentform.setMaintainInstituteProposal(true);
+    		}
+        }
+        
+        if(hasPermission("VIEW_INST_PROPOSAL_DOC") || 
+        		hasPermission("VIEW_SHARED_INST_PROPOSAL_DOC")) {
+        	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
+    		if(instProposalAttachmentform != null) {
+    			instProposalAttachmentform.setCanViewAttachment(true);
     		}
         }
         

@@ -45,7 +45,10 @@ public class AwardAttachmentFormBean implements Serializable{
     
     private boolean disableAttachmentRemovalIndicator=false;
     
-    private boolean maintainInstituteProposal=false;
+    private boolean canViewAttachment=false;
+
+    private boolean maintainAwardAttachment=false;
+    
     
     public AwardAttachmentFormBean(final AwardForm form) {
         this.form = form;
@@ -84,24 +87,7 @@ public class AwardAttachmentFormBean implements Serializable{
         this.newAttachment = newAttachment;
     }
 
-    public boolean isMaintainInstituteProposal() {
-		return maintainInstituteProposal;
-	}
-
-
-
-
-
-
-	public void setMaintainInstituteProposal(boolean maintainInstituteProposal) {
-		this.maintainInstituteProposal = maintainInstituteProposal;
-	}
-
-
-
-
-
-
+   
 	public boolean isDisableAttachmentRemovalIndicator() {
 		return disableAttachmentRemovalIndicator;
 	}
@@ -114,6 +100,42 @@ public class AwardAttachmentFormBean implements Serializable{
 	public void setDisableAttachmentRemovalIndicator(
 			boolean disableAttachmentRemovalIndicator) {
 		this.disableAttachmentRemovalIndicator = disableAttachmentRemovalIndicator;
+	}
+
+
+
+
+
+
+	public boolean isCanViewAttachment() {
+		return canViewAttachment;
+	}
+
+
+
+
+
+
+	public void setCanViewAttachment(boolean canViewAttachment) {
+		this.canViewAttachment = canViewAttachment;
+	}
+
+
+
+
+
+
+	public boolean isMaintainAwardAttachment() {
+		return maintainAwardAttachment;
+	}
+
+
+
+
+
+
+	public void setMaintainAwardAttachment(boolean maintainAwardAttachment) {
+		this.maintainAwardAttachment = maintainAwardAttachment;
 	}
 
 

@@ -47,9 +47,9 @@ public class SubAwardAttachmentFormBean implements Serializable {
     
     private boolean disableAttachmentRemovalIndicator=false;
     
-    private boolean maintainInstituteProposal=false;
+    private boolean maintainSubawardAttachment=false;
     
-    
+    private boolean canViewAttachment=false;
     /**
      * Gets the newReport attribute. 
      * @return Returns the newReport.
@@ -69,14 +69,6 @@ public class SubAwardAttachmentFormBean implements Serializable {
     public void setNewReport(SubAwardReports newReport) {
         this.newReport = newReport;
     }
-
-    public boolean isMaintainInstituteProposal() {
-		return maintainInstituteProposal;
-	}
-
-	public void setMaintainInstituteProposal(boolean maintainInstituteProposal) {
-		this.maintainInstituteProposal = maintainInstituteProposal;
-	}
 
 	public SubAwardAttachmentFormBean(final SubAwardForm form) {
         this.form = form;
@@ -119,6 +111,22 @@ public class SubAwardAttachmentFormBean implements Serializable {
 	public void setDisableAttachmentRemovalIndicator(
 			boolean disableAttachmentRemovalIndicator) {
 		this.disableAttachmentRemovalIndicator = disableAttachmentRemovalIndicator;
+	}
+
+	public boolean isMaintainSubawardAttachment() {
+		return maintainSubawardAttachment;
+	}
+
+	public void setMaintainSubawardAttachment(boolean maintainSubawardAttachment) {
+		this.maintainSubawardAttachment = maintainSubawardAttachment;
+	}
+
+	public boolean isCanViewAttachment() {
+		return canViewAttachment;
+	}
+
+	public void setCanViewAttachment(boolean canViewAttachment) {
+		this.canViewAttachment = canViewAttachment;
 	}
 
 	public SubAwardForm getForm() {

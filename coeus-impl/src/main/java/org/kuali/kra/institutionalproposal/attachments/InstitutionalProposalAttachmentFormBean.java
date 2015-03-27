@@ -46,6 +46,8 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
     
     private boolean maintainInstituteProposal=false;
     
+    private boolean canViewAttachment=false;
+    
     public InstitutionalProposalAttachmentFormBean(final InstitutionalProposalForm form) {
         this.form = form;
     }
@@ -236,6 +238,18 @@ public class InstitutionalProposalAttachmentFormBean implements Serializable{
 
 	public void setMaintainInstituteProposal(boolean maintainInstituteProposal) {
 		this.maintainInstituteProposal = maintainInstituteProposal;
+	}
+
+
+
+	public boolean isCanViewAttachment() {
+		return canViewAttachment;
+	}
+
+
+
+	public void setCanViewAttachment(boolean canViewAttachment) {
+		this.canViewAttachment = canViewAttachment;
 	}
 
 

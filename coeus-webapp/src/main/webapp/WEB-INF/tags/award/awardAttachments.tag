@@ -82,7 +82,7 @@ opacity:1;
 				</th>
              </tr>
              
-                <c:if test="${!readOnly}">
+                <c:if test="${awardAttachmentFormBean.maintainAwardAttachment == true}">
                 <tbody class="addline">
 	             <tr>
 	                <td align="center" valign="middle" class="infoline">
@@ -102,12 +102,12 @@ opacity:1;
 					</td>
 	         		<td class="infoline">
 	              		<div align="center">
-	            			<kul:htmlControlAttribute property="awardAttachmentFormBean.newAttachment.typeCode" attributeEntry="${awardAttachmentAttributes.typeCode}" />
+	            			<kul:htmlControlAttribute property="awardAttachmentFormBean.newAttachment.typeCode" attributeEntry="${awardAttachmentAttributes.typeCode}" readOnly="false" />
 	              		</div>
 	            	</td>
 					<td align="left" valign="middle" class="infoline">
 	                	<div align="left">
-	                		<kul:htmlControlAttribute property="awardAttachmentFormBean.newAttachment.description" attributeEntry="${awardAttachmentAttributes.description}"/>
+	                		<kul:htmlControlAttribute property="awardAttachmentFormBean.newAttachment.description" attributeEntry="${awardAttachmentAttributes.description}" readOnly="false"/>
 		            	</div>
 					</td>
 					<td align="left" valign="middle" class="infoline">
@@ -183,31 +183,40 @@ opacity:1;
 					</td>
 					<td align="center" valign="middle">
 						<div align="center">
-						<c:if test="${!readOnly}">
-						 <c:choose>
-							<c:when test="${awardAttachmentFormBean.disableAttachmentRemovalIndicator == true}">
-								<c:if test="${KualiForm.document.awardList[0].awardAttachments[itrStatus.index].documentStatusCode != 'V'}"> 
-								<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+						<c:choose>
+						<c:when test="${readOnly}">
+						<c:if test="${awardAttachmentFormBean.canViewAttachment}">
+						<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 								alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
-								<c:if test="${awardAttachmentFormBean.maintainInstituteProposal == true}">
+						</c:if>
+						</c:when>
+						<c:otherwise>
+						<c:if test="${KualiForm.document.awardList[0].awardAttachments[itrStatus.index].documentStatusCode != 'V'}">
+						<<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
+								alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
+						</c:if>
+						</c:otherwise>
+						</c:choose>
+						 <c:choose>
+							<c:when test="${awardAttachmentFormBean.disableAttachmentRemovalIndicator == true}">
+								
+								<c:if test="${awardAttachmentFormBean.maintainAwardAttachment == true}">
+								<c:if test="${KualiForm.document.awardList[0].awardAttachments[itrStatus.index].documentStatusCode != 'V'}">
 								<html:image property="methodToCall.voidAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-void.gif' styleClass="tinybutton"
 									   alt="Void Attachment"/>
-							     </c:if> 
 							     </c:if>
-							    <c:if test="${awardAttachmentFormBean.maintainInstituteProposal == true}">
-								<c:choose>
+							     <c:choose>
 							    <c:when test="${!modify}">
 							    <html:image property="methodToCall.modifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 									   src='${ConfigProperties.kra.externalizable.images.url}tinybutton-modify.gif' styleClass="tinybutton"
 									   alt="Modify Attachment"/>
 							    </c:when>
 							    <c:otherwise>
-								  <c:if test="${!readOnly}">
-            	                <html:image property="methodToCall.applyModifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
+								  <html:image property="methodToCall.applyModifyAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 						         src="${ConfigProperties.kra.externalizable.images.url}tinybutton-apply.gif" styleClass="tinybutton"/>
-            	                  </c:if>
             	                  </c:otherwise>
             	                  </c:choose>
             	                </c:if>
@@ -221,7 +230,6 @@ opacity:1;
 									   alt="Delete Attachment"/>
 						  </c:otherwise>
 						   </c:choose>
-						</c:if>	
 						</div>
 					</td>
 	         	</tr>
