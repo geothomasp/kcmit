@@ -160,13 +160,22 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
                 SubAwardService.class).getAmountInfo(subAwardDocument.getSubAward());
         subAwardForm.getSubAwardDocument().setSubAward(subAward);
         
+
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-        if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
-        	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
-    		if(subAwardAttachmentform != null) {
-    			subAwardAttachmentform.setMaintainInstituteProposal(true);
-    		}
-        }
+               
+               if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS") || 
+               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SHARED_SUBAWARD_DOC")) {
+               	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
+           		if(subAwardAttachmentform != null) {
+           			subAwardAttachmentform.setCanViewAttachment(true);
+           		}
+               }
+               if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
+               	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
+           		if(subAwardAttachmentform != null) {
+           			subAwardAttachmentform.setMaintainSubawardAttachment(true);
+           		}
+               }
         
         String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
                 ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
