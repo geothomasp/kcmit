@@ -45,7 +45,7 @@ public interface Constants {
     public static final String CO_INVESTIGATOR_ROLE = "COI";
     public static final String MULTIPLE_VALUE = "multipleValues";
     public static final String KEYWORD_PANEL_DISPLAY = "proposaldevelopment.displayKeywordPanel";
-
+    public static final String KEYWORD_PANEL_DISPLAY_IP_AWARD = "award.ip.displayKeywordPanel";
     public static final String PHS_RESTRAININGPLAN_PILEADERSHIPPLAN_ATTACHMENT="121";
     public static final String PHS_RESEARCHPLAN_MULTIPLEPILEADERSHIPPLAN="46";
     public static final int MENTORING_PLAN_ATTACHMENT_TYPE_CODE=8;

@@ -94,6 +94,7 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
     
     private boolean viewFundingSource;
     private boolean docOpenedFromIPSearch;
+    private boolean displayKeywordPanel=false;
     
     /**
      * 
@@ -461,7 +462,15 @@ public class InstitutionalProposalForm extends KcTransactionalDocumentFormBase i
         this.viewFundingSource = viewFundingSource;
     }
 
-    public boolean isDocOpenedFromIPSearch() {
+    public boolean isDisplayKeywordPanel() {
+		return displayKeywordPanel;
+	}
+
+	public void setDisplayKeywordPanel(boolean displayKeywordPanel) {
+		this.displayKeywordPanel = displayKeywordPanel;
+	}
+
+	public boolean isDocOpenedFromIPSearch() {
         return docOpenedFromIPSearch;
     }
     public void setDocOpenedFromIPSearch(boolean docOpened) {

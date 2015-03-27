@@ -199,6 +199,8 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     private List<ReportTrackingBean> reportTrackingBeans;
     
     private AccountCreationPresentationHelper accountCreationHelper;
+    
+    private boolean displayKeywordPanel=false;
 
     /**
      * Constructs a AwardForm with an existing AwardDocument. Used primarily by tests outside of Struts
@@ -326,7 +328,15 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     }
 
 
-    public AwardFandaRate getNewAwardFandaRate() {
+    public boolean isDisplayKeywordPanel() {
+		return displayKeywordPanel;
+	}
+
+	public void setDisplayKeywordPanel(boolean displayKeywordPanel) {
+		this.displayKeywordPanel = displayKeywordPanel;
+	}
+
+	public AwardFandaRate getNewAwardFandaRate() {
         return newAwardFandaRate;
     }
 
@@ -1439,7 +1449,9 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         this.reportTrackingBeans = reportTrackingBeans;
     }
     
-    public String determineRootAwardNumber(AwardForm awardForm) {
+    
+
+	public String determineRootAwardNumber(AwardForm awardForm) {
         String prevRootAwardNumber = getPrevRootAwardNumber();
         return prevRootAwardNumber != null ? prevRootAwardNumber : getAwardDocument().getAward().getAwardNumber();
     }

@@ -30,6 +30,8 @@
 <c:set var="readOnly" value="${KualiForm.editingMode['viewOnly']}" scope="request" />
 <c:set var="canEdit" value="${KualiForm.editingMode['modifyIP'] && KualiForm.displayEditButton}" scope="request" />
 
+<c:set var="displayKeywordPanel" value="${KualiForm.displayKeywordPanel}"/>
+
 <div align="right"><kul:help documentTypeName="InstitutionalProposalDocument" pageName="Institutional Proposal" /></div>
 
 <kul:documentOverview editingMode="${KualiForm.editingMode}" />
@@ -39,8 +41,9 @@
 <kra-ip:institutionalProposalGraduateStudents />
 <kra-ip:institutionalProposalNotes />
 <kra-ip:institutionalProposalDeliveryInfo />
+<c:if test="${displayKeywordPanel}">
 <kra-ip:institutionalProposalKeywords />
-
+</c:if>
 <kul:panelFooter />	
 
 <SCRIPT type="text/javascript">

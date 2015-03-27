@@ -383,6 +383,10 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
     			instProposalAttachment.setDisableAttachmentRemovalIndicator(true);
     		}
     	}
+    	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
+    	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
+    		((InstitutionalProposalForm) form).setDisplayKeywordPanel(true);
+    	}
        
         return forward;
     }
