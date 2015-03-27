@@ -397,8 +397,18 @@ public abstract class AwardBaseStream implements XmlStream {
 					.setStatusCode(String.valueOf(award.getStatusCode()));
 		}
 		if (award.getStatusDescription() != null) {
-			awardHeaderType.setStatusDescription(award.getStatusDescription());
-		}
+			if (prevAward != null && prevAward.getStatusDescription() != null) {
+				String CurrAwardStatus = award.getStatusDescription();
+				String prevAwardStatus = prevAward.getStatusDescription();
+				String awardStatusMod = getModAwardStatus(CurrAwardStatus,
+						prevAwardStatus);
+				if (awardStatusMod != null) {
+					awardHeaderType.setStatusDescription(awardStatusMod);
+				}
+			} else {
+				awardHeaderType.setStatusDescription(award.getStatusDescription());
+			}	
+		}	
 		if (award.getSponsorCode() != null) {
 			awardHeaderType.setSponsorCode(award.getSponsorCode());
 		}
@@ -425,10 +435,68 @@ public abstract class AwardBaseStream implements XmlStream {
 			awardHeaderType.setPIName(award.getPrincipalInvestigatorName());
 		}
 		if (award.getTitle() != null) {
-			awardHeaderType.setTitle(award.getTitle());
+			if (prevAward != null && prevAward.getTitle() != null) {
+				String awardTitle = award.getTitle();
+				String prevAwardTitle = prevAward.getTitle();
+				String awardTitleMod = getModAwardTitle(awardTitle,
+						prevAwardTitle);
+				if (awardTitleMod != null) {
+					awardHeaderType.setTitle(awardTitleMod);
+				}
+			} else {
+				awardHeaderType.setTitle(award.getTitle());
+			}	
 		}
 		return awardHeaderType;
 	}
+	
+	
+	/*
+	 * This method will get the title based on if previous award type
+	 * title is equal to null or not equal to award award title
+	 * Otherwise returns * (Asterisk)
+	 */
+	private String getModAwardTitle(String awardTitle,
+			String prevAwardTitle) {
+		String awardTitleMod = null;
+		if (awardTitle != null) {
+			if (prevAwardTitle == null
+					|| !awardTitle.equals(prevAwardTitle)) {
+				awardTitleMod = new StringBuilder(awardTitle).append(
+						END_ASTERISK_SPACE_INDICATOR).toString();
+
+			} else {
+				awardTitleMod = awardTitle;
+			}
+		} else if (prevAwardTitle != null) {
+
+			awardTitleMod = START_ASTERISK_SPACE_INDICATOR;
+		}
+		return awardTitleMod;
+	}
+	
+	/*
+	 * This method will get the previous status
+	 * status is equal to null or not equal to award award status
+	 * Otherwise returns * (Asterisk)
+	 */
+	private String getModAwardStatus(String CurrAwardStatus,
+			String prevAwardStatus) {
+		String awardStatusMod = null;
+		if (CurrAwardStatus != null) {
+			if (prevAwardStatus == null
+					|| !CurrAwardStatus.equals(prevAwardStatus)) {
+				awardStatusMod = new StringBuilder(CurrAwardStatus).append(
+						END_ASTERISK_SPACE_INDICATOR).toString();
+				} else {
+				awardStatusMod = CurrAwardStatus;
+			}
+		} else if (prevAwardStatus != null) {
+	    awardStatusMod = START_ASTERISK_SPACE_INDICATOR;
+		}
+		return awardStatusMod;
+	}
+	
 
 	/**
 	 * <p>
