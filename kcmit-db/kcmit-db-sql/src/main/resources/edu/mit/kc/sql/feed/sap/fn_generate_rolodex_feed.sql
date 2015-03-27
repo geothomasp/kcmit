@@ -140,7 +140,7 @@ UTL_fILE.fclose(control_file);
 
 
 UPDATE krcr_parm_t SET VAL = as_user WHERE  parm_nm = 'SAP_FEED_ROLODEX_FEED_USER';
-UPDATE krcr_parm_t SET VAL = sysdate WHERE  parm_nm = 'SAP_FEED_ROLODEX_FEED_DATE';
+UPDATE krcr_parm_t SET VAL = to_char(sysdate,'Mon-DD-yyyy hh:mi:ss am') WHERE  parm_nm = 'SAP_FEED_ROLODEX_FEED_DATE';
 
 COMMIT;
 
