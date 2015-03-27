@@ -1,0 +1,250 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="Dashboard-View" parent="Dashboard-View-parentBean"/>
+    <bean id="Dashboard-View-parentBean" abstract="true"
+          parent="Uif-FormView" p:viewHelperService="#{#getService('dashboardViewHelperService')}"
+          p:formClass="edu.mit.kc.dashboard.core.DashboardForm"
+          p:stickyFooter="true" p:singlePageView="true">
+        <property name="contentContainerCssClasses">
+          <list>
+            <value>container</value>
+          </list>
+        </property>
+        <property name="additionalScriptFiles">
+            <list>
+                <value>scripts/propdev/core.js</value>
+                <value>scripts/common/dialog.js</value>
+                <value>scripts/dashboard.js</value>
+            </list>
+        </property>
+        <property name="additionalCssFiles">
+            <list>
+                <value>css/mitDashboard.css</value>
+            </list>
+        </property>
+        <property name="header">
+            <null/>
+        </property>
+        <property name="page" ref="Dashboard-Page"/>
+        <property name="onDocumentReadyScript" value="setupTabRetrieval();"/>
+        <property name="dialogs">
+            <list>
+                <ref bean="Dashboard-SpecifyUser-Dialog"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="Dashboard-SpecifyUser-Dialog" parent="Uif-DialogGroup" p:retrieveViaAjax="true"
+          p:enterKeyAction="Dashboard-SpecifyUser-Button"
+          p:headerText="Change Dashboard User">
+        <property name="destroyDialogOnHidden" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:required="true" p:label="Username"
+                      p:propertyName="tempUserName" p:labelLeft="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"/>
+                    </property>
+                    <property name="quickfinder">
+                        <bean parent="Uif-QuickFinder" p:returnByScript="true"
+                              p:fieldConversions="userName:tempUserName"
+                              p:dataObjectClassName="org.kuali.coeus.common.framework.person.KcPerson"/>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+        <property name="footer.items">
+            <list>
+
+                <bean parent="Uif-DialogDismissButton" p:actionLabel="Cancel"/>
+                <bean id="Dashboard-SpecifyUser-Button" parent="Uif-PrimaryActionButton"
+                      p:actionLabel="Show User's Dashboard"
+                      p:methodToCall="changeDashboard"
+                      p:successCallback="Kc.Dialog.closeDialogWithoutError('Dashboard-SpecifyUser-Dialog')"
+                      p:refreshId="Dashboard-Page" p:defaultEnterKeyAction="true"
+                      p:performClientSideValidation="true"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-Page" parent="Uif-Page" p:headerText="Dashboard">
+        <property name="header.rightGroup">
+          <bean parent="Uif-HeaderRightGroup">
+            <property name="items">
+              <list>
+                  <bean parent="Uif-DropdownToggleMenu" p:toggleText="@{#form.dashboardPerson.fullName}'s Dashboard">
+                    <property name="menuItems">
+                      <list>
+                        <bean parent="Uif-MenuAction" p:actionLabel="Specify User..."
+                              p:actionScript="showDialog('Dashboard-SpecifyUser-Dialog');"/>
+                      </list>
+                    </property>
+                  </bean>
+              </list>
+            </property>
+          </bean>
+        </property>
+        <property name="items">
+            <list>
+                <ref bean="Dashboard-Top"/>
+                <ref bean="Dashboard-Activity"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-Top" parent="Uif-CssGridSection">
+        <property name="items">
+            <list>
+                <bean parent="Uif-VerticalBoxSection" p:headerText="Expenditures Volume by Sponsor Type" p:colSpan="6">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Image" p:source="@{#ConfigProperties['application.url']}/static/images/graph_sample.png"/>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-ListCollectionSection" p:headerText="Alerts [span class='dashboard-alert-num']@{#form.alerts.size()}[/span]" p:colSpan="6"
+                        p:additionalCssClasses="dashboard-alert-list">
+                    <property name="collectionObjectClass" value="edu.mit.kc.dashboard.bo.Alert"/>
+                    <property name="propertyName" value="alerts"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField"
+                                  p:messageText="[span class='icon-warning'][/span] @{#line.alert}"/>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-Activity" parent="Uif-TabSection" p:headerText="My Research Activity">
+        <property name="items">
+            <list>
+                <ref bean="Dashboard-MyProposals"/>
+                <ref bean="Dashboard-MyAwards"/>
+                <ref bean="Dashboard-ProjectDocuments"/>
+                <ref bean="Dashboard-KeyPerson"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-MyProposals" parent="Uif-TableCollectionSection">
+        <property name="headerText" value="Proposals"/>
+        <property name="collectionObjectClass"
+                  value="org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument"/>
+        <property name="propertyName" value="myProposals"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.generateAutoSequence" value="false"/>
+        <property name="layoutManager.richTable.ajaxSource"
+                  value="@{#ConfigProperties['application.url']}/kc-pd-krad/dashboard?methodToCall=tableJsonRetrieval&amp;updateComponentId=Dashboard-MyProposals&amp;ajaxReturnType=update-component&amp;ajaxRequest=true&amp;formKey=@{#form.formKey}"/>
+        <!-- enable DataTables and server paging -->
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="useServerPaging" value="true"/>
+        <property name="readOnly" value="true"/>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-LinkField" p:label="Proposal" p:linkText="@{#line.documentNumber}">
+                    <property name="finalizeMethodToCall" value="buildPropDevLink"/>
+                    <property name="finalizeMethodAdditionalArguments" value="@{#line.documentNumber}"/>
+                </bean>
+                <bean parent="Uif-DataField" p:label="Project Title" p:propertyName="developmentProposal.title"></bean>
+                <bean parent="Uif-DataField" p:label="Sponsor Name"
+                      p:propertyName="developmentProposal.sponsorName">
+                </bean>
+                <bean parent="Uif-InputField" p:label="Status"
+                      p:propertyName="developmentProposal.proposalStateTypeCode">
+                    <property name="optionsFinder">
+                        <bean class="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder">
+                            <property name="businessObjectClass"
+                                      value="org.kuali.coeus.propdev.impl.state.ProposalState"/>
+                            <property name="includeKeyInDescription" value="false"/>
+                            <property name="keyAttributeName" value="code"/>
+                            <property name="labelAttributeName" value="description"/>
+                        </bean>
+                    </property>
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-DataField" p:label="Investigator"
+                      p:propertyName="developmentProposal.principalInvestigatorName"></bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-MyAwards" parent="Uif-TableCollectionSection" p:retrieveViaAjax="true">
+        <property name="headerText" value="Awards"/>
+        <property name="collectionObjectClass"
+                  value="org.kuali.kra.award.home.Award"/>
+        <property name="propertyName" value="myAwards"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.generateAutoSequence" value="false"/>
+
+        <!-- enable DataTables and server paging -->
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="useServerPaging" value="true"/>
+        <property name="readOnly" value="true"/>
+
+        <property name="layoutManager.richTable.ajaxSource"
+                  value="@{#ConfigProperties['application.url']}/kc-pd-krad/dashboard?methodToCall=tableJsonRetrieval&amp;updateComponentId=Dashboard-MyAwards&amp;ajaxReturnType=update-component&amp;ajaxRequest=true&amp;formKey=@{#form.formKey}"/>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-LinkField" p:label="Award" p:linkText="@{#line.awardNumber}">
+                    <property name="finalizeMethodToCall" value="buildAwardLink"/>
+                    <property name="finalizeMethodAdditionalArguments" value="@{#line.awardDocument.documentNumber}"/>
+                </bean>
+                <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
+                <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
+                <bean parent="Uif-DataField" p:label="Investigator" p:propertyName="principalInvestigatorName"></bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-ProjectDocuments" parent="Dashboard-MyAwards">
+        <property name="headerText" value="Project Documents"/>
+
+        <property name="layoutManager.richTable.ajaxSource"
+                  value="@{#ConfigProperties['application.url']}/kc-pd-krad/dashboard?methodToCall=tableJsonRetrieval&amp;updateComponentId=Dashboard-ProjectDocuments&amp;ajaxReturnType=update-component&amp;ajaxRequest=true&amp;formKey=@{#form.formKey}"/>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-LinkField" p:label="Actions" p:linkText="View Project Doc">
+                    <property name="finalizeMethodToCall" value="buildProjectDocLink"/>
+                    <property name="finalizeMethodAdditionalArguments"
+                              value="@{#line.awardDocument.documentNumber},@{#line.awardId}"/>
+                </bean>
+                <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
+                <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
+                <bean parent="Uif-DataField" p:label="Investigator" p:propertyName="principalInvestigatorName"></bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Dashboard-KeyPerson" parent="Dashboard-MyAwards">
+        <property name="headerText" value="Key Person Maintenance"/>
+        <property name="layoutManager.richTable.ajaxSource"
+                  value="@{#ConfigProperties['application.url']}/kc-pd-krad/dashboard?methodToCall=tableJsonRetrieval&amp;updateComponentId=Dashboard-KeyPerson&amp;ajaxReturnType=update-component&amp;ajaxRequest=true&amp;formKey=@{#form.formKey}"/>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-LinkField" p:label="Award" p:linkText="View Key Person">
+                    <property name="finalizeMethodToCall" value="buildKeyPersonLink"/>
+                    <property name="finalizeMethodAdditionalArguments"
+                              value="@{#line.awardDocument.documentNumber},@{#line.awardId}"/>
+                </bean>
+                <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
+                <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
+                <bean parent="Uif-DataField" p:label="Investigator" p:propertyName="principalInvestigatorName"></bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
