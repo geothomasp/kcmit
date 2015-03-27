@@ -712,7 +712,9 @@ select SEQ_SAP_ID.nextval into li_sp_feed_id from dual;
 
 
    return (0);
-
+	EXCEPTION 
+	WHEN OTHERS THEN
+	  Return (-1);
 	end generate_feed;
 
 /***************************************************************************/

@@ -1,4 +1,4 @@
-create or replace function fn_generate_rolodex_feed (as_path in varchar2) return number is
+create or replace function fn_generate_rolodex_feed (as_path in varchar2,as_user in VARCHAR2) return number is
 
 TYPE t_rolodex_feed IS RECORD (
 		 LAST_NAME 				VARCHAR2(20),
@@ -138,6 +138,9 @@ UTL_fILE.Put_Line(control_file, ls_control_line);
 
 UTL_fILE.fclose(control_file);
 
+
+UPDATE krcr_parm_t SET VAL = as_user WHERE  parm_nm = 'SAP_FEED_ROLODEX_FEED_USER';
+UPDATE krcr_parm_t SET VAL = sysdate WHERE  parm_nm = 'SAP_FEED_ROLODEX_FEED_DATE';
 
 COMMIT;
 
