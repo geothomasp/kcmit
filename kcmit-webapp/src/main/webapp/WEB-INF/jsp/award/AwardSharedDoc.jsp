@@ -16,7 +16,7 @@
 <!-- AwardMedusa.jsp -->
 
 <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
-
+<!-- <c:set var="navigateFlag" scope="request" value="awardSharedDoc"/> -->
 	 <kul:documentPage
 	showDocumentInfo="true"
 	htmlFormAction="sharedDoc"
@@ -29,7 +29,7 @@
 
 <kul:tabTop tabTitle="Project Documents" defaultOpen="true" tabErrorKey="">
 <kra-shared:sharedDoc helpParameterNamespace="KC-AWARD" helpParameterDetailType="Document" helpParameterName="awardMedusaHelpUrl" />
-	<html:hidden property="navigateFlag" value="awardSharedDoc" />
+<html:text property="navigateFlag" value="awardSharedDoc" style="display: none;"/>
 </kul:tabTop>
 <kul:panelFooter />
 <div id="globalbuttons" class="globalbuttons">	    
