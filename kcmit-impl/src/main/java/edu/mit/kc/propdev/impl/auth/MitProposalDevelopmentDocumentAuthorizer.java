@@ -10,5 +10,10 @@ public class MitProposalDevelopmentDocumentAuthorizer extends ProposalDevelopmen
 	public boolean canDisapprove(Document document, Person user) {
 		return false;
 	}
+	
+	@Override
+	public boolean canCancel(Document document, Person user) {
+		return false;
+	}
 
 }
