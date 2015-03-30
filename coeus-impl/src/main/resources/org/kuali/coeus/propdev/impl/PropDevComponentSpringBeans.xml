@@ -137,7 +137,20 @@
     <bean id="propDevKcBusinessRulesHandler" class="org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesHandler"/>
 
     <!-- Proposal Development Services -->
-
+<bean id="parameterService"
+		class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+		<property name="serviceName" value="parameterService" />
+	</bean>
+	<bean id="dbFunctionExecuteService"
+		class="org.kuali.coeus.common.dbfunctionmanager.DbFunctionExecuteServiceImpl">
+	</bean>
+	<bean id="coiDbFunctionService"
+		class="org.kuali.coeus.propdev.impl.proposalperson.CoiDbFunctionServiceImpl">
+		<property name="dbFunctionExecuteService" ref="dbFunctionExecuteService" />
+		<property name="parameterService" ref="parameterService" />
+	</bean> 
+    
+     
     <bean id="proposalDevelopmentLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
         <property name="lookupableHelperService" ref="proposalDevelopmentLookupableHelperService" />
     </bean>

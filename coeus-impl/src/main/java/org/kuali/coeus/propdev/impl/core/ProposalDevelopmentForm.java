@@ -220,7 +220,25 @@ public class ProposalDevelopmentForm extends BudgetVersionFormBase implements Re
     private transient UnitService unitService;
     private transient DocumentDictionaryService documentDictionaryService;
     private transient ProposalDevelopmentService proposalDevelopmentService;
-    
+    private String coiDisclosureStatus;
+    private List<ProposalPerson> coiDisclosureStatusCollection;
+    public String getCoiDisclosureStatus() {
+		return coiDisclosureStatus;
+	}
+
+	public void setCoiDisclosureStatus(String coiDisclosureStatus) {
+		this.coiDisclosureStatus = coiDisclosureStatus;
+	}
+
+	public List<ProposalPerson> getCoiDisclosureStatusCollection() {
+		return coiDisclosureStatusCollection;
+	}
+
+	public void setCoiDisclosureStatusCollection(
+			List<ProposalPerson> coiDisclosureStatusCollection) {
+		this.coiDisclosureStatusCollection = coiDisclosureStatusCollection;
+	}
+
 	public ProposalDevelopmentForm() {
         super();
         initialize();        

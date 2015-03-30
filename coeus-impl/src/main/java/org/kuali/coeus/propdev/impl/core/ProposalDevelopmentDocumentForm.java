@@ -40,6 +40,7 @@ import org.kuali.coeus.propdev.impl.custom.ProposalDevelopmentCustomDataHelper;
 import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.editable.ProposalChangedData;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
+import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.person.creditsplit.ProposalCreditSplitListDto;
 import org.kuali.coeus.propdev.impl.person.question.ProposalPersonQuestionnaireHelper;
 import org.kuali.coeus.propdev.impl.questionnaire.ProposalDevelopmentQuestionnaireHelper;
@@ -133,6 +134,14 @@ public class ProposalDevelopmentDocumentForm extends TransactionalDocumentFormBa
     private boolean sendNarrativeChangeNotification;
 
 
+private ProposalPerson proposalPerson;
+public ProposalPerson getProposalPerson() {
+	return proposalPerson;
+}
+
+public void setProposalPerson(ProposalPerson proposalPerson) {
+	this.proposalPerson = proposalPerson;
+}
     public ProposalPersonQuestionnaireHelper getProposalPersonQuestionnaireHelper() {
         return proposalPersonQuestionnaireHelper;
     }

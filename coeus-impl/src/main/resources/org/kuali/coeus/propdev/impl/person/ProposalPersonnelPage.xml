@@ -322,6 +322,8 @@
                                               p:actionLabel="" p:methodToCall="movePersonUp" p:order="20"/>
                                         <bean parent="Uif-ActionLink" p:iconClass="icon-arrow-down" p:render="@{#line.moveDownAllowed}"
                                               p:actionLabel="" p:methodToCall="movePersonDown" p:order="30"/>
+                                        <bean parent="Uif-ActionLink" p:actionLabel="COI Disclosure Status"
+                                              p:iconClass="icon-bell2" p:order="35"  p:actionScript="showDialog('PropDev-PersonnelPage-COIStatus-Dialog');"/>
                                         <bean parent="Uif-DeleteLineAction" p:actionLabel=""
                                               p:iconClass="icon-trash" p:order="40" p:render="@{!#parent.readOnly}"  p:performClientSideValidation="false">
                                             <property name="confirmationDialog">
@@ -725,4 +727,65 @@
     <bean id="PropDev-PersonnelPage-InputField-parentBean" abstract="true"
           parent="Uif-InputField" p:fieldLabel.renderColon="false"
           p:dictionaryObjectEntry="org.kuali.coeus.common.framework.person.KcPerson" />
+                   
+          
+		    <bean id="PropDev-PersonnelPage-COIStatus-Dialog" parent="PropDev-PersonnelPage-COIStatus-Dialog-parent" />
+			<bean id="PropDev-PersonnelPage-COIStatus-Dialog-parent" parent="Uif-DialogGroup"
+				p:headerText="COI Disclosure Status">
+				<property name="items">
+					<list>
+						<bean parent="PropDev-PersonnelPage-COIStatus-Collection1"
+							p:order="10" />
+					</list>
+				</property>
+				<property name="footer.items">
+					<list>
+						<bean parent="Uif-DialogDismissButton" p:actionLabel="Close"
+							p:order="20" />
+					</list>
+				</property>
+			</bean>
+                           
+          
+        <bean id="PropDev-PersonnelPage-COIStatus-Collection1" parent="PropDev-PersonnelPage-COIStatus-Collection1-parent" />
+        <bean id="PropDev-PersonnelPage-COIStatus-Collection1-parent" 
+         parent="Uif-TableCollectionSection" p:collectionObjectClass="org.kuali.coeus.propdev.impl.person.ProposalPerson"
+          p:propertyName="document.developmentProposal.proposalPersons" p:addWithDialog="false"
+		p:renderAddLine="false" p:layoutManager.renderSequenceField="false"
+		p:renderInactiveToggleButton="false" p:layoutManager.richTable.render="true" p:renderLineActions="false">
+		
+		<property name="layoutManager.richTable.templateOptions">
+			<map>
+				<entry key="sDom" value="tip" />
+				<entry key="bRetrieve" value="true" />
+				<entry key="bPaginate" value="false" />
+				<entry key="bInfo" value="false" />
+			</map>
+		</property>
+		
+		<property name="header.lowerGroup">
+		<bean parent="Uif-VerticalBoxGroup">
+			<property name="items">
+				<list>
+					<bean parent="Uif-Message"
+						p:messageText="Project:			@{#line.developmentProposal.proposalNumber}"
+						p:order="10" p:style="font-weight: bold; font-size: larger;" />
+					<bean parent="Uif-Message" p:messageText="Title:			@{#line.developmentProposal.title}"
+						p:order="20" p:style="font-weight: bold; font-size: larger;" />
+				</list>
+			</property>
+		</bean>
+		</property>
+		
+	    <property name="items">
+	    <list>
+			<bean parent="Uif-DataField" p:propertyName="fullName"/>
+			<bean parent="Uif-DataField" p:propertyName="proposalPersonRoleId"/>
+			<bean parent="Uif-DataField" p:propertyName="coiDisclosureStatus"/>
+	    </list>
+	    </property> 
+  
+	</bean>   
+                                              
+                        
 </beans>

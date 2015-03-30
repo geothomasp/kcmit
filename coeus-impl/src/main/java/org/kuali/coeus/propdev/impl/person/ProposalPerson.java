@@ -45,12 +45,16 @@ import org.kuali.coeus.propdev.impl.person.creditsplit.NamedCreditSplitable;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.propdev.impl.person.creditsplit.ProposalPersonCreditSplit;
 import org.kuali.coeus.propdev.impl.person.question.ProposalPersonQuestionnaireHelper;
+import org.kuali.coeus.propdev.proposalperson.CoiDbFunctionService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.util.CollectionUtils;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import java.sql.SQLException;
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -404,7 +408,36 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     
     @Transient
     private transient PropAwardPersonRoleService propAwardPersonRoleService;
+    @Transient
+    private String coiDisclosureStatus;
+    @Transient
+    private transient CoiDbFunctionService coiDbFunctionService;
     
+    
+	public CoiDbFunctionService getCoiDbFunctionService() {
+		 if (this.coiDbFunctionService == null) {
+             this.coiDbFunctionService = KcServiceLocator.getService(CoiDbFunctionService.class);
+         }
+		return coiDbFunctionService;
+	}
+
+	public void setCoiDbFunctionService(CoiDbFunctionService coiDbFunctionService) {
+		this.coiDbFunctionService = coiDbFunctionService;
+	}
+
+	public String getCoiDisclosureStatus() {
+    	String hasDisclosure="";           		
+    	try {
+    		hasDisclosure = this.getCoiDbFunctionService().getKeyPersonnelCoiDisclosureStatus(this.getDevelopmentProposal().getProposalNumber(), this.getPersonId(),isQuestionnairesCompleted());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return hasDisclosure;
+	}
+
+	public void setCoiDisclosureStatus(String coiDisclosureStatus) {
+		this.coiDisclosureStatus = coiDisclosureStatus;
+	}
     @Transient
     private Timestamp createTimestamp;
  
