@@ -102,6 +102,12 @@ Portions of Kuali are copyrighted by other parties as described in the [link='@{
                 
               <bean parent="Uif-ActionLink" p:actionLabel="DASHBOARD"
 					p:order="20">
+					<property name="actionUrl">
+						<bean parent="Uif-Url"
+							p:baseUrl="@{#ConfigProperties['application.url']}/kc-pd-krad"
+							p:viewId="Dashboard-View"
+							p:controllerMapping="/dashboard" />
+					</property>
 				</bean>
 				<bean parent="Kc-Header-DefaultMenu" p:toggleText="MAINTENANCE"
 					p:order="30">
