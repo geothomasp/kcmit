@@ -49,10 +49,11 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 
 	@Override
-	public String generateRolodexFeed(String path) throws SQLException {
+	public String generateRolodexFeed(String path, String user) throws SQLException {
 
 		List<Object> paramValues = new ArrayList<Object>();
 		paramValues.add(0, path);
+		paramValues.add(1, user);
 		String resultRolodex = "";
 		try {
 
@@ -66,10 +67,11 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 
 	@Override
-	public String generateSponsorFeed(String path) throws SQLException {
+	public String generateSponsorFeed(String path,String user) throws SQLException {
 
 		List<Object> paramValues = new ArrayList<Object>();
 		paramValues.add(0, path);
+		paramValues.add(1, user);
 		String resultSponsor = "";
 		try {
 
@@ -83,8 +85,7 @@ public class SapFeedServiceImpl implements SapFeedService
 
 	}
 	
-	public void insertSapFeedDetails(String awardNumber, Integer sequenceNumber, String feedType,String feedStatus)
-	{
+	public void insertSapFeedDetails(String awardNumber, Integer sequenceNumber, String feedType,String feedStatus) {
 		SapFeedDetails sapFeedDetails=new SapFeedDetails();
 		sapFeedDetails.setAwardNumber(awardNumber);
     	sapFeedDetails.setSequenceNumber(sequenceNumber);
@@ -92,8 +93,7 @@ public class SapFeedServiceImpl implements SapFeedService
     	sapFeedDetails.setFeedStatus(feedStatus);
     	sapFeedDetails.setTranId(DEFAULT_TRANSACTION_ID);
     	sapFeedDetails = getBusinessObjectService().save(sapFeedDetails);
-    	
-	}
+    }
 	 
 
 	public DbFunctionService getDbFunctionService() {
@@ -135,5 +135,4 @@ public class SapFeedServiceImpl implements SapFeedService
 	public void setDataObjectService(DataObjectService dataObjectService) {
 		this.dataObjectService = dataObjectService;
 	}
-	
 }

@@ -28,10 +28,10 @@ public class SapFeedsForm extends UifFormBase {
 	private int fedInRecords=0;
 	private int errorInRecords=0;
 	
-	private String sponsorFeedUser;
-	private String sponsorFeedDate;
-	private String rolodexFeedUser;
-	private String rolodexFeedDate;
+	private String sponsorFeedUser=null;
+	private String sponsorFeedDate=null;
+	private String rolodexFeedUser=null;
+	private String rolodexFeedDate=null;
 
 
 	public Boolean getSponsordatachanged() {

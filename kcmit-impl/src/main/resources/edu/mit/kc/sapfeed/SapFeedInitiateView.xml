@@ -27,11 +27,11 @@
 				<value>scripts/common/dialog.js</value>
 				<value>scripts/common/wizard.js</value>
 				<value>scripts/common/inlineEdit.js</value>
-				<value>scripts/propdev/budget.js</value>
 			</list>
 		</property>
 		<property name="additionalCssFiles">
 			<list>
+			    <value>css/common/core.css</value>
 				<value>css/wells.less</value>
 				<value>css/alerts.less</value>
 				<value>css/close.less</value>

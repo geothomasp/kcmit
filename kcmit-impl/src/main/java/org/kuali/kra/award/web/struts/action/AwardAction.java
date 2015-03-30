@@ -2121,29 +2121,37 @@ public class AwardAction extends BudgetParentActionBase {
        
     }
     
-	public void updatingSapFeedDetails(AwardForm form) {
-		String feedType = "N";
-		String feedStatus = "P";
+    public void updatingSapFeedDetails(AwardForm form) {
+		String feedType = null;
+		String feedStatus = null;
 		String newAwardNumber = form.getAwardDocument().getAward().getAwardNumber();
 		Integer newSequenceNumber = form.getAwardDocument().getAward().getSequenceNumber();
-
 		BusinessObjectService businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
 		HashMap<String, String> fieldValues = new HashMap<String, String>();
 		fieldValues.put("awardNumber", newAwardNumber);
 		// Get sapfeed details
-		List<SapFeedDetails> sapFeedDetails =  (List<SapFeedDetails>) businessObjectService.findMatching(SapFeedDetails.class, fieldValues);
-		for(SapFeedDetails sapFeedDetail:sapFeedDetails)
-		{
-		if (sapFeedDetail == null) {
-			feedType = "N";
-		}
-		else if (sapFeedDetail.getSequenceNumber() == newSequenceNumber && sapFeedDetail.getFeedStatus() == "P") {
-			feedStatus = "F";
+		List<SapFeedDetails> sapFeedDetails = (List<SapFeedDetails>) businessObjectService.findMatching(SapFeedDetails.class, fieldValues);
+
+		if (sapFeedDetails != null && sapFeedDetails.size() > 0) {
+			for (SapFeedDetails sapFeedDetail : sapFeedDetails) {
+				if (sapFeedDetail.getFeedStatus().equals("F") && sapFeedDetail.getFeedType().equals("N") && sapFeedDetail.getSequenceNumber().equals(
+								newSequenceNumber)) {
+					feedType = "C";
+					feedStatus = "F";
+				}
+				else{
+					feedType="C";
+					feedStatus=sapFeedDetail.getFeedStatus();
+				}
+				sapFeedDetail.setFeedType(feedType);
+				sapFeedDetail.setFeedStatus(feedStatus);
+				getBusinessObjectService().save(sapFeedDetail);
+			}
 		} else {
-			feedType = "C";
+			feedType = "N";
+			feedStatus = "P";
+			getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
 		}
-		}
-		getSapFeedService().insertSapFeedDetails(newAwardNumber, newSequenceNumber, feedType,feedStatus);
 	}
 	
 	private PermissionService getPermissionService() {

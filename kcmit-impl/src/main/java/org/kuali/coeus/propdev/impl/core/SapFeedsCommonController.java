@@ -44,8 +44,6 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 	private static final String DUMMY_SPONSOR = "999999";
 	private String Path;
 
-	
-
 
 	@Autowired
 	@Qualifier("kualiConfigurationService")
@@ -66,7 +64,7 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 			@ModelAttribute("KualiForm") SapFeedsForm form,
 			BindingResult result, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-         
+        
 		generatePendingFeedCount(form);
         isSponsorUpdated(form);
 		
@@ -101,8 +99,7 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 			Path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.TEST.PATH");
 
-		String user = globalVariableService.getUserSession()
-				.getLoggedInUserPrincipalName();
+	    String user=getLoggedInUser();
 		String statusMasterFeed = null;
 		statusMasterFeed = sapFeedService.generateMasterFeed(Path, user);
 		
@@ -133,8 +130,9 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 		else
 			Path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.TEST.PATH");
+		String user=getLoggedInUser();
 		String statusSponsorFeed = null;
-		statusSponsorFeed = sapFeedService.generateSponsorFeed(Path);
+		statusSponsorFeed = sapFeedService.generateSponsorFeed(Path,user);
 		if(statusSponsorFeed.equals("0"))
 			form.setSponsorFeedGenerated(true);
 		
@@ -164,8 +162,9 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 			Path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.TEST.PATH");
 		
+		String user=getLoggedInUser();
 		String statusRolodexFeed = null;
-		statusRolodexFeed = sapFeedService.generateRolodexFeed(Path);
+		statusRolodexFeed = sapFeedService.generateRolodexFeed(Path,user);
 		
 		if(statusRolodexFeed.equals("0"))
 			form.setRolodexFeedGenerated(true);
@@ -238,12 +237,14 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 		 if(sponsors !=null && dummySponsors !=null)
 			 sponsorCount=sponsors.size()-dummySponsors.size();
 		
-
-		tempSapSponsorDetails = (List<TempSapSponsorDetails>) KcServiceLocator.getService(BusinessObjectService.class).findAll(TempSapSponsorDetails.class);
-
-		if (tempSapSponsorDetails !=null && sponsorCount != tempSapSponsorDetails.size())
-			form.setSponsordatachanged(true);
-
+		 tempSapSponsorDetails = (List<TempSapSponsorDetails>) KcServiceLocator.getService(BusinessObjectService.class).findAll(TempSapSponsorDetails.class);
+		 
+		 if (tempSapSponsorDetails !=null && sponsorCount != tempSapSponsorDetails.size())
+			 form.setSponsordatachanged(true);
+	}
+	
+	public String getLoggedInUser(){
+		return globalVariableService.getUserSession().getLoggedInUserPrincipalName();
 	}
 	
 	public void setKualiConfigurationService(
