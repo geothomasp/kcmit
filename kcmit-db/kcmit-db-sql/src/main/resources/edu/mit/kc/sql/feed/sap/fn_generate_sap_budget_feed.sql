@@ -27,6 +27,12 @@ li_inserted                     PLS_INTEGER := 0;
 		r_sap_bud_det c_sap_bud_det%rowtype;
 
 	CURSOR c_award_budget is
+		select t1.cost_element as gl_account_key,
+		sum(t1.line_item_cost) amount
+		from budget_details t1 		
+		where t1.budget_id = li_budget_id   
+		group by t1.cost_element
+		UNION	
 		select t3.gl_account_key,
 		sum(t2.calculated_cost) amount
 		from budget_details t1 
@@ -155,9 +161,15 @@ begin
 					sys_guid()
 					);
 		END IF;		
-				
+		
+		UPDATE 	AWARD_BUDGET_EXT SET AWARD_BUDGET_STATUS_CODE = 9 --Posted
+		WHERE budget_id IN ( SELECT budget_id FROM SAP_BUDGET_FEED_DETAILS WHERE BATCH_ID = as_batch_id);
+		
+		UPDATE SAP_BUDGET_FEED_DETAILS SET FEED_STATUS = 'F'  WHERE BATCH_ID = as_batch_id;
+		
 		COMMIT;		
-
+		
+		
 	ret := fn_spool_awd_budget_batch(as_batch_id, as_path);
 
 	return as_batch_id;
