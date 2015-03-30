@@ -42,6 +42,7 @@ import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReviewExemption
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
@@ -408,6 +409,11 @@ public abstract class ProposalDevelopmentControllerBase {
         if (canEdit) {
             if ((new ProposalDevelopmentDocumentRule().processAttachmentRules(form.getProposalDevelopmentDocument()))
                     && (new ProposalDevelopmentDocumentRule().processPersonnelAttachmentDuplicates(form.getProposalDevelopmentDocument()))) {
+            	Narrative narrative=form.getProposalDevelopmentAttachmentHelper().getNarrative();
+            	if(narrative.getObjectId()!=null){
+            		narrative.setUpdated(true);
+            		form.getProposalDevelopmentAttachmentHelper().setNarrative(narrative);
+            	}
             	form.getProposalDevelopmentAttachmentHelper().handleNarrativeUpdates(form, document);
             	form.getProposalDevelopmentAttachmentHelper().handleInstAttachmentUpdates(form, document);
             	form.getProposalDevelopmentAttachmentHelper().handlePersonBioUpdates(form, document);
