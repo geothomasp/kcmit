@@ -52,7 +52,7 @@ Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Modify Award',
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Modify Award','Time And Money Modifier');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Modify Award Budget','Award Budget Modifier');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Negotiation SuperUser','Negotiation Administrator');
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Protocol Approver','ProtocolApprover');
+--Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Protocol Approver','ProtocolApprover');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Run Budget Reports','Run Dev Budget Reports');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View Award Budget','Award Budget Viewer');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View Institute Proposal Document','Institutional Proposal Viewer');
