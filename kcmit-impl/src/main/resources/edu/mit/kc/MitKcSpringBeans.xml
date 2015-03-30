@@ -159,6 +159,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/MitAwardFaRateType.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITAwardDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/MITAward.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/MITAwardComment.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/KrmsFunctionsParams.xml</value> 
 				<value>classpath:edu/mit/kc/datadictionary/KrmsFunctions.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/PiAppointmentType.xml</value>

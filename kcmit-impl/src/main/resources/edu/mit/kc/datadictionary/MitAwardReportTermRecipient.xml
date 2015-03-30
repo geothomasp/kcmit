@@ -32,5 +32,11 @@
 			<bean parent="AnyCharacterValidationPattern" />
 		</property>
 	</bean> 
+	<bean id="AwardReportTermRecipient-contactTypeCode" parent="Mit-AwardReportTermRecipient-contactTypeCode-parentBean" />
+	<bean id="Mit-AwardReportTermRecipient-contactTypeCode-parentBean"  parent="AwardReportTermRecipient-contactTypeCode-parentBean" >
+		<property name="validationPattern">
+			<bean parent="AnyCharacterValidationPattern" />
+		</property>
+	</bean>
 
 </beans>

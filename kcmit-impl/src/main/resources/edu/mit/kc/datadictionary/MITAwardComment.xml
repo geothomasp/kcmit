@@ -1,0 +1,22 @@
+<!-- created for MITKC-104/103 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">      
+        
+<bean id="AwardComment-comments" parent="Mit-AwardComment-comments-parentBean" />
+  <bean id="Mit-AwardComment-comments-parentBean" abstract="true" parent="AwardComment-comments-parentBean">
+ <property name="name" value="comments" />
+    <property name="forceUppercase" value="false" />
+    <property name="label" value="Comments" />
+    <property name="shortLabel" value="Comments" />
+        <property name="control" >
+      <bean parent="TextareaControlDefinition" p:rows="10" p:cols="140"/>
+    </property>
+    <property name="controlField">
+      <bean p:rows="10" p:cols="140" parent="Uif-TextAreaControl"/>
+    </property>
+    <property name="summary" value="Comments" />
+    <property name="description" value="Comments" />
+    	 </bean>
+    </beans>
