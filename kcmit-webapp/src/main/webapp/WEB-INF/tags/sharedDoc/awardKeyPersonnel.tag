@@ -31,7 +31,7 @@
 <c:set var="coiRoleConstant"
 	value="<%=org.kuali.kra.infrastructure.Constants.CO_INVESTIGATOR_ROLE%>" />
 <c:set var="kpMaintenance" value="${KualiForm.kpMaintenanceRole}" />
-
+<c:set var="pi" value="${KualiForm.pi}" />
 <kul:page lookup="true" showDocumentInfo="false"
 	headerMenuBar="${headerMenu}" headerTitle="Project Documents"
 	docTitle="" transactionalDocument="false"
@@ -276,8 +276,9 @@
     					<td>
     						<div align="center">
     						 <%--  <c:if test="${!readOnly}"> --%>
-    						 
-    						 	<c:if test='${kpMaintenance == "true"}'>
+    			
+    						 	<c:if test='${(kpMaintenance == "true")  || (pi == "true")}'>
+    		
 									<c:if test='${awardContact.roleCode == "KP"}'>
 										<c:if test='${awardContact.confirmed == false}'>
 											<html:image

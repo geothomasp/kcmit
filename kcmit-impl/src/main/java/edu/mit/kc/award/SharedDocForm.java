@@ -210,7 +210,17 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     public  Collection<AwardPersonRemove> awardPersonRemovalHistory = new ArrayList<AwardPersonRemove>();
     private AccountCreationPresentationHelper accountCreationHelper;
     private boolean kpMaintenanceRole = false;
-    private boolean alertMessage = false;   
+    private boolean pi = false;
+    
+	public boolean isPi() {
+		return pi;
+	}
+
+	public void setPi(boolean pi) {
+		this.pi = pi;
+	}
+
+	private boolean alertMessage = false;   
     
  private String tabHeader;
     

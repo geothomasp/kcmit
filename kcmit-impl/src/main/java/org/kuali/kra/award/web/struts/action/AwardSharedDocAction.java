@@ -96,6 +96,10 @@ public class AwardSharedDocAction extends AwardAction {
 		 AwardDocument document=sharedDocForm.getAwardDocument();
 		 ActionForward actionForward = super.execute(mapping, form, request, response); 
 		 String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+		 
+		 sharedDocForm.setPi(isLoggedInUserPI(currentUser,sharedDocForm));
+
+			
 		 sharedDocForm.setKpMaintenanceRole(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", KcMitConstants.AWARD_KEYPERSON_MAINTENANCE_ROLE));  //Move to Constants
 		 sharedDocForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
 		
@@ -532,6 +536,16 @@ return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
 	            
 	        }
 	        
-
-	        
+	 
+	        public boolean isLoggedInUserPI(String principalId,AwardForm awardForm){
+	   		 AwardDocument awardDocument = awardForm.getAwardDocument();
+			  Award currentAward = awardDocument.getAward();
+	          	       for (AwardPerson person : currentAward.getInvestigators()) {
+	          	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+	          	                    && StringUtils.equals(principalId, person.getPersonId())) {
+	          	                return true;
+	          	            }
+	          	        }
+	          	        return false;
+	          	    } 	     
  }
