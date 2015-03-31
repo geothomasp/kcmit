@@ -316,7 +316,7 @@
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-PrimaryActionButton-Mini" p:actionLabel="Notify @{#lp.fullName}" p:methodToCall="sendCertificationNotification"
-                                              p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}] and !#empty(#lp.versionNumber) and #ViewHelper.canCertifyRequired(#line) and !#parent.readOnly}"
+                                              p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}] and !#empty(#lp.versionNumber) and #ViewHelper.canViewCertificationTab(document,#line) and !#parent.readOnly}"
                                               p:order="10"/>
                                         <bean parent="Uif-ActionLink" p:iconClass="icon-arrow-up" p:render="@{#line.moveUpAllowed}"
                                               p:actionLabel="" p:methodToCall="movePersonUp" p:order="20"/>
@@ -629,7 +629,7 @@
     <bean id="PropDev-PersonnelPage-Questionnaire" parent="PropDev-PersonnelPage-Questionnaire-parentBean" />
     <bean id="PropDev-PersonnelPage-Questionnaire-parentBean"
           abstract="true" parent="Uif-CssGridSection" p:id="personnelQuestionnaire"
-          p:render="@{#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #ViewHelper.canCertifyRequired(#line) or #ViewHelper.isCertQuestView(#line) or !#line.getRole().getCertificationRequired()}"
+          p:render="@{#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0}"
           p:refreshWhenChangedPropertyNames="document.developmentProposal.proposalPersons[@{#index}].proposalPersonRoleId"
           p:progressiveRenderAndRefresh="true"
           p:headerText="@{(#line.questionnaireHelper.answerHeaders != null and #line.questionnaireHelper.answerHeaders.size() > 0 and #line.questionnaireHelper.answerHeaders[0].label != null) ? #line.questionnaireHelper.answerHeaders[0].label : 'None'}">
@@ -640,22 +640,41 @@
                       p:order="10" />
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="clearAnswers" p:actionLabel="Clear All Answers"
                       p:actionParameters="personNumber:@{(#line.proposalPersonNumber)}"
-                      p:render="@{!#parent.readOnly and #ViewHelper.renderQuestionnaire(#line) and !document.developmentProposal.isChild()}"
+                      p:render="@{!#ViewHelper.isCertQuestViewOnly(document,#line)  and !document.developmentProposal.isChild()}"
                       p:order="20">
                     <property name="confirmationDialog">
                         <bean parent="Uif-DialogGroup-OkCancel" p:promptText="Are you sure you want to clear all the answers?"/>
                     </property>
                 </bean>
-                <bean parent="Questionnaire-QuestionsGroup" p:propertyName="questionnaireHelper.answerHeaders[0].questions"
-                      p:render="@{#ViewHelper.renderQuestionnaire(#line)}"
-                      p:readOnly="@{document.developmentProposal.isChild() or #ViewHelper.isCertQuestView(#line)}"
-                      p:order="30" />             
-     
-                      
+                <bean parent="Questionnaire-QuestionsGroup" p:propertyName="questionnaireHelper.answerHeaders[0].questions"  p:order="30" 
+                   p:readOnly="@{document.developmentProposal.isChild() or #ViewHelper.isCertQuestViewOnly(document,#line)}" >
+                    
+					  <property name="subCollections">
+						<list>
+							<bean id="proposalPersonQuestionnaire-SubCollection" parent="proposalPersonQuestionnaire-SubCollection-parentBean" p:order="10"/>
+							 
+						</list>
+					</property> 
+				</bean>     
             </list>
         </property>
     </bean>
-    <bean id="PropDev-PersonnelPage-TrainingDetails" parent="PropDev-PersonnelPage-TrainingDetails-parentBean"/>
+    <bean id="proposalPersonQuestionnaire-SubCollection-parentBean" parent="Questionnaire-SubCollection-parentBean">
+		<property name="items">
+			<list>
+                <bean parent="Uif-MessageField" p:messageText="@{#ViewHelper.getQuestionMoreInfo(#lp.questionnaireQuestion.question)}"
+                        p:hidden="true"/>
+				<bean id="proposalPersonQuestionnaire-InputField" parent="Questionnaire-InputField-parentBean" p:readOnly="@{document.developmentProposal.isChild() or document.getCerttifyViewOnly()}" p:order="10" />
+                <bean parent="Uif-InputField" p:propertyName="question.lookupReturn" p:fieldLabel.render="false">
+                    <property name="control">
+                        <bean parent="Uif-HiddenControl" />
+                    </property>
+                </bean>
+			</list>
+		</property>
+	</bean> 
+	
+	<bean id="PropDev-PersonnelPage-TrainingDetails" parent="PropDev-PersonnelPage-TrainingDetails-parentBean"/>
     <bean id="PropDev-PersonnelPage-TrainingDetails-parentBean" abstract="true" parent="Uif-TableCollectionSection"
           p:headerText="Person Training Details"
           p:propertyName="personTrainings"
@@ -727,9 +746,7 @@
     <bean id="PropDev-PersonnelPage-InputField-parentBean" abstract="true"
           parent="Uif-InputField" p:fieldLabel.renderColon="false"
           p:dictionaryObjectEntry="org.kuali.coeus.common.framework.person.KcPerson" />
-                   
-          
-		    <bean id="PropDev-PersonnelPage-COIStatus-Dialog" parent="PropDev-PersonnelPage-COIStatus-Dialog-parent" />
+            <bean id="PropDev-PersonnelPage-COIStatus-Dialog" parent="PropDev-PersonnelPage-COIStatus-Dialog-parent" />
 			<bean id="PropDev-PersonnelPage-COIStatus-Dialog-parent" parent="Uif-DialogGroup"
 				p:headerText="COI Disclosure Status">
 				<property name="items">
@@ -785,7 +802,7 @@
 	    </list>
 	    </property> 
   
-	</bean>   
-                                              
-                        
+	</bean>  
+	
+	 
 </beans>

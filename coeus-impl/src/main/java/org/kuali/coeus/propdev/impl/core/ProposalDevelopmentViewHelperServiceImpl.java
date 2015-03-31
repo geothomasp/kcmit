@@ -111,7 +111,9 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     private static final Logger LOG = Logger.getLogger(ProposalDevelopmentViewHelperServiceImpl.class);
     private static final String PARENT_PROPOSAL_TYPE_CODE = "PRDV";
     private static final String PARAMETER_DELIMITER = ",";
-    private static final String SPONSOR_HEIRARCHY= "COIHierarchyRequiringKPs";
+    private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
+    private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
+    
     @Autowired
     @Qualifier("dateTimeService")
     private DateTimeService dateTimeService;
@@ -959,71 +961,102 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         }
         return true;
     }
-    public boolean canCertifyRequired(ProposalPerson proposalPerson){
-    	String principalId=getGlobalVariableService().getUserSession().getPrincipalId();
-            String value = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
-            String modSubCodeCoi= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
-            		"MODULE_SUB_ITEM_CODE_COI_CERTIFICATION");
-            ProposalDevelopmentDocument document=proposalPerson.getDevelopmentProposal().getProposalDocument();
-        boolean canCertify = kraAuthorizationService.hasPermission(principalId, document, PermissionConstants.CERTIFY); 
-           List<String> newRoles=Arrays.asList(value.split(PARAMETER_DELIMITER));     
-           String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
-           
-          if (proposalPerson.isInvestigator() && proposalPerson.isPrincipalInvestigator()
-                  && StringUtils.equals(principalId, proposalPerson.getPersonId())) {
-              return true;
-          } if (proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)){
-        	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modSubCodeCoi)||canCertify){
-        		  return true;
-        	  }else{
-        		  return false;
-        	  } 
-          }
-           
-        if (proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)){
-        	for(String projectRole:newRoles){
-        	if(proposalPerson.getProjectRole().equals(projectRole)) {
-            return false;
-        	}}
-        	if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
-        	return true;
-        	}
-        	if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy)) {
-				return true;
-			}}
-        if(isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal()))
-        {
-     	   return true;
-     	   }  
-        return true;       		
-        	
+    public boolean canViewCertificationTab(ProposalDevelopmentDocument document,ProposalPerson proposalPerson){
+    	String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
+    	boolean isPiLoggedIn = isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal(),currentUser);
+    	boolean canCertifyProposal = canCertifyProposal(document,currentUser);
+    	if((isPiLoggedIn && proposalPerson.getPersonId().equals(currentUser)) ||
+    			(canCertifyProposal && proposalPerson.isPrincipalInvestigator()))
+    	{
+    		return true;
+    	}
+    	if ((proposalPerson.getPersonId().equals(currentUser) && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))
+    			||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)) ||
+    			(canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))){
+    		return true;
+    	}
+    	String keyPersonProjectRoles = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
+    	List<String> keyPersonRoleList =Arrays.asList(keyPersonProjectRoles.split(PARAMETER_DELIMITER));     
+
+    	String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+    	String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
+    	if ((proposalPerson.getPersonId().equals(currentUser) && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))||
+    			(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)) ||
+    			(canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))){
+    		for(String projectRole:keyPersonRoleList){
+    			if(proposalPerson.getProjectRole().equals(projectRole)) {
+    				return false;
+    			}}
+    		if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
+    			return true;
+    		}
+    		if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName)) {
+    			return true;
+    		}}
+
+    	return false;       		
+
     }
-    public boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal){
-   	 String principalId=getGlobalVariableService().getUserSession().getPrincipalId();    	
-   	       for (ProposalPerson person : developmentProposal.getInvestigators()) {
-   	            if (person.isInvestigator() && person.isPrincipalInvestigator()
-   	                    && StringUtils.equals(principalId, person.getPersonId())) {
-   	                return true;
-   	            }
-   	        }
-   	        return false;
-   	    } 	
-    public boolean isCertQuestView(ProposalPerson proposalPerson){
+ 
+	    private boolean canCertifyProposal(ProposalDevelopmentDocument document,String user){
+	    	boolean viewCertify = kraAuthorizationService.hasPermission(user, document, PermissionConstants.VIEW_CERTIFICATION); 
+	    	boolean certify = kraAuthorizationService.hasPermission(user, document, PermissionConstants.CERTIFY); 
+	    	if(viewCertify || certify){
+	    		return true;
+	    	}else{
+	    		return false;
+	    	}
+	
+	    }
+	 
+	
+	    public boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal,String user){
+	    	for (ProposalPerson person : developmentProposal.getInvestigators()) {
+	    		if (person.isPrincipalInvestigator() && StringUtils.equals(user, person.getPersonId())) {
+	    			return true;
+	    		}
+	    	}
+	    	return false;
+	    } 	
+ 
+		 public boolean isKeyPersonCustomData(DevelopmentProposal developmentProposal) {
+				try {
+					List<CustomAttributeDocValue> customDataList = developmentProposal
+							.getProposalDocument().getCustomDataList();
+					for (CustomAttributeDocValue attributeDocValue : customDataList) {
+						if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("PCK")&& attributeDocValue.getCustomAttribute().getValue().equals("Y")) {
+							return true;
+						}
+					}
+				} catch (Exception exception) {
+		
+				}
+				return false;
+			}
+    public boolean isCertQuestViewOnly(ProposalDevelopmentDocument document ,ProposalPerson proposalPerson){
     	 String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
-    	 String modDubCodePi=(getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE,
-         		"MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"));
-    	 ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) proposalPerson.getDevelopmentProposal().getDocument();
-    	  boolean canViewProposal = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.VIEW_CERTIFICATION);
-      	        if(canViewProposal){
-      	        	if( proposalPerson.getQuestionnaireHelper().getModuleQnBean().getModuleSubItemCode().equals(modDubCodePi)){
+    	 boolean canViewCretification = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.VIEW_CERTIFICATION);
+    	 boolean canCertify = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.CERTIFY); 
+		    	if(canCertify){
+		    		document.setCerttifyViewOnly(false);
+		    		return false;	
+		    	}
+      	        if(canViewCretification){
+      	        	if(proposalPerson.getPersonId().equals(currentUser)){
+      	        		document.setCerttifyViewOnly(false);
       	        		return false;	
       	        	}else{
+      	        		document.setCerttifyViewOnly(true);
       	        		return true;
       	        	}      	        	
       	        }else{
+      	        	document.setCerttifyViewOnly(false);
       	        	return false;
       	        }
       	    } 
+    public boolean isViewOnly(ProposalDevelopmentDocument document){
+    	return document.getCerttifyViewOnly();
+    }
    	
     public String getWizardMaxResults() {
         return getParameterService().getParameterValueAsString(KRADConstants.KRAD_NAMESPACE,
@@ -1120,21 +1153,7 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         form.setDefaultOpenTab("");
         return openTab;
     }
-  public boolean isKeyPersonCustomData(
-			DevelopmentProposal developmentProposal) {
-		try {
-			List<CustomAttributeDocValue> customDataList = developmentProposal
-					.getProposalDocument().getCustomDataList();
-			for (CustomAttributeDocValue attributeDocValue : customDataList) {
-				if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("PCK")&& attributeDocValue.getCustomAttribute().getValue().equals("Y")) {
-					return true;
-				}
-			}
-		} catch (Exception exception) {
-
-		}
-		return false;
-	}
+  
     public String getPropPersonName(String personId) {
         if (StringUtils.isNotEmpty(personId)) {
             Person person= getPersonService().getPerson(personId);

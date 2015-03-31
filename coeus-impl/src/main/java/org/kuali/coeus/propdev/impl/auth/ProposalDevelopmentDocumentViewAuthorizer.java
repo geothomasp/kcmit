@@ -60,12 +60,13 @@ public class ProposalDevelopmentDocumentViewAuthorizer extends KcKradTransaction
             int index = getIndexFromCollectionGroupId(ProposalDevelopmentConstants.KradConstants.PERSONNEL_QUESTIONNAIRE, groupId);
             ProposalPerson proposalPerson = document.getDevelopmentProposal().getProposalPersons().get(index);
 
-            success &= ((ProposalDevelopmentDocumentAuthorizer)getDocumentAuthorizer()).hasCertificationPermissions(document, user, proposalPerson);
+            success &= ((ProposalDevelopmentDocumentAuthorizer)getDocumentAuthorizer()).canViewCertificationTab(document, user, proposalPerson);
         }
 
         return success;
     }
 
+    
     /**
      * To be used with group collection items.
      * Gets the index of the group that is passed in.
