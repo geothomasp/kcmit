@@ -376,7 +376,8 @@ public class AwardDeltaXmlStream extends AwardBaseStream {
 				.getAwardCustomDataList();
 		List<OtherData> otherDatas = new ArrayList<OtherData>();
 		OtherData otherData = null;
-		for (AwardCustomData awardCustomData : awardCustomDataList) {
+		int count =0;
+        for (AwardCustomData awardCustomData : awardCustomDataList) {
 			otherData = OtherData.Factory.newInstance();
 			String columnValue = awardCustomData.getValue();
 			if (awardCustomData.getCustomAttribute() != null
@@ -385,14 +386,35 @@ public class AwardDeltaXmlStream extends AwardBaseStream {
 						.getName());
 			}
 			if (columnValue != null) {
-				otherData.setColumnValue(columnValue);
+				if (prevAward != null && !prevAward.getAwardCustomDataList().isEmpty()) {
+					String prevColumValue = prevAward.getAwardCustomDataList().get(count).getValue();
+					columnValue = getModColumValue(columnValue,
+							prevColumValue);
+				} 
+			otherData.setColumnValue(columnValue);
 			}
 			otherDatas.add(otherData);
+			count++;
 		}
 		awardOtherDatas.setOtherDataArray(otherDatas.toArray(new OtherData[0]));
 		return awardOtherDatas;
 	}
 
+	private String getModColumValue(String columnValue,
+			String prevColumValue) {
+		String columnValueMod = null;
+		if (columnValue != null) {
+			if (prevColumValue == null
+					|| !columnValue.equals(prevColumValue)) {
+				columnValueMod = new StringBuilder(START_ASTERISK_SPACE_INDICATOR).append(
+						columnValue).toString();
+
+			} else {
+				columnValueMod = columnValue;
+			}
+		}
+		return columnValueMod;
+	}
 	/*
 	 * This method sets the values to print requirement attributes and finally
 	 * returns the print requirement xml object
