@@ -20,6 +20,7 @@ package org.kuali.coeus.common.impl.unit;
 
 import org.kuali.coeus.common.framework.unit.Unit;
 import org.kuali.coeus.common.framework.unit.UnitService;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.krms.KcKrmsConstants;
 import org.kuali.rice.core.api.data.DataType;
 import org.kuali.rice.core.api.exception.RiceIllegalArgumentException;
@@ -118,7 +119,7 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
                                             agendaDefinition.getTypeId(),agendaDefinition.isActive());
     }
     
-    private class UnitAgenda extends BasicAgenda {
+private static class UnitAgenda extends BasicAgenda {
         
         private Map<String, String> qualifiers;
         private boolean isActive;
@@ -135,31 +136,28 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
             if(!isActive){
                 return false;
             }
-            //return super.appliesTo();
-            boolean canApply = false;
             for (Map.Entry<String, String> agendaQualifier : environment.getSelectionCriteria().getAgendaQualifiers().entrySet()) {
-                if(!canApply){
-                    String agendaQualifierValue = qualifiers.get(agendaQualifier.getKey());
-                    String environmentQualifierValue = agendaQualifier.getValue();
-                    
-                   if (KcKrmsConstants.UNIT_NUMBER.equals(agendaQualifier.getKey())) {
-                        String[] unitNumbers = environmentQualifierValue.split(",");
-                        for (int i = 0; i < unitNumbers.length; i++) {
-                            String enviornmentUnitNumber = unitNumbers[i];
-                            if (enviornmentUnitNumber.equals(agendaQualifierValue)){ 
-                                canApply = true;
-                                break;
-                            }
-                        }
-                    } else if (!environmentQualifierValue.equals(agendaQualifierValue)) {
-                        canApply = false;
+                String agendaQualifierValue = qualifiers.get(agendaQualifier.getKey());
+                String environmentQualifierValue = agendaQualifier.getValue();
+                
+               if (KcKrmsConstants.UNIT_NUMBER.equals(agendaQualifier.getKey())) {
+                    if (!(environmentQualifierValue.equals(agendaQualifierValue) || 
+                    		isChildUnit(environmentQualifierValue, agendaQualifierValue))) {
+                        return false;
                     }
+                } else if (!environmentQualifierValue.equals(agendaQualifierValue)) {
+                    return false;
                 }
             }
-            return canApply;
+            return true;
         }
         
-      
+        private boolean isChildUnit(String childNumber, String parentNumber) {
+            UnitService unitService = KcServiceLocator.getService(UnitService.class);
+            Unit childUnit = unitService.getUnit(childNumber);
+            Unit parentUnit = unitService.getUnit(parentNumber);
+            return childUnit == null || parentUnit == null ? false : childUnit.isParentUnit(parentUnit);
+        }
 
     }
 
