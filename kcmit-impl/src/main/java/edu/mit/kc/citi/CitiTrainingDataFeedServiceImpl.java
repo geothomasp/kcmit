@@ -209,11 +209,15 @@ public class CitiTrainingDataFeedServiceImpl implements CitiTrainingDataFeedServ
 	}
 
     private Timestamp convertDate(String dateCompletedValue) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+    	Timestamp convertedDate =  convertDate(dateCompletedValue,"MM/dd/yyyy");
+    	return convertedDate==null?convertDate(dateCompletedValue,"dd/MM/yyyy"):convertedDate;
+    }
+    private Timestamp convertDate(String dateCompletedValue,String formatString) {
+        SimpleDateFormat sdf = new SimpleDateFormat(formatString);
         try {
             return new Timestamp(sdf.parse(dateCompletedValue).getTime());
         } catch (ParseException ex) {
-            Logger.getLogger(CitiTrainingDataFeedServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CitiTrainingDataFeedServiceImpl.class.getName()).log(Level.WARNING, null, ex);
             return null;
         }
     }
