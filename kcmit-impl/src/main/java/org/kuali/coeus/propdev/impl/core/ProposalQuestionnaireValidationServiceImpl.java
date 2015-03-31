@@ -49,7 +49,7 @@ public class ProposalQuestionnaireValidationServiceImpl implements ProposalQuest
 
 	protected void checkPIStatus(ProposalPerson proposalPerson) {
 		if((proposalPerson.isPrincipalInvestigator() || proposalPerson.isCoInvestigator()) && 
-				!proposalPerson.isInvestigator()) {
+				!proposalPerson.getFacultyFlag()) {
         	getGlobalVariableService().getMessageMap().putError(PROPOSAL_SUBMIT_PAGE_ID, ERROR_PI_STATUS, new String[]{proposalPerson.getProposalPersonRoleId(), proposalPerson.getLastName()});
 		}
 	}
