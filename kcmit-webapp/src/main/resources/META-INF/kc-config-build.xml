@@ -35,8 +35,8 @@ This config file only contains properties that are set by the maven build proces
     <param name="app.feedback.link">https://jira.mit.edu/jira/secure/CreateIssue.jspa?pid=12540&amp;issuetype=1&amp;Create=Create</param>
     
     <!-- Sap Feed Path -->
-	<param name="SAP.PRODUCTION.PATH">/u01/app/oracle</param>
-	<param name="SAP.TEST.PATH">/u01/app/oracle</param>
+	<param name="SAP.PRODUCTION.PATH">PROD</param>
+	<param name="SAP.TEST.PATH">TEST</param>
 	<!--   <param name="kns.css.files">kr/css/kuali.css,kr/scripts/jscalendar-1.0/calendar-win2k-1.css,scripts/fancybox2.1.5/jquery.fancybox.css,css/kuali_application.css</param> -->
 	
 </config>

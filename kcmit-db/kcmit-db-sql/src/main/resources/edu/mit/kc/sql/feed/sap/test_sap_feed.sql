@@ -32,3 +32,12 @@ li_ret:=fn_generate_sponsor_feed('TEST','admin');
 dbms_output.put_line(li_ret);
 end;
 /
+
+declare
+batch_file UTL_fILE.FILE_TYPE;
+begin
+batch_file := utl_file.fopen('TEST','testKCSAP.txt','W');
+end;
+
+--SELECT * FROM all_directories
+
