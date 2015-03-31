@@ -165,6 +165,11 @@ public class ProposalDevelopmentSubmitController extends
     @Qualifier("proposalQuestionnaireValidationService")
     private ProposalQuestionnaireValidationService proposalQuestionnaireValidationService;
     
+    @Autowired
+    @Qualifier("proposalTypeService")
+    private ProposalTypeService proposalTypeService;
+
+    
     private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
 
     public KcCoiLinkService kcCoiLinkService;
@@ -343,7 +348,8 @@ public class ProposalDevelopmentSubmitController extends
 
         if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
-    			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
+    			setProposalTypeCodeNewChangedAndCorrected( form);
+                //Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
     			if(autogenerateInstitutionalProposal() && ! hasInstitutionalProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalNumber())) {
     				submitApplication(form);
     			}
@@ -352,6 +358,8 @@ public class ProposalDevelopmentSubmitController extends
             } else {
     			return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
+        }else if(sequenceIPToSubmitToSponsor(form)) {
+            return getModelAndViewService().showDialog("PropDev-ResumbitSequence-OptionsSection", true, form);
         } else {
         	return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
         }
@@ -433,6 +441,29 @@ public class ProposalDevelopmentSubmitController extends
     	isValid &= getKcBusinessRulesEngine().applyRules(new SubmitToSponsorEvent(form.getProposalDevelopmentDocument()));
     	return isValid;
     }
+    
+    protected boolean sequenceIPToSubmitToSponsor(ProposalDevelopmentDocumentForm form) {
+    	boolean isValid = false;
+    	ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
+    	DevelopmentProposal developmentProposal= proposalDevelopmentDocument.getDevelopmentProposal();
+    	if( StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
+        				|| StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getBudgetSowUpdateProposalTypeCode())
+        						|| StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode())
+        								|| StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())) {
+    		isValid=true;
+        }
+    	return isValid;
+    }
+    
+    protected void setProposalTypeCodeNewChangedAndCorrected(ProposalDevelopmentDocumentForm form) {
+    	ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
+    	DevelopmentProposal developmentProposal= proposalDevelopmentDocument.getDevelopmentProposal();
+    	if( StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+    			&& developmentProposal.getContinuedFrom() != null) {
+    	form.setResubmissionOption(ProposalDevelopmentConstants.ResubmissionOptions.GENERATE_NEW_VERSION_OF_ORIGINAL_IP);
+    	}
+    }
+
     
     protected List<String> getUnitRulesMessages(ProposalDevelopmentDocument pdDoc) {
         return getKrmsRulesExecutionService().processUnitValidations(pdDoc.getLeadUnitNumber(), pdDoc);
@@ -900,4 +931,8 @@ public class ProposalDevelopmentSubmitController extends
 			ProposalQuestionnaireValidationService proposalQuestionnaireValidationService) {
 		this.proposalQuestionnaireValidationService = proposalQuestionnaireValidationService;
 	}
+	public ProposalTypeService getProposalTypeService() {
+		return proposalTypeService;
+	}
+
 }
