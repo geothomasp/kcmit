@@ -429,10 +429,11 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     	String hasDisclosure="";           		
     	try {
     		hasDisclosure = this.getCoiDbFunctionService().getKeyPersonnelCoiDisclosureStatus(this.getDevelopmentProposal().getProposalNumber(), this.getPersonId(),isQuestionnairesCompleted());
-		} catch (SQLException e) {
+		
+    	} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return hasDisclosure;
+		return hasDisclosure.isEmpty()?"NA":hasDisclosure;
 	}
 
 	public void setCoiDisclosureStatus(String coiDisclosureStatus) {

@@ -95,7 +95,7 @@ public class CoiDbFunctionServiceImpl implements CoiDbFunctionService{
 		
 		paramValues.add(0, developmentProposalNumber);
 		paramValues.add(1, keyPersonId);
-		paramValues.add(2,isQuestionnairesCompleted);
+		paramValues.add(2,isQuestionnairesCompleted == true ?1:0);
 		
 		try {
 			status =  getDbFunctionExecuteService().executeFunction("fn_prop_person_coi_status"+this.getDBLink(),paramValues);
