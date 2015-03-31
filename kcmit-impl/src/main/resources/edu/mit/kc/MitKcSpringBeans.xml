@@ -186,6 +186,8 @@
                  <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateMasterFeedPage.xml</value>
                  <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateRolodexFeedPage.xml</value>
                  <value>classpath:edu/mit/kc/sapfeed/SapFeedGenerateSponsorFeedPage.xml</value>
+                 <value>classpath:edu/mit/kc/sapfeed/SapFeedDetails.xml</value>
+                 <value>classpath:edu/mit/kc/sapfeed/docs/SapFeedDetailsMaintenanceDocument.xml</value>
                  
                  <!--  dashboard -->
                  <value>classpath:edu/mit/kc/dashboard/DashboardView.xml</value>

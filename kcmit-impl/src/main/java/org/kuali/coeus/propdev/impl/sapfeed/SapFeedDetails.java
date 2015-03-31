@@ -1,16 +1,36 @@
 package org.kuali.coeus.propdev.impl.sapfeed;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 
-
+@Entity
+@Table(name = "SAP_FEED_DETAILS")
 public class SapFeedDetails extends KcPersistableBusinessObjectBase {
 	
+	@Id
+    @Column(name = "FEED_ID")
 	private Integer feedId;
+	
+	@Column(name = "AWARD_NUMBER")
 	private String awardNumber;
+	 
+	@Column(name = "SEQUENCE_NUMBER")
 	private Integer sequenceNumber;
+	 
+	@Column(name = "FEED_TYPE")
 	private String feedType;
+	 
+	@Column(name = "FEED_STATUS")
 	private String feedStatus;
+	 
+	@Column(name = "BATCH_ID")
 	private String batchId;
+	 
+	@Column(name = "TRANSACTION_ID")
 	private String tranId;
 	
 	
