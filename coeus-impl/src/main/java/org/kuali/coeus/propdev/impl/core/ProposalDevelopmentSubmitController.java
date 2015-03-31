@@ -172,6 +172,10 @@ public class ProposalDevelopmentSubmitController extends
     @Autowired
     @Qualifier("kcWorkflowService")
     private KcWorkflowService kcWorkflowService;
+    
+    @Autowired
+    @Qualifier("proposalTypeService")
+    private ProposalTypeService proposalTypeService;
 
     private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
 
@@ -369,6 +373,7 @@ public class ProposalDevelopmentSubmitController extends
 
     	if (!requiresResubmissionPrompt(form)) {
     		if(validToSubmitToSponsor(form) ) {
+    			setProposalTypeCodeNewChangedAndCorrected( form);
     			submitApplication(form);
                 handleSubmissionNotification(form);
                 form.setDeferredMessages(getGlobalVariableService().getMessageMap());
@@ -376,7 +381,9 @@ public class ProposalDevelopmentSubmitController extends
     		} else {
                 return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-    	} else {
+    	} else if(sequenceIPToSubmitToSponsor(form)) {
+            return getModelAndViewService().showDialog("PropDev-ResumbitSequence-OptionsSection", true, form);
+    	}else {
             return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
     	}
     }
@@ -427,6 +434,28 @@ public class ProposalDevelopmentSubmitController extends
     	boolean isValid = !getValidationState(form).equals(AuditHelper.ValidationState.ERROR);
     	isValid &= getKcBusinessRulesEngine().applyRules(new SubmitToSponsorEvent(form.getProposalDevelopmentDocument()));
     	return isValid;
+    }
+    
+    protected boolean sequenceIPToSubmitToSponsor(ProposalDevelopmentDocumentForm form) {
+    	boolean isValid = false;
+    	ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
+    	DevelopmentProposal developmentProposal= proposalDevelopmentDocument.getDevelopmentProposal();
+    	if( StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
+        				|| StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getBudgetSowUpdateProposalTypeCode())
+        						|| StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode())
+        								|| StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())) {
+    		isValid=true;
+        }
+    	return isValid;
+    }
+    
+    protected void setProposalTypeCodeNewChangedAndCorrected(ProposalDevelopmentDocumentForm form) {
+    	ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
+    	DevelopmentProposal developmentProposal= proposalDevelopmentDocument.getDevelopmentProposal();
+    	if( StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+    			&& developmentProposal.getContinuedFrom() != null) {
+    	form.setResubmissionOption(ProposalDevelopmentConstants.ResubmissionOptions.GENERATE_NEW_VERSION_OF_ORIGINAL_IP);
+    	}
     }
     
     protected List<String> getUnitRulesMessages(ProposalDevelopmentDocument pdDoc) {
@@ -879,4 +908,8 @@ public class ProposalDevelopmentSubmitController extends
     public void setKcWorkflowService(KcWorkflowService kcWorkflowService) {
         this.kcWorkflowService = kcWorkflowService;
     }
+    
+    public ProposalTypeService getProposalTypeService() {
+		return proposalTypeService;
+	}
 }

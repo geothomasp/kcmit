@@ -32,6 +32,21 @@ public interface ProposalTypeService {
 	
 	public String getRenewProposalTypeCode();
 	
+	public String getNewChangedOrCorrectedProposalTypeCode();
+	
+	public String getPreProposalProposalTypeCode();
+	
+	public String getBudgetSowUpdateProposalTypeCode();
+	
+	public String getSupplementChangedOrCorrectedProposalTypeCode();
+	
+	public String getRenewalChangedOrCorrectedProposalTypeCode();
+	
+	public String getResubmissionChangedOrCorrectedProposalTypeCode();
+	
+	public String getSupplementProposalTypeCode();
+	
+	
 	public boolean isProposalTypeRenewalRevisionContinuation(String proposalTypeCode);
 
 }

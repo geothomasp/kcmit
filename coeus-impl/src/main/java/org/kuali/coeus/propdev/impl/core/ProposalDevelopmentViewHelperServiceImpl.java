@@ -848,14 +848,18 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     }
 
     public boolean requiresResubmissionPrompt(DevelopmentProposal developmentProposal, String resubmissionOption) {
-       return ( getProposalTypeService().getContinuationProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
-            || getProposalTypeService().getRenewProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
-            || getProposalTypeService().getResubmissionProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
-            || getProposalTypeService().getRevisionProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
-            || getProposalTypeService().getS2SSubmissionChangeCorrectedCode().equals(developmentProposal.getProposalTypeCode())
-            || isSubmissionChangeCorrected(developmentProposal))
-            && resubmissionOption == null;
-    }
+        return ( getProposalTypeService().getContinuationProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getRenewProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getResubmissionProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getRevisionProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getS2SSubmissionChangeCorrectedCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getBudgetSowUpdateProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode().equals(developmentProposal.getProposalTypeCode())
+             || isSubmissionChangeCorrected(developmentProposal))
+             && resubmissionOption == null;
+     }
     
 
     
