@@ -488,11 +488,9 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
         if (developmentProposal.getRolodex() != null) {
             institutionalProposal.setRolodexId(developmentProposal.getRolodex().getRolodexId());
         }
-   /*     if(institutionalProposal.getAwardType()!=null && developmentProposal.getAnticipatedAwardType()!=null){
-        institutionalProposal.getAwardType().setDescription(developmentProposal.getAnticipatedAwardType().getDescription());
-        institutionalProposal.setAwardTypeCode(developmentProposal.getAnticipatedAwardType().getCode());
-        }    */
-        institutionalProposal.setAwardTypeCode(developmentProposal.getAnticipatedAwardType().getCode());
+        if(developmentProposal.getAnticipatedAwardType()!=null){
+        	institutionalProposal.setAwardTypeCode(developmentProposal.getAnticipatedAwardType().getCode());
+        }
     }
     
     protected void doCustomAttributeDataFeed(InstitutionalProposalDocument institutionalProposalDocument, DevelopmentProposal developmentProposal) throws WorkflowException {
