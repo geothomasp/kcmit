@@ -33,8 +33,10 @@ import org.kuali.coeus.s2sgen.api.print.FormPrintService;
 import org.kuali.coeus.sys.api.model.KcFile;
 import org.kuali.coeus.sys.framework.controller.ControllerFileUtils;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.uif.UifParameters;
@@ -61,6 +63,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class ProposalDevelopmentS2SController extends ProposalDevelopmentControllerBase {
     private static final String CONTENT_TYPE_XML = "text/xml";
     private static final String CONTENT_TYPE_PDF = "application/pdf";
+    private ProposalTypeService proposalTypeService;
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProposalDevelopmentS2SController.class);
 
@@ -107,7 +110,17 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
 
            //Set default S2S Submission Type
            if (StringUtils.isBlank(form.getNewS2sOpportunity().getS2sSubmissionTypeCode())){
-               String defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, KeyConstants.S2S_SUBMISSIONTYPE_APPLICATION);
+        	   String defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, KeyConstants.S2S_SUBMISSIONTYPE_APPLICATION);
+               if(StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+            		   || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
+            				   || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode())
+            						  || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())) {
+            	   defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+                           ParameterConstants.DOCUMENT_COMPONENT, ProposalDevelopmentConstants.PropDevParameterConstants.CHANGE_CORRECTED_CODE); 
+        	   } else if(StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getPreProposalProposalTypeCode())) {
+        		   defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+                           ParameterConstants.ALL_COMPONENT, ProposalDevelopmentConstants.PropDevParameterConstants.S2S_SUBMISSION_TYPE_CODE_PREAPPLICATION_PARM);
+        	   }
                proposal.getS2sOpportunity().setS2sSubmissionTypeCode(defaultS2sSubmissionTypeCode);
                getDataObjectService().wrap(proposal.getS2sOpportunity()).fetchRelationship("s2sSubmissionType");
            }
@@ -426,6 +439,13 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
 
     public void setProposalDevelopmentDocumentViewAuthorizer(ProposalDevelopmentDocumentViewAuthorizer proposalDevelopmentDocumentViewAuthorizer) {
         this.proposalDevelopmentDocumentViewAuthorizer = proposalDevelopmentDocumentViewAuthorizer;
+    }
+    
+    public ProposalTypeService getProposalTypeService() {
+        if (proposalTypeService == null) {
+            proposalTypeService = KcServiceLocator.getService(ProposalTypeService.class);
+        }
+        return proposalTypeService;
     }
 }
 

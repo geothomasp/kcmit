@@ -29,6 +29,7 @@ import org.kuali.coeus.common.framework.version.VersionException;
 import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.VersioningService;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.core.ProposalTypeService;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.person.ProposalPersonUnit;
 import org.kuali.coeus.propdev.impl.person.creditsplit.ProposalPersonCreditSplit;
@@ -107,6 +108,8 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
 	private static final String FALSE_INDICATOR_VALUE = "0";
 
     private FiscalYearMonthService fiscalYearMonthService;
+    
+    private ProposalTypeService proposalTypeService;
     
     
     public FiscalYearMonthService getFiscalYearMonthService() {
@@ -452,7 +455,18 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
     }
     
     protected void doBaseFieldsDataFeed(InstitutionalProposal institutionalProposal, DevelopmentProposal developmentProposal) {
+    	
+    	if(StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())) {
+    		institutionalProposal.setProposalTypeCode(Integer.parseInt(getProposalTypeService().getNewProposalTypeCode()));	
+    	} else if(StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode())) {
+    		institutionalProposal.setProposalTypeCode(Integer.parseInt(getProposalTypeService().getSupplementProposalTypeCode()));
+    	} else if(StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())) {
+    		institutionalProposal.setProposalTypeCode(Integer.parseInt(getProposalTypeService().getRenewProposalTypeCode()));
+    	} else if(StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getBudgetSowUpdateProposalTypeCode())) {
+    		//Do Nothing Resulting Institute Proposal type should be the same as the original Institute Proposal
+    	} else {
         institutionalProposal.setProposalTypeCode(Integer.parseInt(developmentProposal.getProposalTypeCode()));
+    	}
         institutionalProposal.setActivityTypeCode(developmentProposal.getActivityTypeCode());
         if (developmentProposal.getProposalDocument().getDocumentHeader().getWorkflowDocument().isDisapproved()) {
             //if rejected set status code to WITHDRAWN
@@ -836,5 +850,12 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
 
     public void setInstitutionalProposalDao(InstitutionalProposalDao institutionalProposalDao) {
         this.institutionalProposalDao = institutionalProposalDao;
+    }
+    
+    public ProposalTypeService getProposalTypeService() {
+        if (proposalTypeService == null) {
+            proposalTypeService = KcServiceLocator.getService(ProposalTypeService.class);
+        }
+        return proposalTypeService;
     }
 }
