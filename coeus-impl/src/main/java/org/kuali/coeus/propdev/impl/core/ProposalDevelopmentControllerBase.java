@@ -413,6 +413,7 @@ public abstract class ProposalDevelopmentControllerBase {
             	if(narrative.getObjectId()!=null){
             		narrative.setUpdated(true);
             		form.getProposalDevelopmentAttachmentHelper().setNarrative(narrative);
+            		 getDataObjectService().wrap(narrative).fetchRelationship("narrativeStatus");
             	}
             	form.getProposalDevelopmentAttachmentHelper().handleNarrativeUpdates(form, document);
             	form.getProposalDevelopmentAttachmentHelper().handleInstAttachmentUpdates(form, document);

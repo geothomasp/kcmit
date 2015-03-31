@@ -84,7 +84,12 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=save", "pageId=PropDev-AttachmentsPage"})
     public ModelAndView saveAttachments(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
-       return super.narrativePageSave(form,form.isCanEditView());
+       Narrative narrative =form.getProposalDevelopmentAttachmentHelper().getNarrative();
+       if(narrative.getObjectId()!=null){
+    	   narrative.setUpdated(true);
+    	   form.getProposalDevelopmentAttachmentHelper().setNarrative(narrative);
+       }
+    	return super.narrativePageSave(form,form.isCanEditView());
     }
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=addFileUploadLine")
@@ -147,7 +152,7 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
            Narrative tmpNarrative = new Narrative();
            form.getProposalDevelopmentAttachmentHelper().setSelectedLineIndex(selectedLine);
            PropertyUtils.copyProperties(tmpNarrative,form.getDevelopmentProposal().getNarrative(Integer.parseInt(selectedLine)));
-           form.getProposalDevelopmentAttachmentHelper().setNarrative(tmpNarrative);
+           
        }
 
         return getModelAndViewService().showDialog("PropDev-AttachmentsPage-ProposalDetails",true,form);
@@ -282,6 +287,7 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
         int selectedLineIndex = Integer.parseInt(form.getProposalDevelopmentAttachmentHelper().getSelectedLineIndex());
         if(narrative.getObjectId() != null) {
         	narrative.setUpdated(true);
+        	form.getProposalDevelopmentAttachmentHelper().setNarrative(narrative);
         }
         narrative.refreshReferenceObject("narrativeType");
         narrative.refreshReferenceObject("narrativeStatus");
