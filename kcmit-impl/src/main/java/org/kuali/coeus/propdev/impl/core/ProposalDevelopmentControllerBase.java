@@ -618,7 +618,7 @@ public abstract class ProposalDevelopmentControllerBase {
     public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean wasComplete,boolean hasCOIquestions) {
         boolean selfCertifyOnly = getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,Constants.PARAMETER_COMPONENT_DOCUMENT,ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
         if (selfCertifyOnly) {
-            String proxyId = getGlobalVariableService().getUserSession().getPrincipalId();
+            String proxyId = getGlobalVariableService().getUserSession().getPrincipalName();
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
             	if(hasCOIquestions){
             		try {
