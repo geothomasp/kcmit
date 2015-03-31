@@ -563,6 +563,7 @@
                     <property name="detailCols">
                         <list>
                             <value>awardNumber</value>
+                             <value>award.accountNumber</value>
                             <value>leadUnitNumber</value>
                             <value>leadUnit.unitName</value>
                             <value>reportStatus.description</value>
@@ -636,6 +637,7 @@
                     <property name="detailCols">
                         <list>
                             <value>awardNumber</value>
+                             <value>award.accountNumber</value>
                             <value>leadUnitNumber</value>
                             <value>leadUnit.unitName</value>
                             <value>reportStatus.description</value>
@@ -652,6 +654,7 @@
         <property name="allFields">
             <list>
                 <value>awardNumber</value>
+                <value>award.accountNumber</value>
                 <value>piName</value>
                 <value>leadUnitNumber</value>
                 <value>leadUnit.unitName</value>

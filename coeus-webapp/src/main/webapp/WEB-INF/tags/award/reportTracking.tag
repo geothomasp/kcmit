@@ -150,6 +150,10 @@
 						attributeEntry="${reportTrackingAttributes.overdue}" readOnly="${true }"  />
 				</td>
 				<td>
+					<kul:htmlControlAttribute property="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].accountNumber" 
+						attributeEntry="${reportTrackingAttributes.accountNumber}" readOnly="${true }"  />
+				</td>
+				<td>
 					<kul:htmlControlAttribute property="document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerName" 
 					onblur="loadContactPersonName('document.award.awardReportTermItems[${index}].reportTrackings[${status.index}].preparerName',
 										'preparer[${status.index}]',
