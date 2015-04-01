@@ -103,7 +103,7 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 		String statusMasterFeed = null;
 		statusMasterFeed = sapFeedService.generateMasterFeed(Path, user);
 		
-		if (statusMasterFeed.equals("")) {
+		if (statusMasterFeed.equals("") || statusMasterFeed.equals("-1") ) {
 			return getModelAndViewService().showDialog(
 					SAP_FEED_COMMONERROR_DIALOG_ID, true, form);
 		}
