@@ -75,16 +75,6 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
             //workaround for the document associated with the OJB retrived dev prop not having a workflow doc.
             person.setDevelopmentProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal());
             person.getQuestionnaireHelper().populateAnswers();
-            Map<String, Object> values = new HashMap<String, Object>();
-            values.put("documentNumber", form.getProposalDevelopmentDocument().getDocumentNumber());
-            values.put("recipients", person.getPersonId());
-            List<KcNotification> notifications =  (List<KcNotification>)businessObjectService.findMatchingOrderBy(KcNotification.class,values,"updateTimestamp",false);
-            for(KcNotification notification : notifications){
-            	if(notification.getNotificationType().getActionCode().equals("104") && notification.getNotificationType().getModuleCode().equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE)){
-            		person.setNotificationCreateTimestamp(notification.getUpdateTimestamp());
-            		person.setNotificationUpdateUser(notification.getUpdateUser());
-            	}
-            }
         }
         return super.navigate(form, result, request, response);
     }
@@ -305,6 +295,23 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
             }
         }
         return super.save(form);
+    }
+    
+    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=preparePersonNotificationDetails")
+    public ModelAndView preparePersonNotificationDetails(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
+    	for (ProposalPerson person : form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
+    		Map<String, Object> values = new HashMap<String, Object>();
+    		values.put("documentNumber", form.getProposalDevelopmentDocument().getDocumentNumber());
+    		values.put("recipients", person.getPersonId());
+    		List<KcNotification> notifications =  (List<KcNotification>)businessObjectService.findMatchingOrderBy(KcNotification.class,values,"updateTimestamp",true);
+    		for(KcNotification notification : notifications){
+    			if(notification.getNotificationType().getActionCode().equals("104") && notification.getNotificationType().getModuleCode().equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE)){
+    				person.setNotificationCreateTimestamp(notification.getUpdateTimestamp());
+    				person.setNotificationUpdateUser(notification.getUpdateUser());
+    			}
+    		}
+    	}
+    	return getModelAndViewService().showDialog("PropDev-Personal-NotifyPersonsDialog",true,form);
     }
 
     private enum MoveOperationEnum {
