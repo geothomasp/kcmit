@@ -152,6 +152,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         newProposalPerson.setProjectRole((String)form.getAddKeyPersonHelper().getParameter("keyPersonProjectRole"));
        }
        getKeyPersonnelService().addProposalPerson(newProposalPerson, form.getProposalDevelopmentDocument());
+       Collections.sort(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons(), new ProposalPersonRoleComparator());
        form.getAddKeyPersonHelper().reset();
        return getRefreshControllerService().refresh(form);
    }
@@ -360,5 +361,53 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
+	}
+	
+	public class ProposalPersonRoleComparator implements Comparator<ProposalPerson> {
+		@Override
+		public int compare(ProposalPerson person1, ProposalPerson person2) {
+			int retval = 0;
+			if (person1.isInvestigator() || person2.isInvestigator()) {
+				if (person1.isPrincipalInvestigator() || person2.isPrincipalInvestigator()) {
+					if (person1.isPrincipalInvestigator()) {
+						retval--;
+					}
+					if (person2.isPrincipalInvestigator()) {
+						retval++;
+					}
+				}
+				if (retval == 0) {
+					if (person1.isMultiplePi() || person2.isMultiplePi()) {
+						if (person1.isMultiplePi()) {
+							retval--;
+						}
+						if (person2.isMultiplePi()) {
+							retval++;
+						}
+					}
+				}
+			}
+			if (retval == 0) {
+				if (person1.isCoInvestigator() || person2.isCoInvestigator()) {
+					if (person1.isCoInvestigator()) {
+						retval--;
+					}
+					if (person2.isCoInvestigator()) {
+						retval++;
+					}
+				}
+			}
+			if (retval == 0) {
+				if (person1.isKeyPerson() || person2.isKeyPerson()) {
+					if (person1.isKeyPerson()) {
+						retval--;
+					}
+					if (person2.isKeyPerson()) {
+						retval++;
+					}
+				}
+			}
+			return retval;
+		}
 	}
 }
