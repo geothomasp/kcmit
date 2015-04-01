@@ -348,8 +348,7 @@ public class ProposalDevelopmentSubmitController extends
 
         if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
-    			setProposalTypeCodeNewChangedAndCorrected( form);
-                //Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
+    			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
     			if(autogenerateInstitutionalProposal() && ! hasInstitutionalProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalNumber())) {
     				submitApplication(form);
     			}
@@ -358,8 +357,6 @@ public class ProposalDevelopmentSubmitController extends
             } else {
     			return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-        }else if(sequenceIPToSubmitToSponsor(form)) {
-            return getModelAndViewService().showDialog("PropDev-ResumbitSequence-OptionsSection", true, form);
         } else {
         	return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
         }
@@ -384,14 +381,17 @@ public class ProposalDevelopmentSubmitController extends
 
     	if (!requiresResubmissionPrompt(form)) {
     		if(validToSubmitToSponsor(form) ) {
-    			submitApplication(form);
+    			setProposalTypeCodeNewChangedAndCorrected(form);
+                submitApplication(form);
                 handleSubmissionNotification(form);
                 form.setDeferredMessages(getGlobalVariableService().getMessageMap());
                 return sendSubmitToSponsorNotification(form);
     		} else {
                 return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-    	} else {
+    	}else if(sequenceIPToSubmitToSponsor(form)) {
+            return getModelAndViewService().showDialog("PropDev-ResumbitSequence-OptionsSection", true, form);
+        }else {
             return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
     	}
     }
