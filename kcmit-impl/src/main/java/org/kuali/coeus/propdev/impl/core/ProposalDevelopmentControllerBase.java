@@ -278,13 +278,14 @@ public abstract class ProposalDevelopmentControllerBase {
          }
 
          ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).setOrdinalPosition(form.getDevelopmentProposal().getProposalPersons());
-         saveAnswerHeaders(form, form.getPageId());
+        
 
          getTransactionalDocumentControllerService().save(form);
          if (form.isAuditActivated()){
              getAuditHelper().auditConditionally(form);
          }
-
+         
+         saveAnswerHeaders(form, form.getPageId());
          
          populateAdHocRecipients(form.getProposalDevelopmentDocument());
          
@@ -574,6 +575,7 @@ public abstract class ProposalDevelopmentControllerBase {
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
                         allCertificationAreNowComplete &= isComplete;
                         boolean hasCOIquestions = checkForCOIquestions(answerHeader);
+                        updateCOIOnPDCerificationComplete(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete,hasCOIquestions);
                         checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete,wasComplete,hasCOIquestions);
                     }
                 }
@@ -595,6 +597,19 @@ public abstract class ProposalDevelopmentControllerBase {
         }
 	}
 
+	public void updateCOIOnPDCerificationComplete(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean hasCOIquestions) {
+            String userName = getGlobalVariableService().getUserSession().getPrincipalName();
+            if (recentlyCompleted) {
+            	if(hasCOIquestions){
+            		try {
+            			getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), userName);
+            		} catch (SQLException e) {
+            			LOGGER.info(Level.ALL, e);
+            			LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
+            		}
+            	}
+            }
+    }
 	private boolean checkForCOIquestions(AnswerHeader answerHeader ){
 
 		boolean hasCOIquestions = false;
@@ -618,16 +633,8 @@ public abstract class ProposalDevelopmentControllerBase {
     public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean wasComplete,boolean hasCOIquestions) {
         boolean selfCertifyOnly = getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,Constants.PARAMETER_COMPONENT_DOCUMENT,ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
         if (selfCertifyOnly) {
-            String proxyId = getGlobalVariableService().getUserSession().getPrincipalName();
+            String proxyId = getGlobalVariableService().getUserSession().getPrincipalId();
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
-            	if(hasCOIquestions){
-            		try {
-            			getKcCoiLinkService().updateCOIOnPDCerificationComplete(developmentProposal.getProposalNumber(), person.getPersonId(), proxyId);
-            		} catch (SQLException e) {
-            			LOGGER.info(Level.ALL, e);
-            			LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
-            		}
-            	}
                 ProposalDevelopmentNotificationContext context = new ProposalDevelopmentNotificationContext(developmentProposal,"106","Proposal Person Certification Completed");
                 ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(developmentProposal);
                 KcNotification notification = getKcNotificationService().createNotificationObject(context);
