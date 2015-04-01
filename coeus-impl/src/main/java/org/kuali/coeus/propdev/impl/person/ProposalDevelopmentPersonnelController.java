@@ -30,8 +30,10 @@ import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentViewHelperServiceImp
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
+import org.kuali.coeus.common.framework.module.CoeusModule;
 import org.kuali.coeus.common.framework.person.PersonTypeConstants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
@@ -61,6 +63,11 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
     @Autowired
     @Qualifier("keyPersonnelService")
 	private KeyPersonnelService keyPersonnelService;
+    
+
+	@Autowired
+	@Qualifier("businessObjectService")
+	private BusinessObjectService businessObjectService;
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-PersonnelPage"})
     public ModelAndView navigateToPersonnel(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -68,6 +75,16 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
             //workaround for the document associated with the OJB retrived dev prop not having a workflow doc.
             person.setDevelopmentProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal());
             person.getQuestionnaireHelper().populateAnswers();
+            Map<String, Object> values = new HashMap<String, Object>();
+            values.put("documentNumber", form.getProposalDevelopmentDocument().getDocumentNumber());
+            values.put("recipients", person.getPersonId());
+            List<KcNotification> notifications =  (List<KcNotification>)businessObjectService.findMatchingOrderBy(KcNotification.class,values,"updateTimestamp",false);
+            for(KcNotification notification : notifications){
+            	if(notification.getNotificationType().getActionCode().equals("104") && notification.getNotificationType().getModuleCode().equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE)){
+            		person.setNotificationCreateTimestamp(notification.getUpdateTimestamp());
+            		person.setNotificationUpdateUser(notification.getUpdateUser());
+            	}
+            }
         }
         return super.navigate(form, result, request, response);
     }
@@ -234,7 +251,10 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         recipient.setPersonId(person.getPersonId());        
         getKcNotificationService().sendNotification(context,notification,Collections.singletonList(recipient));
         getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-PersonnelPage-Collection", KeyConstants.INFO_NOTIFICATIONS_SENT, person.getFullName()+" "+notification.getCreateTimestamp());
-        person.setCreateTimestamp(notification.getCreateTimestamp());
+        notification.setRecipients(person.getPersonId());
+        getKcNotificationService().saveNotification(notification);
+        person.setNotificationCreateTimestamp(notification.getCreateTimestamp());
+        person.setNotificationUpdateUser(notification.getCreateUser());
     }
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=sendAllCertificationNotifications")
@@ -242,16 +262,16 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         int index = 0;
         for (ProposalPerson proposalPerson : form.getDevelopmentProposal().getProposalPersons()) {
         	if(proposalPerson.isSelectedPerson()){
-            boolean certificationComplete = true;
-            for (AnswerHeader answerHeader : proposalPerson.getQuestionnaireHelper().getAnswerHeaders()) {
-                certificationComplete &= answerHeader.isCompleted();
-            }
-            if (!certificationComplete) {
-                sendPersonNotification(form, String.valueOf(index));
-            }
-
-            index++;
-        }}
+        		boolean certificationComplete = true;
+        		for (AnswerHeader answerHeader : proposalPerson.getQuestionnaireHelper().getAnswerHeaders()) {
+        			certificationComplete &= answerHeader.isCompleted();
+        		}
+        		if (!certificationComplete) {
+        			sendPersonNotification(form, String.valueOf(index));
+        		}
+        	}  
+        	index++;
+        }
         return getRefreshControllerService().refresh(form);
     }
 
@@ -333,4 +353,12 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
     public void setWizardControllerService(WizardControllerService wizardControllerService) {
         this.wizardControllerService = wizardControllerService;
     }
+    
+    public BusinessObjectService getBusinessObjectService() {
+		return businessObjectService;
+	}
+
+	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+		this.businessObjectService = businessObjectService;
+	}
 }

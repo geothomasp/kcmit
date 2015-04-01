@@ -439,8 +439,16 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 	public void setCoiDisclosureStatus(String coiDisclosureStatus) {
 		this.coiDisclosureStatus = coiDisclosureStatus;
 	}
+	
     @Transient
     private Timestamp createTimestamp;
+    
+    @Transient
+    private Timestamp notificationCreateTimestamp;
+
+
+    @Transient
+    private String notificationUpdateUser;
  
     public boolean isMoveDownAllowed() {
         return moveDownAllowed;
@@ -1822,5 +1830,21 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 
 	public void setCreateTimestamp(Timestamp createTimestamp) {
 		this.createTimestamp = createTimestamp;
+	}
+	
+	public Timestamp getNotificationCreateTimestamp() {
+		return notificationCreateTimestamp;
+	}
+
+	public void setNotificationCreateTimestamp(Timestamp notificationCreateTimestamp) {
+		this.notificationCreateTimestamp = notificationCreateTimestamp;
+	}
+
+	public String getNotificationUpdateUser() {
+		return notificationUpdateUser;
+	}
+
+	public void setNotificationUpdateUser(String notificationUpdateUser) {
+		this.notificationUpdateUser = notificationUpdateUser;
 	}
 }
