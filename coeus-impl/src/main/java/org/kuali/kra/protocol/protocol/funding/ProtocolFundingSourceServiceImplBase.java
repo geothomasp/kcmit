@@ -682,11 +682,11 @@ public abstract class ProtocolFundingSourceServiceImplBase implements ProtocolFu
             isLookupable = true;
         } else if (FundingSourceType.UNIT.equals(fundingSourceTypeCode)) {
             isLookupable = true;
-        } else if (FundingSourceType.AWARD.equals(fundingSourceTypeCode) && isAwardLinkEnabled()) {
+        } else if (FundingSourceType.AWARD.equals(fundingSourceTypeCode)) {
             isLookupable = true;
-        } else if (FundingSourceType.PROPOSAL_DEVELOPMENT.equals(fundingSourceTypeCode) && isDevelopmentProposalLinkEnabled()) {
+        } else if (FundingSourceType.PROPOSAL_DEVELOPMENT.equals(fundingSourceTypeCode)) {
             isLookupable = true;
-        } else if (FundingSourceType.INSTITUTIONAL_PROPOSAL.equals(fundingSourceTypeCode) && isInstitionalProposalLinkEnabled()) {
+        } else if (FundingSourceType.INSTITUTIONAL_PROPOSAL.equals(fundingSourceTypeCode)) {
             isLookupable = true;
         }
         
