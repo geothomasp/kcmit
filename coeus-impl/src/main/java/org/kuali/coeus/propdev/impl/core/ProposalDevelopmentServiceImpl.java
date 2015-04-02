@@ -24,7 +24,14 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItemCalculatedAmount;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetRateAndBase;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPerson;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelCalculatedAmount;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
+import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelRateAndBase;
 import org.kuali.coeus.common.budget.framework.rate.BudgetLaRate;
 import org.kuali.coeus.common.budget.framework.rate.BudgetRate;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
@@ -434,7 +441,14 @@ public class ProposalDevelopmentServiceImpl implements ProposalDevelopmentServic
         if (!budgetIds.isEmpty()) {
             getDataObjectService().deleteMatching(BudgetRate.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
             getDataObjectService().deleteMatching(BudgetLaRate.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetPersonnelCalculatedAmount.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetPersonnelRateAndBase.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetPersonnelDetails.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetLineItemCalculatedAmount.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetRateAndBase.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetLineItem.class, QueryByCriteria.Builder.fromPredicates(in("budgetId", budgetIds)));
             getDataObjectService().deleteMatching(BudgetPeriod.class, QueryByCriteria.Builder.fromPredicates(in("budget.budgetId", budgetIds)));
+            getDataObjectService().deleteMatching(BudgetPerson.class, QueryByCriteria.Builder.fromPredicates(in("budget.budgetId", budgetIds)));
         }
     }
 
