@@ -18,6 +18,7 @@
  */
 package org.kuali.kra.award.budget;
 
+import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
@@ -144,5 +145,12 @@ public interface AwardBudgetService extends BudgetCommonService<Award> {
     	    throws WorkflowException;    
     
     public AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException;
-    
+    /**
+     *
+     * This method will clear the BudgetSumamryPeriodCalcAmounts
+     * @param budgetPeriod
+     */
+    public void removeBudgetSummaryPeriodCalcAmounts(BudgetPeriod budgetPeriod);
+
+    public void populateSummaryCalcAmounts(Budget budget,BudgetPeriod budgetPeriod);
 }
