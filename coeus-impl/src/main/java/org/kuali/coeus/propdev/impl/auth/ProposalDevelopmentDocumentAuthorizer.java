@@ -407,22 +407,11 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
         return isAuthorizedToRecallProposal(document, user);
     }
 
-    public boolean hasCertificationPermissions(ProposalDevelopmentDocument document, Person user, ProposalPerson proposalPerson){
-        final Boolean param = getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
-
-        if (param != null && param) {
-
-            // null person indicates non employee and only people with proxy perms can certify for them so return false below
-            boolean isKeyPersonnel = proposalPerson.getPerson() != null && proposalPerson.getPerson().getPersonId().equals(user.getPrincipalId());
-            boolean canCertify = getKcAuthorizationService().hasPermission(user.getPrincipalId(), document, PermissionConstants.CERTIFY);
-
-            return isKeyPersonnel || canCertify;
-        }
-        return true;
-    }
     
-    public boolean canViewCertificationTab(ProposalDevelopmentDocument document, Person user,ProposalPerson proposalPerson){
-            
+    public boolean hasCertificationPermissions(ProposalDevelopmentDocument document, Person user,ProposalPerson proposalPerson){
+           if(proposalPerson.getPerson()==null){
+        	   return false;
+           }
            boolean isPiLoggedIn = isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal(),user);
            boolean canCertifyProposal = canCertifyProposal(document,user);
            if((isPiLoggedIn && proposalPerson.getPersonId().equals(user.getPrincipalId())) ||

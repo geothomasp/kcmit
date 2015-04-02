@@ -966,6 +966,9 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         return true;
     }
     public boolean canViewCertificationTab(ProposalDevelopmentDocument document,ProposalPerson proposalPerson){
+    	if(proposalPerson.getPerson()==null){
+      	   return false;
+        }
     	String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
     	boolean isPiLoggedIn = isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal(),currentUser);
     	boolean canCertifyProposal = canCertifyProposal(document,currentUser);
@@ -1038,6 +1041,9 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
 				return false;
 			}
     public boolean isCertQuestViewOnly(ProposalDevelopmentDocument document ,ProposalPerson proposalPerson){
+    	 if(proposalPerson.getPerson()==null){
+      	   return false;
+         }
     	 String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
     	 boolean canViewCretification = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.VIEW_CERTIFICATION);
     	 boolean canCertify = kraAuthorizationService.hasPermission(currentUser, document, PermissionConstants.CERTIFY); 
