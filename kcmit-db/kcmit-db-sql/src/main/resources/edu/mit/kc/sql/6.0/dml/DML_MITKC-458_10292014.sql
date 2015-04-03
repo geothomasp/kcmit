@@ -30,5 +30,5 @@ update krcr_parm_t set val = 'N' where parm_nm = 'institutionalproposal.creditsp
 /
 update krcr_parm_t set val = 'FDP_ATT_5' where parm_nm = 'Subaward_FDP_Attachment_5_Form_ID'
 /
-update krcr_parm_t set val = 'Project Year' where parm_nm = 'CostShareProjectPeriodNameLabel'
+update krcr_parm_t set val = 'Project Period' where parm_nm = 'CostShareProjectPeriodNameLabel'
 /
