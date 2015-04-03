@@ -48,12 +48,9 @@ import org.kuali.coeus.propdev.impl.person.question.ProposalPersonQuestionnaireH
 import org.kuali.coeus.propdev.proposalperson.CoiDbFunctionService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.SQLException;
 import javax.persistence.*;
 
@@ -111,8 +108,12 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     @Column(name = "PROP_PERSON_NUMBER")
     private Integer proposalPersonNumber;
 
-    @Column(name = "PROP_PERSON_ROLE_ID")
+
+	@Column(name = "PROP_PERSON_ROLE_ID")
     private String proposalPersonRoleId;
+    
+    @OneToOne(mappedBy = "proposalPerson", orphanRemoval = true, cascade = { CascadeType.ALL })
+    private ProposalPersonNotification proposalPersonNotification;
 
     @OneToOne(cascade = { CascadeType.REFRESH })
     @PrimaryKeyJoinColumns({ @PrimaryKeyJoinColumn(name = "PROPOSAL_NUMBER", referencedColumnName = "PROPOSAL_NUMBER"), @PrimaryKeyJoinColumn(name = "PROP_PERSON_NUMBER", referencedColumnName = "PROP_PERSON_NUMBER") })
@@ -443,13 +444,7 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     @Transient
     private Timestamp createTimestamp;
     
-    @Transient
-    private Timestamp notificationCreateTimestamp;
-
-
-    @Transient
-    private String notificationUpdateUser;
- 
+   
     public boolean isMoveDownAllowed() {
         return moveDownAllowed;
     }
@@ -1832,19 +1827,13 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 		this.createTimestamp = createTimestamp;
 	}
 	
-	public Timestamp getNotificationCreateTimestamp() {
-		return notificationCreateTimestamp;
+	
+	
+	public ProposalPersonNotification getProposalPersonNotification() {
+		return proposalPersonNotification;
 	}
 
-	public void setNotificationCreateTimestamp(Timestamp notificationCreateTimestamp) {
-		this.notificationCreateTimestamp = notificationCreateTimestamp;
-	}
-
-	public String getNotificationUpdateUser() {
-		return notificationUpdateUser;
-	}
-
-	public void setNotificationUpdateUser(String notificationUpdateUser) {
-		this.notificationUpdateUser = notificationUpdateUser;
+	public void setProposalPersonNotification(ProposalPersonNotification proposalPersonNotification) {
+		this.proposalPersonNotification = proposalPersonNotification;
 	}
 }
