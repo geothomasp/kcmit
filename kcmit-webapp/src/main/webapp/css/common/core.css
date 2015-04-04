@@ -482,14 +482,16 @@ section.medusa div.btn a:hover{
 .kc-applicationFooter {
     background-color: #aa003e;
     color: #FFF;
-    bottom: 0px;
     width: 100%;
     text-align: center;
-    padding-top: 20px;
-    padding-bottom: 12px;
     background-repeat: no-repeat;
     background-position: right 5px;
-    height: 80px;
+    bottom: 0;
+
+    font-size: 10px;
+    height: 40px;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 .kc-applicationFooter a {
@@ -497,7 +499,8 @@ section.medusa div.btn a:hover{
     text-decoration: underline;
 }
 
-.kc-applicationFooter-version {
-    font-size: 10px;
+.header-logoGroup > a {
+    height: 50px;
+    margin-right: 0;
 }
 
