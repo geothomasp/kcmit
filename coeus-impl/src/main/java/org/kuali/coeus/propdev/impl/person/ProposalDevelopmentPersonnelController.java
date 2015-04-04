@@ -30,10 +30,12 @@ import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentViewHelperServiceImp
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
-import org.kuali.coeus.common.framework.module.CoeusModule;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.common.framework.person.PersonTypeConstants;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
@@ -66,10 +68,12 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
     
 
 	@Autowired
-	@Qualifier("businessObjectService")
-	private BusinessObjectService businessObjectService;
+	@Qualifier("dataObjectService")
+	private DataObjectService dataObjectService;
 
-    @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-PersonnelPage"})
+   
+
+	@Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-PersonnelPage"})
     public ModelAndView navigateToPersonnel(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
         for (ProposalPerson person : form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
             //workaround for the document associated with the OJB retrived dev prop not having a workflow doc.
@@ -142,6 +146,10 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         newProposalPerson.setProjectRole((String)form.getAddKeyPersonHelper().getParameter("keyPersonProjectRole"));
        }
        getKeyPersonnelService().addProposalPerson(newProposalPerson, form.getProposalDevelopmentDocument());
+       ProposalPersonNotification proposalPersonNotification = new ProposalPersonNotification();
+       proposalPersonNotification.setProposalPerson(newProposalPerson);
+       newProposalPerson.setProposalPersonNotification(proposalPersonNotification);
+       getDataObjectService().save(newProposalPerson);
        Collections.sort(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons(), new ProposalPersonRoleComparator());
        form.getAddKeyPersonHelper().reset();
        return getRefreshControllerService().refresh(form);
@@ -232,7 +240,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 
     public void sendPersonNotification(ProposalDevelopmentDocumentForm form, String selectedLine) throws Exception {
         ProposalPerson person = form.getDevelopmentProposal().getProposalPerson(Integer.parseInt(selectedLine));
-
+        String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
         ProposalDevelopmentNotificationContext context =
                 new ProposalDevelopmentNotificationContext(form.getDevelopmentProposal(), "104", "Certify Notification");
         ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(form.getDevelopmentProposal());
@@ -242,10 +250,17 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         recipient.setPersonId(person.getPersonId());        
         getKcNotificationService().sendNotification(context,notification,Collections.singletonList(recipient));
         getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-PersonnelPage-Collection", KeyConstants.INFO_NOTIFICATIONS_SENT, person.getFullName()+" "+notification.getCreateTimestamp());
-        notification.setRecipients(person.getPersonId());
-        getKcNotificationService().saveNotification(notification);
-        person.setNotificationCreateTimestamp(notification.getCreateTimestamp());
-        person.setNotificationUpdateUser(notification.getCreateUser());
+        if(person.getProposalPersonNotification()!=null){
+        person.getProposalPersonNotification().setNotificationSender(currentUser);
+        person.getProposalPersonNotification().setNotifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
+        }else{
+        	ProposalPersonNotification proposalPersonNotification =new ProposalPersonNotification();
+        	proposalPersonNotification.setProposalPerson(person);
+        	proposalPersonNotification.setNotificationSender(currentUser);
+        	proposalPersonNotification.setNotifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
+        	person.setProposalPersonNotification(proposalPersonNotification);
+        }
+        getDataObjectService().save(person.getProposalPersonNotification());
     }
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=sendAllCertificationNotifications")
@@ -297,23 +312,6 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         return super.save(form);
     }
     
-    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=preparePersonNotificationDetails")
-    public ModelAndView preparePersonNotificationDetails(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
-    	for (ProposalPerson person : form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
-    		Map<String, Object> values = new HashMap<String, Object>();
-    		values.put("documentNumber", form.getProposalDevelopmentDocument().getDocumentNumber());
-    		values.put("recipients", person.getPersonId());
-    		List<KcNotification> notifications =  (List<KcNotification>)businessObjectService.findMatchingOrderBy(KcNotification.class,values,"updateTimestamp",true);
-    		for(KcNotification notification : notifications){
-    			if(notification.getNotificationType().getActionCode().equals("104") && notification.getNotificationType().getModuleCode().equals(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE)){
-    				person.setNotificationCreateTimestamp(notification.getUpdateTimestamp());
-    				person.setNotificationUpdateUser(notification.getUpdateUser());
-    			}
-    		}
-    	}
-    	return getModelAndViewService().showDialog("PropDev-Personal-NotifyPersonsDialog",true,form);
-    }
-
     private enum MoveOperationEnum {
         MOVING_PERSON_DOWN (1),
         MOVING_PERSON_UP(-1);
@@ -362,14 +360,6 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         this.wizardControllerService = wizardControllerService;
     }
     
-    public BusinessObjectService getBusinessObjectService() {
-		return businessObjectService;
-	}
-
-	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-		this.businessObjectService = businessObjectService;
-	}
-	
 	public class ProposalPersonRoleComparator implements Comparator<ProposalPerson> {
 		@Override
 		public int compare(ProposalPerson person1, ProposalPerson person2) {
@@ -417,4 +407,12 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 			return retval;
 		}
 	}
+	
+	 public DataObjectService getDataObjectService() {
+			return dataObjectService;
+		}
+
+		public void setDataObjectService(DataObjectService dataObjectService) {
+			this.dataObjectService = dataObjectService;
+		}
 }

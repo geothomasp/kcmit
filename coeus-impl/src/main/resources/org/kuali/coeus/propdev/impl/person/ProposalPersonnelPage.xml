@@ -44,7 +44,7 @@
                     <property name="items">
                         <list>
                             <bean parent="PropDev-PersonnelPage-AddButton" p:order="10" p:render="@{!document.developmentProposal.isParent() and !#parent.readOnly}"/>
-                            <bean parent="Uif-PrimaryActionButton" p:order="20" p:actionLabel="Notify All" p:methodToCall="preparePersonNotificationDetails" p:cssClasses="pull-right"
+                            <bean parent="Uif-PrimaryActionButton" p:order="20" p:actionLabel="Notify All" p:actionScript="showDialog('PropDev-Personal-NotifyPersonsDialog')"  p:cssClasses="pull-right"
                                   p:render="@{#actionFlags[#{T(org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants.PropDevDocumentActions).NOTIFY_PROPOSAL_PERSONS}]
                                   and document.developmentProposal.proposalPersons.size() > 0
                                   and !#ViewHelper.areAllCertificationsComplete(document.developmentProposal.proposalPersons)
@@ -717,13 +717,13 @@
             <list>
             	<bean parent="Uif-InputField" p:propertyName="selectedPerson" p:order="20">
 					<property name="control">
-						<bean parent="Uif-CheckboxControl" p:disabled="@{!#ViewHelper.canViewCertificationTab(document,#line)}"/>
+						<bean parent="Uif-CheckboxControl" p:disabled="@{!#ViewHelper.canViewCertificationTab(document,#line) or #lp.questionnairesCompleted}"/>
 					</property>
 				</bean>
                 <bean parent="Uif-InputField" p:propertyName="fullName" p:order="10" p:readOnly="true"/>
           
-				<bean parent="Uif-InputField" p:label="Update User" p:propertyName="notificationUpdateUser" p:order="10" p:readOnly="true" />
-				<bean parent="Uif-InputField" p:label="Last Notification" p:propertyName="notificationCreateTimestamp" p:order="10" p:readOnly="true" />
+				<bean parent="Uif-InputField" p:label="Update User" p:propertyName="proposalPersonNotification.personName" p:order="10" p:readOnly="true" />
+				<bean parent="Uif-InputField" p:label="Last Notification" p:propertyName="proposalPersonNotification.notifiedTime" p:order="10" p:readOnly="true" />
             </list>
         </property>  
           	<property name="footer">
