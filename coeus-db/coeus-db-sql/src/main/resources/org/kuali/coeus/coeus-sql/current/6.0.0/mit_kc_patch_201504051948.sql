@@ -1,0 +1,4 @@
+@tables/KC_TBL_PROPOSAL_PERSON_NOTIFICATION.sql
+commit
+/
+
