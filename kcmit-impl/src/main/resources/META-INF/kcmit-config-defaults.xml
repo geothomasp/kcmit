@@ -12,9 +12,17 @@
 	<param name="showPassword">true</param>
     <param name="rice.kim.additionalSpringFiles">classpath:edu/mit/kc/MitKcKimOverridesSpringBeans.xml</param>
     <param name="filter.login.class">org.kuali.rice.krad.web.filter.UserLoginFilter</param>
+
     <param name="feedback.link.url">http://kc.mit.edu/</param>
     <param name="feedback.link.text">Get Help</param>
-    
+
+    <param name="mit.osp.website.url">http://kc.mit.edu/</param>
+    <param name="mit.coeus.coi.application.url">http://kc.mit.edu/</param>
+    <param name="citi.training.website.url">http://kc.mit.edu/</param>
+    <param name="mit.nda.application.url">http://kc.mit.edu/</param>
+    <param name="mit.kc.gethelp.url">http://kc.mit.edu/</param>
+    <param name="mit.osp.contacts.url">http://kc.mit.edu/</param>
+
     <!-- Sap Feed Path -->
 	<param name="SAP.PRODUCTION.PATH">PROD</param>
 	<param name="SAP.TEST.PATH">TEST</param>
