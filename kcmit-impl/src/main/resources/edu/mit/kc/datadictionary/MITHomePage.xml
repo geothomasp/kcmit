@@ -74,17 +74,17 @@
             <list>
 
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Web Site"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.osp.website.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="COI"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.coeus.coi.application.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="NDA"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.nda.application.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="CITI Training"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="KC Assistance"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.baseUrl="@{#ConfigProperties['citi.training.website.url']}"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Get Help"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.kc.gethelp.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Contacts"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.osp.contacts.url']}"/>
 
             </list>
         </property>
