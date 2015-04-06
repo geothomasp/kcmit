@@ -13,22 +13,22 @@ begin
 	FROM DUAL;
 	
 	begin
-		ret := fn_generate_sap_feed(as_path,as_update_user,li_batch_id,ld_now);
+		ret := fn_generate_sap_budget_feed(as_path,as_update_user,li_batch_id,ld_now);
 	exception
 	when others then
-		raise_application_error(-20100, 'Exception in fn_generate_sap_feed. Error is ' || SQLERRM);
+		raise_application_error(-20100, 'Exception in fn_generate_sap_budget_feed. Error is ' || SQLERRM);
 		ret := -1;
 	end;
 	
 	begin
-		ret := fn_generate_sap_budget_feed(as_path,as_update_user,li_batch_id,ld_now);
+		ret := fn_generate_sap_feed(as_path,as_update_user,li_batch_id,ld_now);
 	exception
 	when others then
-		raise_application_error(-20101, 'Exception in fn_generate_sap_budget_feed. Error is ' || SQLERRM);
+		raise_application_error(-20101, 'Exception in fn_generate_sap_feed. Error is ' || SQLERRM);
 		ret := -1;
-	end;
+	end;	
 	
-	return (li_batch_id);
+	return ret;
 
 end;
 /

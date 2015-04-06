@@ -23,12 +23,16 @@ rec_feed cur_feeds%rowtype;
 
 begin
 
-
-    SELECT *
-	INTO lrec_batch_list
-    FROM sap_budget_feed_batch_list
-	WHERE sap_budget_feed_batch_list.BATCH_ID = ai_batch_id  ;
-
+	begin
+		SELECT *
+		INTO lrec_batch_list
+		FROM sap_budget_feed_batch_list
+		WHERE sap_budget_feed_batch_list.BATCH_ID = ai_batch_id ;
+		
+	exception   
+    when others then		
+     return (-1);
+    end;
 	--open the batch file.
 
 	ls_filename := lrec_batch_list.batch_file_name;
