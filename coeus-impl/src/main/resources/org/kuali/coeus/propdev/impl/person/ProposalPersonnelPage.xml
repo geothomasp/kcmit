@@ -720,10 +720,9 @@
 						<bean parent="Uif-CheckboxControl" p:disabled="@{!#ViewHelper.canViewCertificationTab(document,#line) or #lp.questionnairesCompleted}"/>
 					</property>
 				</bean>
-                <bean parent="Uif-InputField" p:propertyName="fullName" p:order="10" p:readOnly="true"/>
+                <bean parent="Uif-InputField" p:label="Name" p:propertyName="fullName" p:order="10" p:readOnly="true"/>
           
-				<bean parent="Uif-InputField" p:label="Update User" p:propertyName="proposalPersonNotification.personName" p:order="10" p:readOnly="true" />
-				<bean parent="Uif-InputField" p:label="Last Notification" p:propertyName="proposalPersonNotification.notifiedTime" p:order="10" p:readOnly="true" />
+				<bean parent="Uif-InputField" p:label="Last Notification" p:propertyName="lastNotification" p:order="10" p:readOnly="true" />
             </list>
         </property>  
           	<property name="footer">

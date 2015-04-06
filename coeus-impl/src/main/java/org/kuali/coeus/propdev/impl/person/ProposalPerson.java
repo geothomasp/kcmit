@@ -111,9 +111,16 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 
 	@Column(name = "PROP_PERSON_ROLE_ID")
     private String proposalPersonRoleId;
+	
+	
+	@Column(name = "CERTIFIED_BY")
+	private String certifiedBy;
+
+
+	@Column(name = "LAST_NOTIFICATION")
+	private Timestamp lastNotification;
     
-    @OneToOne(mappedBy = "proposalPerson", orphanRemoval = true, cascade = { CascadeType.ALL })
-    private ProposalPersonNotification proposalPersonNotification;
+
 
     @OneToOne(cascade = { CascadeType.REFRESH })
     @PrimaryKeyJoinColumns({ @PrimaryKeyJoinColumn(name = "PROPOSAL_NUMBER", referencedColumnName = "PROPOSAL_NUMBER"), @PrimaryKeyJoinColumn(name = "PROP_PERSON_NUMBER", referencedColumnName = "PROP_PERSON_NUMBER") })
@@ -1815,6 +1822,7 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 		return selectedPerson;
 	}
 
+
 	public void setSelectedPerson(boolean selectedPerson) {
 		this.selectedPerson = selectedPerson;
 	}
@@ -1827,13 +1835,20 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 		this.createTimestamp = createTimestamp;
 	}
 	
-	
-	
-	public ProposalPersonNotification getProposalPersonNotification() {
-		return proposalPersonNotification;
+	public String getCertifiedBy() {
+		return certifiedBy;
 	}
 
-	public void setProposalPersonNotification(ProposalPersonNotification proposalPersonNotification) {
-		this.proposalPersonNotification = proposalPersonNotification;
+	public void setCertifiedBy(String certifiedBy) {
+		this.certifiedBy = certifiedBy;
 	}
+	
+	public Timestamp getLastNotification() {
+		return lastNotification;
+	}
+
+	public void setLastNotification(Timestamp lastNotification) {
+		this.lastNotification = lastNotification;
+	}
+
 }

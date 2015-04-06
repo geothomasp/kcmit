@@ -146,9 +146,6 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         newProposalPerson.setProjectRole((String)form.getAddKeyPersonHelper().getParameter("keyPersonProjectRole"));
        }
        getKeyPersonnelService().addProposalPerson(newProposalPerson, form.getProposalDevelopmentDocument());
-       ProposalPersonNotification proposalPersonNotification = new ProposalPersonNotification();
-       proposalPersonNotification.setProposalPerson(newProposalPerson);
-       newProposalPerson.setProposalPersonNotification(proposalPersonNotification);
        getDataObjectService().save(newProposalPerson);
        Collections.sort(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons(), new ProposalPersonRoleComparator());
        form.getAddKeyPersonHelper().reset();
@@ -250,17 +247,8 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         recipient.setPersonId(person.getPersonId());        
         getKcNotificationService().sendNotification(context,notification,Collections.singletonList(recipient));
         getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-PersonnelPage-Collection", KeyConstants.INFO_NOTIFICATIONS_SENT, person.getFullName()+" "+notification.getCreateTimestamp());
-        if(person.getProposalPersonNotification()!=null){
-        person.getProposalPersonNotification().setNotificationSender(currentUser);
-        person.getProposalPersonNotification().setNotifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
-        }else{
-        	ProposalPersonNotification proposalPersonNotification =new ProposalPersonNotification();
-        	proposalPersonNotification.setProposalPerson(person);
-        	proposalPersonNotification.setNotificationSender(currentUser);
-        	proposalPersonNotification.setNotifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
-        	person.setProposalPersonNotification(proposalPersonNotification);
-        }
-        getDataObjectService().save(person.getProposalPersonNotification());
+        person.setLastNotification(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
+        getDataObjectService().save(person);
     }
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=sendAllCertificationNotifications")
