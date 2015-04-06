@@ -73,7 +73,7 @@
         <property name="items">
             <list>
                  <bean parent="Uif-MenuAction" p:actionLabel="OSP Web Site"
-                      p:location.baseUrl="@{#ConfigProperties['mit.osp.website.url']}"/>
+                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.osp.website.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="COI"
                       p:actionUrl.baseUrl="@{#ConfigProperties['mit.coeus.coi.application.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="NDA"
