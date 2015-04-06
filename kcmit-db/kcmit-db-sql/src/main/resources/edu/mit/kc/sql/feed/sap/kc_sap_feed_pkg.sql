@@ -141,19 +141,19 @@ function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-
+----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 1');
 --get current fiscal year from KRCR_PARM_T table.
 		li_ret := fn_get_fiscal_year;
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-
+----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 2');
 --get IDC and OH rates for this fiscal year
 		li_ret := fn_get_rates;
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-
+----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 3');
 --moved following check after the get unit information on 9/22/00
 --Following check for costing sheet key was added on 8/10/00
 --Get Costing sheet key and validate it.
@@ -177,19 +177,20 @@ function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-
+----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 4');
 --Following check for costing sheet key was added on 8/10/00
 --Get Costing sheet key and validate it.
 		li_ret := fn_get_costing_sheet_key;
 		IF li_ret = -1 THEN
 			Return(-1);
 		END IF;
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 4A');
 
 --get money and end dates
 
 		li_Ret := fn_get_money_and_dates;
 
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 5');
 		feed_record.batch_id := ai_batch_id;
 		feed_record.feed_id := gi_feed_id;
 
@@ -222,7 +223,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 	Should be modified later to accomodate more levels.
 ***************************************************************************************/
 
-		IF gs_parent_award_number = '000000-000' THEN
+		IF gs_parent_award_number = '000000-00000' THEN
 			feed_record.account_level := '1';
 		ELSE
 			feed_record.account_level := '2';
@@ -231,7 +232,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET MIT_SAP_ACCOUNT
 
 		feed_record.mit_sap_account := gs_account_number;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 6');
 --SET DEPTNO.
 
 --No more 99 logic on Unit number 7/21/98
@@ -265,11 +266,11 @@ PROJECT_TYPE column is dropped as of 5/6/02
 				feed_record.billing_element := ' ';
 			end if;
 		END IF;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 7');
 --SET BILLING_TYPE
 
 		feed_record.billing_type := fn_get_billing_type;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 8');
 --dbms_output.put_line('done BILLING_TYPE');
 
 --SET BILLING_FORM
@@ -277,7 +278,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --More logic comming from Steve (10-09-97)
 
 		feed_record.billing_form := fn_get_billing_form;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 9');
 --dbms_output.put_line('done BILLING_FORM');
 
 
@@ -293,7 +294,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 
 		feed_record.spon_code := grec_award.sponsor_code;
 
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 10');
 --dbms_output.put_line('done SPON_CODE');
 
 --SET PRIMARY_SPONSOR
@@ -322,12 +323,12 @@ PROJECT_TYPE column is dropped as of 5/6/02
      --COEUSDEV-851
 
      		feed_record.contract := regexp_replace(grec_award.sponsor_award_number, '[^ -~]', ' ') ;
-       
+       --upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 11');
 --dbms_output.put_line('done CONTRACT');
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 12');
 --SET CUSTOMER
 		feed_record.customer := fn_get_customer;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 13');
 		--get the mapping from steve
 
 --SET TERM_CODE
@@ -381,7 +382,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 		feed_record.acctname := SUBSTR(grec_award.title, 1, 40) ;
 
 --dbms_output.put_line('done ACCT_NAME');
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 14');
 --SET EFFECT_DATE
 
 		IF grec_award.pre_award_effective_date is not NULL THEN
@@ -446,7 +447,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 		ELSE
 			feed_record.mail_code := '1'; -- This was 1 -- COEUSDEV-1103
 		END IF;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 15');
 --dbms_output.put_line('done MAIL_CODE');
 
 --SET SUPERVISOR
@@ -461,7 +462,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET SUPER_ROOM
 
 		feed_record.super_room := fn_format_room(gs_pi_room);
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 16');
 --dbms_output.put_line('done SUPER_ROOM');
 
 --SET ADDRESSEE
@@ -482,12 +483,12 @@ PROJECT_TYPE column is dropped as of 5/6/02
 
 		feed_record.addr_room := fn_format_room(gs_addresse_room);
 --dbms_output.put_line('done ADDR_ROOM');
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 17');
 --SET AGREE_TYPE
 		--check logic with steve.
 --		ls_temp := fn_get_agree_type;
 		feed_record.agree_type := fn_get_agree_type;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 18');
 --dbms_output.put_line('after agree type');
 
 --SET AUTH_TOTAL
@@ -505,7 +506,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET COST_SHARE
 
 		feed_record.cost_share := fn_get_cost_share;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 19');
 --dbms_output.put_line('done COST_SHARE');
 
 --SET FUND_CLASS
@@ -579,7 +580,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET DFAFS
 
 		feed_record.dfafs := fn_get_dfafs;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 20');
 --dbms_output.put_line('done DFAFS');
 
 
@@ -620,7 +621,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET LAB_ALLOCATION_KEY
 
 		feed_record.lab_allocation_key := fn_get_lab_allocation;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 21');
 --dbms_output.put_line('done LAB_ALLOCATION_KEY');
 
 --SET EB_ADJUSTMENT_KEY
@@ -638,7 +639,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET COMMENT1
 
 		feed_record.comment1 := fn_generate_comment1;
-
+--upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 22');
 --SET COMMENT2
 
 		feed_record.comment2 := '-';
@@ -714,6 +715,7 @@ select SEQ_SAP_ID.nextval into li_sp_feed_id from dual;
    return (0);
 	EXCEPTION 
 	WHEN OTHERS THEN
+	  upd_sap_feed_log_error(gi_batch_id, gi_feed_id, SQLERRM);
 	  Return (-1);
 	end generate_feed;
 
@@ -801,10 +803,10 @@ INTO gs_parent_award_number
    FROM AWARD_HIERARCHY
    WHERE (AWARD_HIERARCHY.AWARD_NUMBER = gs_award_number ) ;
 
---IF Parent award_number = '000000-000' then this award is a level 1 award.
+--IF Parent award_number = '000000-00000' then this award is a level 1 award.
 --ELSE get the parent award's account_number.
 
-IF gs_parent_award_number <> '000000-000' THEN
+IF gs_parent_award_number <> '000000-00000' THEN
 	SELECT AWARD.ACCOUNT_NUMBER
     INTO gs_parent_account_number
     FROM AWARD
@@ -1204,12 +1206,12 @@ begin
 		FROM AWARD_AMOUNT_INFO AMOUNT2 WHERE
 		AMOUNT2.AWARD_NUMBER =			 AWARD_AMOUNT_INFO.AWARD_NUMBER	and
 		AMOUNT2.SEQUENCE_NUMBER <= gi_sequence_number	) and
-		TO_NUMBER(AWARD_AMOUNT_INFO.TRANSACTION_ID) =
-			     		(SELECT MAX(TO_NUMBER(AMOUNT3.TRANSACTION_ID))
+		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) =
+			     		(SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
 				   	 FROM   AWARD_AMOUNT_INFO AMOUNT3
  					 		WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
 						 	 AND    AWARD_AMOUNT_INFO.SEQUENCE_NUMBER  = AMOUNT3.SEQUENCE_NUMBER
-							 AND TO_NUMBER(AMOUNT3.TRANSACTION_ID) <= TO_NUMBER(gs_transaction_id));
+							 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
 
 
 return 0;
