@@ -230,7 +230,10 @@ public class AwardAction extends BudgetParentActionBase {
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
         if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
         		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
-        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments")) {
+        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
+        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
+          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
+          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
         	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
     		if(awardAttachmentform != null) {
     			awardAttachmentform.setCanViewAttachment(true);
