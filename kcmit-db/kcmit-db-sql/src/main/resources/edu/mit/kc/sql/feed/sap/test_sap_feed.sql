@@ -36,8 +36,11 @@ end;
 declare
 batch_file UTL_fILE.FILE_TYPE;
 begin
-batch_file := utl_file.fopen('TEST','testKCSAP.txt','W');
+batch_file := utl_file.fopen('TEST','testKCSAP1.txt','W');
 end;
 
 --SELECT * FROM all_directories
 
+select * from dba_directories where directory_name = 'TEST'
+
+grant read, write on directory TEST to PUBLIC;
