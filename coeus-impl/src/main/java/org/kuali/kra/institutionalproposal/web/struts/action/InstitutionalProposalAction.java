@@ -109,7 +109,7 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
             } else {
                 editModes.add(AuthorizationConstants.EditMode.VIEW_ONLY);
             }
-            if (hasPermission("Edit Institutional Proposal")) {
+            if (hasPermission("KC-IP","Edit Institutional Proposal")) {
                 editModes.add(MODIFY_IP);
             }
             Map editMode = this.convertSetToMap(editModes);
@@ -139,9 +139,9 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         
     }
     
-    private boolean hasPermission(String permissionName){
+    private boolean hasPermission(String nameSpace,String permissionName){
         KcPerson person = getKcPersonService().getKcPersonByUserName(getUserName());       
-        return getUnitAuthorizationService().hasPermission(person.getPersonId(), "KC-IP", permissionName);
+        return getUnitAuthorizationService().hasPermission(person.getPersonId(),nameSpace, permissionName);
 
     }
     private String getUserName() {
@@ -358,17 +358,25 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         }  
         
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-        if(hasPermission("MAINTAIN_INST_PROPOSAL_DOC") || 
-        		hasPermission("Create Institutional Proposal") ||
-        		     hasPermission("Edit Institutional Proposal")) {
+        if(hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC") || 
+        		hasPermission("KC-IP","Create Institutional Proposal") ||
+        		     hasPermission("KC-IP","Edit Institutional Proposal")) {
         	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
     		if(instProposalAttachmentform != null) {
     			instProposalAttachmentform.setMaintainInstituteProposal(true);
     		}
         }
         
-        if(hasPermission("VIEW_INST_PROPOSAL_DOC") || 
-        		hasPermission("VIEW_SHARED_INST_PROPOSAL_DOC")) {
+        if(hasPermission("KC-IP","VIEW_INST_PROPOSAL_DOC") || 
+        		hasPermission("KC-IP","VIEW_SHARED_INST_PROPOSAL_DOC") ||
+        		   hasPermission("KC-IP","Create Institutional Proposal") ||
+        		      hasPermission("KC-IP","Edit Institutional Proposal") ||
+        		         hasPermission("KC-IP","View Proposal") ||
+        		            hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC") ||
+        		               hasPermission("KC-IP","Cancel Institutional Proposal") ||
+        		                  hasPermission("KC-IP","Save Institutional Proposal") ||
+        		                     hasPermission("KC-IP","Submit Institutional Proposal") ||
+        		                    	hasPermission("KC-SYS","Initiate Document"))  {
         	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
     		if(instProposalAttachmentform != null) {
     			instProposalAttachmentform.setCanViewAttachment(true);
