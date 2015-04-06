@@ -72,34 +72,8 @@
 
         <property name="items">
             <list>
-
-				<bean parent="Uif-Link" p:href="@{#ConfigProperties['mit.osp.website.url']}"
-                      p:wrapperCssClasses="pull-right" p:target="_new"
-                      p:render="@{#ConfigProperties['mit.osp.website.url'] != ''}"
-                      p:linkText="OSP Web Site"/>
-				<bean parent="Uif-Link" p:href="@{#ConfigProperties['mit.coeus.coi.application.url']}"
-                      p:wrapperCssClasses="pull-right" p:target="_new"
-                      p:render="@{#ConfigProperties['mit.coeus.coi.application.url'] != ''}"
-                      p:linkText="COI"/>
-				<bean parent="Uif-Link" p:href="@{#ConfigProperties['mit.nda.application.url']}"
-                      p:wrapperCssClasses="pull-right" p:target="_new"
-                      p:render="@{#ConfigProperties['mit.nda.application.url'] != ''}"
-                      p:linkText="NDA"/>
-				<bean parent="Uif-Link" p:href="@{#ConfigProperties['citi.training.website.url']}"
-                      p:wrapperCssClasses="pull-right" p:target="_new"
-                      p:render="@{#ConfigProperties['citi.training.website.url'] != ''}"
-                      p:linkText="CITI Training"/>
-				<bean parent="Uif-Link" p:href="@{#ConfigProperties['mit.kc.gethelp.url']}"
-                      p:wrapperCssClasses="pull-right" p:target="_new"
-                      p:render="@{#ConfigProperties['mit.kc.gethelp.url'] != ''}"
-                      p:linkText="Get Help"/>
-				<bean parent="Uif-Link" p:href="@{#ConfigProperties['mit.osp.contacts.url']}"
-                      p:wrapperCssClasses="pull-right" p:target="_new"
-                      p:render="@{#ConfigProperties['mit.osp.contacts.url'] != ''}"
-                      p:linkText="OSP Contacts"/>
-                
-<!--                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Web Site"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['mit.osp.website.url']}"/>
+                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Web Site"
+                      p:location.baseUrl="@{#ConfigProperties['mit.osp.website.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="COI"
                       p:actionUrl.baseUrl="@{#ConfigProperties['mit.coeus.coi.application.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="NDA"
@@ -110,7 +84,6 @@
                       p:actionUrl.baseUrl="@{#ConfigProperties['mit.kc.gethelp.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Contacts"
                       p:actionUrl.baseUrl="@{#ConfigProperties['mit.osp.contacts.url']}"/>
- -->
             </list>
         </property>
     </bean>
