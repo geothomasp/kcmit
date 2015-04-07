@@ -15,6 +15,7 @@ ls_batch_file_name              sap_budget_feed_batch_list.batch_file_name%type;
 ls_amount 						sap_budget_feed.amount%type;
 ret 							number;
 li_inserted                     PLS_INTEGER := 0;
+ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
 	CURSOR c_sap_bud_det IS
 		SELECT	t1.budget_id,
 		t2.account_number,
@@ -32,15 +33,28 @@ li_inserted                     PLS_INTEGER := 0;
 		from budget_details t1 		
 		where t1.budget_id = li_budget_id   
 		group by t1.cost_element
+		
 		UNION	
-		select t3.gl_account_key,
-		sum(t2.calculated_cost) amount
-		from budget_details t1 
-		inner join budget_details_cal_amts t2 on t1.budget_details_id = t2.budget_details_id
-		inner join sap_bud_rate_class_gl_mapping t3 on t1.on_off_campus_flag = t3.on_off_campus_flag 
-													and t2.rate_class_code = t3.rate_class_code 
-		where t1.budget_id = li_budget_id
-		group by t3.gl_account_key;
+		
+		SELECT decode(t3.activity_type_code,1,'422121', '422123') gl_account_key,
+			nvl(t1.amount,0) AS AMOUNT
+		FROM (
+			  select t1.budget_id,
+			  sum(t1.total_indirect_cost) amount
+			  from budget_periods t1 	   
+			  where t1.budget_id = li_budget_id
+			  group by t1.budget_id    
+			) t1 	
+		INNER JOIN  AWARD_BUDGET_EXT t2 on t1.budget_id = t2.budget_id
+		INNER JOIN award t3 on t2.award_id = t3.award_id
+		
+		UNION
+		
+		select '422127' As gl_account_key,
+		nvl(sum(TOTAL_FRINGE_AMOUNT),0) AS amount
+		from award_budget_period_ext t1
+		inner join budget_periods t2 on t1.budget_period_number = t2.budget_period_number
+		where t2.budget_id = li_budget_id;	
 		r_award_budget c_award_budget%rowtype;
 		
 begin	
@@ -103,6 +117,15 @@ begin
 						ls_amount := '-'||LPAD(ABS(r_award_budget.amount), 9, '0');
 				end if;
 			
+				begin
+					SELECT SAP_OBJ_CD into ls_cost_element FROM SAP_KC_OBJ_CD_MAPPING
+					WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
+					
+				exception
+				when others then
+					ls_cost_element := r_award_budget.gl_account_key;
+				end;
+			
 				INSERT INTO SAP_BUDGET_FEED(
 							SAP_BUDGET_FEED_ID,
 							SAP_BUDGET_FEED_DETAILS_ID,
@@ -119,7 +142,7 @@ begin
 						 as_batch_id,
 						 ls_sap_feed_fiscal_year,
 						 ls_account_number,
-						 r_award_budget.gl_account_key,
+						 ls_cost_element,
 						 ls_amount,
 						 1,
 						 sys_guid()
