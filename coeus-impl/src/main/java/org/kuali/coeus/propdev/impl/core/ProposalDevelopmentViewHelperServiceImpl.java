@@ -991,7 +991,7 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     			(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)) ||
     			(canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))){
     		for(String projectRole:keyPersonRoleList){
-    			if(proposalPerson.getProjectRole().equals(projectRole)) {
+    			if(proposalPerson.getProjectRole().equalsIgnoreCase(projectRole)) {
     				return false;
     			}}
     		if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
