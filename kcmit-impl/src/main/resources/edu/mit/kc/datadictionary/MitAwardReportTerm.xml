@@ -25,34 +25,10 @@
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-
-     <bean id="AwardReportTerm-frequencyCode" parent="Mit-AwardReportTerm-frequencyCode-parentBean" />
-	<bean id="Mit-AwardReportTerm-frequencyCode-parentBean" abstract="true" parent="AwardReportTerm-frequencyCode-parentBean" >
-	<property name="validationPattern">
-			<bean parent="AnyCharacterValidationPattern" />
-		</property>	
-		</bean>
 	<bean id="AwardReportTerm-frequencyBaseCode" parent="MIT-AwardReportTerm-frequencyBaseCode-parentBean" />
 	<bean id="MIT-AwardReportTerm-frequencyBaseCode-parentBean" parent="AwardReportTerm-frequencyBaseCode-parentBean">
 		<property name="validationPattern">
 			<bean parent="AnyCharacterValidationPattern" />
 		</property>		
 		</bean>	
-	
-	<bean id="AwardReportTerm-ospDistributionCode" parent="MIT-AwardReportTerm-ospDistributionCode-parentBean" />
-	<bean id="MIT-AwardReportTerm-ospDistributionCode-parentBean" parent="AwardReportTerm-ospDistributionCode-parentBean" >
-		<property name="validationPattern" >
-			<bean parent="AnyCharacterValidationPattern" />
-		</property>	
-		<property name="control" >
-			<bean parent="SelectControlDefinition"
-	            p:businessObjectClass="org.kuali.kra.award.home.Distribution"
-	            p:valuesFinderClass="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder"
-	            p:includeKeyInLabel="true"
-	            p:includeBlankRow="false"
-	            p:keyAttribute="ospDistributionCode"
-	            p:labelAttribute="description" />
-		</property>
-	</bean>
-	
-</beans>
+	</beans>
