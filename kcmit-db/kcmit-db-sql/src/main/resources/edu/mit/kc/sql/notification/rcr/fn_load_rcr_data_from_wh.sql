@@ -105,14 +105,18 @@ BEGIN
             ls_PayrollPeriodKey := 'U';
         end if;
         
-
-        INSERT INTO RCR_APPOINTMENTS (
-       RCR_APPOINT_ID,PERSON_ID, ACCOUNT_NUMBER, APPOINTMENT_DATE, 
-       APPOINTMENT_TYPE, DATA_LOAD_DATE, UPDATE_TIMESTAMP, 
-       UPDATE_USER,VER_NBR,OBJ_ID) 
-        VALUES ( SEQ_RCR_APPOINT_ID.nextval,ls_PersonID, ls_AccountNumber, ldt_AppntDate,
-        ls_PayrollPeriodKey, trunc(sysdate), sysdate, user,1,sys_guid());
-
+		 begin		
+			INSERT INTO RCR_APPOINTMENTS (
+			RCR_APPOINT_ID,PERSON_ID, ACCOUNT_NUMBER, APPOINTMENT_DATE, 
+			APPOINTMENT_TYPE, DATA_LOAD_DATE, UPDATE_TIMESTAMP, 
+			UPDATE_USER,VER_NBR,OBJ_ID) 
+			VALUES ( SEQ_RCR_APPOINT_ID.nextval,ls_PersonID, ls_AccountNumber, ldt_AppntDate,
+			ls_PayrollPeriodKey, trunc(sysdate), sysdate, user,1,sys_guid());		
+		exception
+            when others then
+                li_ret := 0;
+        end;
+		
 	end loop; 
 	close c_new_appnt;
 

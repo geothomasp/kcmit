@@ -866,7 +866,7 @@ BEGIN
 
 	EXCEPTION
 		WHEN others THEN
-		upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid sponsor code');
+		upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid sponsor code for award number = '||gs_award_number||', sequence number = '||gi_sequence_number||', Sponsr cd = '||grec_award.sponsor_code);
     	return (-1);
 END;
 
@@ -877,37 +877,39 @@ return (0);
 EXCEPTION
 
 WHEN null_account_number THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Account Number is Null');
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Account Number is Null for award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN invalid_account_number THEN
     error_message := 'Invalid Account Number. Account number should be 7 character long and shoule be >= 1000000.';
+	error_message := error_message ||' Award number = '||gs_award_number||', sequence number = '||gi_sequence_number;
     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, error_message);
     return (-1);
 
 WHEN null_parent_account_number THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Parent Account Number is Null');
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Parent Account Number is Null for award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN invalid_parent_account_number THEN
     error_message := 'Invalid Parent Account Number. Account number should be 7 character long.';
+	error_message := error_message|| ' for award number = '||gs_award_number||', sequence number = '||gi_sequence_number;
     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, error_message);
     return (-1);
 
 WHEN parent_not_found THEN
-     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Parent MIT award number not found in AWARD_HIERARCHY table.');
+     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Parent MIT award number not found in AWARD_HIERARCHY table. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 	  return (-1);
 
 WHEN consortium_account THEN
-     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Feed for consortium accounts not implemented.');
+     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Feed for consortium accounts not implemented. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 	  return (-1);
 
 WHEN hold_account THEN																	--added on 03/16/98
-     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'The Account is in Hold or Inactive.');
+     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'The Account is in Hold or Inactive. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 	  return (-1);
 
 WHEN OTHERS THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, SUBSTR(SQLERRM, 1, 350));
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, ' Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 200));
     return (-1);
 
 /*===========================*/
@@ -1079,7 +1081,7 @@ BEGIN
 
 EXCEPTION
 		WHEN OTHERS THEN
-   	 upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award');
+   	 upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
    	 return (-1);
 END;
 
@@ -1164,19 +1166,19 @@ return 0;
 EXCEPTION
 
 WHEN pi_not_found THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'PI Information not found for this Award');
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'PI Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN pi_name_too_long THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'PI name is more than 30 characters.');
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'PI name is more than 30 characters. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN lu_not_found THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award');
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN OTHERS THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, SUBSTR(SQLERRM, 1, 350));
+    upd_sap_feed_log_error(gi_batch_id, gi_feed_id,'Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
     return (0);
 
 /*===========================*/
@@ -1420,19 +1422,19 @@ begin
 				IF (SUBSTR(ls_costing_sheet, 1, 1) <> 'E') AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'G')
 					AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'B') AND -- 'B' Added on 10/30/03
 					(SUBSTR(ls_costing_sheet, 1, 5) <> 'RESEB') THEN   -- RESEB Added on 5/24/06
-					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned.');
+					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 			    	return (-1);
 				END IF;
 			ELSIF gs_account_number >= '2000000' AND gs_account_number <= '4999999' THEN
 				IF (SUBSTR(ls_costing_sheet, 1, 1) <> 'E') AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'F') AND
 					(SUBSTR(ls_costing_sheet, 1, 1) <> 'S') THEN
-					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned.');
+					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 			    	return (-1);
 				END IF;
 			ELSIF gs_account_number >= '5000000' THEN
 				IF (SUBSTR(ls_costing_sheet, 1, 1) <> 'E') AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'R')
                    AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'B') THEN
-					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned.');
+					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 			    	return (-1);
 				END IF;
 			END IF;
@@ -1618,7 +1620,7 @@ ELSE
 
 		EXCEPTION
 			WHEN others THEN
-				upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid EB Rates. Cannot find a valid EB Adjustment Key.');
+				upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid EB Rates. Cannot find a valid EB Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     			return (-1);
 	END;
 
@@ -1650,7 +1652,7 @@ END IF;
 			IF cur_idc_off%NOTFOUND THEN
 				close cur_idc_on;
 				close cur_idc_off;
-				upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. No Off campus rate available for FY ' || ls_FiscalYear );
+				upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. No Off campus rate available for FY ' || ls_FiscalYear||', Award number = '||gs_award_number||', sequence number = '||gi_sequence_number );
     			return (-1);
 			END IF ;
 
@@ -1669,7 +1671,8 @@ END IF;
 					WHEN others THEN
 						close cur_idc_on;
 						close cur_idc_off;
-						upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key.');
+						upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+						upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 		    			return (-1);
 				END; --END For Begin block
 			END IF;
