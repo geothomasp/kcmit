@@ -18,6 +18,11 @@
  */
 package org.kuali.coeus.propdev.impl.core;
 
+import static org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants.AUDIT_WARNINGS;
+import static org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants.DEADLINE_DATE_KEY;
+import static org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants.SPONSOR_PROGRAM_INFO_PAGE_ID;
+import static org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants.SPONSOR_PROGRAM_INFO_PAGE_NAME;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.api.sponsor.SponsorService;
 import org.kuali.coeus.common.framework.compliance.core.SaveSpecialReviewEvent;
@@ -503,10 +508,15 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         boolean retval = true;
         
         List<AuditError> auditErrors = new ArrayList<AuditError>();
+        List<AuditError> auditWarnings = new ArrayList<AuditError>();
         String budgetStatusCompleteCode = getParameterService().getParameterValueAsString(
                 Budget.class, Constants.BUDGET_STATUS_COMPLETE_CODE);
         budgetVersionsExists = !proposal.getBudgets().isEmpty();
-        if (proposal.getFinalBudget() == null && budgetVersionsExists) {
+        if(!budgetVersionsExists) {
+        	AuditError noBudgetWarning = new AuditError(ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID, KeyConstants.AUDIT_WARNING_PROPOSAL_WITHNO_BUDGET, ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID, new String[] { proposal.getProposalNumber() });
+        	auditWarnings.add(noBudgetWarning);
+        	retval = false;
+        } else if (proposal.getFinalBudget() == null && budgetVersionsExists) {
         	auditErrors.add(new AuditError("document.developmentProposal.budgets", KeyConstants.AUDIT_ERROR_NO_BUDGETVERSION_FINAL, ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_ID));
         	retval = false;
         } else if (proposal.getFinalBudget() != null &&
@@ -518,6 +528,9 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
             GlobalVariables.getAuditErrorMap().put("budgetVersionErrors", new AuditCluster(ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_NAME, auditErrors, ProposalDevelopmentDataValidationConstants.AUDIT_ERRORS));
         }
 
+        if (auditWarnings.size() > 0) {
+            GlobalVariables.getAuditErrorMap().put("budgetVersionWarnings", new AuditCluster(ProposalDevelopmentDataValidationConstants.BUDGET_PAGE_NAME, auditWarnings, ProposalDevelopmentDataValidationConstants.AUDIT_WARNINGS));
+        }
         return retval;
     }
 
