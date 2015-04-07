@@ -119,7 +119,7 @@ public class UnitAgendaTypeServiceImpl extends AgendaTypeServiceBase  {
                                             agendaDefinition.getTypeId(),agendaDefinition.isActive());
     }
     
-private static class UnitAgenda extends BasicAgenda {
+private class UnitAgenda extends BasicAgenda {
         
         private Map<String, String> qualifiers;
         private boolean isActive;
