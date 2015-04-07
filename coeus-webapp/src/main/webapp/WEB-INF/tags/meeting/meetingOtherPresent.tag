@@ -70,13 +70,13 @@
         	<th width="15%" class="infoline">Actions </th>
 		</tr>
 			<%-- Header --%>
-		<c:if test="${fn:length(KualiForm.meetingHelper.otherPresentBeans) > 1}">
+		<%-- <c:if test="${fn:length(KualiForm.meetingHelper.otherPresentBeans) > 1}">
             <tr>
                 <td colspan="5" style="padding:0px;">
                     <div style="clear:left; height:80px; overflow-y:scroll; overflow-x:hidden; position:relative;">
                 
                 		<table cellpadding=0 cellspacing="0"  style="border-collapse:collapse;">
-        </c:if>
+        </c:if> --%>
         <c:forEach var="otherPresentBean" items="${KualiForm.meetingHelper.otherPresentBeans}" varStatus="status">
 	        <tr>
 				<th  width="5%" class="infoline" align="center">
@@ -104,10 +104,10 @@
 		        </c:if>
 	        </tr>
         </c:forEach>
- 		<c:if test="${fn:length(KualiForm.meetingHelper.otherPresentBeans) > 1}">      	
+ 		<%-- <c:if test="${fn:length(KualiForm.meetingHelper.otherPresentBeans) > 1}">      	
         	            </table>
 			        </div>
 		        </td>
 			</tr>
-        </c:if>        	
+        </c:if>        	 --%>
     </table>	
