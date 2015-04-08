@@ -1,10 +1,12 @@
 package org.kuali.coeus.propdev.impl.dashboard;
 
 import org.kuali.kra.award.home.Award;
+import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.doctype.DocumentTypeService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.kuali.rice.krad.uif.element.Link;
 import org.kuali.rice.krad.uif.field.LinkField;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
@@ -26,22 +28,22 @@ import java.util.Properties;
 public class DashboardViewHelperService extends ViewHelperServiceImpl {
 
 
-	public void buildPropDevLink(LinkField actionLink, Object model, String docId) throws WorkflowException {
-        actionLink.setHref(getConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
+	public static String buildPropDevLink(String docId) throws WorkflowException {
+        return CoreApiServiceLocator.getKualiConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
      	                + KRADConstants.DOCHANDLER_DO_URL
      	                + docId
-     	                + KRADConstants.DOCHANDLER_URL_CHUNK);
+     	                + KRADConstants.DOCHANDLER_URL_CHUNK;
 
 	}
 
-    public void buildAwardLink(LinkField actionLink, Object model, String docId) throws WorkflowException {
-        actionLink.setHref(getConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
+    public static String buildAwardLink(String docId) throws WorkflowException {
+        return CoreApiServiceLocator.getKualiConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY)
      	                + KRADConstants.DOCHANDLER_DO_URL
      	                + docId
-     	                + KRADConstants.DOCHANDLER_URL_CHUNK);
+     	                + KRADConstants.DOCHANDLER_URL_CHUNK;
    	}
 
-    public void buildProjectDocLink(LinkField actionLink, Object model, String docId, String awardId) {
+    public static String buildProjectDocLink(String docId, String awardId) {
         Properties parameters = new Properties();
         parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "sharedDoc");
         parameters.put(KRADConstants.PARAMETER_COMMAND, KewApiConstants.DOCSEARCH_COMMAND);
@@ -51,10 +53,10 @@ public class DashboardViewHelperService extends ViewHelperServiceImpl {
         parameters.put("docOpenedFromAwardSearch", "true");
         parameters.put("placeHolderAwardId", awardId);
         String href  = UrlFactory.parameterizeUrl("../" + getHtmlActionShared(), parameters);
-        actionLink.setHref(href);
+        return href;
     }
 
-    public void buildKeyPersonLink(LinkField actionLink, Object model, String docId, String awardId) {
+    public static String buildKeyPersonLink(String docId, String awardId) {
 
        Properties parameters = new Properties();
        parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "keyperson");//contact
@@ -65,14 +67,14 @@ public class DashboardViewHelperService extends ViewHelperServiceImpl {
        parameters.put("docOpenedFromAwardSearch", "true");
        parameters.put("placeHolderAwardId", awardId);
        String href  = UrlFactory.parameterizeUrl("../"+getHtmlActionKeyPerson(), parameters);
-       actionLink.setHref(href);
+       return href;
 
     }
 
-    protected String getHtmlActionShared() {
+    protected static String getHtmlActionShared() {
         return "sharedDoc.do";
     }
-    protected String getHtmlActionKeyPerson() {
+    protected static String getHtmlActionKeyPerson() {
         return "keyperson.do";
     }
 

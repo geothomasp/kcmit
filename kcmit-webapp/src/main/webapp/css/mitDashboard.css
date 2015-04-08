@@ -93,3 +93,26 @@ a[role="tab"] {
 .DTTT_container {
   display: none;
 }
+
+.dashboard-graph {
+    width: 100%;
+    height: 250px;
+}
+
+.alert-priority1 {
+    color: red;
+    position: relative;
+    top: .1em;
+}
+
+.alert-priority2 {
+    color: darkorange;
+    position: relative;
+    top: .1em;
+}
+
+.alert-priority3 {
+    color: gold;
+    position: relative;
+    top: .1em;
+}
