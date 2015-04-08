@@ -110,8 +110,10 @@ public class ProposalDevelopmentDocumentForm extends TransactionalDocumentFormBa
     private boolean viewOnly = false;
 
     private AnswerHeader updateAnswerHeader;
+    
+    private String coiIntegrationMessage;
 
-    /* These 2 properties are used for autogenerating an institutional proposal for a resubmission */
+	/* These 2 properties are used for autogenerating an institutional proposal for a resubmission */
     private String resubmissionOption;
     private String institutionalProposalToVersion;
 
@@ -674,4 +676,13 @@ public void setProposalPerson(ProposalPerson proposalPerson) {
 	public void setHierarchyProposalNumber(String hierarchyProposalNumber) {
 		this.hierarchyProposalNumber = hierarchyProposalNumber;
 	}
+	
+	public String getCoiIntegrationMessage() {
+		return coiIntegrationMessage;
+	}
+
+	public void setCoiIntegrationMessage(String coiIntegrationMessage) {
+		this.coiIntegrationMessage = coiIntegrationMessage;
+	}
+
 }
