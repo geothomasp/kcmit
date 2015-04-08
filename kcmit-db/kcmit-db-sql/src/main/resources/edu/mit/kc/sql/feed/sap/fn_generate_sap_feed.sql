@@ -14,7 +14,7 @@ rec_batch_list 				SAP_FEED_BATCH_LIST%ROWTYPE;
 ld_now						DATE;
 li_feed_count				number;
 li_sort_id					SAP_FEED.SORT_ID%TYPE;
-li_sap_feed_batch       	NUMBER(12,0);
+li_sap_feed_batch       	SAP_FEED_BATCH_LIST.SAP_FEED_BATCH_ID%TYPE;
 ls_TransactionID			SAP_FEED_DETAILS.TRANSACTION_ID%TYPE;
 
 ret 							number;
@@ -86,9 +86,11 @@ begin
 															to_char(ld_now, 'YYYYMMDDHH24MISS'));
 ----dbms_output.put_line('before insert');
 
-select SEQ_SAP_FEED_BATCH_ID.nextval into li_sap_feed_batch from dual;
+	select SEQ_SAP_FEED_BATCH_ID.nextval into li_sap_feed_batch from dual;
+	rec_batch_list.SAP_FEED_BATCH_ID := li_sap_feed_batch;
+	
 	INSERT INTO SAP_FEED_BATCH_LIST
-	VALUES (li_sap_feed_batch,rec_batch_list.batch_id, rec_batch_list.batch_file_name,
+	VALUES (rec_batch_list.SAP_FEED_BATCH_ID,rec_batch_list.batch_id, rec_batch_list.batch_file_name,
 			  rec_batch_list.batch_timestamp, rec_batch_list.update_user,
 				rec_batch_list.no_of_records,sysdate,1,sys_guid());
 
@@ -110,20 +112,22 @@ select SEQ_SAP_FEED_BATCH_ID.nextval into li_sap_feed_batch from dual;
 			exit when cur_pending_feeds_minus%NOTFOUND;
 
 			li_sort_id := li_sort_id + 1;
-			ret := kc_sap_feed_pkg.generate_feed(li_batch_id, li_feed_id,award_number,sequence_number,
+			ret := kc_sap_feed_pkg.generate_feed(li_sap_feed_batch,li_batch_id, li_feed_id,award_number,sequence_number,
 													feed_type, ls_TransactionID, li_sort_id);
 
 			IF ret = -1 THEN
 
       		UPDATE SAP_FEED_DETAILS
      			SET FEED_STATUS = 'E',
-				 	BATCH_ID    =  li_batch_id
+				 	BATCH_ID    =  li_batch_id,
+					SAP_FEED_BATCH_ID = li_sap_feed_batch
    			WHERE SAP_FEED_DETAILS.FEED_ID = li_feed_id   ;
 			ELSE
 
 				UPDATE SAP_FEED_DETAILS
-     			SET FEED_STATUS = 'F',
-   			 	BATCH_ID    =  li_batch_id
+     			SET FEED_STATUS = 'F',				
+   			 	BATCH_ID    =  li_batch_id,
+				SAP_FEED_BATCH_ID = li_sap_feed_batch
    			WHERE SAP_FEED_DETAILS.FEED_ID = li_feed_id   ;
 
 				rec_batch_list.no_of_records := rec_batch_list.no_of_records + 1;
@@ -143,20 +147,22 @@ select SEQ_SAP_FEED_BATCH_ID.nextval into li_sap_feed_batch from dual;
 			exit when cur_pending_feeds%NOTFOUND;
 
 			li_sort_id := li_sort_id + 1;
-			ret := kc_sap_feed_pkg.generate_feed(li_batch_id, li_feed_id,award_number, sequence_number,
+			ret := kc_sap_feed_pkg.generate_feed(li_sap_feed_batch,li_batch_id, li_feed_id,award_number, sequence_number,
 													feed_type, ls_TransactionID, li_sort_id);
 
 			IF ret = -1 THEN
 
       		UPDATE SAP_FEED_DETAILS
      			SET FEED_STATUS = 'E',
-				 	BATCH_ID    =  li_batch_id
+				 	BATCH_ID    =  li_batch_id,
+					SAP_FEED_BATCH_ID = li_sap_feed_batch
    			WHERE SAP_FEED_DETAILS.FEED_ID = li_feed_id   ;
 			ELSE
 
 				UPDATE SAP_FEED_DETAILS
      			SET FEED_STATUS = 'F',
-   			 	BATCH_ID    =  li_batch_id
+   			 	BATCH_ID    =  li_batch_id,
+				SAP_FEED_BATCH_ID = li_sap_feed_batch
    			WHERE SAP_FEED_DETAILS.FEED_ID = li_feed_id   ;
 
 				rec_batch_list.no_of_records := rec_batch_list.no_of_records + 1;
@@ -173,13 +179,13 @@ select SEQ_SAP_FEED_BATCH_ID.nextval into li_sap_feed_batch from dual;
 
 	  UPDATE SAP_FEED_BATCH_LIST
      SET NO_OF_RECORDS = rec_batch_list.no_of_records
-		WHERE SAP_FEED_BATCH_LIST.BATCH_ID = li_batch_id;
+		WHERE SAP_FEED_BATCH_LIST.SAP_FEED_BATCH_ID = li_sap_feed_batch;
 
 		COMMIT;
 
-	ret := fn_spool_batch(li_batch_id, as_path);
+	ret := fn_spool_batch(li_sap_feed_batch,li_batch_id, as_path);
 
-	return (li_batch_id);
+	return (li_sap_feed_batch);
 
 end;
 /

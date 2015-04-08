@@ -12,9 +12,11 @@ li_budget_id 					award_budget_ext.budget_id%type;
 ls_account_number				award.account_number%type;
 li_no_of_records				NUMBER;
 ls_batch_file_name              sap_budget_feed_batch_list.batch_file_name%type;
+li_sap_budget_feed_batch_id     sap_budget_feed_batch_list.sap_budget_feed_batch_id%type;
 ls_amount 						sap_budget_feed.amount%type;
 ret 							number;
 li_inserted                     PLS_INTEGER := 0;
+li_count 						NUMBER;
 ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
 	CURSOR c_sap_bud_det IS
 		SELECT	t1.budget_id,
@@ -54,7 +56,8 @@ ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
 		nvl(sum(TOTAL_FRINGE_AMOUNT),0) AS amount
 		from award_budget_period_ext t1
 		inner join budget_periods t2 on t1.budget_period_number = t2.budget_period_number
-		where t2.budget_id = li_budget_id;	
+		where t2.budget_id = li_budget_id;		
+	
 		r_award_budget c_award_budget%rowtype;
 		
 begin	
@@ -71,6 +74,51 @@ begin
 	select val into ls_sap_feed_fiscal_year from krcr_parm_t where parm_nm = 'SAP_FEED_CURRENT_FISCAL_YEAR';
 	
 	li_no_of_records := 0;
+	
+	
+		SELECT	count(t1.budget_id) INTO li_count
+		FROM AWARD_BUDGET_EXT t1
+		INNER JOIN AWARD t2 on t1.award_id = t2.award_id
+		WHERE t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
+												connect by regexp_substr(ls_award_budget_status, '[^,]+', 1, level) is not null );
+		
+		IF li_count = 0 THEN -- There is nothing to feed
+			return -100;
+		END IF;	
+	
+	
+	
+		ls_batch_file_name := concat(concat(concat('dospfpl1.', ltrim(to_char(as_batch_id, '000'))), '.'),
+															to_char(as_dt_now, 'YYYYMMDDHH24MISS'));
+															
+		li_sap_budget_feed_batch_id := 	seq_sap_budget_feed_batch_id.nextval;												
+		
+		INSERT INTO sap_budget_feed_batch_list(
+						sap_budget_feed_batch_id,
+						batch_id,
+						batch_file_name,
+						batch_timestamp,
+						update_user,
+						no_of_records,
+						update_timestamp,
+						ver_nbr,
+						obj_id
+						)
+				VALUES(
+				li_sap_budget_feed_batch_id,
+				as_batch_id,
+				ls_batch_file_name,
+				as_dt_now,
+				as_update_user,
+				li_no_of_records,
+				sysdate,
+				1,
+				sys_guid()
+				);
+				
+	
+	
+	
 	open c_sap_bud_det;
 	loop
 	fetch c_sap_bud_det into r_sap_bud_det;
@@ -81,6 +129,7 @@ begin
 		
 		INSERT INTO SAP_BUDGET_FEED_DETAILS(
 		SAP_BUDGET_FEED_DETAILS_ID,
+		SAP_BUDGET_FEED_BATCH_ID,
 		BATCH_ID,
 		BUDGET_ID,
 		AWARD_NUMBER,
@@ -93,6 +142,7 @@ begin
 		)
 		VALUES(
 		li_sap_budget_feed_details_id,
+		li_sap_budget_feed_batch_id,
 		as_batch_id,
 		r_sap_bud_det.budget_id,
 		r_sap_bud_det.award_number,
@@ -116,7 +166,7 @@ begin
 				else
 						ls_amount := '-'||LPAD(ABS(r_award_budget.amount), 9, '0');
 				end if;
-			
+				
 				begin
 					SELECT SAP_OBJ_CD into ls_cost_element FROM SAP_KC_OBJ_CD_MAPPING
 					WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
@@ -129,6 +179,7 @@ begin
 				INSERT INTO SAP_BUDGET_FEED(
 							SAP_BUDGET_FEED_ID,
 							SAP_BUDGET_FEED_DETAILS_ID,
+							SAP_BUDGET_FEED_BATCH_ID,
 							BATCH_ID,
 							FISCAL_YEAR,
 							ACCOUNT_NUMBER,
@@ -139,10 +190,11 @@ begin
 							)
 				VALUES(  SEQ_SAP_BUDGET_FEED_ID.NEXTVAL,
 						 li_sap_budget_feed_details_id,
+						 li_sap_budget_feed_batch_id,
 						 as_batch_id,
 						 ls_sap_feed_fiscal_year,
 						 ls_account_number,
-						 ls_cost_element,
+						 ls_cost_element,						 
 						 ls_amount,
 						 1,
 						 sys_guid()
@@ -158,32 +210,7 @@ begin
 	end loop;
 	close c_sap_bud_det;
 
-		ls_batch_file_name := concat(concat(concat('dospfpl1.', ltrim(to_char(as_batch_id, '000'))), '.'),
-															to_char(as_dt_now, 'YYYYMMDDHH24MISS'));
-		IF li_inserted = 1 THEN
-			INSERT INTO sap_budget_feed_batch_list(
-							sap_budget_feed_batch_id,
-							batch_id,
-							batch_file_name,
-							batch_timestamp,
-							update_user,
-							no_of_records,
-							update_timestamp,
-							ver_nbr,
-							obj_id
-							)
-					VALUES(
-					seq_sap_budget_feed_batch_id.nextval,
-					as_batch_id,
-					ls_batch_file_name,
-					as_dt_now,
-					as_update_user,
-					li_no_of_records,
-					sysdate,
-					1,
-					sys_guid()
-					);
-		END IF;		
+		
 		
 		UPDATE 	AWARD_BUDGET_EXT SET AWARD_BUDGET_STATUS_CODE = 9 --Posted
 		WHERE budget_id IN ( SELECT budget_id FROM SAP_BUDGET_FEED_DETAILS WHERE BATCH_ID = as_batch_id);
@@ -193,9 +220,9 @@ begin
 		COMMIT;		
 		
 		
-	ret := fn_spool_awd_budget_batch(as_batch_id, as_path);
+	ret := fn_spool_awd_budget_batch(li_sap_budget_feed_batch_id, as_path);
 
-	return as_batch_id;
+	return li_sap_budget_feed_batch_id;
 
 end;
 /

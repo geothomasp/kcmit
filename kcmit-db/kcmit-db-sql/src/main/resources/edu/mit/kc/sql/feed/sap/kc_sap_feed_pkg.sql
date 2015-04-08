@@ -1,5 +1,5 @@
 create or replace package kc_sap_feed_pkg as
-  function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
+  function  generate_feed  (ai_sap_feed_batch_id number, ai_batch_id in number, ai_feed_id in number,
 										  as_award_number in AWARD.AWARD_NUMBER%TYPE,
                                 ai_sequence_number in AWARD.SEQUENCE_NUMBER%TYPE,
                                 as_feed_type in SAP_FEED_DETAILS.FEED_TYPE%TYPE,
@@ -33,6 +33,7 @@ gs_award_number  					AWARD.AWARD_NUMBER%TYPE;
 gi_sequence_number 					AWARD.SEQUENCE_NUMBER%TYPE;
 gi_feed_id 							SAP_FEED_DETAILS.FEED_ID%TYPE;
 gi_batch_id							SAP_FEED_BATCH_LIST.BATCH_ID%TYPE;
+gi_sap_feed_batch_id				SAP_FEED_BATCH_LIST.SAP_FEED_BATCH_ID%TYPE;
 gi_sponsor_type 					SPONSOR.SPONSOR_TYPE_CODE%TYPE;
 gi_prime_sponsor_type 				SPONSOR.SPONSOR_TYPE_CODE%TYPE;     --Added on 8/27/98
 grec_award 							AWARD%ROWTYPE; --one record from AWARD
@@ -67,7 +68,7 @@ function fn_get_cost_share  return varchar2;
 function fn_get_custom_element_value (as_CustomElement in
 		 							 CUSTOM_ATTRIBUTE.NAME%TYPE)  return varchar2;
 /***************************************************************************************/
-function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
+function  generate_feed  (ai_sap_feed_batch_id number, ai_batch_id in number, ai_feed_id in number,
 										  as_award_number in AWARD.AWARD_NUMBER%TYPE,
                                 ai_sequence_number in AWARD.SEQUENCE_NUMBER%TYPE,
                                 as_feed_type in SAP_FEED_DETAILS.FEED_TYPE%TYPE,
@@ -113,9 +114,9 @@ function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
 	gi_sequence_number 					:= NULL;
 	gi_feed_id 							:= NULL;
 	gi_batch_id							:= NULL;
+	gi_sap_feed_batch_id				:= NULL;
 	gi_sponsor_type 					:= NULL;
 	grec_award 							:= NULL;
-
 	gd_exp_date 						:= NULL;
 	gn_anticipated_total 				:= NULL;
 	gn_obligated_total 					:= NULL;
@@ -127,6 +128,7 @@ function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
 
      gi_feed_id := ai_feed_id;
 	 gi_batch_id := ai_batch_id;
+	 gi_sap_feed_batch_id := ai_sap_feed_batch_id;
 	 gs_award_number := as_award_number;
      gi_sequence_number := ai_sequence_number;
 	 gs_transaction_id := as_transaction_id;
@@ -141,19 +143,19 @@ function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 1');
+----upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 1');
 --get current fiscal year from KRCR_PARM_T table.
 		li_ret := fn_get_fiscal_year;
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 2');
+----upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 2');
 --get IDC and OH rates for this fiscal year
 		li_ret := fn_get_rates;
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 3');
+----upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 3');
 --moved following check after the get unit information on 9/22/00
 --Following check for costing sheet key was added on 8/10/00
 --Get Costing sheet key and validate it.
@@ -177,22 +179,23 @@ function  generate_feed  (ai_batch_id in number, ai_feed_id in number,
 		IF li_ret = -1 THEN
          Return (-1);
 		END IF;
-----upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 4');
+----upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 4');
 --Following check for costing sheet key was added on 8/10/00
 --Get Costing sheet key and validate it.
 		li_ret := fn_get_costing_sheet_key;
 		IF li_ret = -1 THEN
 			Return(-1);
 		END IF;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 4A');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 4A');
 
 --get money and end dates
 
 		li_Ret := fn_get_money_and_dates;
 
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 5');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 5');
 		feed_record.batch_id := ai_batch_id;
 		feed_record.feed_id := gi_feed_id;
+		feed_record.sap_feed_batch_id := ai_sap_feed_batch_id;
 
 		IF as_feed_type = 'N' THEN
 			feed_record.sap_transaction := 'ZCO1';  --Create new account in SAP
@@ -232,7 +235,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET MIT_SAP_ACCOUNT
 
 		feed_record.mit_sap_account := gs_account_number;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 6');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 6');
 --SET DEPTNO.
 
 --No more 99 logic on Unit number 7/21/98
@@ -266,11 +269,11 @@ PROJECT_TYPE column is dropped as of 5/6/02
 				feed_record.billing_element := ' ';
 			end if;
 		END IF;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 7');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 7');
 --SET BILLING_TYPE
 
 		feed_record.billing_type := fn_get_billing_type;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 8');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 8');
 --dbms_output.put_line('done BILLING_TYPE');
 
 --SET BILLING_FORM
@@ -278,7 +281,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --More logic comming from Steve (10-09-97)
 
 		feed_record.billing_form := fn_get_billing_form;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 9');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 9');
 --dbms_output.put_line('done BILLING_FORM');
 
 
@@ -294,7 +297,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 
 		feed_record.spon_code := grec_award.sponsor_code;
 
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 10');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 10');
 --dbms_output.put_line('done SPON_CODE');
 
 --SET PRIMARY_SPONSOR
@@ -323,12 +326,12 @@ PROJECT_TYPE column is dropped as of 5/6/02
      --COEUSDEV-851
 
      		feed_record.contract := regexp_replace(grec_award.sponsor_award_number, '[^ -~]', ' ') ;
-       --upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 11');
+       --upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 11');
 --dbms_output.put_line('done CONTRACT');
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 12');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 12');
 --SET CUSTOMER
 		feed_record.customer := fn_get_customer;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 13');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 13');
 		--get the mapping from steve
 
 --SET TERM_CODE
@@ -382,7 +385,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 		feed_record.acctname := SUBSTR(grec_award.title, 1, 40) ;
 
 --dbms_output.put_line('done ACCT_NAME');
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 14');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 14');
 --SET EFFECT_DATE
 
 		IF grec_award.pre_award_effective_date is not NULL THEN
@@ -447,7 +450,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 		ELSE
 			feed_record.mail_code := '1'; -- This was 1 -- COEUSDEV-1103
 		END IF;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 15');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 15');
 --dbms_output.put_line('done MAIL_CODE');
 
 --SET SUPERVISOR
@@ -462,7 +465,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET SUPER_ROOM
 
 		feed_record.super_room := fn_format_room(gs_pi_room);
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 16');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 16');
 --dbms_output.put_line('done SUPER_ROOM');
 
 --SET ADDRESSEE
@@ -483,12 +486,12 @@ PROJECT_TYPE column is dropped as of 5/6/02
 
 		feed_record.addr_room := fn_format_room(gs_addresse_room);
 --dbms_output.put_line('done ADDR_ROOM');
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 17');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 17');
 --SET AGREE_TYPE
 		--check logic with steve.
 --		ls_temp := fn_get_agree_type;
 		feed_record.agree_type := fn_get_agree_type;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 18');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 18');
 --dbms_output.put_line('after agree type');
 
 --SET AUTH_TOTAL
@@ -506,7 +509,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET COST_SHARE
 
 		feed_record.cost_share := fn_get_cost_share;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 19');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 19');
 --dbms_output.put_line('done COST_SHARE');
 
 --SET FUND_CLASS
@@ -580,7 +583,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET DFAFS
 
 		feed_record.dfafs := fn_get_dfafs;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 20');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 20');
 --dbms_output.put_line('done DFAFS');
 
 
@@ -621,7 +624,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET LAB_ALLOCATION_KEY
 
 		feed_record.lab_allocation_key := fn_get_lab_allocation;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 21');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 21');
 --dbms_output.put_line('done LAB_ALLOCATION_KEY');
 
 --SET EB_ADJUSTMENT_KEY
@@ -639,7 +642,7 @@ PROJECT_TYPE column is dropped as of 5/6/02
 --SET COMMENT1
 
 		feed_record.comment1 := fn_generate_comment1;
---upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Pass 22');
+--upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 22');
 --SET COMMENT2
 
 		feed_record.comment2 := '-';
@@ -660,16 +663,68 @@ PROJECT_TYPE column is dropped as of 5/6/02
 
 --Now insert the feed record to SAP_FEED_BATCH_LIST
 select SEQ_SAP_ID.nextval into li_sp_feed_id from dual;
-  INSERT INTO SAP_FEED
+  INSERT INTO SAP_FEED(
+					SAP_FEED_ID,
+					BATCH_ID,
+					SAP_FEED_BATCH_ID,
+					FEED_ID,		
+					SAP_TRANSACTION,
+					WBS_TYPE,
+					ACCOUNT_LEVEL,
+					MIT_SAP_ACCOUNT,
+					DEPTNO,
+					BILLING_ELEMENT,
+					BILLING_TYPE,
+					BILLING_FORM,
+					SPON_CODE,
+					PRIMARY_SPONSOR,
+					CONTRACT,
+					CUSTOMER,
+					TERM_CODE,
+					PARENT_ACCOUNT,
+					ACCTNAME,
+					EFFECT_DATE,
+					EXPIRATION,
+					SUB_PLAN,
+					MAIL_CODE,
+					SUPERVISOR,
+					SUPER_ROOM,
+					ADDRESSEE,
+					ADDR_ROOM,
+					AGREE_TYPE,
+					AUTH_TOTAL,
+					COST_SHARE,
+					FUND_CLASS,
+					POOL_CODE,
+					PENDING_CODE,
+					FS_CODE,
+					DFAFS,
+					CALC_CODE,
+					CFDANO,
+					COSTING_SHEET_KEY,
+					LAB_ALLOCATION_KEY,
+					EB_ADJUSTMENT_KEY,
+					OH_ADJUSTMENT_KEY,
+					COMMENT1,
+					COMMENT2,
+					COMMENT3,
+					TITLE,
+					SORT_ID,
+					UPDATE_USER,
+					UPDATE_TIMESTAMP,
+					VER_NBR,
+					OBJ_ID				
+					)
 	VALUES( li_sp_feed_id, 
 	        feed_record.BATCH_ID,
+			feed_record.SAP_FEED_BATCH_ID,
             feed_record.FEED_ID,
             feed_record.SAP_TRANSACTION,
             feed_record.WBS_TYPE,
             feed_record.ACCOUNT_LEVEL,
             feed_record.MIT_SAP_ACCOUNT,
             feed_record.DEPTNO,
-				feed_record.BILLING_ELEMENT,
+			feed_record.BILLING_ELEMENT,
             feed_record.BILLING_TYPE,
             feed_record.BILLING_FORM,
             feed_record.SPON_CODE,
@@ -715,7 +770,7 @@ select SEQ_SAP_ID.nextval into li_sp_feed_id from dual;
    return (0);
 	EXCEPTION 
 	WHEN OTHERS THEN
-	  upd_sap_feed_log_error(gi_batch_id, gi_feed_id, SQLERRM);
+	  upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||substr(SQLERRM,1,250));
 	  Return (-1);
 	end generate_feed;
 
@@ -866,7 +921,7 @@ BEGIN
 
 	EXCEPTION
 		WHEN others THEN
-		upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid sponsor code for award number = '||gs_award_number||', sequence number = '||gi_sequence_number||', Sponsr cd = '||grec_award.sponsor_code);
+		upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid sponsor code for award number = '||gs_award_number||', sequence number = '||gi_sequence_number||', Sponsr cd = '||grec_award.sponsor_code);
     	return (-1);
 END;
 
@@ -877,39 +932,39 @@ return (0);
 EXCEPTION
 
 WHEN null_account_number THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Account Number is Null for award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Account Number is Null for award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN invalid_account_number THEN
     error_message := 'Invalid Account Number. Account number should be 7 character long and shoule be >= 1000000.';
 	error_message := error_message ||' Award number = '||gs_award_number||', sequence number = '||gi_sequence_number;
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, error_message);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, error_message);
     return (-1);
 
 WHEN null_parent_account_number THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Parent Account Number is Null for award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Parent Account Number is Null for award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN invalid_parent_account_number THEN
     error_message := 'Invalid Parent Account Number. Account number should be 7 character long.';
 	error_message := error_message|| ' for award number = '||gs_award_number||', sequence number = '||gi_sequence_number;
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, error_message);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, error_message);
     return (-1);
 
 WHEN parent_not_found THEN
-     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Parent MIT award number not found in AWARD_HIERARCHY table. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+     upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Parent MIT award number not found in AWARD_HIERARCHY table. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 	  return (-1);
 
 WHEN consortium_account THEN
-     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Feed for consortium accounts not implemented. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+     upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Feed for consortium accounts not implemented. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 	  return (-1);
 
 WHEN hold_account THEN																	--added on 03/16/98
-     upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'The Account is in Hold or Inactive. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+     upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'The Account is in Hold or Inactive. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 	  return (-1);
 
 WHEN OTHERS THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, ' Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 200));
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, ' Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 200));
     return (-1);
 
 /*===========================*/
@@ -1081,7 +1136,7 @@ BEGIN
 
 EXCEPTION
 		WHEN OTHERS THEN
-   	 upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+   	 upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
    	 return (-1);
 END;
 
@@ -1166,19 +1221,19 @@ return 0;
 EXCEPTION
 
 WHEN pi_not_found THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'PI Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'PI Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN pi_name_too_long THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'PI name is more than 30 characters. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'PI name is more than 30 characters. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN lu_not_found THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Lead Unit Information not found for this Award. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     return (-1);
 
 WHEN OTHERS THEN
-    upd_sap_feed_log_error(gi_batch_id, gi_feed_id,'Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
     return (0);
 
 /*===========================*/
@@ -1422,19 +1477,19 @@ begin
 				IF (SUBSTR(ls_costing_sheet, 1, 1) <> 'E') AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'G')
 					AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'B') AND -- 'B' Added on 10/30/03
 					(SUBSTR(ls_costing_sheet, 1, 5) <> 'RESEB') THEN   -- RESEB Added on 5/24/06
-					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+					upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 			    	return (-1);
 				END IF;
 			ELSIF gs_account_number >= '2000000' AND gs_account_number <= '4999999' THEN
 				IF (SUBSTR(ls_costing_sheet, 1, 1) <> 'E') AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'F') AND
 					(SUBSTR(ls_costing_sheet, 1, 1) <> 'S') THEN
-					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+					upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 			    	return (-1);
 				END IF;
 			ELSIF gs_account_number >= '5000000' THEN
 				IF (SUBSTR(ls_costing_sheet, 1, 1) <> 'E') AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'R')
                    AND (SUBSTR(ls_costing_sheet, 1, 1) <> 'B') THEN
-					upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+					upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid Costing sheet assigned. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 			    	return (-1);
 				END IF;
 			END IF;
@@ -1536,10 +1591,10 @@ begin
 EXCEPTION
 
 when NO_DATA_FOUND THEN
-	upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Entry for SAP_FEED_CURRENT_FISCAL_YEAR missing from KRCR_PARM_T table.');
+	upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Entry for SAP_FEED_CURRENT_FISCAL_YEAR missing from KRCR_PARM_T table.');
     return (-1);
 WHEN others THEN
-	upd_sap_feed_log_error(gi_batch_id, gi_feed_id, SUBSTR(SQLERRM, 1, 350));
+	upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 350));
     return (-1);
 
 /*===========================*/
@@ -1620,7 +1675,7 @@ ELSE
 
 		EXCEPTION
 			WHEN others THEN
-				upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid EB Rates. Cannot find a valid EB Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+				upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid EB Rates. Cannot find a valid EB Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
     			return (-1);
 	END;
 
@@ -1652,7 +1707,7 @@ END IF;
 			IF cur_idc_off%NOTFOUND THEN
 				close cur_idc_on;
 				close cur_idc_off;
-				upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. No Off campus rate available for FY ' || ls_FiscalYear||', Award number = '||gs_award_number||', sequence number = '||gi_sequence_number );
+				upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid OH Rates. No Off campus rate available for FY ' || ls_FiscalYear||', Award number = '||gs_award_number||', sequence number = '||gi_sequence_number );
     			return (-1);
 			END IF ;
 
@@ -1671,8 +1726,8 @@ END IF;
 					WHEN others THEN
 						close cur_idc_on;
 						close cur_idc_off;
-						upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
-						upd_sap_feed_log_error(gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+						upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
+						upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Invalid OH Rates. Cannot find a valid OH Adjustment Key. Award number = '||gs_award_number||', sequence number = '||gi_sequence_number);
 		    			return (-1);
 				END; --END For Begin block
 			END IF;

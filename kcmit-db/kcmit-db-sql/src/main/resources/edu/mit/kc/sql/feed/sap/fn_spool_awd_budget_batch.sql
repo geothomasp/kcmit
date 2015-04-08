@@ -1,5 +1,5 @@
 create or replace
-function fn_spool_awd_budget_batch (ai_batch_id in number, as_path in varchar2) return number is
+function fn_spool_awd_budget_batch (ai_sap_budget_feed_batch_id in number, as_path in varchar2) return number is
 lrec_batch_list 						sap_budget_feed_batch_list%ROWTYPE;
 ls_filename 							SAP_FEED_BATCH_LIST.BATCH_FILE_NAME%TYPE;
 ls_controlfilename 						SAP_FEED_BATCH_LIST.BATCH_FILE_NAME%TYPE;
@@ -17,7 +17,7 @@ cursor cur_feeds  is
 				COST_ELEMENT,
 				AMOUNT
 		FROM SAP_BUDGET_FEED
-		WHERE SAP_BUDGET_FEED.BATCH_ID = ai_batch_id
+		WHERE SAP_BUDGET_FEED.SAP_BUDGET_FEED_BATCH_ID = ai_sap_budget_feed_batch_id
 		ORDER BY SAP_BUDGET_FEED.SAP_BUDGET_FEED_DETAILS_ID ASC ;
 rec_feed cur_feeds%rowtype;
 
@@ -27,7 +27,7 @@ begin
 		SELECT *
 		INTO lrec_batch_list
 		FROM sap_budget_feed_batch_list
-		WHERE sap_budget_feed_batch_list.BATCH_ID = ai_batch_id ;
+		WHERE sap_budget_feed_batch_list.SAP_BUDGET_FEED_BATCH_ID = ai_sap_budget_feed_batch_id ;
 		
 	exception   
     when others then		
