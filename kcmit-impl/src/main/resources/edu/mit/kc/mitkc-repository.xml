@@ -16,8 +16,8 @@
 		<field-descriptor name="customField2" column="CUSTOM_FIELD2" jdbc-type="VARCHAR" />
 		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
 	</class-descriptor>
-	<class-descriptor class="edu.mit.kc.award.contacts.AwardPersonConfirm" table="AWARD_PERSON_CONFIRM">
-    	<field-descriptor name="awardPersonConfirmId" column="AWARD_PERSON_CONFIRM_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_AWARD_PERSON_CONFIRM_ID"/>
+	<class-descriptor class="edu.mit.kc.award.contacts.AwardPersonConfirm" table="AWARD_KEY_PERS_CONFIRM">
+    	<field-descriptor name="awardPersonConfirmId" column="AWARD_KEY_PERS_CONFIRM_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_AWARD_PERSON_CONFIRM_ID"/>
 			<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR" nullable="false" />  	
     		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="true"/>
     		<field-descriptor name="sequenceNumber" column="SEQUENCE_NUMBER" jdbc-type="INTEGER" nullable="false"/>
@@ -33,8 +33,8 @@
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="false" />
 
     </class-descriptor>
-    <class-descriptor class="edu.mit.kc.award.contacts.AwardPersonRemove" table="AWARD_PERSON_REMOVE">
-    	<field-descriptor name="awardPersonRemoveId" column="AWARD_PERSON_REMOVE_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_AWARD_PERSON_REMOVE_ID"/>
+    <class-descriptor class="edu.mit.kc.award.contacts.AwardPersonRemove" table="AWARD_KEY_PERS_REMOVED">
+    	<field-descriptor name="awardPersonRemoveId" column="AWARD_KEY_PERS_REMOVED_ID" jdbc-type="BIGINT" primarykey="true" autoincrement="true" sequence-name="SEQ_AWARD_PERSON_REMOVE_ID"/>
 			<field-descriptor name="awardNumber" column="AWARD_NUMBER" jdbc-type="VARCHAR" nullable="false" />  	
     		<field-descriptor name="awardPersonId" column="AWARD_PERSON_ID" jdbc-type="BIGINT" nullable="true"/>
     		<field-descriptor name="awardId" column="AWARD_ID" jdbc-type="BIGINT" nullable="false"/>    		
@@ -184,5 +184,6 @@
 		<field-descriptor name="batchTimeStamp" column="BATCH_TIMESTAMP" jdbc-type="TIMESTAMP" />
 		<field-descriptor name="noOfRecords" column="NO_OF_RECORDS" jdbc-type="BIGINT" />
 	</class-descriptor>	
+	
 	
 </descriptor-repository>
