@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN
 		select
-		decode( cd.disclosure_disposition_code,3,decode(cd.review_status_code, 1,'In-Progress','Review-In-Progress'),1,'Approved','Disapproved') into ls_status
+		decode( cd.disclosure_disposition_code,3,decode(cd.review_status_code, 1,'In-Progress','Submitted For Review'),1,'Approved','Disapproved') into ls_status
 		from osp$coi_disclosure cd
 		where cd.module_item_key = ls_module_item_key
 		and   cd.person_id = as_person_id
