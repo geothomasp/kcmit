@@ -161,10 +161,10 @@
 		<property name="shortLabel" value="Frequency" />
 		<property name="maxLength" value="22" />
 		<property name="validationPattern" >
-			<bean parent="NumericValidationPattern" />
+			<bean parent="AnyCharacterValidationPattern" />
 		</property>
     <property name="validCharactersConstraint">
-      <bean parent="NumericPatternConstraint"/>
+      <bean parent="AnyCharacterPatternConstraint"/>
     </property>
 		<property name="control" >
       <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kra.award.paymentreports.Frequency" p:valuesFinderClass="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder" p:includeKeyInLabel="false" p:includeBlankRow="false" p:keyAttribute="frequencyCode" p:labelAttribute="description"/>
@@ -193,10 +193,10 @@
 		<property name="shortLabel" value="Frequency Base" />
 		<property name="maxLength" value="22" />
 		<property name="validationPattern" >
-			<bean parent="NumericValidationPattern" />
+			<bean parent="AnyCharacterValidationPattern" />
 		</property>
     <property name="validCharactersConstraint">
-      <bean parent="NumericPatternConstraint"/>
+      <bean parent="AnyCharacterPatternConstraint"/>
     </property>
 		<property name="control" >
       <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kra.award.paymentreports.FrequencyBase" p:valuesFinderClass="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder" p:includeKeyInLabel="false" p:includeBlankRow="false" p:keyAttribute="frequencyBaseCode" p:labelAttribute="description"/>

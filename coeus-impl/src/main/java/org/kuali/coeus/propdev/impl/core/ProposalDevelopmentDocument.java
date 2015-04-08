@@ -149,7 +149,7 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
     private transient Boolean allowsNoteAttachments;
     
     @Transient
-    private transient Boolean certtifyViewOnly;
+    private transient Boolean certtifyViewOnly = false;
 
     
 	public ProposalDevelopmentDocument() {

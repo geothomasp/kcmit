@@ -33,12 +33,12 @@
 			<%-- Header --%>
 			
 			<%-- Existing data --%>
-		<c:if test="${fn:length(KualiForm.meetingHelper.memberPresentBeans) > 2}">			
+		<%-- <c:if test="${fn:length(KualiForm.meetingHelper.memberPresentBeans) > 2}">			
             <tr>
                 <td colspan="5" style="padding:0px;">                       
                     <div style="clear:left; height:120px; overflow-y:scroll; overflow-x:hidden; position:relative;">
                             <table cellpadding=0 cellspacing="0"  style="border-collapse:collapse;">
-        </c:if>                
+        </c:if>   --%>              
         <c:forEach var="memberPresentBean" items="${KualiForm.meetingHelper.memberPresentBeans}" varStatus="status">
 	        <tr>
 				<th style="width:48px;" class="infoline" align="center">
@@ -105,10 +105,10 @@
 	        </tr>
         </c:forEach>    
         	
-		<c:if test="${fn:length(KualiForm.meetingHelper.memberPresentBeans) > 2}">
+		<%-- <c:if test="${fn:length(KualiForm.meetingHelper.memberPresentBeans) > 20}">
                         </table>
                     </div>
                 </td>	
             </tr>
-        </c:if>
+        </c:if> --%>
     </table>
