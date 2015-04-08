@@ -24,7 +24,7 @@
 
   
     
-	<bean id="PropDev-Personal-CoiQuestionDialog" parent="Uif-DialogGroup-YesNo" p:promptText="@{coiIntegrationMessage}" >
+	<bean id="PropDev-Personal-CoiQuestionDialog" parent="Uif-DialogGroup" p:promptText="@{coiIntegrationMessage}" p:dialogCssClass="modal-lg">
 	<property name="footer.items">
             <list>
                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="OK" p:methodToCall="save" p:order="10"
