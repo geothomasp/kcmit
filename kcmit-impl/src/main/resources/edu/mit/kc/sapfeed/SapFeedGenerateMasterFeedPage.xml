@@ -80,7 +80,8 @@
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="path"
-				    p:label="Target Environment" p:order="30">
+				    p:label="Target Environment" p:order="30"
+				    p:defaultValue="T">
 					<property name="control">
 						<bean parent="Uif-VerticalRadioControl">
 
@@ -134,11 +135,14 @@
 					p:style="font-size: medium;" p:order="10" />
 				<bean parent="Uif-Message" p:messageText="Batch File :@{#lp.batchFileName}"
 					p:order="10" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
-				<bean parent="Uif-Message" p:messageText="Records Fed:@{#lp.fedInRecords}"
+				<bean parent="Uif-Message" p:messageText="Records Fed:@{#lp.fedInRecords eq null ? '' :#lp.fedInRecords}"
 					p:order="20" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
 
-				<bean parent="Uif-Message" p:messageText="Records in Error:@{#lp.errorInRecords}"
-					p:order="30" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
+				<bean parent="Uif-Message" p:messageText="Records in Error:@{#lp.errorInRecords eq null ? '' : #lp.errorInRecords}"
+			        p:order="30" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
+				
+				<bean parent="Sap-Feed_ErrorList" 
+					p:order="40" p:render="@{#lp.errorInRecords ne 0}" /> 
 			</list>
 		</property>
 
@@ -146,6 +150,18 @@
 			<list>
 				<bean parent="Uif-DialogDismissButton" p:actionLabel="Close"
 					p:order="10" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="Sap-Feed_ErrorList" parent="Sap-Feed_ErrorList-parentBean" />
+	<bean id="Sap-Feed_ErrorList-parentBean" parent="Uif-ListCollectionSection">
+		<property name="collectionObjectClass"
+			value="org.kuali.coeus.propdev.impl.sapfeed.SapFeedErrorDetails" />
+		<property name="propertyName" value="sapFeedErrorDetails" />
+		<property name="items">
+			<list>
+			   <bean parent="Uif-MessageField" p:messageText="@{#line.errorMessage}" />
 			</list>
 		</property>
 	</bean>

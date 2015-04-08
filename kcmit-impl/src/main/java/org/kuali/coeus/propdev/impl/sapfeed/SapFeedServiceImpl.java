@@ -35,7 +35,7 @@ public class SapFeedServiceImpl implements SapFeedService
 		List<Object> paramValues = new ArrayList<Object>();
 		paramValues.add(0, path);
 		paramValues.add(1, user);
-		String resultMaster = "";
+		String resultMaster = "0,0";
 		try {
 
 			 resultMaster = getDbFunctionService().executeFunction(

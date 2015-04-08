@@ -67,5 +67,4 @@ public class SapFeedBatchDetails extends KcPersistableBusinessObjectBase {
 	public void setNoOfRecords(Long noOfRecords) {
 		this.noOfRecords = noOfRecords;
 	}
-	
 }

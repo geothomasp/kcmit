@@ -33,6 +33,8 @@ public class SapFeedDetails extends KcPersistableBusinessObjectBase {
 	@Column(name = "TRANSACTION_ID")
 	private String tranId;
 	
+	@Column(name = "SAP_FEED_BATCH_ID")
+	private Long sapFeedBatchId;
 	
 	public Integer getFeedId() {
 		return feedId;
@@ -76,5 +78,12 @@ public class SapFeedDetails extends KcPersistableBusinessObjectBase {
 	public void setTranId(String tranId) {
 		this.tranId = tranId;
 	}
+	public Long getSapFeedBatchId() {
+		return sapFeedBatchId;
+	}
+	public void setSapFeedBatchId(Long sapFeedBatchId) {
+		this.sapFeedBatchId = sapFeedBatchId;
+	}
+	
 	
 }

@@ -1,7 +1,7 @@
 package org.kuali.coeus.propdev.impl.sapfeed;
 
 import java.sql.Timestamp;
-
+import java.util.List;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -22,17 +22,20 @@ public class SapFeedsForm extends UifFormBase {
 	private String path;
 	private int pendingFeedCount;
 	private Boolean sponsordatachanged=false;
+	private Boolean masterFeedFileGenerated=false;
 	private Boolean sponsorFeedGenerated=false;
 	private Boolean rolodexFeedGenerated=false;
 	private String batchFileName;
-	private int fedInRecords=0;
-	private int errorInRecords=0;
+	private int fedInRecords;
+	private int errorInRecords;
 	
 	private String sponsorFeedUser=null;
 	private String sponsorFeedDate=null;
 	private String rolodexFeedUser=null;
 	private String rolodexFeedDate=null;
-
+	
+	
+	private List<SapFeedErrorDetails> sapFeedErrorDetails;
 
 	public Boolean getSponsordatachanged() {
 		return sponsordatachanged;
@@ -75,6 +78,14 @@ public class SapFeedsForm extends UifFormBase {
 	}
 
 	
+	public Boolean getMasterFeedFileGenerated() {
+		return masterFeedFileGenerated;
+	}
+
+	public void setMasterFeedFileGenerated(Boolean masterFeedFileGenerated) {
+		this.masterFeedFileGenerated = masterFeedFileGenerated;
+	}
+
 	public String getBatchFileName() {
 		return batchFileName;
 	}
@@ -157,5 +168,13 @@ public class SapFeedsForm extends UifFormBase {
 	public void setRolodexFeedDate(String rolodexFeedDate) {
 		this.rolodexFeedDate = rolodexFeedDate;
 	}
-	 
+
+	public List<SapFeedErrorDetails> getSapFeedErrorDetails() {
+		return sapFeedErrorDetails;
+	}
+
+	public void setSapFeedErrorDetails(List<SapFeedErrorDetails> sapFeedErrorDetails) {
+		this.sapFeedErrorDetails = sapFeedErrorDetails;
+	}
+	
 }
