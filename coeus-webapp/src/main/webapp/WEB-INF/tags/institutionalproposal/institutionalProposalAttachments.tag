@@ -197,6 +197,7 @@ opacity:1;
 					</td>
 					 <td align="center" valign="middle">
 						<div align="center">
+						<c:if test="${KualiForm.document.institutionalProposalList[0].instProposalAttachments[itrStatus.index].documentStatusCode != 'V'}">
 						<c:choose>
 						<c:when test="${readOnly}">
 						<c:if test="${institutionalProposalAttachmentBean.canViewAttachment}">
@@ -206,13 +207,12 @@ opacity:1;
 						</c:if>
 						</c:when>
 						<c:otherwise>
-						<c:if test="${KualiForm.document.institutionalProposalList[0].instProposalAttachments[itrStatus.index].documentStatusCode != 'V'}">
 						<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 								alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
-						</c:if>
 						</c:otherwise>
 						</c:choose>
+						</c:if>
 						<c:if test="${institutionalProposalAttachmentBean.maintainInstituteProposal == true}">
 						<c:choose>
 							<c:when test="${institutionalProposalAttachmentBean.disableAttachmentRemovalIndicator == true}">

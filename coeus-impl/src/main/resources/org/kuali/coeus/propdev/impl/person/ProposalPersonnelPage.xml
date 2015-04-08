@@ -50,6 +50,12 @@
                                   and !#ViewHelper.areAllCertificationsComplete(document.developmentProposal.proposalPersons)
                                   and !document.developmentProposal.isChild()
                                   and !#parent.readOnly}"/>
+                            <bean parent="Uif-PrimaryActionButton" p:actionLabel="COI Disclosure Status"
+                                               p:order="35"  p:actionScript="showDialog('PropDev-PersonnelPage-COIStatus-Dialog');"
+                                                p:render="@{document.developmentProposal.proposalPersons.size() > 0
+                                  and !#ViewHelper.areAllCertificationsComplete(document.developmentProposal.proposalPersons)
+                                  and !document.developmentProposal.isChild()
+                                  and !#parent.readOnly}"/>
                         </list>
                     </property>
                 </bean>
@@ -322,8 +328,8 @@
                                               p:actionLabel="" p:methodToCall="movePersonUp" p:order="20"/>
                                         <bean parent="Uif-ActionLink" p:iconClass="icon-arrow-down" p:render="@{#line.moveDownAllowed}"
                                               p:actionLabel="" p:methodToCall="movePersonDown" p:order="30"/>
-                                        <bean parent="Uif-ActionLink" p:actionLabel="COI Disclosure Status"
-                                              p:iconClass="icon-bell2" p:order="35"  p:actionScript="showDialog('PropDev-PersonnelPage-COIStatus-Dialog');"/>
+                                        <!-- <bean parent="Uif-ActionLink" p:actionLabel="COI Disclosure Status"
+                                              p:iconClass="icon-bell2" p:order="35"  p:actionScript="showDialog('PropDev-PersonnelPage-COIStatus-Dialog');"/> -->
                                         <bean parent="Uif-DeleteLineAction" p:actionLabel=""
                                               p:iconClass="icon-trash" p:order="40" p:render="@{!#parent.readOnly}"  p:performClientSideValidation="false">
                                             <property name="confirmationDialog">
