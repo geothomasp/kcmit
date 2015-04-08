@@ -179,7 +179,7 @@
 				
 					<value>classpath:edu/mit/kc/datadictionary/MITLandingPageView.xml</value>
 					<value>classpath:edu/mit/kc/datadictionary/MITHomePage.xml</value>
-				
+				<value>classpath:edu/mit/kc/datadictionary/MitProposalPersonnelPage.xml</value>
 
 				<!-- Sap Feeds -->
 				 <value>classpath:edu/mit/kc/sapfeed/SapFeedInitiateView.xml</value>
@@ -193,6 +193,7 @@
                
                  <!--  dashboard -->
                  <value>classpath:edu/mit/kc/dashboard/DashboardView.xml</value>
+                 
 			</list>
 		</property>
         <property name="databaseRepositoryFilePaths">

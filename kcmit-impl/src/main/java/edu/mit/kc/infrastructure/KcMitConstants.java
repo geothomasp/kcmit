@@ -68,5 +68,8 @@ public interface KcMitConstants {
     public static final String ERROR_OBLIGATED_OR_ANTICIPATED_AMOUNT_REQUIRED = "error.transaction.amount.required";
     public static final String ERROR_IP_COST_SHARE_SOURCE_ACCOUNT_LIMIT_EXCEEDS="error.institutionalProposalCostShare.sourceamount.exceeds";
     public static final String AWARD_BUDGET_STATUS_REPOSTED = "awardBudgetStatusRePosted";
+    public static final String COI_QUESTION_ANSWERED = "proposal.info.coiQuestionAnswered";
+    public static final String MIT_COEUS_COI_APPLICATION_URL = "mit.coeus.coi.application.url";
+    
     
 }
