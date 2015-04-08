@@ -1,5 +1,5 @@
 CREATE OR REPLACE TRIGGER T_KP_CONFIRM_AFT_INSERT_ROW 
-after insert on AWARD_PERSON_CONFIRM for each row
+after insert on AWARD_KEY_PERS_CONFIRM for each row
 
 declare
 
