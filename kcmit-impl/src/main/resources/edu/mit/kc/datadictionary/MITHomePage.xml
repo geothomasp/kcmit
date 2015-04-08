@@ -74,17 +74,17 @@
             <list>
 
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Web Site"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.href="http://www.kuali.org"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="COI"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.href="http://www.kuali.org"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="NDA"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.href="http://www.kuali.org"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="CITI Training"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.href="http://www.kuali.org"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="KC Assistance"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.href="http://www.kuali.org"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Contacts"
-                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}"/>
+                      p:actionUrl.href="http://www.kuali.org"/>
 
             </list>
         </property>
@@ -418,7 +418,7 @@
                 </bean>
 
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                      p:actionLabel="Create IRB Commiittee" p:order="10">
+                      p:actionLabel="Create IRB Commiittee" p:order="130">
                     <property name="actionUrl.requestParameters">
                         <map>
                             <entry key="href"
@@ -428,7 +428,7 @@
                 </bean>
 
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                      p:actionLabel="Search for IRB Commiittee" p:order="20">
+                      p:actionLabel="Search for IRB Commiittee" p:order="140">
                     <property name="actionUrl.requestParameters">
                         <map>
                             <entry key="href"
@@ -438,7 +438,7 @@
                 </bean>
 
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                      p:actionLabel="View Protocol Submissions" p:order="30">
+                      p:actionLabel="View Protocol Submissions" p:order="150">
                     <property name="actionUrl.requestParameters">
                         <map>
                             <entry key="href"
@@ -448,7 +448,7 @@
                 </bean>
 
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                      p:actionLabel="View IRB Schedules" p:order="40">
+                      p:actionLabel="View IRB Schedules" p:order="160">
                     <property name="actionUrl.requestParameters">
                         <map>
                             <entry key="href"
