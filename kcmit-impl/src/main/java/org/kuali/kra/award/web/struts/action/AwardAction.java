@@ -447,6 +447,8 @@ public class AwardAction extends BudgetParentActionBase {
         }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus==6){
         	/*request.getSession().setAttribute("isWarning", false);*/
         	awardForm.setValidPrompt(false);
+        }else if(awardStatus==6){
+        	awardForm.setValidPrompt(false);
         }
         boolean awardNewStatus=awardForm.isStatusHold();
        /* if(awardNewStatus){
