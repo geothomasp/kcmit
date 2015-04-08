@@ -1,4 +1,4 @@
-create or replace function fn_spool_batch (ai_batch_id in number, as_path in varchar2) return number is
+create or replace function fn_spool_batch (ai_sap_feed_batch_id number, ai_batch_id in number, as_path in varchar2) return number is
 lrec_batch_list 						SAP_FEED_BATCH_LIST%ROWTYPE;
 lrec_feed       						SAP_FEED%ROWTYPE;
 ls_AwardNumber                       	sap_feed_details.AWARD_NUMBER%type;
@@ -14,7 +14,7 @@ ls_control_line							varchar2(112);
 	cursor cur_feeds  is
          	SELECT *
     					 FROM SAP_FEED
-  						 WHERE SAP_FEED.BATCH_ID = ai_batch_id
+  						 WHERE SAP_FEED.SAP_FEED_BATCH_ID = ai_sap_feed_batch_id
 						 ORDER BY SAP_FEED.SORT_ID ASC ;
 
 begin
@@ -24,7 +24,7 @@ begin
   SELECT *
 	INTO lrec_batch_list
     FROM SAP_FEED_BATCH_LIST
-	WHERE SAP_FEED_BATCH_LIST.BATCH_ID = ai_batch_id  ;
+	WHERE SAP_FEED_BATCH_LIST.SAP_FEED_BATCH_ID = ai_sap_feed_batch_id  ;
 
 --open the batch file.
 
