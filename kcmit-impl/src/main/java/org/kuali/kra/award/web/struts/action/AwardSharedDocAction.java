@@ -104,9 +104,9 @@ public class AwardSharedDocAction extends AwardAction {
 		 sharedDocForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
 		
 		 if(!sharedDocForm.isAwardProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC_AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
-					 (getPermissionService().hasPermission(currentUser, "KC_AWARD", "VIEW_AWARD_DOCUMENTS"))||
-							 (getPermissionService().hasPermission(currentUser, "KC_AWARD", "CREATE_AWARD"))){
+			 if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS"))||
+							 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "CREATE_AWARD"))){
 				 sharedDocForm.setAwardProjectDocView(true);
 			 }}	
 		 if(!sharedDocForm.isSubAwardProjectDocView()){
