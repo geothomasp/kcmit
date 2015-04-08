@@ -16,6 +16,8 @@
 package org.kuali.coeus.propdev.impl.dashboard;
 
 
+import edu.mit.kc.dashboard.bo.Alert;
+import edu.mit.kc.dashboard.bo.Expenditures;
 import edu.mit.kc.dashboard.core.DashboardForm;
 import edu.mit.kc.workloadbalancing.core.WorkloadForm;
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +63,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Controller("dashboard")
@@ -148,6 +153,9 @@ public class DashboardController {
         form.setDashboardPerson(kcPerson);
 
         populateProposals(form);
+        populateGraphData(form);
+        populateAlerts(form);
+
         return form;
     }
 
@@ -168,12 +176,30 @@ public class DashboardController {
             throws Exception {
         String refreshId = request.getParameter("updateComponentId");
 
-        if (form.getMyAwards().isEmpty() &&
+        if (form.getMyAwards() == null &&
                 (refreshId.equals("Dashboard-MyAwards") || refreshId.equals("Dashboard-ProjectDocuments") || refreshId.equals("Dashboard-KeyPerson"))) {
             populateAwards(form);
         }
 
         return getRefreshControllerService().refresh(form);
+    }
+
+    protected void populateAlerts(DashboardForm form) {
+      HashMap<String, String> criteria = new HashMap<String, String>();
+      criteria.put("userName", form.getDashboardPerson().getUserName());
+      criteria.put("active", "Y");
+      List<Alert> alerts =
+              dataObjectService.findMatching(Alert.class, QueryByCriteria.Builder.andAttributes(criteria).setOrderByAscending("priority").build()).getResults();
+
+      form.setAlerts(alerts);
+    }
+
+    protected void populateGraphData(DashboardForm form) {
+        HashMap<String, String> criteria = new HashMap<String, String>();
+        criteria.put("userName", form.getDashboardPerson().getUserName());
+        List<Expenditures> expendituresList =
+                dataObjectService.findMatching(Expenditures.class, QueryByCriteria.Builder.andAttributes(criteria).setOrderByAscending("fiscalYear").build()).getResults();
+        form.setExpenditureData(expendituresList);
     }
 
     protected void populateProposals(DashboardForm form) {
@@ -250,13 +276,15 @@ public class DashboardController {
 
         form.setTempUserName(null);
         form.setMyProposals(new ArrayList<ProposalDevelopmentDocument>());
-        form.setMyAwards(new ArrayList<Award>());
+        form.setMyAwards(null);
         if (form.getClientStateForSyncing() != null) {
             form.getClientStateForSyncing().remove("Dashboard-Activity");
         }
 
         form.setDashboardPerson(person);
         populateProposals(form);
+        populateGraphData(form);
+        populateAlerts(form);
 
         return getRefreshControllerService().refresh(form);
     }
