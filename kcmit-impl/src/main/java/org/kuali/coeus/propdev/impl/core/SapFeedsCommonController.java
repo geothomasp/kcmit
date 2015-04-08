@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
 import org.kuali.coeus.propdev.impl.sapfeed.SapFeedBatchDetails;
 import org.kuali.coeus.propdev.impl.sapfeed.SapFeedDetails;
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedErrorDetails;
 import org.kuali.coeus.propdev.impl.sapfeed.SapFeedService;
 import org.kuali.coeus.propdev.impl.sapfeed.SapFeedsForm;
 import org.kuali.coeus.propdev.impl.sapfeed.TempSapSponsorDetails;
@@ -17,6 +18,7 @@ import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.core.api.criteria.QueryResults;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
@@ -101,19 +103,27 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 
 	    String user=getLoggedInUser();
 		String statusMasterFeed = null;
+		String sapFeedStatus=null;
+		String budgetFeedStatus=null;
 		statusMasterFeed = sapFeedService.generateMasterFeed(Path, user);
 		
-		if (statusMasterFeed.equals("") || statusMasterFeed.equals("-1") ) {
-			return getModelAndViewService().showDialog(
-					SAP_FEED_COMMONERROR_DIALOG_ID, true, form);
-		}
+		String[] feedStatus=statusMasterFeed.split(",");
+		if(feedStatus !=null &&feedStatus.length >=0){
+			 sapFeedStatus=feedStatus[0];
+			 budgetFeedStatus=feedStatus[1];
+			 if (sapFeedStatus.equals("0") || sapFeedStatus.equals("-1")) {
+					return getModelAndViewService().showDialog(
+							SAP_FEED_COMMONERROR_DIALOG_ID, true, form);
+				}
 
-		if (statusMasterFeed.equals(SAP_MASTERFEED_NO_PENDINGFEED_VALUE)) {
-			return getModelAndViewService().showDialog(
-					SAP_MASTERFEED_ERROR_DIALOG_ID, true, form);
+				if (sapFeedStatus.equals(SAP_MASTERFEED_NO_PENDINGFEED_VALUE)) {
+					return getModelAndViewService().showDialog(
+							SAP_MASTERFEED_ERROR_DIALOG_ID, true, form);
+				}
+				getSapFeedBatchDetals(form,sapFeedStatus);
 		}
 		
-		getSapFeedBatchDetals(form,statusMasterFeed);
+		
 		return getModelAndViewService().showDialog(SAP_FEED_RESULT_DIALOG_ID,
 				true, form);
 	}
@@ -182,29 +192,33 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 				true, form);
 	}
 	
-	public void getSapFeedBatchDetals(SapFeedsForm form,String batchId) {
+	public void getSapFeedBatchDetals(SapFeedsForm form,String sapFeedBatchId) {
 		
 		List<SapFeedDetails> fedSapfeedDetails=new ArrayList<SapFeedDetails>();;
 		List<SapFeedDetails> errorSapfeedDetails=new ArrayList<SapFeedDetails>();;
 		HashMap<String, String> fieldValues = new HashMap<String, String>();
 		HashMap<String, String> params = new HashMap<String, String>();
 		
-		fieldValues.put("batchId", batchId);
+		fieldValues.put("sapFeedBatchId", sapFeedBatchId);
 		fieldValues.put("feedStatus", "E");
 		
-		params.put("batchId", batchId);
+		params.put("sapFeedBatchId", sapFeedBatchId);
 		params.put("feedStatus", "F");
 
 		errorSapfeedDetails = (List<SapFeedDetails>) KcServiceLocator.getService(BusinessObjectService.class).findMatching(SapFeedDetails.class,fieldValues);
 		fedSapfeedDetails = (List<SapFeedDetails>) KcServiceLocator.getService(BusinessObjectService.class).findMatching(SapFeedDetails.class,params);
 		
 		
-		SapFeedBatchDetails sapFeedBatchDetail = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedBatchDetails.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("batchId", batchId)).build());
+		SapFeedBatchDetails sapFeedBatchDetail = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedBatchDetails.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("sapFeedBatchId", sapFeedBatchId)).build());
 		if(sapFeedBatchDetail !=null )
 		form.setBatchFileName(sapFeedBatchDetail.getBatchFileName());
 		
-		if(errorSapfeedDetails !=null && fedSapfeedDetails!=null )
-		{
+		
+	    QueryResults<SapFeedErrorDetails> sapFeedErrorDetails = KcServiceLocator.getService(DataObjectService.class).findMatching(SapFeedErrorDetails.class, QueryByCriteria.Builder.andAttributes(Collections.singletonMap("sapFeedBatchId", sapFeedBatchId)).build());
+		if(sapFeedErrorDetails !=null )
+			form.setSapFeedErrorDetails(sapFeedErrorDetails.getResults());
+			
+		if(errorSapfeedDetails !=null && fedSapfeedDetails!=null ){
 			form.setFedInRecords(fedSapfeedDetails.size());
 			form.setErrorInRecords(errorSapfeedDetails.size());
 		}

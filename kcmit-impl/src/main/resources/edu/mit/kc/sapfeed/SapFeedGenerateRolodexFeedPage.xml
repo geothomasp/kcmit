@@ -53,7 +53,8 @@
 			<list>
 				
 				<bean parent="Uif-InputField" p:propertyName="path"
-					p:label="Target Environment" p:order="10">
+					p:label="Target Environment" p:order="10"
+					p:defaultValue="T">
 					<property name="control">
 						<bean parent="Uif-VerticalRadioControl">
 

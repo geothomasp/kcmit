@@ -541,7 +541,7 @@ return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
 	   		 AwardDocument awardDocument = awardForm.getAwardDocument();
 			  Award currentAward = awardDocument.getAward();
 	          	       for (AwardPerson person : currentAward.getInvestigators()) {
-	          	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+	          	            if ((person.isInvestigator() && person.isPrincipalInvestigator())
 	          	                    && StringUtils.equals(principalId, person.getPersonId())) {
 	          	                return true;
 	          	            }

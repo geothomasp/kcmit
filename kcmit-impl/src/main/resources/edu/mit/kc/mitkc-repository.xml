@@ -160,6 +160,7 @@
 		<field-descriptor name="feedStatus" column="FEED_STATUS" jdbc-type="VARCHAR" />
 		<field-descriptor name="batchId" column="BATCH_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="tranId" column="TRANSACTION_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="sapFeedBatchId" column="SAP_FEED_BATCH_ID" jdbc-type="BIGINT" />
 		<field-descriptor name="updateTimestamp" column="UPDATE_TIMESTAMP" jdbc-type="TIMESTAMP" />
 		<field-descriptor name="updateUser" column="UPDATE_USER" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" />
@@ -183,6 +184,5 @@
 		<field-descriptor name="batchTimeStamp" column="BATCH_TIMESTAMP" jdbc-type="TIMESTAMP" />
 		<field-descriptor name="noOfRecords" column="NO_OF_RECORDS" jdbc-type="BIGINT" />
 	</class-descriptor>	
-	
 	
 </descriptor-repository>

@@ -2144,6 +2144,10 @@ public class AwardAction extends BudgetParentActionBase {
 					feedType = "C";
 					feedStatus = "F";
 				}
+				else if(sapFeedDetail.getFeedStatus().equals("E") && sapFeedDetail.getFeedType().equals("N") ){
+					feedType = "N";
+					feedStatus = "P";
+				}
 				else{
 					feedType="C";
 					feedStatus=sapFeedDetail.getFeedStatus();
