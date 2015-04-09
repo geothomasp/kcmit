@@ -897,6 +897,8 @@ public interface Constants {
     public static final String PARAMETER_FDP_SUBAWARD_ATTACHMENT_5 = "Subaward_FDP_Attachment_5_Form_ID";
     public static final String PARAMETER_PRINT_ATTACHMENT_TYPE_INCLUSION = "Subaward_Print_Attachment_Type_Inclusion";
     public static final String PD_INITIATED_ROUTE_NODE_NAME = "Initiated";
+    public static final String DEFAULT_ACTIVITY_TYPE = "DEFAULT_ACTIVITY_TYPE";
+    public static final String DEFAULT_S2S_SUBMISSION_TYPE = "DEFAULT_S2S_SUBMISSION_TYPE";
 
         
 }

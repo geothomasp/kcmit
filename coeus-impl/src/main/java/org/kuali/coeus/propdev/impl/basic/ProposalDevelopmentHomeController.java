@@ -33,6 +33,9 @@ import org.kuali.coeus.propdev.impl.core.*;
 import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.state.ProposalState;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.krad.exception.DocumentAuthorizationException;
 import org.kuali.rice.krad.service.DataDictionaryService;
@@ -300,6 +303,11 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
             if (!propDevForm.getDocument().getDocumentHeader().getWorkflowDocument().isEnroute()
                     && (StringUtils.equals(form.getRequest().getParameter("viewDocument"),"true") || StringUtils.equals(viewOnly, "true")) ) {
                 propDevForm.setViewOnly(true);
+            }
+            if(propDevForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalTypeCode() == null){
+            	String defaultActivityTypeCode = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+                        ParameterConstants.DOCUMENT_COMPONENT,Constants.DEFAULT_ACTIVITY_TYPE);
+            	propDevForm.getProposalDevelopmentDocument().getDevelopmentProposal().setActivityTypeCode(defaultActivityTypeCode);
             }
 
             return modelAndView;
