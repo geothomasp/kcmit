@@ -607,6 +607,7 @@ public abstract class ProposalDevelopmentControllerBase {
 	public void saveAnswerHeaders(ProposalDevelopmentDocumentForm pdForm,String pageId) {
         boolean allCertificationsWereComplete = true;
         boolean allCertificationAreNowComplete = true;
+        
         setUpdatedToCoi(false);
         if (StringUtils.equalsIgnoreCase(pageId, Constants.KEY_PERSONNEL_PAGE) ||
                 StringUtils.equalsIgnoreCase(pageId,"PropDev-CertificationView-Page")) {
@@ -620,6 +621,11 @@ public abstract class ProposalDevelopmentControllerBase {
                         person.getQuestionnaireHelper().populateAnswers();
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
                         allCertificationAreNowComplete &= isComplete;
+                        if(isComplete && !wasComplete){
+                        	person.setCertifiedBy(getGlobalVariableService().getUserSession().getPrincipalId());
+                        }else if(wasComplete && !isComplete){
+                        	person.setCertifiedBy(null);
+                        }
                         if(!isUpdatedToCoi()){
                         	setUpdatedToCoi(updateCOIOnPDCerificationComplete(pdForm,person,isComplete || wasComplete,answerHeader));
                         }else{
