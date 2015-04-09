@@ -29,10 +29,7 @@
 		</property>
 	</bean>
 	
-	
 
-
-	<!-- Header Section create new collection and manage UI -->
 	 <bean id="PropBudget-PeriodsPageSPE-CollectionGroup" parent="PropBudget-PeriodsPageSPE-CollectionGroup-parentBean"/>
     <bean id="PropBudget-PeriodsPageSPE-CollectionGroup-parentBean" parent="Uif-TableCollectionSection" abstract="true" p:layoutManager.numberOfColumns="3"
     	  p:headerText="Budget Summary Details"
@@ -75,9 +72,7 @@
 			</map>
 		</property>
 	</bean>  
-<!-- header table ends -->
 
-	<!--add line collection  starts -->
 	<bean id="PropBudget-SinglePointEntry-TabGroup" parent="PropBudget-SinglePointEntry-TabGroup-parentBean" />
 	<bean id="PropBudget-SinglePointEntry-TabGroup-parentBean"
 		abstract="true" parent="Kc-DynamicTabSection"
@@ -188,22 +183,17 @@
 		</property>
 	</bean>
 	
-	
-	
-	<!-- Details Starts -->
-		<bean id="PropBudget-ConfirmPeriodChangesDialog" parent="Uif-DialogGroup-YesNo"
-		p:promptText="You are about to enter costs in a later period. Doing so will prevent you from using the generate all periods function to auto-calculate later periods. Do you wish to continue?"/>
 
 	<bean id="PropBudget-EditSPELineItemPeriod-Section" parent="PropBudget-EditSPELineItemPeriod-Section-parent" />
-	<bean id="PropBudget-EditSPELineItemPeriod-Section-parent" p:fieldBindingObjectPath="addProjectBudgetLineItemHelper" abstract="true" parent="Uif-DialogGroup" 
+	<bean id="PropBudget-EditSPELineItemPeriod-Section-parent" abstract="true" parent="Uif-DialogGroup" 
 		p:readOnly="@{#parent.readOnly}"
         p:onHideDialogScript="jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog'));});"
 		p:headerText="Edit Assigned Cost Element" p:enterKeyAction="@DEFAULT">
 		<property name="items">
 			<list>
-				<bean parent="Uif-DataField" p:fieldLabel.labelText=" " p:propertyName="budgetLineItem.lineItemDescription"
+				<bean parent="Uif-DataField" p:fieldLabel.labelText=" " p:propertyName="addProjectBudgetLineItemHelper.budgetLineItem.lineItemDescription"
 					p:style="font-weight: bold; font-size: larger;" p:order="10"/>
-				<bean parent="PropBudget-EditSPELineItemCosts-Details-TabSection" p:order="20"/>
+				<bean parent="PropBudget-NonPersonnelCosts-Details-TabSection" p:order="20"/>
 			</list>
 		</property>
 		<property name="footer">
@@ -237,151 +227,23 @@
 			</bean>
 		</property>
 	</bean>
-	
-	<bean id="PropBudget-EditSPELineItemCosts-Details-TabSection" parent="PropBudget-SPELineItemCosts-Details-TabSection-parentBean">
-		<property name="items">
-			<list>
-				<bean parent="PropBudget-EditSPELineItemCosts-Details-Tab"
-					p:headerText="Details" p:order="10"/>
-				<bean parent="PropBudget-NonPersonnelCosts-CostSharing-Tab"
-					p:headerText="Cost Sharing" p:order="20"/>
-				<bean parent="PropBudget-NonPersonnelCosts-Rates-Tab"
-					p:headerText="Rates" p:order="30"/>
-			</list>
-		</property>
-	</bean>
-	<bean id="PropBudget-EditSPELineItemCosts-Details-Tab" parent="PropBudget-SPELineItemCosts-Details-Tab-parentBean">
-		<property name="items">
-			<list>
-				<ref bean="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection"/>
-				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection"/>
-				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection"/>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="PropBudget-SPELineItemCosts-Details-TabSection" parent="PropBudget-SPELineItemCosts-Details-TabSection-parentBean" />
-	<bean id="PropBudget-SPELineItemCosts-Details-TabSection-parentBean" parent="Uif-TabSection">
-		<property name="items">
-			<list>
-				<bean parent="PropBudget-NonPersonnelCosts-Details-Tab"
-					p:headerText="Details" p:order="10" />
-				<bean parent="PropBudget-NonPersonnelCosts-CostSharing-Tab"
-					p:headerText="Cost Sharing" p:order="20" />
-				<bean parent="PropBudget-NonPersonnelCosts-Rates-Tab"
-					p:headerText="Rates" p:order="30" />
-			</list>
-		</property>
-	</bean>
 
-	<bean id="PropBudget-NonPersonnelCosts-Details-Tab" parent="PropBudget-SPELineItemCosts-Details-Tab-parentBean" />
-	<bean id="PropBudget-SPELineItemCosts-Details-Tab-parentBean" abstract="true" parent="Uif-VerticalBoxSubSection">
-		<property name="items">
-			<list>
-				<ref bean="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection"/>
-				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection"/>
-				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection"/>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="PropBudget-NonPersonnelCosts-CostSharing-Tab" parent="PropBudget-NonPersonnelCosts-CostSharing-Tab-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-CostSharing-Tab-parentBean" abstract="true" parent="Uif-VerticalBoxSubSection">
-		<property name="items">
-			<list>				
-				<ref bean="PropBudget-NonPersonnelCosts-CostSharing-Section" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="PropBudget-NonPersonnelCosts-CostSharing-Section" parent="PropBudget-NonPersonnelCosts-CostSharing-Section-parentBean" />
-	<bean id="PropBudget-NonPersonnelCosts-CostSharing-Section-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
-		<property name="items">
-			<list>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.costSharingAmount"
-					p:required="false" p:order="10"/>
-				<bean parent="Uif-DataField" p:propertyName="budgetLineItem.underrecoveryAmount"
-					p:required="false" p:order="20"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.budgetJustification"
-					p:required="false" p:order="30" p:label="Justification"/>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="PropBudget-NonPersonnelCosts-Rates-Tab" parent="PropBudget-BudgetLineItem-Rates" />
-
-	<bean id="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean" />
-	<bean id="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
+	<bean id="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection" parent="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection-parentBean" />
+	<bean id="PropBudget-NonPersonnelCosts-LineItem-ObjectFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.costElement"
 					p:label="Object Code Name" p:optionsFinder="#{#getService('costElementKeyValuesFinder')}" 
-					p:optionsFinder.addBlankOption="false" p:order="10"/>
+					p:optionsFinder.addBlankOption="false" p:order="10" p:readOnly="@{#fp.budgetLineItem.formulatedCostElementFlag}"/>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemCost"
-					p:label="Total Base Cost" p:order="20" p:required="false"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.quantity"
+					p:label="Total Base Cost" p:order="20" p:required="false" p:readOnly="@{#fp.budgetLineItem.formulatedCostElementFlag}"/>
+				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.quantity" p:readOnly="@{#fp.budgetLineItem.formulatedCostElementFlag}"
 					p:order="30" p:required="false"/>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemDescription"
 					p:order="40" p:required="false"/>
 			</list>
 		</property>
 	</bean>
-
-	<bean id="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection-parentBean" />
-	<bean id="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
-		<property name="items">
-			<list>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.startDate"
-					p:required="true" p:order="10"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.endDate"
-					p:required="true" p:order="20"/>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection-parentBean" />
-	<bean id="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
-		<property name="items">
-			<list>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.applyInRateFlag"
-					p:order="10" p:label="Apply Inflation"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.submitCostSharingFlag"
-					p:order="20" p:label="Submit cost sharing"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.onOffCampusFlag"
-                    p:readOnly="@{budget.onOffCampusFlag != '#{T(org.kuali.kra.infrastructure.OnOffCampusFlagConstants).Default.code}'}"
-					p:readOnlyDisplayReplacement="@{#fp.budgetLineItem.onOffCampusFlag ? 'Yes' : 'No'}" 
-					p:order="30" p:label="On Campus"/>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="PropBudget-EditNonPersonnelPeriod-ParticipantSupportSection" parent="PropBudget-EditNonPersonnelPeriod-ParticipantSupportSection-parent" />
-	<bean id="PropBudget-EditNonPersonnelPeriod-ParticipantSupportSection-parent" p:fieldBindingObjectPath="addProjectBudgetLineItemHelper" abstract="true" parent="Uif-DialogGroup" 
-        p:onHideDialogScript="jQuery('#PropBudget-NonPersonnelCostsPage-EditParticipantSupport-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-NonPersonnelCostsPage-EditParticipantSupport-Dialog'));});"
-		p:headerText="Participants">
-		<property name="items">
-			<list>
-				<bean parent="Uif-InputField" p:propertyName="currentTabBudgetPeriod.numberOfParticipants"
-					p:order="10" p:label="Number of Participants"/>
-			</list>
-		</property>
-		<property name="footer">
-			<bean parent="Uif-FooterBase">
-				<property name="items">
-					<list>
-						<bean parent="Uif-PrimaryActionButton" p:actionLabel="Save Changes" p:methodToCall="saveParticipantDetails"
-							p:refreshId="PropBudget-NonPersonnelCosts-LineItemDetails_@{#fp.addProjectBudgetLineItemHelper.currentTabBudgetPeriod.budgetPeriod}"
-							p:dialogDismissOption="REQUEST" p:render="@{!#parent.readOnly}"
-							p:order="10" />
-						<bean parent="Uif-DialogDismissButton" p:actionLabel="Cancel"
-							p:order="20" />
-					</list>
-				</property>
-			</bean>
-		</property>
-	</bean>
-		<!-- Details ends -->
-		
 		
 </beans>
                     
