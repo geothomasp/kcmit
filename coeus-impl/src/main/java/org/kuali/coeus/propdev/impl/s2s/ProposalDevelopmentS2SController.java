@@ -111,7 +111,12 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
            //Set default S2S Submission Type
            if (StringUtils.isBlank(form.getNewS2sOpportunity().getS2sSubmissionTypeCode())){
         	   String defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, KeyConstants.S2S_SUBMISSIONTYPE_APPLICATION);
-               if(StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+               if(getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+                       ParameterConstants.DOCUMENT_COMPONENT,"DEFAULT_S2S_SUBMISSION_TYPE")!=null) {
+            	   defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+                           ParameterConstants.DOCUMENT_COMPONENT,Constants.DEFAULT_S2S_SUBMISSION_TYPE);
+               }
+        	   if(StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
             		   || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
             				   || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode())
             						  || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())) {
