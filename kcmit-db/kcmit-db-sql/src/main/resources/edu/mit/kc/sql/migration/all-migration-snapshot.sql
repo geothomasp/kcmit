@@ -2,6 +2,7 @@
 @DML_MITKC-1190_04092015.sql
 @DML_MITKC-1274_04092015.sql
 @DML_MITKC-1365_04092015.sql
+@patch_protocol_status.sql
 commit;
 EXIT
 /
