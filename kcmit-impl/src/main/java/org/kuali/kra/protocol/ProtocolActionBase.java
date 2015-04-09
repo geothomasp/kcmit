@@ -184,6 +184,13 @@ public abstract class ProtocolActionBase extends KcTransactionalDocumentActionBa
     public ActionForward protocolActions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception  {
         // for protocol lookup copy link - rice 1.1 need this
         ProtocolFormBase protocolForm = (ProtocolFormBase) form;
+        ActionForward actionForward = mapping.findForward(Constants.MAPPING_BASIC);
+        ProtocolBase protocol = protocolForm.getProtocolDocument().getProtocol();
+        if (protocol.isEmptyProtocolResearchAreas()) {
+			ProtocolResearchAreaAuditRule protocolResearchAreaAuditRule = new ProtocolResearchAreaAuditRule();
+			protocolResearchAreaAuditRule.processRunAuditBusinessRules(protocolForm.getProtocolDocument());
+			return actionForward;
+		}
         String command = request.getParameter("command");
         if (KewApiConstants.DOCSEARCH_COMMAND.equals(command)) {
             String docIdRequestParameter = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
@@ -221,6 +228,14 @@ public abstract class ProtocolActionBase extends KcTransactionalDocumentActionBa
     }
     
     protected ActionForward branchToPanelOrNotificationEditor(ActionMapping mapping, ProtocolFormBase protocolForm, String ulitmateDestination) {
+    	 
+    	ActionForward actionForward = mapping.findForward(Constants.MAPPING_BASIC);
+        ProtocolBase protocol = protocolForm.getProtocolDocument().getProtocol();
+    	if (protocol.isEmptyProtocolResearchAreas()) {
+			ProtocolResearchAreaAuditRule protocolResearchAreaAuditRule = new ProtocolResearchAreaAuditRule();
+			protocolResearchAreaAuditRule.processRunAuditBusinessRules(protocolForm.getProtocolDocument());
+			return actionForward;
+		}
         if (protocolForm.isShowNotificationEditor()) {
             protocolForm.setShowNotificationEditor(false);
             protocolForm.getNotificationHelper().getNotificationContext().setForwardName(ulitmateDestination);
