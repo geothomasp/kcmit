@@ -2134,47 +2134,39 @@ public class AwardAction extends BudgetParentActionBase {
 		BusinessObjectService businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
 		HashMap<String, String> fieldValues = new HashMap<String, String>();
 		fieldValues.put("awardNumber", newAwardNumber);
+		
 		// Get sapfeed details
-		List<SapFeedDetails> sapFeedDetails = (List<SapFeedDetails>) businessObjectService.findMatching(SapFeedDetails.class, fieldValues);
+		List<SapFeedDetails> sapFeedDetails = (List<SapFeedDetails>) businessObjectService.findMatchingOrderBy(SapFeedDetails.class, fieldValues, "sequenceNumber", false);
 
 		if (sapFeedDetails != null && sapFeedDetails.size() > 0) {
-			Map<Integer, SapFeedDetails> sapFeedsMap = new HashMap<Integer, SapFeedDetails>();
-			for (SapFeedDetails sapFeedDetail : sapFeedDetails) {
-				
-				
-				if (sapFeedDetail.getFeedStatus().equals("F") && sapFeedDetail.getFeedType().equals("N") && sapFeedDetail.getSequenceNumber().equals(
-								newSequenceNumber)) {
-					feedType = "C";
-					feedStatus = "F";
-					sapFeedDetail.setFeedType(feedType);
-					sapFeedDetail.setFeedStatus(feedStatus);
-					getBusinessObjectService().save(sapFeedDetail);
-				}
-				else if(sapFeedDetail.getFeedStatus().equals("E") && sapFeedDetail.getFeedType().equals("N") ){
-					
-					sapFeedsMap.put(sapFeedDetail.getFeedId(), sapFeedDetail);
-				}
-				
-				else{
-					feedType="C";
-					feedStatus=sapFeedDetail.getFeedStatus();
-					sapFeedDetail.setFeedType(feedType);
-					sapFeedDetail.setFeedStatus(feedStatus);
-					getBusinessObjectService().save(sapFeedDetail);
-				}
-			
+		SapFeedDetails latestFeedDetails=sapFeedDetails.get(0);
+		
+		if (latestFeedDetails.getFeedStatus().equals("F") && latestFeedDetails.getFeedType().equals("N") ){
+			  	feedType = "C";
+			  	feedStatus = "F";
+			  	latestFeedDetails.setFeedType(feedType);
+			  	latestFeedDetails.setSequenceNumber(newSequenceNumber);
+			  	latestFeedDetails.setFeedStatus(feedStatus);
+			  	getBusinessObjectService().save(latestFeedDetails);
 			}
-			
-			if(sapFeedsMap != null && sapFeedsMap.size() > 0){
+		else if(latestFeedDetails.getFeedStatus().equals("E") && latestFeedDetails.getFeedType().equals("N")){
 				feedType = "N";
 				feedStatus = "P";
 				getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
 			}
-		
-		} else {
-			feedType = "N";
-			feedStatus = "P";
-			getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
+		else{
+				feedType = "C";
+			  	feedStatus = latestFeedDetails.getFeedStatus();
+			  	latestFeedDetails.setFeedType(feedType);
+			  	latestFeedDetails.setFeedStatus(feedStatus);
+			  	latestFeedDetails.setSequenceNumber(newSequenceNumber);
+			  	getBusinessObjectService().save(latestFeedDetails);
+			}
+		}
+		 else {
+			 	feedType = "N";
+			 	feedStatus = "P";
+			 	getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
 		}
 	}
 	
