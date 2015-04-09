@@ -16,6 +16,8 @@
 package org.kuali.kra.award.web.struts.action;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -24,11 +26,13 @@ import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.compliance.core.SaveSpecialReviewLinkEvent;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewService;
+import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
+import org.kuali.kra.award.home.fundingproposal.AwardFundingProposal;
 import org.kuali.kra.award.home.keywords.AwardScienceKeyword;
 import org.kuali.kra.award.specialreview.AwardSpecialReview;
 import org.kuali.kra.bo.FundingSourceType;
@@ -45,9 +49,13 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
+import edu.mit.kc.coi.KcCoiLinkService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +71,7 @@ public class AwardHomeAction extends AwardAction {
     private static final String DOC_HANDLER_URL_PATTERN = "%s/DocHandler.do?command=displayDocSearchView&docId=%s";
     private ApprovedSubawardActionHelper approvedSubawardActionHelper;
     private ParameterService parameterService;
-    
+    private static final Log LOG = LogFactory.getLog( AwardHomeAction.class );
     public AwardHomeAction(){
         approvedSubawardActionHelper = new ApprovedSubawardActionHelper();
     }
@@ -259,6 +267,8 @@ public class AwardHomeAction extends AwardAction {
             }
         }
         
+        List<AwardFundingProposal> awardFundingProposals = getFundingProposalForCOIUpadate(awardDocument.getAward());
+        
         /**
          * the following two null overrides are per KCAWD-1001
          */
@@ -287,10 +297,36 @@ public class AwardHomeAction extends AwardAction {
             
             persistSpecialReviewProtocolFundingSourceLink(award, isAwardProtocolLinkingEnabled);
         }
+        
+        updateCOIOnLinkIPToAward(awardFundingProposals,awardDocument.getAward());
 
         return forward;
     }
+    
+    private List<AwardFundingProposal> getFundingProposalForCOIUpadate(Award award){
+    	List<AwardFundingProposal> awardFundingProposals = new ArrayList();
+    	for(AwardFundingProposal awardFundingProposal : award.getFundingProposals()){
+    		if(!awardFundingProposal.isPersisted()){
+    			awardFundingProposals.add(awardFundingProposal);
+    		}
+    	}
+    	return awardFundingProposals;
+    }
+    
+    private void updateCOIOnLinkIPToAward(List<AwardFundingProposal> awardFundingProposals,Award award){
+    	String loggedInUser = KcServiceLocator.getService(GlobalVariableService.class).getUserSession().getPrincipalName();
+    	for(AwardFundingProposal awardFundingProposal:awardFundingProposals){
+    		try {
+    			KcServiceLocator.getService(KcCoiLinkService.class).updateCOIOnLinkIPToAward(award.getAwardNumber(),awardFundingProposal.getProposal().getInstitutionalProposal().getInstProposalNumber(),loggedInUser);
+    		} catch(NullPointerException e){
+    			LOG.error("Input parameters return null");
+    		}catch (SQLException e) {
+    			LOG.error(e.getMessage(), e);
+    			LOG.error("DBLINK is not accessible or the parameter value returning null");
+    		}
 
+    	}
+    }
     private void setTotalsOnAward(Award award) {
         AwardAmountInfo aai = award.getLastAwardAmountInfo();
         aai.setAmountObligatedToDate(aai.getObligatedTotalDirect().add(aai.getObligatedTotalIndirect()));

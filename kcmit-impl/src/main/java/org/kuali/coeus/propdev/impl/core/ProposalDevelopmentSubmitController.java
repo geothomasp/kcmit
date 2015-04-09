@@ -564,7 +564,7 @@ public class ProposalDevelopmentSubmitController extends
         getGlobalVariableService().getMessageMap().putInfo(KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_VERSIONED, versionNumber, proposalDevelopmentForm.getInstitutionalProposalToVersion());
 
         Long institutionalProposalId = getActiveProposalId(proposalDevelopmentForm.getInstitutionalProposalToVersion());
-        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(institutionalProposalId.toString());
+        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(proposalDevelopmentForm.getInstitutionalProposalToVersion());
         persistProposalAdminDetails(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber(), institutionalProposalId);
         persistSpecialReviewProtocolFundingSourceLink(institutionalProposalId, isIPProtocolLinkingEnabled);
     }
@@ -576,7 +576,7 @@ public class ProposalDevelopmentSubmitController extends
         getGlobalVariableService().getMessageMap().putInfo(Constants.NO_FIELD,KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_CREATED, proposalNumber);
 
         Long institutionalProposalId = getActiveProposalId(proposalNumber);
-        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(institutionalProposalId.toString());
+        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(proposalNumber);
         persistProposalAdminDetails(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber(), institutionalProposalId);
         persistSpecialReviewProtocolFundingSourceLink(institutionalProposalId, isIPProtocolLinkingEnabled);
     }

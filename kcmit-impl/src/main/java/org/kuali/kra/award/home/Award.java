@@ -1863,16 +1863,6 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
             AwardFundingProposal afp = new AwardFundingProposal(this, institutionalProposal);
             fundingProposals.add(afp);
             institutionalProposal.add(afp);
-            //IP is Linked with award COI integration point MITKC-611 case 2     
-            try {
-            	getKcCoiLinkService().updateCOIOnLinkIPToAward(afp.getAward().getAwardNumber(),institutionalProposal.getInstProposalNumber(),getGlobalVariableService().getUserSession().getPrincipalName());
-			
-			} catch(NullPointerException e){
-				LOGGER.log(Level.ALL,"Input parameters return null");
-			}catch (SQLException e) {
-				LOGGER.log(Level.ALL, e.getMessage(), e);
-				LOGGER.log(Level.ALL,"DBLINK is not accessible or the parameter value returning null");
-			}            
         }
     }
 
