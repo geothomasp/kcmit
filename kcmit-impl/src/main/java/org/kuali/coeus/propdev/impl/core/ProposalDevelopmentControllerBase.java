@@ -35,6 +35,7 @@ import org.kuali.coeus.propdev.impl.keyword.PropScienceKeyword;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.propdev.impl.person.ProposalPersonCoiIntegrationService;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiographyService;
@@ -197,7 +198,12 @@ public abstract class ProposalDevelopmentControllerBase {
     @Qualifier("kualiConfigurationService")
     private ConfigurationService kualiConfigurationService;
 
+    
+    @Autowired
+    @Qualifier("proposalPersonCoiIntegrationService")
+    private ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
    
+	
 	private transient boolean updatedToCoi = false;
   
 
@@ -653,15 +659,16 @@ public abstract class ProposalDevelopmentControllerBase {
 	}
 
 	public boolean updateCOIOnPDCerificationComplete(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person, boolean completed,AnswerHeader answerHeader) {
+			boolean coiQuestionsAnswered = false;
 			if(checkForCOIquestions(answerHeader)){
 				 updateToCOI(pdForm,person);
 			}
-            if (completed) {
-            	if(checkForCOIquestionsAnswered(answerHeader)){
-            		return true;
-            	}
-            }
-            return false;
+			coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
+			
+			if(coiQuestionsAnswered){
+				return coiQuestionsAnswered;
+			}
+            return coiQuestionsAnswered;
     }
 	
 	private void updateToCOI(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person){
@@ -674,28 +681,7 @@ public abstract class ProposalDevelopmentControllerBase {
 		}
 		
 	}
-	private boolean checkForCOIquestionsAnswered(AnswerHeader answerHeader){
-
-		boolean hasCOIquestions = false;
-		String coiCertificationQuestionIds = getParameterService().getParameterValueAsString("KC-GEN", "All", "PROP_PERSON_COI_CERTIFY_QID");
-		List<String> coiCertificationQuestionIdList = new ArrayList<String>();
-		if(coiCertificationQuestionIds!=null){
-			String[] questionIds = coiCertificationQuestionIds.split(",");
-			for (String questionid : questionIds){
-				coiCertificationQuestionIdList.add(questionid);
-			}
-		}
-		for(Answer answer :answerHeader.getAnswers()){
-			for(String coiCertificationQuestionId : coiCertificationQuestionIdList){
-				if(coiCertificationQuestionId.equals(answer.getQuestionSeqId().toString()) && answer.getAnswer().equals("Y")){
-					hasCOIquestions = true;
-					break;
-				}
-
-			}
-		}
-		return hasCOIquestions;
-	}
+	
 	private boolean checkForCOIquestions(AnswerHeader answerHeader ){
 
 		boolean hasCOIquestions = false;
@@ -1044,5 +1030,14 @@ public abstract class ProposalDevelopmentControllerBase {
 	public void setKualiConfigurationService(
 			ConfigurationService kualiConfigurationService) {
 		this.kualiConfigurationService = kualiConfigurationService;
+	}
+	
+	public ProposalPersonCoiIntegrationService getProposalPersonCoiIntegrationService() {
+		return proposalPersonCoiIntegrationService;
+	}
+
+	public void setProposalPersonCoiIntegrationService(
+			ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService) {
+		this.proposalPersonCoiIntegrationService = proposalPersonCoiIntegrationService;
 	}
 }
