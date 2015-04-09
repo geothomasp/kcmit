@@ -9,9 +9,11 @@
   <tr>
       <th colspan="8" style="border-style: solid; text-align:left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Attachments</th>
     </tr>
-      <th colspan="2">Attachments</th>
+      <th colspan="2">Attachment Type</th>
       <th colspan="2">Description</th>
-      <th colspan="2">FileName</th>
+      <th colspan="2">File Name</th>
+      <th colspan="2">Uploaded Date</th>
+      <th colspan="2">Uploaded By Name</th>
     </tr>
      <c:set var="viewSharedDoc" value="${KualiForm.ipProjectDocView}" />
       <c:if test="${viewSharedDoc}">
@@ -19,16 +21,15 @@
     <c:if test="${ipAttachment.documentStatusCode == 'A'}">
       <tr>
         <td style="text-align: center;" colspan="2">
-           <c:out value="${ipAttachment.comments}"/>
+           <c:out value="${ipAttachment.type.description}"/>
                         
         </td>
          <td style="text-align: center;" colspan="2">
-           <c:out value="${ipAttachment.fileName}"/>
+           <c:out value="${ipAttachment.attachmentTitle}"/>
                         
         </td>
-        <td style="text-align: center;" colspan="2">
-          
-            <c:out value="${ipAttachment.file.name}"/>
+        <td style="text-align: center;" colspan="2">          
+            <c:out value="${ipAttachment.fileName}"/>
            </td>
            <td colspan="2">    
       
