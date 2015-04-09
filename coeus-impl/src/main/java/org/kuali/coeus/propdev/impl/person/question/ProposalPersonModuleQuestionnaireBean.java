@@ -64,7 +64,7 @@ public class ProposalPersonModuleQuestionnaireBean extends ProposalDevelopmentMo
     	if(roleId.equals(Constants.PRINCIPAL_INVESTIGATOR_ROLE)){
     		return  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
     	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
-    	}else if(roleId.equals(Constants.CO_INVESTIGATOR_ROLE)){
+    	}else if(roleId.equals(Constants.CO_INVESTIGATOR_ROLE) || roleId.equals(Constants.MULTI_PI_ROLE)){
     		return  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
     	            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_COI_CERTIFICATION"); 
     	}else {

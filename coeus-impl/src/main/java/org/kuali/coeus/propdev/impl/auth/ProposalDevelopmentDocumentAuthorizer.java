@@ -424,6 +424,12 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
         		  (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))){
         		  return true;
           }
+          if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))
+        		  ||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE)) ||
+        		  (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))){
+        		  return true;
+          }
+          
           String keyPersonProjectRoles = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
           List<String> keyPersonRoleList =Arrays.asList(keyPersonProjectRoles.split(PARAMETER_DELIMITER));     
     
