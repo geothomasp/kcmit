@@ -139,7 +139,9 @@
 					p:order="10" p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="endDate" p:order="20"
 					p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
-				<bean parent="Uif-InputField" p:propertyName="costElement"
+				<bean parent="Uif-InputField" p:propertyName="costElement" 
+					p:optionsFinder="#{#getService('costElementKeyValuesFinder')}" 
+					p:optionsFinder.addBlankOption="false"
 					p:label="Object Code Name" p:order="30" p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="lineItemCost"
 					p:label="Total Base Cost" p:order="40" p:required="false" p:readOnly="@{#line.personnelLineItem}"/>
@@ -252,37 +254,12 @@
 		<property name="items">
 			<list>
 				<ref bean="PropBudget-SPEBudgetCosts-LineItem-DateFieldSection"/>
-				<ref bean="PropBudget-EditNonPersonnelCosts-LineItem-ObjectFieldSection"/>
+				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection"/>
 				<ref bean="PropBudget-SPEBudgetCosts-LineItem-ApplyRateFieldSection"/>
 			</list>
 		</property>
 	</bean>
 	
-	<bean id="PropBudget-EditNonPersonnelCosts-LineItem-ObjectFieldSection" parent="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean">
-		<property name="items">
-			<list>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.budgetCategoryCode"
-					p:label="Budget Category" p:order="10" p:required="false"
-					p:optionsFinder="#{#getService('budgetNonPersonnelBudgetCategoryValuesFinder')}" 
-					p:optionsFinder.addBlankOption="false">
-			    	<property name="control">
-			      		<bean parent="Uif-DropdownControl"/>
-			    	</property>
- 						</bean>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.costElement"
-					p:refreshWhenChangedPropertyNames="#fp.budgetCategoryTypeCode"
-					p:label="Object Code Name" p:optionsFinder="#{#getService('budgetNonPersonnelCostElementValuesFinder')}" 
-					p:optionsFinder.addBlankOption="false" p:order="20"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemCost"
-					p:label="Total Base Cost" p:order="30" p:required="false"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.quantity"
-					p:order="40" p:required="false"/>
-				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemDescription"
-					p:order="50" p:required="false"/>
-			</list>
-		</property>
-	</bean>
-
 	<bean id="PropBudget-SPELineItemCosts-Details-TabSection" parent="PropBudget-SPELineItemCosts-Details-TabSection-parentBean" />
 	<bean id="PropBudget-SPELineItemCosts-Details-TabSection-parentBean" parent="Uif-TabSection">
 		<property name="items">
@@ -337,24 +314,15 @@
 	<bean id="PropBudget-SPEBudgetCosts-LineItem-ObjectFieldSection-parentBean" parent="Uif-CssGridSection-1FieldLabelColumn">
 		<property name="items">
 			<list>
-				<bean parent="Uif-InputField" p:propertyName="budgetCategoryTypeCode"
-					p:label="Category" p:order="10" p:required="false"
-					p:optionsFinder="#{#getService('budgetNonPersonnelBudgetCategoryTypeValuesFinder')}" 
-					p:optionsFinder.addBlankOption="false">
-			    	<property name="control">
-			      		<bean parent="Uif-DropdownControl"/>
-			    	</property>
- 						</bean>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.costElement"
-					p:refreshWhenChangedPropertyNames="#fp.budgetCategoryTypeCode"
-					p:label="Object Code Name" p:optionsFinder="#{#getService('budgetNonPersonnelCostElementValuesFinder')}" 
-					p:optionsFinder.addBlankOption="false" p:order="20"/>
+					p:label="Object Code Name" p:optionsFinder="#{#getService('costElementKeyValuesFinder')}" 
+					p:optionsFinder.addBlankOption="false" p:order="10"/>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemCost"
-					p:label="Total Base Cost" p:order="30" p:required="false"/>
+					p:label="Total Base Cost" p:order="20" p:required="false"/>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.quantity"
-					p:order="40" p:required="false"/>
+					p:order="30" p:required="false"/>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemDescription"
-					p:order="50" p:required="false"/>
+					p:order="40" p:required="false"/>
 			</list>
 		</property>
 	</bean>
