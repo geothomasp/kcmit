@@ -31,6 +31,7 @@ import org.kuali.coeus.propdev.impl.state.ProposalStateService;
 import org.kuali.coeus.common.framework.auth.perm.Permissionable;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.workflow.KcDocumentRejectionService;
+import org.kuali.kra.authorization.KraAuthorizationConstants;
 import org.kuali.kra.bo.RolePersons;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.BudgetParentDocument;
@@ -72,7 +73,6 @@ import org.kuali.rice.krad.workflow.DocumentInitiator;
 import org.kuali.rice.krad.workflow.KualiDocumentXmlMaterializer;
 import org.kuali.rice.krad.workflow.KualiTransactionalDocumentInformation;
 import org.kuali.rice.krms.api.engine.Facts;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -624,6 +624,7 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
     void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
     }
+<<<<<<< HEAD
     
     public Boolean getCerttifyViewOnly() {
 		return certtifyViewOnly;
@@ -631,4 +632,11 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
 	public void setCerttifyViewOnly(Boolean certtifyViewOnly) {
 		this.certtifyViewOnly = certtifyViewOnly;
 	}
+=======
+
+    @Override
+    public String getCustomLockDescriptor(Person user) {
+        return this.getDocumentBoNumber() + "-" + KraAuthorizationConstants.LOCK_DESCRIPTOR_PROPOSAL;
+    }
+>>>>>>> RESKC-318:remove narrative locking region
 }

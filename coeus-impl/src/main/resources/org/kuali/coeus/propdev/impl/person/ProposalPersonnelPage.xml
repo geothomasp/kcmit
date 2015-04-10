@@ -652,20 +652,10 @@
                         <bean parent="Uif-DialogGroup-OkCancel" p:promptText="Are you sure you want to clear all the answers?"/>
                     </property>
                 </bean>
-                <bean parent="Questionnaire-QuestionsGroup" p:propertyName="questionnaireHelper.answerHeaders[0].questions"  p:order="30" 
-                   p:readOnly="@{document.developmentProposal.isChild() or #ViewHelper.isCertQuestViewOnly(document,#line)}" >
-                     <property name="items">
-                  <list>
-                   <bean parent="Uif-MessageField" p:messageText="@{#lp.questionnaireQuestion.questionNumber}"/>   
-                   </list>
-		          </property>    
-					  <property name="subCollections">
-						<list>
-							<bean id="proposalPersonQuestionnaire-SubCollection" parent="proposalPersonQuestionnaire-SubCollection-parentBean" p:order="10"/>
-							 
-						</list>
-					</property> 
-				</bean>     
+                <bean parent="Questionnaire-QuestionsGroup" p:propertyName="questionnaireHelper.answerHeaders[0].questions"
+                      p:render="@{#ViewHelper.renderQuestionnaire(#line)}"
+                      p:readOnly="@{document.developmentProposal.isChild() or (#parent.readOnly and !#editModes[#proposalAuthConsts.CAN_SAVE_CERTIFICATION])}"
+                      p:order="40" />
             </list>
         </property>
     </bean>
