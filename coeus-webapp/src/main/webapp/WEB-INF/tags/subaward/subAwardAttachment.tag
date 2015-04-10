@@ -77,6 +77,7 @@ opacity:1;
 					</div>
 				</th> 
              </tr>
+             <c:if test="${!readOnly}">
                 <tbody class="addline">
 	             <tr>
 	             <c:if test="${subAwardAttachmentFormBean.maintainSubawardAttachment == true}">
@@ -129,6 +130,7 @@ opacity:1;
 				</c:if>
 				</tr>
 				</tbody>
+				</c:if>
 			 
 			<c:forEach var="attachment" items="${KualiForm.document.subAwardList[0].subAwardAttachments}" varStatus="itrStatus">
 				<c:set var="count" value="${itrStatus.index}"/>
