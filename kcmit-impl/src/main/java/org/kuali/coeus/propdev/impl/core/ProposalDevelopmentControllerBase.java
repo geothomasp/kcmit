@@ -53,6 +53,7 @@ import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.infrastructure.RoleConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.exception.RiceRuntimeException;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -629,8 +630,11 @@ public abstract class ProposalDevelopmentControllerBase {
                         allCertificationAreNowComplete &= isComplete;
                         if(isComplete && !wasComplete){
                         	person.setCertifiedBy(getGlobalVariableService().getUserSession().getPrincipalId());
+                            person.setCertifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
+
                         }else if(wasComplete && !isComplete){
                         	person.setCertifiedBy(null);
+                        	person.setCertifiedTime(null);
                         }
                         if(!isUpdatedToCoi()){
                         	setUpdatedToCoi(updateCOIOnPDCerificationComplete(pdForm,person,isComplete || wasComplete,answerHeader));
