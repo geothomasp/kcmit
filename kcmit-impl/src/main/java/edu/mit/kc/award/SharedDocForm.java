@@ -172,6 +172,11 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     private boolean ipProjectDocView;
     private boolean propProjectDocView;
     private boolean subAwardProjectDocView;
+    
+    private boolean awardProjectSharedDocView;
+    private boolean ipProjectSharedDocView;
+    private boolean propProjectSharedDocView;
+    private boolean subAwardProjectSharedDocView;
 
     private AwardHierarchyBean awardHierarchyBean;
     private AwardPrintNotice awardPrintNotice;
@@ -1495,6 +1500,38 @@ public void setNavigateFlag(String navigateFlag) {
 
 	public void setSubAwardProjectDocView(boolean subAwardProjectDocView) {
 		this.subAwardProjectDocView = subAwardProjectDocView;
+	}
+
+	public boolean isAwardProjectSharedDocView() {
+		return awardProjectSharedDocView;
+	}
+
+	public void setAwardProjectSharedDocView(boolean awardProjectSharedDocView) {
+		this.awardProjectSharedDocView = awardProjectSharedDocView;
+	}
+
+	public boolean isIpProjectSharedDocView() {
+		return ipProjectSharedDocView;
+	}
+
+	public void setIpProjectSharedDocView(boolean ipProjectSharedDocView) {
+		this.ipProjectSharedDocView = ipProjectSharedDocView;
+	}
+
+	public boolean isPropProjectSharedDocView() {
+		return propProjectSharedDocView;
+	}
+
+	public void setPropProjectSharedDocView(boolean propProjectSharedDocView) {
+		this.propProjectSharedDocView = propProjectSharedDocView;
+	}
+
+	public boolean isSubAwardProjectSharedDocView() {
+		return subAwardProjectSharedDocView;
+	}
+
+	public void setSubAwardProjectSharedDocView(boolean subAwardProjectSharedDocView) {
+		this.subAwardProjectSharedDocView = subAwardProjectSharedDocView;
 	}
 
 	

@@ -7,13 +7,13 @@
       <th colspan="4" style="border-style: solid; text-align: left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Institutional Proposal ${node.bo.proposalNumber}</th>
     </tr>
   <tr>
-      <th colspan="8" style="border-style: solid; text-align:left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Attachments</th>
+      <th colspan="12" style="border-style: solid; text-align:left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Attachments</th>
     </tr>
       <th colspan="2">Attachment Type</th>
       <th colspan="2">Description</th>
       <th colspan="2">File Name</th>
-      <th colspan="2">Uploaded Date</th>
-      <th colspan="2">Uploaded By Name</th>
+      <!-- <th colspan="2">Uploaded Date</th>
+      <th colspan="2">Uploaded By Name</th> -->
     </tr>
      <c:set var="viewSharedDoc" value="${KualiForm.ipProjectDocView}" />
       <c:if test="${viewSharedDoc}">
@@ -21,18 +21,21 @@
     <c:if test="${ipAttachment.documentStatusCode == 'A'}">
       <tr>
         <td style="text-align: center;" colspan="2">
-           <c:out value="${ipAttachment.type.description}"/>
-                        
+           <c:out value="${ipAttachment.type.description}"/>                        
         </td>
          <td style="text-align: center;" colspan="2">
-           <c:out value="${ipAttachment.attachmentTitle}"/>
-                        
+           <c:out value="${ipAttachment.attachmentTitle}"/>                        
         </td>
         <td style="text-align: center;" colspan="2">          
-            <c:out value="${ipAttachment.fileName}"/>
+            <c:out value="${ipAttachment.file.name}"/>
            </td>
-           <td colspan="2">    
-      
+            <td style="text-align: center;" colspan="2">          
+         <%--    <c:out value="${ipAttachment.file.name}"/> --%>
+           </td>
+            <td style="text-align: center;" colspan="2">          
+            <%-- <c:out value="${ipAttachment.file.name}"/> --%>
+           </td>
+           <td colspan="2">        
           <html:image property="methodToCall.viewAttachmentIp.line${itrStatus.index}.anchor${currentTabIndex}.id${ipAttachment.proposalId}"
 		src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>

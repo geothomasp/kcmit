@@ -39,15 +39,6 @@
 		<a href="#" title="Expand the entire tree below"><img src="static/images/jquery/plus.gif" /> Expand All</a>
 		</span>
     </h3>
- <table cellspacing="0" cellpadding="0" class="elementtable">	
-	<tr>
-        <th style="text-align: center; background-color: rgb(195, 195, 195); width: 60px;">				
-				<html:image src="${ConfigProperties.kra.externalizable.images.url}tinybutton-refresh.gif" styleClass="tinybutton" alt="Refresh" property="methodToCall.refreshView" />
-		</th>	
-    </tr>
-</table> 
-
-
 <c:set var="openned" value="false" scope="request"/>
 <div style = "background:#e4e4e4; margin: 10px 0pt 0pt; clear: left; position: static; text-align: left;" >     
   <ul id="medusaview" class="filetree stripeli treeview medusatree"  >

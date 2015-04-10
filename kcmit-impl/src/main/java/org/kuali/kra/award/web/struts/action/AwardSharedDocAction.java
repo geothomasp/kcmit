@@ -102,32 +102,52 @@ public class AwardSharedDocAction extends AwardAction {
 			
 		 sharedDocForm.setKpMaintenanceRole(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", KcMitConstants.AWARD_KEYPERSON_MAINTENANCE_ROLE));  //Move to Constants
 		 sharedDocForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
-		
+		/* List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
+		 for(SharedDocumentType sharedDocType:sharedDocTypeNew){
+			 if(sharedDocType.getModuleCode().equals()
+		 }*/
 		 if(!sharedDocForm.isAwardProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
+			/* if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
 					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS"))||
 							 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "CREATE_AWARD"))){
-				 sharedDocForm.setAwardProjectDocView(true);
-			 }}	
+				 sharedDocForm.setAwardProjectDocView(true);*/
+			 if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments"))||
+				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments"))||
+				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award"))|| 
+				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award"))){ 
+				 sharedDocForm.setAwardProjectDocView(true);			 
+				
+			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))){
+				 sharedDocForm.setAwardProjectSharedDocView(true);
+			 }
 		 if(!sharedDocForm.isSubAwardProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY_SUBAWARD"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "CREATE_SUBAWARD"))||
+			 if ((getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "CREATE SUBAWARD"))||
 							 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS"))){
 				 sharedDocForm.setSubAwardProjectDocView(true);
-			 }}	
+			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_SUBAWARD_DOC"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))){
+				 sharedDocForm.setSubAwardProjectSharedDocView(true);
+			 }}	}	
 		 if(!sharedDocForm.isIpProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC-IP", "MODIFY_INST_PROPOSAL"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-IP", "CREATE_INST_PROPOSAL"))||
+			 if ((getPermissionService().hasPermission(currentUser, "KC-IP", "Edit Institutional Proposal"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-IP", "Create Institutional Proposal"))||
 							 (getPermissionService().hasPermission(currentUser, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")||
 									 (getPermissionService().hasPermission(currentUser, "KC-IP", "VIEW_INST_PROPOSAL_DOC")))){
 				 sharedDocForm.setIpProjectDocView(true);
+			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_INST_PROPOSAL_DOC"))||
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))){
+				 sharedDocForm.setIpProjectSharedDocView(true);
 			 }}	
 		 if(!sharedDocForm.isPropProjectDocView()){
 			 if (getPermissionService().hasPermission(currentUser, "KC-PD", "VIEW_DEV_PROPOSAL_DOC")){
 									 sharedDocForm.setPropProjectDocView(true);
-			 }}	
-		      
-		
+			 }else if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC")){
+				 sharedDocForm.setPropProjectSharedDocView(true);
+			 }
+			 }	
+		      		
 	 return actionForward;
 	 }}
     public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
