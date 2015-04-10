@@ -27,10 +27,7 @@
         <td style="text-align: center;" colspan="2">
             <c:out value="${attachment.description}"/>
         </td>
-        <td style="text-align: center;" colspan="2">
-            <c:out value="${attachment.type.description}"/>
-        </td>
-          <td style="text-align: center;" colspan="2">
+         <td style="text-align: center;" colspan="2">
             <c:out value="${attachment.file.name}"/>
         </td>
         <td colspan="2">        
