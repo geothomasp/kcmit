@@ -150,7 +150,7 @@
     					    *<kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" />
     					    
     					    <span>(Required for Key Persons)</span>
-    				<html:text property="projectPersonnelBean.newAwardContact.keyPersonRole" value="" /> 
+    				<html:text property="projectPersonnelBean.newAwardContact.keyPersonRole" value="${KualiForm.projectPersonnelBean.newProjectPerson.person.directoryTitle}" /> <%-- ${KualiForm.projectPersonnelBean.newProjectPerson.person.directoryTitle} --%>
     				   <%--   <kul:htmlControlAttribute property="projectPersonnelBean.newAwardContact.keyPersonRole" 
     										           attributeEntry="${awardPersonAttributes.keyPersonRole}"/>  --%>
     						</div>				           
@@ -237,12 +237,12 @@
     	        	<html:hidden property="projectPersonnelBean.contactRoleCode" value="KP" />
     	      <br/>
 	
-   	                			<span class="keypersononly">
-	    					    	*<kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" />
+   	                		<!-- 	<span class="keypersononly"> -->
+	    					    	 <kul:htmlAttributeLabel attributeEntry="${awardPersonAttributes.keyPersonRole}" useShortLabel="true" noColon="false" /> 
 		    					    <span class="noscriptonly">(Required for Key Persons only)</span> 
 		    				        <kul:htmlControlAttribute property="projectPersonnelBean.projectPersonnel[${awardContactRowStatus.index}].keyPersonRole" 
-		    										           attributeEntry="${awardPersonAttributes.keyPersonRole}"/>
-	    					    </span>
+		    										           attributeEntry="${awardPersonAttributes.keyPersonRole}" readOnly="true"/>
+	    					  <!--  -->  
     	                	</div>
     	                	${KualiForm.valueFinderResultCache}
     	                	 
