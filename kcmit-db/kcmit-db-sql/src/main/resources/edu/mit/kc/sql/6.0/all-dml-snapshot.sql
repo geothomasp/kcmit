@@ -1,3 +1,4 @@
 @dml/DML_MITKC-1081_20150409.sql
+@dml/DML_MITKC-1394_04102015.sql
 commit
 /
