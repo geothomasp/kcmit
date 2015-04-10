@@ -164,7 +164,8 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
                
                if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS") || 
-               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SHARED_SUBAWARD_DOC") ) {
+               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SHARED_SUBAWARD_DOC") ||
+               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
                	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
            		if(subAwardAttachmentform != null) {
            			subAwardAttachmentform.setCanViewAttachment(true);
