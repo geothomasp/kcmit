@@ -127,19 +127,10 @@
 					</property>
 				</bean>
 
-				<bean parent="Kc-Header-DefaultMenu" p:toggleText="MAINTENANCE"
-					p:order="30" p:render="@{T(edu.mit.kc.header.MitHeaderHelper).renderMaintenanceHeaderLink()}">
-					<property name="wrapperCssClasses">
-						<list merge="true">
-							<value>kc-centralAdminDropdown</value>
-							<value>kc-listIconDropdown</value>
-						</list>
-					</property>
-				</bean>
-                <bean parent="Uif-Link" p:href="../portal.do"
+				 <bean parent="Uif-Link" p:href="../portal.do"
                     p:render="@{T(edu.mit.kc.header.MitHeaderHelper).renderSysAdminHeaderLink()}"
                     p:wrapperCssClasses="pull-right" p:target="_new"
-                    p:linkText="SYSTEM ADMIN PORTAL" p:order="40"/>
+                    p:linkText="SYSTEM ADMIN PORTAL" p:order="30"/>
             </list>
         </property>
     </bean>
@@ -203,54 +194,6 @@
           abstract="true" p:source="../static/images/logo-mit2.png"/>
 
    
-    <bean id="Kc-Header-DefaultMenu" parent="Kc-Header-DefaultMenu-parentBean"/>
-    <bean id="Kc-Header-DefaultMenu-parentBean" abstract="true"
-          parent="Uif-DropdownToggleMenu" p:toggleCaretClass="">
-        <property name="wrapperCssClasses">
-            <list merge="true">
-                <value>kc-navMenuDropdown</value>
-            </list>
-        </property>
-        <property name="menuGroup">
-            <bean parent="Uif-AppMenuGroup">
-                <property name="layoutManager.defaultItemSizes.smSize" value="4"/>
-                <property name="layoutManager.defaultItemSizes.mdSize" value="3"/>
-                <property name="items">
-                    <list>
-                        <bean parent="Kc-Header-Maintenance-Shared" p:order="10"/>
-                     
-                    </list>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="Kc-Header-Maintenance-Shared" parent="Kc-Header-Maintenance-Shared-parentBean"/>
-    <bean id="Kc-Header-Maintenance-Shared-parentBean" abstract="true" parent="Uif-MenuList" p:headerText="Shared">
-        <property name="items">
-            <list>
-			   <bean parent="Uif-MenuAction" p:actionLabel="Generate SAP Feeds"
-					p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kc-pd-krad"
-					p:actionUrl.viewId="SapFeed-DefaultView"
-					p:actionUrl.controllerMapping="/sapFeedsCommon"
-					p:actionUrl.methodToCall="retrieveCollectionPage" p:order="10" />
-			  
-			   <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                    p:actionLabel="Maintain SAP Feeds" p:order="20">
-                    <property name="actionUrl.requestParameters">
-                        <map>
-                            <entry key="href"
-                                   value="@{#ConfigProperties['rice.server.url']}/kr-krad/lookup?methodToCall=start&amp;dataObjectClassName=org.kuali.coeus.propdev.impl.sapfeed.SapFeedDetails&amp;showMaintenanceLinks=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
-                        </map>
-                    </property>
-               </bean>
-					
-			   <bean parent="Uif-MenuAction" p:actionLabel="Workload Balancing"
-					p:order="30" />
-			</list>
-        </property>
-	 </bean>
-
     <bean id="Kc-Header-Actionlist" parent="Kc-Header-Actionlist-parentBean"/>
     <bean id="Kc-Header-Actionlist-parentBean" abstract="true"
           parent="Uif-DropdownToggleMenu">
