@@ -47,6 +47,7 @@ import org.kuali.coeus.propdev.impl.person.creditsplit.ProposalPersonCreditSplit
 import org.kuali.coeus.propdev.impl.person.question.ProposalPersonQuestionnaireHelper;
 import org.kuali.coeus.propdev.proposalperson.CoiDbFunctionService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
+import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -121,6 +122,8 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 	private Timestamp lastNotification;
     
 
+	@Column(name = "CERTIFIED_TIME")
+	private Timestamp certifiedTime;
 
     @OneToOne(cascade = { CascadeType.REFRESH })
     @PrimaryKeyJoinColumns({ @PrimaryKeyJoinColumn(name = "PROPOSAL_NUMBER", referencedColumnName = "PROPOSAL_NUMBER"), @PrimaryKeyJoinColumn(name = "PROP_PERSON_NUMBER", referencedColumnName = "PROP_PERSON_NUMBER") })
@@ -421,7 +424,13 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     @Transient
     private transient CoiDbFunctionService coiDbFunctionService;
     
+    @Transient
+    private transient String  certifiedPersonName;
     
+    @Transient
+    private transient String  certifiedTimeStamp;
+
+
 	public CoiDbFunctionService getCoiDbFunctionService() {
 		 if (this.coiDbFunctionService == null) {
              this.coiDbFunctionService = KcServiceLocator.getService(CoiDbFunctionService.class);
@@ -1836,6 +1845,7 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 	}
 	
 	public String getCertifiedBy() {
+		
 		return certifiedBy;
 	}
 
@@ -1849,6 +1859,37 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 
 	public void setLastNotification(Timestamp lastNotification) {
 		this.lastNotification = lastNotification;
+	}
+
+	public Timestamp getCertifiedTime() {
+		
+		return certifiedTime;
+	}
+
+	public void setCertifiedTime(Timestamp certifiedTime) {
+		this.certifiedTime = certifiedTime;
+	}
+	
+	public String getCertifiedPersonName() {
+		if(this.certifiedBy!=null){
+			 this.certifiedPersonName = getKcPersonService().getKcPersonByPersonId(certifiedBy).getUserName();
+			}
+		return certifiedPersonName;
+	}
+
+	public void setCertifiedPersonName(String certifiedPersonName) {
+		this.certifiedPersonName = certifiedPersonName;
+	}
+	
+	public String getCertifiedTimeStamp() {
+		if(this.certifiedTime!=null){
+			certifiedTimeStamp = CoreApiServiceLocator.getDateTimeService().toString(certifiedTime, "MM/dd/yyyy hh:mm a");
+		}
+		return certifiedTimeStamp;
+	}
+
+	public void setCertifiedTimeStamp(String certifiedTimeStamp) {
+		this.certifiedTimeStamp = certifiedTimeStamp;
 	}
 
 }
