@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
@@ -21,6 +22,9 @@ import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
 import org.kuali.coeus.common.questionnaire.framework.core.QuestionnaireService;
+import org.kuali.coeus.instprop.api.admin.ProposalAdminDetailsContract;
+import org.kuali.coeus.instprop.api.admin.ProposalAdminDetailsService;
+import org.kuali.coeus.propdev.api.core.SubmissionInfoService;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.propdev.impl.location.ProposalSite;
@@ -35,9 +39,17 @@ import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.bo.CoeusModule;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
+import org.kuali.kra.institutionalproposal.home.InstitutionalProposalBoLite;
+import org.kuali.kra.institutionalproposal.proposaladmindetails.ProposalAdminDetails;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import edu.mit.coeus.utils.xml.v2.propdev.PROPOSALDocument.PROPOSAL;
 import edu.mit.kc.infrastructure.KcMitConstants;
 
 /**
@@ -1113,4 +1125,78 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
         }
         return false;
     }
+   /**MITKC-820
+    * Create New Function "ORIGINAL INSTITUTIONAL PROPOSAL ID IS VALID"
+    *  where if an IP # s entered in the field it's valid if the IP status is "Pending". 
+    *  If the IP is any status other than "Pending", 
+    *  we will write the validation as an error with a message to the user to contact the Data Team to update the Original IP status. 
+    */
+    public boolean isOriginalIPIsValid(DevelopmentProposal developmentProposal){
+    	 String proposalNumber = null;
+    	 String status = "Active";
+    	// String iPNumber = developmentProposal.getProposalDocument().getInstitutionalProposalNumber();
+    	List<? extends ProposalAdminDetailsContract> adminDetails = KcServiceLocator.getService(ProposalAdminDetailsService.class).findProposalAdminDetailsByPropDevNumber(developmentProposal.getProposalNumber());
+		for (ProposalAdminDetailsContract propAdminDetails : adminDetails) {
+			proposalNumber = propAdminDetails.getInstProposalId().toString();
+		}
+		if(!proposalNumber.isEmpty()){
+		  Map<String, String> proposalKeys = new HashMap<String, String>();
+	        proposalKeys.put("proposalNumber", proposalNumber);
+	        List<InstitutionalProposal> instList = getDataObjectService().findMatching(InstitutionalProposal.class,QueryByCriteria.Builder.andAttributes(proposalKeys).build()).getResults();
+	    if(instList != null && instList.size() > 0){
+	    	for (InstitutionalProposal institutionalProposal : instList) {
+	    		status = institutionalProposal.getProposalSequenceStatus();
+	    	}
+	    	
+	    }
+		}
+		if(status.equalsIgnoreCase("PENDING")){
+			return true;
+		}else{
+			return false;
+		}
+    }
+    @Autowired
+    @Qualifier("dataObjectService")
+    private DataObjectService dataObjectService;
+
+    public DataObjectService getDataObjectService() {
+        return dataObjectService;
+    }
+
+    public void setDataObjectService(DataObjectService dataObjectService) {
+        this.dataObjectService = dataObjectService;
+    }
+    /**MITKC-819
+     * Create New Function "PREVIOUS GRANTS.GOV TRACKING ID IS MISSING"
+     * if the function is equal to true it means the field in the KC Dev Proposal is blank.
+     */
+     public boolean confirmTrackingIDBlank(DevelopmentProposal developmentProposal){//ref checkForNullPrevGGTrackId//DML_MITKC-284_20140702.sql
+    	 
+    	  Long proposalId = null;
+          if (StringUtils.isNotEmpty(developmentProposal.getContinuedFrom())) {
+             proposalId = getSubmissionInfoService().getProposalContinuedFromVersionProposalId(developmentProposal.getContinuedFrom());
+          }
+    	  String ggTrackingId = null;
+    	             if (proposalId != null) {
+    	                 ggTrackingId = getSubmissionInfoService().getGgTrackingIdFromProposal(proposalId);
+    	             }
+  
+    	             if(ggTrackingId.isEmpty() && ggTrackingId.equalsIgnoreCase("")){
+    	              	return true;
+    	              	}
+ 		return false;
+     }
+     
+     private SubmissionInfoService submissionInfoService;
+     protected SubmissionInfoService getSubmissionInfoService() {
+         if (this.submissionInfoService == null) {
+             this.submissionInfoService = KcServiceLocator.getService(SubmissionInfoService.class);
+         }
+         return this.submissionInfoService;
+     }
+
+     public void setSubmissionInfoService(SubmissionInfoService submissionInfoService) {
+         this.submissionInfoService = submissionInfoService;
+     }
 }
