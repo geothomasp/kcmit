@@ -766,7 +766,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         meetingHelper.setMemberAbsentBeans(new ArrayList<MemberAbsentBean>());
         for (CommitteeMembershipBase committeeMembership : committeeMemberships) {
             if (!isInMemberPresent(meetingHelper.getMemberPresentBeans(), committeeMembership)
-                    && !isInOtherPresent(meetingHelper.getOtherPresentBeans(), committeeMembership) && !isAlternate(committeeMembership, commSchedule.getScheduledDate())) {
+                    && !isInOtherPresent(meetingHelper.getOtherPresentBeans(), committeeMembership)) {
                 MemberAbsentBean memberAbsentBean = new MemberAbsentBean();
 
                 CommitteeScheduleAttendanceBase attendance = getNewCommitteeScheduleAttendanceInstanceHook();
