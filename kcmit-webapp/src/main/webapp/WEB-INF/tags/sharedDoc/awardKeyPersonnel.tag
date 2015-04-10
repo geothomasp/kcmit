@@ -30,11 +30,6 @@
 	value="<%=org.kuali.kra.infrastructure.Constants.CO_INVESTIGATOR_ROLE%>" />
 <c:set var="kpMaintenance" value="${KualiForm.kpMaintenanceRole}" />
 <c:set var="pi" value="${KualiForm.pi}" />
-<kul:page lookup="true" showDocumentInfo="false"
-	headerMenuBar="${headerMenu}" headerTitle="Project Documents"
-	docTitle="" transactionalDocument="false"
-	htmlFormAction="keyperson">
-	
 
 		<div class="tab-container" align="center">
 			<h3>
@@ -329,4 +324,3 @@
 			</div>
 		
 
-	</kul:page>
