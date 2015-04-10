@@ -116,7 +116,7 @@ public class MitAwardLookupableHelperServiceImpl extends AwardLookupableHelperSe
     public boolean isLoggedInUserPI(Award award){
    	 String principalId=GlobalVariables.getUserSession().getPrincipalId();    	
    	       for (AwardPerson person : award.getInvestigators()) {
-   	            if (person.isInvestigator() && person.isPrincipalInvestigator()
+   	            if (person.isPrincipalInvestigator()
    	                    && StringUtils.equals(principalId, person.getPersonId())) {
    	                return true;
    	            }
