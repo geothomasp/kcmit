@@ -1,0 +1,20 @@
+	add constraint narrative_attachment_fk1 foreign key  (file_data_id) references file_data (id)
+	               *
+ERROR at line 2:
+ORA-02298: cannot validate (KCSO.NARRATIVE_ATTACHMENT_FK1) - parent keys not 
+found 
+
+
+	add constraint eps_prop_person_bio_attach_fk1  foreign key (file_data_id) references file_data (id)
+	               *
+ERROR at line 2:
+ORA-02298: cannot validate (KCSO.EPS_PROP_PERSON_BIO_ATTACH_FK1) - parent keys 
+not found 
+
+
+
+Commit complete.
+
+
+Commit complete.
+
