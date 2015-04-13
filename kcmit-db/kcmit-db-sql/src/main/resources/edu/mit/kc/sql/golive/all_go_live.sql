@@ -4,4 +4,8 @@
 @unit.sql
 @award_budget.sql
 @krms/krms.sql
+commit
 /
+EXIT
+/
+
