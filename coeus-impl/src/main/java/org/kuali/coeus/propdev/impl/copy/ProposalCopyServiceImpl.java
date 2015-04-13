@@ -215,6 +215,8 @@ public class ProposalCopyServiceImpl implements ProposalCopyService {
                 }
 
                 newDoc.getDevelopmentProposal().setS2sOpportunity(null);
+                
+                clearProposalPersonNotificationDetails(newDoc);
 
                 // all copied proposals should always be in progress.
                 newDoc.getDevelopmentProposal().setProposalStateTypeCode(ProposalState.IN_PROGRESS);
@@ -842,6 +844,16 @@ public class ProposalCopyServiceImpl implements ProposalCopyService {
             	dest.getDevelopmentProposal().getBudgets().add(budgetCopy);   		
         	}
         }
+    }
+    
+    private void clearProposalPersonNotificationDetails(ProposalDevelopmentDocument proposalDevelopmentDocument){
+    	List<ProposalPerson> proposalPersons = new ArrayList();
+    	for(ProposalPerson proposalPerson : proposalDevelopmentDocument.getDevelopmentProposal().getProposalPersons()){
+    		proposalPerson.setLastNotification(null);
+    		proposalPersons.add(proposalPerson);
+    	}
+    	 proposalDevelopmentDocument.getDevelopmentProposal().setProposalPersons(proposalPersons);
+    	
     }
 
     public void setDataObjectService(DataObjectService dataObjectService) {
