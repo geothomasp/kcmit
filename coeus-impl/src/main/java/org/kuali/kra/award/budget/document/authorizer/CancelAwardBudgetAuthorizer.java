@@ -21,6 +21,7 @@ package org.kuali.kra.award.budget.document.authorizer;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.coeus.common.framework.auth.task.Task;
 import org.kuali.coeus.sys.framework.workflow.KcDocumentRejectionService;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
 import org.kuali.kra.award.budget.document.authorization.AwardBudgetTask;
@@ -38,8 +39,9 @@ public class CancelAwardBudgetAuthorizer extends BudgetAuthorizer {
     
     private KcDocumentRejectionService kraDocumentRejectionService;
 
-    public boolean isAuthorized(String username, AwardBudgetTask task) {
-        AwardBudgetDocument doc = task.getAwardBudgetDocument();
+    public boolean isAuthorized(String username, Task task) {
+    	AwardBudgetTask budgetTask = (AwardBudgetTask) task;
+        AwardBudgetDocument doc = budgetTask.getAwardBudgetDocument();
         WorkflowDocument workDoc = doc.getDocumentHeader().getWorkflowDocument();
         return !workDoc.isCompletionRequested() 
             && !getKraDocumentRejectionService().isDocumentOnInitialNode(doc.getDocumentHeader().getWorkflowDocument())
