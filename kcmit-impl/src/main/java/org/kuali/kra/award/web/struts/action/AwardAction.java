@@ -2154,6 +2154,16 @@ public class AwardAction extends BudgetParentActionBase {
 				feedStatus = "P";
 				getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
 			}
+		else if(latestFeedDetails.getFeedStatus().equals("R")){
+			feedType = "N";
+			feedStatus = "P";
+			getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
+		}
+		else if(latestFeedDetails.getFeedStatus().equals("P") && latestFeedDetails.getFeedType().equals("N")){
+			feedType = "C";
+			feedStatus = "P";
+			getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
+		}
 		else{
 				feedType = "C";
 			  	feedStatus = latestFeedDetails.getFeedStatus();

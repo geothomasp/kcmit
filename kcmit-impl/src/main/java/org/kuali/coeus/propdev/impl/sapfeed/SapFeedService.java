@@ -16,5 +16,11 @@ public interface SapFeedService {
 			throws SQLException;
 	
 	public void insertSapFeedDetails(String awardNumber, Integer sequenceNumber, String feedType, String feedStatus);
+	
+	public void performRejectAction(Integer feedId);
+	
+	public void performUndoReject(Integer feedId);
+	
+	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,int needSubsequent, String path);
 
 }

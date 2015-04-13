@@ -2,8 +2,10 @@ package org.kuali.coeus.propdev.impl.sapfeed;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,5 +136,49 @@ public class SapFeedServiceImpl implements SapFeedService
 
 	public void setDataObjectService(DataObjectService dataObjectService) {
 		this.dataObjectService = dataObjectService;
+	}
+
+	@Override
+	public void performRejectAction(Integer feedId) {
+		SapFeedDetails sapFeedDetails = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
+		if (sapFeedDetails != null) {
+			if (sapFeedDetails.getFeedStatus().equals("F")) {
+				sapFeedDetails.setFeedStatus("R");
+				getBusinessObjectService().save(sapFeedDetails);
+			}
+		}
+	}
+
+	@Override
+	public void performUndoReject(Integer feedId) {
+		SapFeedDetails sapFeedDetails = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
+		if (sapFeedDetails != null) {
+			if (sapFeedDetails.getFeedStatus().equals("R")) {
+				sapFeedDetails.setFeedStatus("F");
+				getBusinessObjectService().save(sapFeedDetails);
+			}
+		}
+	}
+	
+	/**
+     * Resend the batch and creates file again
+     * @param sapFeedBatchId 
+     * @param batchId 
+     * @param needSubsequent(1 or 0) 1 for all subsequent
+     * @param path 
+     */
+	@Override
+	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,int needSubsequent, String path) {
+		List<Object> paramValues = new ArrayList<Object>();
+		paramValues.add(0, sapFeedBatchId);
+		paramValues.add(1, batchId);
+		paramValues.add(2, needSubsequent);
+		paramValues.add(3, path);
+		try {
+			getDbFunctionService().executeFunction("fn_sap_resend_batch",
+					paramValues);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }
