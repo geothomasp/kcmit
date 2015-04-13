@@ -3,6 +3,7 @@ echo "Script executed from: ${PWD}"
 BASEDIR=${PWD}
 scriptDir="${BASEDIR}/../kcmit-db/kcmit-db-sql/src/main/resources/edu/mit/kc/sql"
 script60Dir="${BASEDIR}/../../kc/coeus-db/coeus-db-sql/src/main/resources/org/kuali/coeus/coeus-sql/current/6.0.0" 
+script60XDir="${BASEDIR}/../../kc/coeus-db/coeus-db-sql/src/main/resources/co/kuali/coeus/data/migration/sql/oracle 
 echo "Base dir: ${BASEDIR}"
 
 if [ $# -lt 1 ]
@@ -45,6 +46,12 @@ mkdir -p logs
 echo "spool feedrun-${tod}.log"
 sqlplus ${usrid}/${pswd}@${sid}  @all-feed-snapshot.sql > logs/feedrun-${tod}.log
 mail -s "feedrun-${tod}.log" geot@mit.edu < logs/feedrun-${tod}.log
+
+cd ${script60XDir}
+mkdir -p logs
+echo "spool kc60Xrun-${tod}.log"
+sqlplus ${usrid}/${pswd}@${sid}  @all-kc60X.sql > logs/kc60Xrun-${tod}.log
+mail -s "kc60Xrun-${tod}.log" geot@mit.edu < logs/kc60Xrun-${tod}.log
 
 cd ${scriptDir}/migration/Coeus_KCRoleRightsMigration
 mkdir -p logs
