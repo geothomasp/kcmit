@@ -67,7 +67,6 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
     private List<DevelopmentProposal> hierarchyDevelopmentProposals;
     private boolean submitBudgetIndicator;
 
-    private List<BudgetLineItem> sepLineItems;
     private List<BudgetLineItem> budgetLineItems;
     public void initialize() {
     	editableBudgetLineItems = new HashMap<String,List<String>>();
@@ -276,13 +275,6 @@ public class ProposalBudgetForm extends UifFormBase implements BudgetContainer, 
     public GlobalVariableService getGlobalVariableService() {
         return KcServiceLocator.getService(GlobalVariableService.class);
     }
-	public List<BudgetLineItem> getSepLineItems() {
-		return sepLineItems;
-	}
-
-	public void setSepLineItems(List<BudgetLineItem> sepLineItems) {
-		this.sepLineItems = sepLineItems;
-	}
 
 	public List<BudgetLineItem> getBudgetLineItems() {
 		return budgetLineItems;
