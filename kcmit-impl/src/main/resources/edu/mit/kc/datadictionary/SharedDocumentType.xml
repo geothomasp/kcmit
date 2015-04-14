@@ -17,9 +17,32 @@
 			<list>
 			     <ref bean="SharedDocumentType-sharedDocumentTypeId" />
 				<ref bean="SharedDocumentType-moduleCode" />
+				<ref bean="SharedDocumentType-coeusModule.description" />
 				<ref bean="SharedDocumentType-documentTypeCode" />			
 			</list>
 		</property>
+		<property name="relationships">
+	      <list>
+		     <bean parent="RelationshipDefinition">
+			    <property name="objectAttributeName" value="coeusModule" />
+			      <property name="primitiveAttributes">
+				    <list>
+					    <bean parent="PrimitiveAttributeDefinition" p:sourceName="moduleCode"
+						      p:targetName="moduleCode" />
+				     </list>
+			       </property>
+		        </bean>
+		        <bean parent="RelationshipDefinition">
+			    <property name="objectAttributeName" value="narrativeTypeCode" />
+			      <property name="primitiveAttributes">
+				    <list>
+					    <bean parent="PrimitiveAttributeDefinition" p:sourceName="documentTypeCode"
+						      p:targetName="code" />
+				     </list>
+			       </property>
+		        </bean>
+	        </list>
+        </property>
 	</bean>
 
 	<!-- Attribute Definitions -->
@@ -48,13 +71,33 @@
 			<bean parent="NumericValidationPattern" />
 		</property>
 		<property name="maxLength" value="3" />
-				<property name="control">
+		<property name="control" >
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.coeus.common.framework.module.CoeusModule" p:valuesFinderClass="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder" p:includeKeyInLabel="false" p:includeBlankRow="false" p:keyAttribute="moduleCode" p:labelAttribute="description" p:script="updateNotificationRecipients(this.value)"/>
+    </property>
+    <property name="optionsFinder">
+      <bean class="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder">
+        <property name="businessObjectClass" value="org.kuali.coeus.common.framework.module.CoeusModule"/>
+        <property name="includeKeyInDescription" value="false"/>
+        <property name="includeBlankRow" value="false"/>
+        <property name="keyAttributeName" value="moduleCode"/>
+        <property name="labelAttributeName" value="description"/>
+      </bean>
+    </property>
+    <property name="controlField">
+      <bean parent="Uif-DropdownControl"/>
+				<!-- <property name="control">
 			<bean parent="TextControlDefinition" p:size="8" />
 		</property>
 		<property name="controlField">
 			<bean parent="Uif-TextControl" p:size="14" />
-		</property>
+		</property> -->
 	</bean>
+	<bean id="SharedDocumentType-coeusModule.description" parent="SharedDocumentType-coeusModule.description-parentBean" />
+    <bean id="SharedDocumentType-coeusModule.description-parentBean" abstract="true" parent="KraAttributeReferenceDummy-description">
+      <property name="name" value="coeusModule.description" />
+      <property name="label" value="Module Name" />
+      <property name="shortLabel" value="Module Name" />
+    </bean> 
 <bean id="SharedDocumentType-documentTypeCode" parent="SharedDocumentType-documentTypeCode-parentBean" />
 	<bean id="SharedDocumentType-documentTypeCode-parentBean" parent="AttributeDefinition"
 		abstract="true" p:name="documentTypeCode" p:forceUppercase="true" p:label="Document Type"
@@ -150,6 +193,7 @@
       <list>
         <bean parent="FieldDefinition" p:attributeName="sharedDocumentTypeId"/>
         <bean parent="FieldDefinition" p:attributeName="moduleCode"/>
+        <bean parent="FieldDefinition" p:attributeName="coeusmodule.description"/>       
         <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/>       
       </list>
     </property>
@@ -179,8 +223,10 @@
 					p:order="10" />
 				<bean parent="Uif-DataField" p:propertyName="moduleCode"
 					p:order="10" />
-				<bean parent="Uif-DataField" p:propertyName="documentTypeCode"
-					p:order="20" />				
+				<bean parent="Uif-DataField" p:propertyName="coeusmodule.description"
+					p:order="10" />	
+					<bean parent="Uif-DataField" p:propertyName="documentTypeCode"
+					p:order="20" />			
 			</list>
 		</property>
 	</bean>
