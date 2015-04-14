@@ -21,7 +21,6 @@ package org.kuali.coeus.propdev.impl.auth;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.framework.auth.KcKradTransactionalDocumentAuthorizerBase;
 import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
 import org.kuali.coeus.propdev.impl.attachment.NarrativeRight;
@@ -35,7 +34,6 @@ import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.auth.perm.Permissionable;
-import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
 import org.kuali.coeus.propdev.impl.state.ProposalStateConstants;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.workflow.KcDocumentRejectionService;
@@ -45,6 +43,7 @@ import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.infrastructure.PermissionConstants;
 import org.kuali.kra.institutionalproposal.InstitutionalProposalConstants;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
+import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetConstants.AuthConstants;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.rice.kew.api.WorkflowDocument;
@@ -53,7 +52,6 @@ import org.kuali.rice.kns.authorization.AuthorizationConstants;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.document.DocumentRequestAuthorizationCache;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -80,11 +78,9 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
 
     private ProposalHierarchyService proposalHierarchyService;
     
-    private SponsorHierarchyService sponsorHierarchyService;
     
-    private static final String PARAMETER_DELIMITER = ",";
-    private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
-    private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
+    ProposalDevelopmentPermissionsService proposalDevelopmentPermissionsService;
+    
 
 
     @Override
@@ -409,89 +405,12 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
 
     
     public boolean hasCertificationPermissions(ProposalDevelopmentDocument document, Person user,ProposalPerson proposalPerson){
-           if(proposalPerson.getPerson()==null){
-        	   return false;
-           }
-           boolean isPiLoggedIn = isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal(),user);
-           boolean canCertifyProposal = canCertifyProposal(document,user);
-           if((isPiLoggedIn && proposalPerson.getPersonId().equals(user.getPrincipalId())) ||
-        		   (canCertifyProposal && proposalPerson.isPrincipalInvestigator()))
-           {
-        	  return true;
-           }
-          if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))
-        		  ||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)) ||
-        		  (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))){
-        		  return true;
-          }
-          if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))
-        		  ||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE)) ||
-        		  (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))){
-        		  return true;
-          }
-          
-          String keyPersonProjectRoles = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
-          List<String> keyPersonRoleList =Arrays.asList(keyPersonProjectRoles.split(PARAMETER_DELIMITER));     
-    
-          String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
-          String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
-          if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))||
-        		 (isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)) ||
-        		 (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))){
-        	  for(String projectRole:keyPersonRoleList){
-        		  if(proposalPerson.getProjectRole().equals(projectRole)) {
-        			  return false;
-        		  }}
-        	  if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
-        		  return true;
-        	  }
-        	  if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName)) {
-        		  return true;
-        	  }}
-      
-        return false;       		
-        	
+    	return getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, user, proposalPerson);
     }
     
-    private boolean canCertifyProposal(ProposalDevelopmentDocument document,Person user){
-    	 boolean viewCertify = getKcAuthorizationService().hasPermission(user.getPrincipalId(), document, PermissionConstants.VIEW_CERTIFICATION); 
-         boolean certify = getKcAuthorizationService().hasPermission(user.getPrincipalId(), document, PermissionConstants.CERTIFY); 
-         if(viewCertify || certify){
-      	   return true;
-         }else{
-           return false;
-         }
-    	
-    }
-    
-
-    public boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal,Person user){
-      	       for (ProposalPerson person : developmentProposal.getInvestigators()) {
-      	            if (person.isPrincipalInvestigator() && StringUtils.equals(user.getPrincipalId(), person.getPersonId())) {
-      	                return true;
-      	            }
-      	        }
-      	        return false;
-      	    } 	
-    
-    public boolean isKeyPersonCustomData(
-			DevelopmentProposal developmentProposal) {
-		try {
-			List<CustomAttributeDocValue> customDataList = developmentProposal
-					.getProposalDocument().getCustomDataList();
-			for (CustomAttributeDocValue attributeDocValue : customDataList) {
-				if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("PCK")&& attributeDocValue.getCustomAttribute().getValue().equals("Y")) {
-					return true;
-				}
-			}
-		} catch (Exception exception) {
-
-		}
-		return false;
-	}
     protected boolean canSaveCertification(ProposalDevelopmentDocument document, Person user) {
         for(ProposalPerson person : document.getDevelopmentProposal().getProposalPersons()) {
-            if (hasCertificationPermissions(document, user, person)) {
+            if (getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, user, person)) {
                 return true;
             }
         }
@@ -990,14 +909,15 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
         this.proposalHierarchyService = proposalHierarchyService;
     }
     
-    public SponsorHierarchyService getSponsorHierarchyService() {
-    	if(sponsorHierarchyService == null){
-    		sponsorHierarchyService = KcServiceLocator.getService(SponsorHierarchyService.class);
+    public ProposalDevelopmentPermissionsService getProposalDevelopmentPermissionsService() {
+    	if(proposalDevelopmentPermissionsService == null){
+    		proposalDevelopmentPermissionsService = KcServiceLocator.getService(ProposalDevelopmentPermissionsService.class);
     	}
-        return sponsorHierarchyService;
-    }
+		return proposalDevelopmentPermissionsService;
+	}
 
-    public void setSponsorHierarchyService(SponsorHierarchyService sponsorHierarchyService) {
-        this.sponsorHierarchyService = sponsorHierarchyService;
-    }
+	public void setProposalDevelopmentPermissionsService(
+			ProposalDevelopmentPermissionsService proposalDevelopmentPermissionsService) {
+		this.proposalDevelopmentPermissionsService = proposalDevelopmentPermissionsService;
+	}
 }

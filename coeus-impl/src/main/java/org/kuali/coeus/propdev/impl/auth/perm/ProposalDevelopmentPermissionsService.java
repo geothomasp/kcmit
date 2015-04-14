@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
+import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.rice.kim.api.identity.Person;
 
 public interface ProposalDevelopmentPermissionsService {
 
@@ -44,4 +46,7 @@ public interface ProposalDevelopmentPermissionsService {
     public void processDeletePermission(ProposalDevelopmentDocument document, ProposalUserRoles proposalUser);
 
     public void processUpdatePermission(ProposalDevelopmentDocument document, ProposalUserRoles proposalUser);
+    
+    public boolean hasCertificationPermissions(ProposalDevelopmentDocument document, Person user,ProposalPerson proposalPerson);
+
 }

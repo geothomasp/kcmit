@@ -18,14 +18,23 @@
  */
 package org.kuali.coeus.propdev.impl.auth.perm;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.propdev.impl.attachment.LegacyNarrativeService;
+import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.propdev.impl.docperm.*;
+import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
+import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.PermissionConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.role.Role;
@@ -40,7 +49,19 @@ import java.util.*;
 public class ProposalDevelopmentPermissionsServiceImpl implements ProposalDevelopmentPermissionsService {
 
     private static final Log LOG = LogFactory.getLog(ProposalDevelopmentPermissionsServiceImpl.class);
-
+    
+    private static final String PARAMETER_DELIMITER = ",";
+    private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
+    private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
+    
+    @Autowired
+    @Qualifier("sponsorHierarchyService")
+    private SponsorHierarchyService sponsorHierarchyService;
+    
+    @Autowired
+  	@Qualifier("parameterService")
+  	private ParameterService parameterService;
+    
     @Autowired
     @Qualifier("kcAuthorizationService")
     private KcAuthorizationService kraAuthorizationService;
@@ -132,6 +153,87 @@ public class ProposalDevelopmentPermissionsServiceImpl implements ProposalDevelo
         }
     }
 
+    public boolean hasCertificationPermissions(ProposalDevelopmentDocument document, Person user,ProposalPerson proposalPerson){
+        if(proposalPerson.getPerson()==null){
+     	   return false;
+        }
+        boolean isPiLoggedIn = isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal(),user);
+        boolean canCertifyProposal = canCertifyProposal(document,user);
+        if((isPiLoggedIn && proposalPerson.getPersonId().equals(user.getPrincipalId())) ||
+     		   (canCertifyProposal && proposalPerson.isPrincipalInvestigator()))
+        {
+     	  return true;
+        }
+       if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))
+     		  ||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)) ||
+     		  (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))){
+     		  return true;
+       }
+       if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))
+     		  ||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE)) ||
+     		  (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))){
+     		  return true;
+       }
+       
+       String keyPersonProjectRoles = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
+       List<String> keyPersonRoleList =Arrays.asList(keyPersonProjectRoles.split(PARAMETER_DELIMITER));     
+ 
+       String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+       String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
+       if ((proposalPerson.getPersonId().equals(user.getPrincipalId()) && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))||
+     		 (isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)) ||
+     		 (canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))){
+     	  for(String projectRole:keyPersonRoleList){
+     		  if(proposalPerson.getProjectRole().equals(projectRole)) {
+     			  return false;
+     		  }}
+     	  if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
+     		  return true;
+     	  }
+     	  if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName)) {
+     		  return true;
+     	  }}
+   
+     return false;       		
+     	
+ }
+    
+    private boolean canCertifyProposal(ProposalDevelopmentDocument document,Person user){
+   	 boolean viewCertify = getKraAuthorizationService().hasPermission(user.getPrincipalId(), document, PermissionConstants.VIEW_CERTIFICATION); 
+        boolean certify = getKraAuthorizationService().hasPermission(user.getPrincipalId(), document, PermissionConstants.CERTIFY); 
+        if(viewCertify || certify){
+     	   return true;
+        }else{
+          return false;
+        }
+   	
+   }
+   
+
+   private boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal,Person user){
+     	       for (ProposalPerson person : developmentProposal.getInvestigators()) {
+     	            if (person.isPrincipalInvestigator() && StringUtils.equals(user.getPrincipalId(), person.getPersonId())) {
+     	                return true;
+     	            }
+     	        }
+     	        return false;
+     	    } 	
+   
+   private boolean isKeyPersonCustomData(
+			DevelopmentProposal developmentProposal) {
+		try {
+			List<CustomAttributeDocValue> customDataList = developmentProposal
+					.getProposalDocument().getCustomDataList();
+			for (CustomAttributeDocValue attributeDocValue : customDataList) {
+				if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("COI_REQUIREMENT")&& attributeDocValue.getValue().equals("PCK")) {
+					return true;
+				}
+			}
+		} catch (Exception exception) {
+
+		}
+		return false;
+	}
     @Override
     public boolean validateAddPermissions(ProposalDevelopmentDocument document, List<ProposalUserRoles> proposalUserRolesList, ProposalUserRoles proposalUser){
         return getKualiRuleService().applyRules(new AddProposalUserEvent(document, proposalUserRolesList, proposalUser));
@@ -208,5 +310,20 @@ public class ProposalDevelopmentPermissionsServiceImpl implements ProposalDevelo
 
     public void setProposalRoleService(ProposalRoleService proposalRoleService) {
         this.proposalRoleService = proposalRoleService;
+    }
+    
+    public SponsorHierarchyService getSponsorHierarchyService() {
+        return sponsorHierarchyService;
+    }
+
+    public void setSponsorHierarchyService(SponsorHierarchyService sponsorHierarchyService) {
+        this.sponsorHierarchyService = sponsorHierarchyService;
+    }
+    
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+    protected ParameterService getParameterService (){
+    	return parameterService;
     }
 }

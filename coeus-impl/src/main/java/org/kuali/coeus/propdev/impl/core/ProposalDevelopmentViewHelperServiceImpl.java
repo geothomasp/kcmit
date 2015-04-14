@@ -70,7 +70,6 @@ import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.impl.validation.DataValidationItem;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.PermissionConstants;
-import org.kuali.kra.krms.KcKrmsConstants.ProposalDevelopment;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.location.AddProposalCongressionalDistrictEvent;
 import org.kuali.coeus.propdev.impl.location.CongressionalDistrict;
@@ -92,8 +91,6 @@ import org.kuali.rice.krad.service.LookupService;
 import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.uif.UifConstants;
 import org.kuali.rice.krad.uif.UifParameters;
-import org.kuali.rice.krad.uif.component.Component;
-import org.kuali.rice.krad.uif.container.Group;
 import org.kuali.rice.krad.uif.element.Action;
 import org.kuali.rice.krad.uif.lifecycle.ViewLifecycle;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
@@ -110,9 +107,6 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     private static final long serialVersionUID = -5122498699317873886L;
     private static final Logger LOG = Logger.getLogger(ProposalDevelopmentViewHelperServiceImpl.class);
     private static final String PARENT_PROPOSAL_TYPE_CODE = "PRDV";
-    private static final String PARAMETER_DELIMITER = ",";
-    private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
-    private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
     
     @Autowired
     @Qualifier("dateTimeService")
@@ -966,86 +960,11 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         return true;
     }
     public boolean canViewCertificationTab(ProposalDevelopmentDocument document,ProposalPerson proposalPerson){
-    	if(proposalPerson.getPerson()==null){
-      	   return false;
-        }
-    	String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
-    	boolean isPiLoggedIn = isPiPersonLoggedInUser( proposalPerson.getDevelopmentProposal(),currentUser);
-    	boolean canCertifyProposal = canCertifyProposal(document,currentUser);
-    	if((isPiLoggedIn && proposalPerson.getPersonId().equals(currentUser)) ||
-    			(canCertifyProposal && proposalPerson.isPrincipalInvestigator()))
-    	{
-    		return true;
-    	}
-    	if ((proposalPerson.getPersonId().equals(currentUser) && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))
-    			||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE)) ||
-    			(canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.CO_INVESTIGATOR_ROLE))){
-    		return true;
-    	}
-    	
-    	if ((proposalPerson.getPersonId().equals(currentUser) && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))
-    			||(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE)) ||
-    			(canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE))){
-    		return true;
-    	}
-    	String keyPersonProjectRoles = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, "keyPersonProjectRole");
-    	List<String> keyPersonRoleList =Arrays.asList(keyPersonProjectRoles.split(PARAMETER_DELIMITER));     
-
-    	String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
-    	String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
-    	if ((proposalPerson.getPersonId().equals(currentUser) && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))||
-    			(isPiLoggedIn && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE)) ||
-    			(canCertifyProposal && proposalPerson.getProposalPersonRoleId().equals(Constants.KEY_PERSON_ROLE))){
-    		for(String projectRole:keyPersonRoleList){
-    			if(proposalPerson.getProjectRole().equalsIgnoreCase(projectRole)) {
-    				return false;
-    			}}
-    		if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
-    			return true;
-    		}
-    		if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName)) {
-    			return true;
-    		}}
-
-    	return false;       		
-
+    	String currentUser=getGlobalVariableService().getUserSession().getPrincipalName();
+    	Person person = getPersonService().getPersonByPrincipalName(currentUser);
+    	return getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, person, proposalPerson);
     }
  
-	    private boolean canCertifyProposal(ProposalDevelopmentDocument document,String user){
-	    	boolean viewCertify = kraAuthorizationService.hasPermission(user, document, PermissionConstants.VIEW_CERTIFICATION); 
-	    	boolean certify = kraAuthorizationService.hasPermission(user, document, PermissionConstants.CERTIFY); 
-	    	if(viewCertify || certify){
-	    		return true;
-	    	}else{
-	    		return false;
-	    	}
-	
-	    }
-	 
-	
-	    public boolean isPiPersonLoggedInUser(DevelopmentProposal developmentProposal,String user){
-	    	for (ProposalPerson person : developmentProposal.getInvestigators()) {
-	    		if (person.isPrincipalInvestigator() && StringUtils.equals(user, person.getPersonId())) {
-	    			return true;
-	    		}
-	    	}
-	    	return false;
-	    } 	
- 
-		 public boolean isKeyPersonCustomData(DevelopmentProposal developmentProposal) {
-				try {
-					List<CustomAttributeDocValue> customDataList = developmentProposal
-							.getProposalDocument().getCustomDataList();
-					for (CustomAttributeDocValue attributeDocValue : customDataList) {
-						if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("PCK")&& attributeDocValue.getCustomAttribute().getValue().equals("Y")) {
-							return true;
-						}
-					}
-				} catch (Exception exception) {
-		
-				}
-				return false;
-			}
     public boolean isCertQuestViewOnly(ProposalDevelopmentDocument document ,ProposalPerson proposalPerson){
     	 if(proposalPerson.getPerson()==null){
       	   return false;
