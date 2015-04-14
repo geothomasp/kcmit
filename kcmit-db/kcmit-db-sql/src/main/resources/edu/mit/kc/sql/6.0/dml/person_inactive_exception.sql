@@ -8,7 +8,7 @@ where upper(trim(t1.last_nm)) like 'TBA%'
 /
 INSERT INTO person_inactive_exception(prncpl_id)
 select t2.prncpl_id from krim_prncpl_t t2 
-where prncpl_nm in ('admin','kr','notsys','kc','guest','kc-notificaion')
+where prncpl_nm in ('admin','kr','notsys','kc','guest','kc-notificaion','mitkc')
 /
 commit
 /
