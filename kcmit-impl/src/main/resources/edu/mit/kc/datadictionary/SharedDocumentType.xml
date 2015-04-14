@@ -83,8 +83,9 @@
         <property name="labelAttributeName" value="description"/>
       </bean>
     </property>
-    <property name="controlField">
-      <bean parent="Uif-DropdownControl"/>
+	<property name="controlField">
+		<bean parent="Uif-DropdownControl" />
+	</property>
 				<!-- <property name="control">
 			<bean parent="TextControlDefinition" p:size="8" />
 		</property>
