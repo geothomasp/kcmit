@@ -145,7 +145,7 @@
                 <bean parent="Uif-Link" p:href="@{#ConfigProperties['feedback.link.url']}"
                       p:wrapperCssClasses="pull-right" p:target="_new"
                       p:render="@{#ConfigProperties['feedback.link.url'] != ''}"
-                      p:linkText="KC Assistance"/>
+                      p:linkText="Get Help"/>
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-ActionListView"
                       p:wrapperCssClasses="pull-right" p:actionLabel="Action List"/>
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-DocSearchView"

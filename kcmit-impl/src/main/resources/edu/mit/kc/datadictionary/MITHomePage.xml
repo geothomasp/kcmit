@@ -81,8 +81,8 @@
                       p:actionUrl.href="@{#ConfigProperties['citi.training.website.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="CITI Training"
                       p:actionUrl.href="@{#ConfigProperties['mit.nda.application.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="KC Assistance"
-                      p:actionUrl.href="@{#ConfigProperties['mit.kc.gethelp.url']}"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Grants.Gov"
+                      p:actionUrl.href="@{#ConfigProperties['grants.gov.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Contacts"
                       p:actionUrl.href="@{#ConfigProperties['mit.osp.contacts.url']}"/>
 
