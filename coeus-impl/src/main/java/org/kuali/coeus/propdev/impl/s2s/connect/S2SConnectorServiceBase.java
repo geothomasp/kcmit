@@ -289,7 +289,8 @@ public class S2SConnectorServiceBase implements S2SConnectorService {
         filters.getInclude().add(".*_WITH_NULL_.*");
         filters.getInclude().add(".*_DH_anon_.*");
 
-        tlsConfig.setDisableCNCheck(true); 
+        tlsConfig.setDisableCNCheck(true);
+//        tlsConfig.setSecureSocketProtocol("TLSV12");
         tlsConfig.setCipherSuitesFilter(filters);
     }
 
