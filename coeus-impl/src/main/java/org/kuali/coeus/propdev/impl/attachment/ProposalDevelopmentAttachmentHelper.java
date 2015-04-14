@@ -121,68 +121,62 @@ public class ProposalDevelopmentAttachmentHelper {
     
     private void removeDeletedPersonBiosFromDocument( List<ProposalPersonBiography> formBios, List<ProposalPersonBiography> documentBios) {
     	// Delete Narratives which are not on the form - from document.
-	   	synchronized(formBios){
-	    	if(documentBios != null && documentBios.size() > 0) {
-	    		List<ProposalPersonBiography> deletedBios = new ArrayList<ProposalPersonBiography>();
-	    		for(ProposalPersonBiography documentBio : documentBios ) {
-	    			if(findBioByPersonNumAndBioNum(formBios, documentBio) == null ) {
-	    				deletedBios.add(documentBio);
-	            	}
-	    		}
-		   		if(deletedBios.size() > 0) {
-		   			documentBios.removeAll(deletedBios);
-		   		}
-	    	}
-	   	}
+    	if(documentBios != null && documentBios.size() > 0) {
+    		List<ProposalPersonBiography> deletedBios = new ArrayList<ProposalPersonBiography>();
+    		for(ProposalPersonBiography documentBio : documentBios ) {
+    			if(findBioByPersonNumAndBioNum(formBios, documentBio) == null ) {
+    				deletedBios.add(documentBio);
+            	}
+    		}
+	   		if(deletedBios.size() > 0) {
+	   			documentBios.removeAll(deletedBios);
+	   		}
+    	}
     }
     
     private void addNewUpdatePersonBiosOnDocument(List<ProposalPersonBiography> formBios, List<ProposalPersonBiography> documentBios) {
-	   	synchronized(formBios){
-	    	for(ProposalPersonBiography formBio :  formBios) {
-		   		if(formBio.getObjectId() == null) {
-		   			documentBios.add(formBio);
-		   			continue;
-		   		}
-		       	if(formBio.isUpdated()) {
-		       		ProposalPersonBiography updatedBio = findBioByPersonNumAndBioNum(documentBios,formBio);
-		       		documentBios.remove(documentBios.indexOf(updatedBio));
-		       		documentBios.add(formBio);
-		       	}
-		   	}
+	   	
+    	for(ProposalPersonBiography formBio :  formBios) {
+	   		if(formBio.getObjectId() == null) {
+	   			documentBios.add(formBio);
+	   			continue;
+	   		}
+	       	if(formBio.isUpdated()) {
+	       		ProposalPersonBiography updatedBio = findBioByPersonNumAndBioNum(documentBios,formBio);
+	       		documentBios.remove(documentBios.indexOf(updatedBio));
+	       		documentBios.add(formBio);
+	       	}
 	   	}
     }
     
     private void addNewUpdateNarrativesOnDocument(List<Narrative> formNarratives, List<Narrative> documentNarratives) {
-	   	synchronized(formNarratives){
-	    	for(Narrative formNarrative :  formNarratives) {
-		   		if(formNarrative.getObjectId() == null) {
-		   			documentNarratives.add(formNarrative);
-		   			continue;
-		   		}
-		       	if(formNarrative.isUpdated()) {
-		       		Narrative updatedNarrative = findNarrativeByModuleNumber(documentNarratives,formNarrative.getModuleNumber());
-		       		documentNarratives.remove(documentNarratives.indexOf(updatedNarrative));
-		       		documentNarratives.add(formNarrative);
-		       	}
-		   	}
+	   	
+    	for(Narrative formNarrative :  formNarratives) {
+	   		if(formNarrative.getObjectId() == null) {
+	   			documentNarratives.add(formNarrative);
+	   			continue;
+	   		}
+	       	if(formNarrative.isUpdated()) {
+	       		Narrative updatedNarrative = findNarrativeByModuleNumber(documentNarratives,formNarrative.getModuleNumber());
+	       		documentNarratives.remove(documentNarratives.indexOf(updatedNarrative));
+	       		documentNarratives.add(formNarrative);
+	       	}
 	   	}
     }
     	
     private void removeDeletedNarrativesFromDocument( List<Narrative> formNarratives, List<Narrative> documentNarratives) {
     	// Delete Narratives which are not on the form - from document.
-	   	synchronized(formNarratives){
-	    	if(documentNarratives != null && documentNarratives.size() > 0) {
-	    		List<Narrative> deletedNarratives = new ArrayList<Narrative>();
-	    		for(Narrative documentNarrative : documentNarratives ) {
-	    			if(findNarrativeByModuleNumber(formNarratives, documentNarrative.getModuleNumber()) == null ) {
-	            		deletedNarratives.add(documentNarrative);
-	            	}
-	    		}
-		   		if(deletedNarratives.size() > 0) {
-		   			documentNarratives.removeAll(deletedNarratives);
-		   		}
-	    	}
-	   	}
+    	if(documentNarratives != null && documentNarratives.size() > 0) {
+    		List<Narrative> deletedNarratives = new ArrayList<Narrative>();
+    		for(Narrative documentNarrative : documentNarratives ) {
+    			if(findNarrativeByModuleNumber(formNarratives, documentNarrative.getModuleNumber()) == null ) {
+            		deletedNarratives.add(documentNarrative);
+            	}
+    		}
+	   		if(deletedNarratives.size() > 0) {
+	   			documentNarratives.removeAll(deletedNarratives);
+	   		}
+    	}
     }
     
     protected ProposalPersonBiography findBioByPersonNumAndBioNum(List<ProposalPersonBiography> origBios, final ProposalPersonBiography newBio) {
