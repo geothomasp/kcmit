@@ -476,8 +476,8 @@ public abstract class ProposalDevelopmentControllerBase {
     }
 
     protected ModelAndView narrativePageSave(ProposalDevelopmentDocumentForm form, boolean canEdit) throws Exception {
-        ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocument().getDocumentNumber());
-        if (canEdit) {
+    	ProposalDevelopmentDocument document = form.getProposalDevelopmentDocument();
+    	if (canEdit) {
         	 if ((new ProposalDevelopmentDocumentRule().processAttachmentRules(form.getProposalDevelopmentDocument()))
                      && (new ProposalDevelopmentDocumentRule().processPersonnelAttachmentDuplicates(form.getProposalDevelopmentDocument()))) {
              	form.getProposalDevelopmentAttachmentHelper().handleNarrativeUpdates(form, document);
