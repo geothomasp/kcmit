@@ -21,6 +21,6 @@ public interface SapFeedService {
 	
 	public void performUndoReject(Integer feedId);
 	
-	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,int needSubsequent, String path);
+	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,Boolean processSubsequentBatches, String path);
 
 }

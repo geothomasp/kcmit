@@ -160,15 +160,11 @@ public class SapFeedServiceImpl implements SapFeedService
 		}
 	}
 	
-	/**
-     * Resend the batch and creates file again
-     * @param sapFeedBatchId 
-     * @param batchId 
-     * @param needSubsequent(1 or 0) 1 for all subsequent
-     * @param path 
-     */
 	@Override
-	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,int needSubsequent, String path) {
+	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,Boolean processSubsequentBatches, String path) {
+		int needSubsequent=0;
+		if(processSubsequentBatches)
+		needSubsequent=1;
 		List<Object> paramValues = new ArrayList<Object>();
 		paramValues.add(0, sapFeedBatchId);
 		paramValues.add(1, batchId);
