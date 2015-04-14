@@ -33,7 +33,7 @@
 			       </property>
 		        </bean>
 		        <bean parent="RelationshipDefinition">
-			    <property name="objectAttributeName" value="narrativeTypeCode" />
+			    <property name="objectAttributeName" value="narrativeType" />
 			      <property name="primitiveAttributes">
 				    <list>
 					    <bean parent="PrimitiveAttributeDefinition" p:sourceName="documentTypeCode"
