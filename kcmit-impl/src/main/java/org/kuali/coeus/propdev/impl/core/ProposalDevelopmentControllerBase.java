@@ -664,7 +664,7 @@ public abstract class ProposalDevelopmentControllerBase {
 
 	public boolean updateCOIOnPDCerificationComplete(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person, boolean completed,AnswerHeader answerHeader) {
 			boolean coiQuestionsAnswered = false;
-			if(checkForCOIquestions(answerHeader)){
+			if(checkForCOIquestions(answerHeader) && completed){
 				 updateToCOI(pdForm,person);
 			}
 			coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
