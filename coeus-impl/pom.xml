@@ -704,6 +704,14 @@
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
+        <dependency>
+	    	<groupId>com.codiform</groupId>
+	    	<artifactId>moo-mvel</artifactId>
+		</dependency>
+     	<dependency>
+       		<groupId>org.mvel</groupId>
+       		<artifactId>mvel2</artifactId>
+       	</dependency>
     </dependencies>
 
     <profiles>
