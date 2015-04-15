@@ -35,7 +35,7 @@
         <bouncycastle.version>1.51</bouncycastle.version>
         <cglib-nodep.version>3.1</cglib-nodep.version>
         <coeus-api.version>6.0.0.1</coeus-api.version>
-        <coeus-s2sgen.version>6.0.1</coeus-s2sgen.version>
+        <coeus-s2sgen.version>6.0.3</coeus-s2sgen.version>
         <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -91,7 +91,7 @@
         <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
         <pdfbox.version>1.8.6</pdfbox.version>
         <quartz.version>1.8.4</quartz.version>
-        <rice.version>2.5.3.0-kckualico</rice.version>
+        <rice.version>2.5.4.2-kckualico</rice.version>
         <servlet.version>3.0.1</servlet.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring.version>3.2.12.RELEASE</spring.version>
@@ -186,9 +186,9 @@
 
         <maven.skip.packaging>false</maven.skip.packaging>
 
-        <error_prone_core.version>1.1.2</error_prone_core.version>
-        <plexus-compiler-javac.version>2.3</plexus-compiler-javac.version>
-        <plexus-compiler-javac-errorprone.version>2.3</plexus-compiler-javac-errorprone.version>
+        <error_prone_core.version>2.0.1</error_prone_core.version>
+        <plexus-compiler-javac.version>2.5</plexus-compiler-javac.version>
+        <plexus-compiler-javac-errorprone.version>2.5</plexus-compiler-javac-errorprone.version>
     </properties>
 
     <build>
@@ -1882,6 +1882,30 @@
                 <artifactId>spring-webmvc</artifactId>
                 <version>${spring.version}</version>
             </dependency>
+            
+            <dependency>
+            	<groupId>org.springframework</groupId>
+            	<artifactId>spring-expression</artifactId>
+            	<version>${spring.version}</version>
+            </dependency>
+
+			<dependency>
+			       <groupId>org.springframework.security</groupId>
+			       <artifactId>spring-security-core</artifactId>
+			       <version>${spring-security.version}</version>
+			</dependency>            
+			<dependency>
+			       <groupId>org.springframework.security</groupId>
+			       <artifactId>spring-security-web</artifactId>
+			       <version>${spring-security.version}</version>
+			</dependency>
+			<dependency>
+			        <groupId>org.springframework.security</groupId>
+			        <artifactId>spring-security-config</artifactId>
+			        <version>${spring-security.version}</version>
+			</dependency>
+
+            
             <dependency>
                 <groupId>org.springmodules</groupId>
                 <artifactId>spring-modules-ojb</artifactId>
