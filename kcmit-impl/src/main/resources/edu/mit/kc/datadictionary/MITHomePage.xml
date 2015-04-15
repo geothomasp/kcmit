@@ -78,9 +78,9 @@
                 <bean parent="Uif-MenuAction" p:actionLabel="COI"
                       p:actionUrl.href="@{#ConfigProperties['mit.coeus.coi.application.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="NDA"
-                      p:actionUrl.href="@{#ConfigProperties['citi.training.website.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="CITI Training"
                       p:actionUrl.href="@{#ConfigProperties['mit.nda.application.url']}"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="CITI Training"
+                      p:actionUrl.href="@{#ConfigProperties['citi.training.website.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="Grants.Gov"
                       p:actionUrl.href="@{#ConfigProperties['grants.gov.url']}"/>
                 <bean parent="Uif-MenuAction" p:actionLabel="OSP Contacts"

@@ -13,12 +13,18 @@
     <param name="rice.kim.additionalSpringFiles">classpath:edu/mit/kc/MitKcKimOverridesSpringBeans.xml</param>
     <param name="filter.login.class">edu.mit.kc.auth.MitKcUserLoginFilter</param>
 
+	<param name="grants.gov.s2s.host.production">https://ws07.grants.gov:443/grantsws-applicant/services/v2/</param>
+	<param name="grants.gov.s2s.host.development">https://trainingws.grants.gov:443/grantsws-applicant/services/v2/</param>
+	<param name="grants.gov.s2s.host">${grants.gov.s2s.host.development}</param>
+	<param name="grants.gov.s2s.port">ApplicantWebServicesSoapPort</param>
+
+
     <param name="feedback.link.url">http://kc.mit.edu/</param>
     <param name="feedback.link.text">Get Help</param>
 
     <param name="mit.osp.website.url">http://osp.mit.edu/</param>
     <param name="mit.coeus.coi.application.url">https://coeus.mit.edu/coeus/coi.do?Menu_Id=004</param>
-    <param name="citi.training.website.url">https://www.citiprogram.org/members/index.cfm</param>
+    <param name="citi.training.website.url">http://coeus.mit.edu/coeus/citi/CitiLogin.jsp</param>
     <param name="mit.nda.application.url">http://nda.mit.edu/</param>
     <param name="grants.gov.url">http://www.grants.gov/</param>
     <param name="mit.osp.contacts.url">http://osp.mit.edu/about-osp/staff/by-department</param>
