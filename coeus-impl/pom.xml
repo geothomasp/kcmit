@@ -707,10 +707,12 @@
         <dependency>
 	    	<groupId>com.codiform</groupId>
 	    	<artifactId>moo-mvel</artifactId>
+	    	<version>${mvel.version}</version>
 		</dependency>
      	<dependency>
        		<groupId>org.mvel</groupId>
        		<artifactId>mvel2</artifactId>
+       		<version>${moo-mvel.version}</version>
        	</dependency>
     </dependencies>
 
