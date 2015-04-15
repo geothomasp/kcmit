@@ -260,5 +260,9 @@ public String isKeyPersonCertifyValid(DevelopmentProposal developmentProposal);
  */
 public String coiAppointmentTypeRule(DevelopmentProposal developmentProposal);
 
+/**
+ * This method will check Multi Pi required Certification
+ */
+public String hasMultiPiRequiredCertification(DevelopmentProposal developmentProposal);
 
 }

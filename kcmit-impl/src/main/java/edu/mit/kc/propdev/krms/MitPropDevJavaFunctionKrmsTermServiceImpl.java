@@ -1199,4 +1199,16 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
      public void setSubmissionInfoService(SubmissionInfoService submissionInfoService) {
          this.submissionInfoService = submissionInfoService;
      }
+
+	@Override
+	public String hasMultiPiRequiredCertification(
+			DevelopmentProposal developmentProposal) {
+		for(ProposalPerson proposalPerson : developmentProposal.getProposalPersons()){
+			if(proposalPerson.getPerson()!=null && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE) && proposalPerson.getCertifiedBy()==null)  {
+				return TRUE;
+	           }
+		}
+		return FALSE;
+	}
+	
 }
