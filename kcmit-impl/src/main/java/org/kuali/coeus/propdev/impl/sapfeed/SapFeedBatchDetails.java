@@ -1,11 +1,10 @@
 package org.kuali.coeus.propdev.impl.sapfeed;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 
 @Entity
@@ -27,6 +26,13 @@ public class SapFeedBatchDetails extends KcPersistableBusinessObjectBase {
 	
 	@Column(name = "NO_OF_RECORDS")
 	private Long noOfRecords;
+
+    @Column(name = "UPDATE_USER")
+    private String updateUser;
+
+    @OneToMany(fetch=FetchType.LAZY, cascade={CascadeType.REFRESH})
+    @JoinColumn(name = "SAP_FEED_BATCH_ID", referencedColumnName = "SAP_FEED_BATCH_ID",  insertable = false, updatable = false)
+    List<SapFeedDetails> sapFeedDetailsList;
 
 	public Long getSapFeedBatchId() {
 		return sapFeedBatchId;
@@ -67,4 +73,20 @@ public class SapFeedBatchDetails extends KcPersistableBusinessObjectBase {
 	public void setNoOfRecords(Long noOfRecords) {
 		this.noOfRecords = noOfRecords;
 	}
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public List<SapFeedDetails> getSapFeedDetailsList() {
+        return sapFeedDetailsList;
+    }
+
+    public void setSapFeedDetailsList(List<SapFeedDetails> sapFeedDetailsList) {
+        this.sapFeedDetailsList = sapFeedDetailsList;
+    }
 }

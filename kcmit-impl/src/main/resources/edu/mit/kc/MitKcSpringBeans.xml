@@ -193,7 +193,9 @@
                
                  <!--  dashboard -->
                  <value>classpath:edu/mit/kc/dashboard/DashboardView.xml</value>
-                 
+                
+                <!-- Sap feed search -->
+                <value>classpath:edu/mit/kc/sapfeed/SapFeedSearchView.xml</value>
 			</list>
 		</property>
         <property name="databaseRepositoryFilePaths">
