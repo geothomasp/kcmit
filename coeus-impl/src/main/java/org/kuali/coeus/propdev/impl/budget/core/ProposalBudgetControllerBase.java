@@ -40,6 +40,7 @@ import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetAddPersonnelPeriodEvent;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelBudgetService;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
+import org.kuali.coeus.common.budget.framework.rate.BudgetRatesService;
 import org.kuali.coeus.common.budget.framework.summary.BudgetSummaryService;
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetService;
@@ -150,6 +151,10 @@ public abstract class ProposalBudgetControllerBase {
 	@Autowired
 	@Qualifier("budgetPersonnelBudgetService")
 	BudgetPersonnelBudgetService budgetPersonnelBudgetService;
+	
+    @Autowired
+    @Qualifier("budgetRatesService")
+    private BudgetRatesService budgetRatesService;
 	
     protected UifFormBase createInitialForm(HttpServletRequest request) {
         return new ProposalBudgetForm();
@@ -457,5 +462,13 @@ public abstract class ProposalBudgetControllerBase {
 	public void setBudgetPersonnelBudgetService(
 			BudgetPersonnelBudgetService budgetPersonnelBudgetService) {
 		this.budgetPersonnelBudgetService = budgetPersonnelBudgetService;
+	}
+
+	public BudgetRatesService getBudgetRatesService() {
+		return budgetRatesService;
+	}
+
+	public void setBudgetRatesService(BudgetRatesService budgetRatesService) {
+		this.budgetRatesService = budgetRatesService;
 	}
 }

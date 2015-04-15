@@ -74,10 +74,6 @@ public class ProposalBudgetCommonController extends ProposalBudgetControllerBase
     @Qualifier("proposalBudgetLockService")
     private ProposalBudgetLockService proposalBudgetLockService;
     
-    @Autowired
-    @Qualifier("budgetRatesService")
-    private BudgetRatesService budgetRatesService;
-	
 	@MethodAccessible
 	@Transactional @RequestMapping(params="methodToCall=defaultMapping")
 	public ModelAndView defaultMapping(@ModelAttribute("KualiForm") ProposalBudgetForm form, BindingResult result, HttpServletRequest request,
@@ -107,7 +103,7 @@ public class ProposalBudgetCommonController extends ProposalBudgetControllerBase
     		canModify = getProposalBudgetAuthorizer().canModifyBudget(form.getBudget(), getGlobalVariableService().getUserSession().getPerson());
     	}
         
-        if (canModify && budgetRatesService.checkActivityTypeChange(form.getBudget().getBudgetRates(), form.getDevelopmentProposal().getActivityTypeCode())) {
+        if (canModify && getBudgetRatesService().checkActivityTypeChange(form.getBudget().getBudgetRates(), form.getDevelopmentProposal().getActivityTypeCode())) {
         	return getModelAndViewService().showDialog(ACTIVITY_RATE_CHANGE_DIALOG_ID, true, form);
         } else if (canModify && form.getBudget().getBudgetRates().isEmpty()) {
         	return getModelAndViewService().showDialog(NO_RATES_DIALOG_ID, true, form);
