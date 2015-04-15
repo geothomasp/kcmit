@@ -36,6 +36,9 @@ public class Alert extends KcPersistableBusinessObjectBase {
     @Column(name = "ACTIVE")
     private String active;
 
+	@Column(name = "ALERT_TYPE_ID")
+    private Long alertTypeId;
+	
     public String getAlertId() {
         return alertId;
     }
@@ -91,4 +94,12 @@ public class Alert extends KcPersistableBusinessObjectBase {
     public void setActive(String active) {
         this.active = active;
     }
+
+	public Long getAlertTypeId() {
+		return alertTypeId;
+	}
+
+	public void setAlertTypeId(Long alertTypeId) {
+		this.alertTypeId = alertTypeId;
+	}
 }
