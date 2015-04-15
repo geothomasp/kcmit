@@ -33,8 +33,8 @@ if [[ -s all-migration-snapshot.sql ]] ; then
 	sqlplus $STAGE_CONNECT_STRING @all-migration-run.sql > logs/migrun-${tod}-stage.log
 	cat all-migration-snapshot.sql > "all-migration-$tod.sql"
 	> all-migration-snapshot.sql;
-	cd ../
-	git add .
-	git commit -am 'reset all snapshots'
-	git push origin master
 fi ;
+cd ../
+git add .
+git commit -am 'reset all snapshots'
+git push origin master
