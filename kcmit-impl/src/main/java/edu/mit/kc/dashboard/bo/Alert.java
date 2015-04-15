@@ -21,12 +21,6 @@ public class Alert extends KcPersistableBusinessObjectBase {
    	@Column(name = "USER_NAME")
     private String userName;
 
-   	@Column(name = "MODULE_NMSPC_CD")
-    private String moduleNamespaceCode;
-
-   	@Column(name = "MODULE_NAME")
-    private String moduleName;
-
    	@Column(name = "ALERT_MESSAGE")
     private String alert;
 
@@ -53,22 +47,6 @@ public class Alert extends KcPersistableBusinessObjectBase {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getModuleNamespaceCode() {
-        return moduleNamespaceCode;
-    }
-
-    public void setModuleNamespaceCode(String moduleNamespaceCode) {
-        this.moduleNamespaceCode = moduleNamespaceCode;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
     }
 
     public String getAlert() {
