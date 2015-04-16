@@ -707,12 +707,10 @@
         <dependency>
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>
-			<version>${mvel.version}</version>
 		</dependency>
      	<dependency>
 			<groupId>com.codiform</groupId>
 			<artifactId>moo-mvel</artifactId>
-			<version>${moo-mvel.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>ch.qos.logback</groupId>
