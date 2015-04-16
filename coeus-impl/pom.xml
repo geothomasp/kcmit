@@ -710,10 +710,16 @@
 			<version>2.1.8.Final</version>
 		</dependency>
      	<dependency>
-       		<groupId>org.mvel</groupId>
-       		<artifactId>mvel2</artifactId>
-       		<version>${moo-mvel.version}</version>
-       	</dependency>
+			<groupId>com.codiform</groupId>
+			<artifactId>moo-mvel</artifactId>
+			<version>${moo-mvel.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
     </dependencies>
 
     <profiles>
