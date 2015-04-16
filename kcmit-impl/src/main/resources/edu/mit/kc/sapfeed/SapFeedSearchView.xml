@@ -31,9 +31,6 @@
                 <value>css/sapFeedSearch.css</value>
             </list>
         </property>
-        <property name="header">
-            <null/>
-        </property>
         <property name="items">
             <list>
                 <ref bean="SapFeedSearch-StartPage"/>
