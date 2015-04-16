@@ -910,8 +910,6 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         timeAndMoneyDocument.setAward(award);
         MitTimeAndMoneyHistoryService tamhs = KcServiceLocator.getService(MitTimeAndMoneyHistoryService.class);
         
-        tamhs.getTimeAndMoneyHistory(timeAndMoneyDocument.getAwardNumber(), timeAndMoneyDocument.getTimeAndMoneyHistory(), timeAndMoneyForm.getColumnSpan());
-        
         timeAndMoneyDocument.getAwardVersionHistoryList().clear();
         tamhs.buildTimeAndMoneyHistoryObjects(award.getAwardNumber(), timeAndMoneyDocument.getAwardVersionHistoryList());
         TimeAndMoneyActionSummaryService tamass = KcServiceLocator.getService(TimeAndMoneyActionSummaryService.class);

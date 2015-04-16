@@ -5,7 +5,7 @@
   <parent>
       <groupId>edu.mit.kc</groupId>
       <artifactId>kcmit</artifactId>
-      <version>6.0.1.1</version>
+      <version>6.0.2.1</version>
   </parent>
   <artifactId>kcmit-impl</artifactId>
   <name>KC MIT Impl </name>
@@ -18,7 +18,7 @@
             <directory>src/main/resources</directory>
         </resource>
 	</resources>  
-    <plugins>
+    <plugins> 
     
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -102,7 +102,7 @@
          <dependency>
             <groupId>org.kuali.coeus</groupId>
             <artifactId>coeus-impl</artifactId>
-            <version>6.0.1</version>
+            <version>6.0.2.21-SNAPSHOT</version>
         </dependency>
        
          <dependency>
