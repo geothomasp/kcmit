@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2010 The Kuali Foundation
+ * Kuali Coeus, a comprehensive research administration system for higher education.
  * 
- * Licensed under the GNU Affero General Public License, Version 3 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2015 Kuali, Inc.
  * 
- * http://www.opensource.org/licenses/ecl1.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.coeus.propdev.impl.core;
 
@@ -28,7 +31,6 @@ import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.framework.compliance.core.SaveDocumentSpecialReviewEvent;
 import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants;
-import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationItem;
 import org.kuali.coeus.propdev.impl.docperm.ProposalRoleTemplateService;
 import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.keyword.PropScienceKeyword;
@@ -307,29 +309,24 @@ public abstract class ProposalDevelopmentControllerBase {
 
          preSave(proposalDevelopmentDocument);
 
-         proposalDevelopmentService.initializeUnitOrganizationLocation(
-                 proposalDevelopmentDocument);
-         proposalDevelopmentService.initializeProposalSiteNumbers(
-                 proposalDevelopmentDocument);
+         proposalDevelopmentService.initializeUnitOrganizationLocation(proposalDevelopmentDocument);
+         proposalDevelopmentService.initializeProposalSiteNumbers(proposalDevelopmentDocument);
 
          for (ProposalPersonBiography biography : form.getDevelopmentProposal().getPropPersonBios()) {
              getProposalPersonBiographyService().prepareProposalPersonBiographyForSave(form.getDevelopmentProposal(),biography);
          }
 
          ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).setOrdinalPosition(form.getDevelopmentProposal().getProposalPersons());
-         
-        
          saveAnswerHeaders(form, form.getPageId());
-        
 
          getTransactionalDocumentControllerService().save(form);
          if (form.isAuditActivated()){
              getAuditHelper().auditConditionally(form);
          }
-         
-         
+
+
          populateAdHocRecipients(form.getProposalDevelopmentDocument());
-         
+
          if (StringUtils.equalsIgnoreCase(form.getPageId(), Constants.CREDIT_ALLOCATION_PAGE)) {
              ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateCreditSplits(form);
          }
@@ -363,10 +360,6 @@ public abstract class ProposalDevelopmentControllerBase {
          return view;
      }
 
-     
-  
-     
-     
      public ModelAndView save(@ModelAttribute("KualiForm") DocumentFormBase form, BindingResult result,
              HttpServletRequest request, HttpServletResponse response, Class<? extends DocumentEventBase> eventClazz) throws Exception {
          ProposalDevelopmentDocumentForm pdForm = (ProposalDevelopmentDocumentForm) form;
@@ -384,9 +377,9 @@ public abstract class ProposalDevelopmentControllerBase {
          } else {
              performCustomSave(proposalDevelopmentDocument, SaveDocumentSpecialReviewEvent.class);
          }
-         
+
          populateAdHocRecipients(pdForm.getProposalDevelopmentDocument());
-         
+
          String pageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
          if (StringUtils.isNotBlank(pageId) && getGlobalVariableService().getMessageMap().hasNoErrors()) {
         	 form.setDirtyForm(false);
@@ -425,111 +418,29 @@ public abstract class ProposalDevelopmentControllerBase {
      }
      
      protected ModelAndView navigate(ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	 if (form.getDevelopmentProposal().getS2sOpportunity() != null && !getProposalDevelopmentService().isGrantsGovEnabledForProposal(form.getDevelopmentProposal())) {
+         if (form.getDevelopmentProposal().getS2sOpportunity() != null && !getProposalDevelopmentService().isGrantsGovEnabledForProposal(form.getDevelopmentProposal())) {
              ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).clearOpportunity(form.getDevelopmentProposal());
          }
          populateAdHocRecipients(form.getProposalDevelopmentDocument());
          String navigateToPageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
-         boolean canEdit = form.isCanEditView();
          if (isNavigateToDeliveryInfoPage(navigateToPageId)) {
              if (form.getDevelopmentProposal().getS2sOpportunity() != null) {
                  getGlobalVariableService().getMessageMap().putInfo(ProposalDevelopmentConstants.KradConstants.DELIVERY_INFO_PAGE, KeyConstants.DELIVERY_INFO_NOT_NEEDED);
              }
          }
-         if (isNavigateAwayFromAttachment(navigateToPageId, form.getPageId())) {
-             prepareLocks(form);
-             return narrativePageSave(form, canEdit);
-         } else if (isNavigateToAttachments(navigateToPageId) ||
-                  isNavigateAwayFromAccess(navigateToPageId,form.getPageId()) ||
-                  isNavigateToAccess(navigateToPageId)) {
-             prepareLocks(form);
+         if (form.isCanEditView()) {
+             return save(form);
+         } else {
+             return getNavigationControllerService().navigate(form);
          }
-         return proposalDevelopmentPageSave(form, canEdit);
+
      }
 
-    protected void prepareLocks(ProposalDevelopmentDocumentForm form) {
-        releasePessimisticLocks(form);
-        form.setEvaluateFlagsAndModes(true);
-        form.setCanEditView(null);
-    }
 
-    protected ModelAndView proposalDevelopmentPageSave(ProposalDevelopmentDocumentForm form, boolean canEdit) throws Exception {
-        ProposalDevelopmentDocument document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocument().getDocumentNumber());
-        if (canEdit) {
-            //when saving on page in the proposal development locking region we don't want to over write attachments that
-            //may have been alter concurrently.  So we retrieve the latest proposal data from the db, and replace the attachment
-            //collections with the values from the db.
-            if (!StringUtils.equals(form.getPageId(),Constants.PROP_DEV_PERMISSIONS_PAGE)) {
-                form.getDevelopmentProposal().setNarratives(document.getDevelopmentProposal().getNarratives());
-                form.getDevelopmentProposal().setInstituteAttachments(document.getDevelopmentProposal().getInstituteAttachments());
-                form.getDevelopmentProposal().setPropPersonBios(document.getDevelopmentProposal().getPropPersonBios());
-                form.getDevelopmentProposal().setProposalAbstracts(document.getDevelopmentProposal().getProposalAbstracts());
-                form.getDocument().setNotes(document.getNotes());
-
-                form.getDocument().setDocumentHeader(document.getDocumentHeader());
-            }
-            return save(form);
-        } else {
-            form.setDocument(document);
-            return getNavigationControllerService().navigate(form);
-        }
-    }
-
-    protected ModelAndView narrativePageSave(ProposalDevelopmentDocumentForm form, boolean canEdit) throws Exception {
-    	ProposalDevelopmentDocument document = form.getProposalDevelopmentDocument();
-    	if (canEdit) {
-        	 if ((new ProposalDevelopmentDocumentRule().processAttachmentRules(form.getProposalDevelopmentDocument()))
-                     && (new ProposalDevelopmentDocumentRule().processPersonnelAttachmentDuplicates(form.getProposalDevelopmentDocument()))) {
-             	form.getProposalDevelopmentAttachmentHelper().handleNarrativeUpdates(form, document);
-             	form.getProposalDevelopmentAttachmentHelper().handleInstAttachmentUpdates(form, document);
-             	form.getProposalDevelopmentAttachmentHelper().handlePersonBioUpdates(form, document);
-                document.getDevelopmentProposal().setProposalAbstracts(form.getDevelopmentProposal().getProposalAbstracts());
-                document.setNotes(form.getDocument().getNotes());
-                form.setDocument(document);
-                return save(form);
-            } else {
-            	form.setCanEditView(canEdit);
-                return getModelAndViewService().getModelAndView(form);
-            }
-
-        } else {
-            form.setDocument(document);
-            return getNavigationControllerService().navigate(form);
-        }
-    }
-
-    protected boolean isNavigateToAttachments(String navigateToPageId) {
-        return StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID);
-    }
-
-    protected boolean isNavigateToAccess(String navigateToPageId) {
-        return StringUtils.equals(navigateToPageId,Constants.PROP_DEV_PERMISSIONS_PAGE);
-    }
-
-    protected boolean isNavigateAwayFromAccess(String navigateToPageId, String pageId) {
-        return StringUtils.equals(pageId,Constants.PROP_DEV_PERMISSIONS_PAGE) &&
-                !StringUtils.equals(navigateToPageId,Constants.PROP_DEV_PERMISSIONS_PAGE);
-    }
-
-    protected boolean isNavigateAwayFromAttachment(String navigateToPageId, String pageId) {
-        return StringUtils.equals(pageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID) &&
-                !StringUtils.equals(navigateToPageId,ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID);
-     }
-    
     protected boolean isNavigateToDeliveryInfoPage(String navigateToPageId) {
         return StringUtils.equals(navigateToPageId, ProposalDevelopmentConstants.KradConstants.DELIVERY_INFO_PAGE);
     }
 
-    protected void releasePessimisticLocks(DocumentFormBase form) {
-        Document document = form.getDocument();
-
-        if (!document.getPessimisticLocks().isEmpty()) {
-            Person user = getGlobalVariableService().getUserSession().getPerson();
-            document.refreshPessimisticLocks();
-            getPessimisticLockService().releaseAllLocksForUser(document.getPessimisticLocks(), user);
-        }
-    }
-    
     public void addEditableCollectionLine(ProposalDevelopmentDocumentForm form, String selectedCollectionPath){
         if(form.getEditableCollectionLines().containsKey(selectedCollectionPath)) {
             updateEditableCollectionLines(form, selectedCollectionPath);
@@ -608,8 +519,6 @@ public abstract class ProposalDevelopmentControllerBase {
 	public void setDataObjectService(DataObjectService dataObjectService) {
 		this.dataObjectService = dataObjectService;
 	}
-	
-	
 
 	public void saveAnswerHeaders(ProposalDevelopmentDocumentForm pdForm,String pageId) {
         boolean allCertificationsWereComplete = true;
