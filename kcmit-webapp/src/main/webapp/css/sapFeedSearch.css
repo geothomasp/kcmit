@@ -1,3 +1,11 @@
+.modal-backdrop {
+    z-index: 10000;
+}
+
+.modal {
+    z-index: 10001;
+}
+
 .dropdown-menu {
     left: auto;
     right: 0;
@@ -15,7 +23,7 @@
     display: none !important;
 }
 
-#SapFeedSearch-SearchGroup .uif-dropdownControl, #SapFeedSearch-SearchGroup .uif-textControl{
+.sapFeed-searchGroup .uif-dropdownControl, .sapFeed-searchGroup .uif-textControl{
     width: 50%;
 }
 
@@ -71,5 +79,9 @@ a .sapSearch-batchId, a .sapSearch-batchId:hover {
   display: none;
 }
 
+.sapSearch-subTitle {
+    color: #666;
+    font-size: .7em;
+}
 
 

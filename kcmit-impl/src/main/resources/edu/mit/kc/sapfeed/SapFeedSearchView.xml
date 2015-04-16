@@ -9,6 +9,11 @@
           parent="Uif-FormView" p:headerText="Sap Feed Maintenance"
           p:formClass="edu.mit.kc.sapfeed.core.SapFeedSearchForm"
           p:stickyFooter="true">
+        <property name="breadcrumbs.render" value="false"/>
+        <property name="header">
+          <bean parent="Uif-ViewHeader" p:areaTitleText="Central Administration"/>
+        </property>
+        <property name="unifiedHeader" value="false"/>
         <property name="contentContainerCssClasses">
             <list>
                 <value>container</value>
@@ -26,9 +31,6 @@
                 <value>css/sapFeedSearch.css</value>
             </list>
         </property>
-        <property name="header">
-            <null/>
-        </property>
         <property name="items">
             <list>
                 <ref bean="SapFeedSearch-StartPage"/>
@@ -36,7 +38,60 @@
                 <ref bean="SapFeedSearch-DetailsPage"/>
             </list>
         </property>
+        <property name="dialogs">
+            <list>
+                <ref bean="SapFeedSearch-ResendBatchDialog"/>
+            </list>
+        </property>
+    </bean>
 
+    <bean id="SapFeedSearch-ResendBatchDialog" parent="Uif-DialogGroup" p:retrieveViaAjax="true"
+          p:headerText="Resend Batch">
+        <property name="destroyDialogOnHidden" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:required="true" p:label="Select Batch"
+                      p:propertyName="resendBatchType">
+                    <property name="control">
+                    <bean parent="Uif-VerticalRadioControl">
+                      <property name="options">
+                        <list>
+                          <bean parent="Uif-KeyLabelPair" p:key="ONE" p:value="Resend Batch"/>
+                          <bean parent="Uif-KeyLabelPair" p:key="ALL" p:value="Resend Batch And All Subsequent Batches"/>
+                        </list>
+                      </property>
+                    </bean>
+                  </property>
+                </bean>
+
+                <bean parent="Uif-InputField" p:required="true" p:label="Target Directory"
+                      p:propertyName="resendTargetDirectory">
+                    <property name="control">
+                    <bean parent="Uif-VerticalRadioControl">
+                      <property name="options">
+                        <list>
+                          <bean parent="Uif-KeyLabelPair" p:key="SAP.PRODUCTION.PATH" p:value="Production"/>
+                          <bean parent="Uif-KeyLabelPair" p:key="SAP.TEST.PATH" p:value="Test"/>
+                        </list>
+                      </property>
+                    </bean>
+                  </property>
+                </bean>
+
+            </list>
+        </property>
+        <property name="footer.items">
+            <list>
+
+                <bean parent="Uif-DialogDismissButton" p:actionLabel="Close"/>
+                <bean parent="Uif-PrimaryActionButton"
+                      p:actionLabel="Resend Batch"
+                      p:methodToCall="resendBatch"
+                      p:successCallback="Kc.Dialog.closeDialogWithoutError('SapFeedSearch-ResendBatchDialog')"
+                      p:refreshId="SapFeedSearch-BatchPage" p:defaultEnterKeyAction="true"
+                      p:performClientSideValidation="true"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="SapFeedSearch-StartPage" parent="Uif-Page" p:headerText="Feed Search">
@@ -123,8 +178,8 @@
                         <bean parent="Uif-DropdownToggleMenu" p:additionalCssClasses="btn btn-default btn-xs" p:toggleText="Actions">
                             <property name="menuItems">
                                 <list>
-                                    <bean parent="Uif-MenuAction" p:actionLabel="Resend Batch" p:methodToCall="resendBatch"
-                                          p:additionalSubmitData="batchId:@{#line.batchId},batchId:@{#line.batchId}"/>
+                                    <bean parent="Uif-MenuAction" p:actionLabel="Resend Batch"
+                                          p:actionScript="writeHiddenToForm('resendBatchId', @{#line.batchId}); writeHiddenToForm('resendSapFeedBatchId', @{#line.sapFeedBatchId}); showDialog('SapFeedSearch-ResendBatchDialog');"/>
                                 </list>
                             </property>
                         </bean>
@@ -213,15 +268,16 @@
         </property>
         <property name="items">
             <list>
-                <ref bean="SapFeedSearch-SearchGroup"/>
+                <bean parent="SapFeedSearch-SearchGroup" p:additionalCssClasses="sapFeed-searchGroup"/>
             </list>
         </property>
     </bean>
 
-    <bean id="SapFeedSearch-SearchGroup" parent="Uif-CssGridSection-1FieldLabelColumn" p:header.render="false">
+    <bean id="SapFeedSearch-SearchGroup" p:additionalCssClasses="sapFeed-searchGroup well well-form"
+          parent="Uif-CssGridSection-1FieldLabelColumn" p:header.render="false">
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="searchType">
+                <bean parent="Uif-InputField" p:label="Feed Search" p:propertyName="searchType">
                     <property name="control">
                         <bean parent="Uif-DropdownControl"
                               p:options-ref="SapFeedSearch-Types"/>

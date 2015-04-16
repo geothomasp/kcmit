@@ -95,6 +95,12 @@ public class SapFeedSearchController {
             throws Exception {
         String refreshId = request.getParameter("updateComponentId");
 
+        // force binding
+        String resendBatchId = request.getParameter("resendBatchId");
+        form.setResendBatchId(resendBatchId);
+        String resendSapBatchId = request.getParameter("resendSapFeedBatchId");
+        form.setResendSapFeedBatchId(resendSapBatchId);
+
         return getRefreshControllerService().refresh(form);
     }
 
@@ -194,7 +200,15 @@ public class SapFeedSearchController {
     @Transactional
     @RequestMapping(params = "methodToCall=resendBatch")
     public ModelAndView resendBatch(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
-        //sapFeedService.performResendBatch();
+        boolean resendSubsequent = false;
+        if (form.getResendBatchType().equals("ALL")) {
+            resendSubsequent = true;
+        }
+
+        String path = getKualiConfigurationService().getPropertyValueAsString(form.getResendTargetDirectory());
+        sapFeedService.performResendBatch(Integer.valueOf(form.getResendBatchId()),
+                Integer.valueOf(form.getResendSapFeedBatchId()), resendSubsequent, path);
+
         return getRefreshControllerService().refresh(form);
     }
 

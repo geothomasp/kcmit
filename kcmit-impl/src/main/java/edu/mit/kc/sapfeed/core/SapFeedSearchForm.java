@@ -20,6 +20,11 @@ public class SapFeedSearchForm extends UifFormBase {
     private String awardNumber;
     private String searchSummary = "";
 
+    private String resendBatchType;
+    private String resendBatchId;
+    private String resendSapFeedBatchId;
+    private String resendTargetDirectory;
+
     public List<SapFeedBatchDetails> getBatchSearchResults() {
         return batchSearchResults;
     }
@@ -82,5 +87,37 @@ public class SapFeedSearchForm extends UifFormBase {
 
     public void setSearchSummary(String searchSummary) {
         this.searchSummary = searchSummary;
+    }
+
+    public String getResendBatchType() {
+        return resendBatchType;
+    }
+
+    public void setResendBatchType(String resendBatchType) {
+        this.resendBatchType = resendBatchType;
+    }
+
+    public String getResendBatchId() {
+        return resendBatchId;
+    }
+
+    public void setResendBatchId(String resendBatchId) {
+        this.resendBatchId = resendBatchId;
+    }
+
+    public String getResendSapFeedBatchId() {
+        return resendSapFeedBatchId;
+    }
+
+    public void setResendSapFeedBatchId(String resendSapFeedBatchId) {
+        this.resendSapFeedBatchId = resendSapFeedBatchId;
+    }
+
+    public String getResendTargetDirectory() {
+        return resendTargetDirectory;
+    }
+
+    public void setResendTargetDirectory(String resendTargetDirectory) {
+        this.resendTargetDirectory = resendTargetDirectory;
     }
 }
