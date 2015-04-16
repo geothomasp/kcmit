@@ -147,7 +147,6 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         newProposalPerson.setProjectRole((String)form.getAddKeyPersonHelper().getParameter("keyPersonProjectRole"));
        }
        getKeyPersonnelService().addProposalPerson(newProposalPerson, form.getProposalDevelopmentDocument());
-       getDataObjectService().save(newProposalPerson);
        Collections.sort(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons(), new ProposalPersonRoleComparator());
        form.getAddKeyPersonHelper().reset();
        form.setAjaxReturnType(UifConstants.AjaxReturnTypes.UPDATEPAGE.getKey());
