@@ -1,20 +1,147 @@
-	add constraint narrative_attachment_fk1 foreign key  (file_data_id) references file_data (id)
-	               *
+	add foreign key narrative_attachment_fk1 (file_data_id) references file_data (id)
+	                *
 ERROR at line 2:
-ORA-02298: cannot validate (KCSO.NARRATIVE_ATTACHMENT_FK1) - parent keys not 
-found 
+ORA-00906: missing left parenthesis 
 
 
-	add constraint eps_prop_person_bio_attach_fk1  foreign key (file_data_id) references file_data (id)
-	               *
+	add foreign key eps_prop_person_bio_attach_fk1 (file_data_id) references file_data (id)
+	                *
 ERROR at line 2:
-ORA-02298: cannot validate (KCSO.EPS_PROP_PERSON_BIO_ATTACH_FK1) - parent keys 
-not found 
+ORA-00906: missing left parenthesis 
+
+
+ALTER TABLE FILE_DATA MODIFY ID VARCHAR2(36) CHARACTER SET utf8 COLLATE utf8_bin
+                                             *
+ERROR at line 1:
+ORA-01735: invalid ALTER TABLE option 
 
 
 
-Commit complete.
+Table altered.
 
 
-Commit complete.
+Table altered.
 
+
+2 rows updated.
+
+
+1 row updated.
+
+INSERT INTO FILE_DATA (SELECT FILE_DATA_ID, SUB_AWARD_XFD_FILE FROM BUDGET_SUB_AWARDS WHERE FILE_DATA_ID IS NOT NULL)
+                                            *
+ERROR at line 1:
+ORA-00932: inconsistent datatypes: expected CHAR got BLOB 
+
+
+INSERT INTO FILE_DATA (SELECT XML_DATA_ID, SUB_AWARD_XML_FILE FROM BUDGET_SUB_AWARDS WHERE XML_DATA_ID IS NOT NULL)
+                                           *
+ERROR at line 1:
+ORA-22835: Buffer too small for CLOB to CHAR or BLOB to RAW conversion (actual: 
+8259, maximum: 4000) 
+
+
+
+Table altered.
+
+
+Table altered.
+
+ALTER TABLE BUDGET_SUB_AWARDS ADD FOREIGN KEY FK2_BUDGET_SUB_AWARDS (FILE_DATA_ID) REFERENCES FILE_DATA (ID)
+                                              *
+ERROR at line 1:
+ORA-00906: missing left parenthesis 
+
+
+ALTER TABLE BUDGET_SUB_AWARDS ADD FOREIGN KEY FK3_BUDGET_SUB_AWARDS (XML_DATA_ID) REFERENCES FILE_DATA (ID)
+                                              *
+ERROR at line 1:
+ORA-00906: missing left parenthesis 
+
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Does this proposal include a request for EArly-concept Grants for Exploratory Research? EAGER (GPG, Chapter II.D.2)' AND SEQUENCE_NUMBER = 1),4,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                                                                                                                                                                 *
+ERROR at line 2:
+ORA-01400: cannot insert NULL into 
+("KCSO"."QUESTIONNAIRE_QUESTIONS"."QUESTION_REF_ID_FK") 
+
+
+
+1 row created.
+
+
+1 row created.
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Did you ensure both merit review criteria are described as an integral part of the narrative? See GPG Chapter II.C.2.d(I).2.' AND SEQUENCE_NUMBER = 1),7,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                                                                                                                                                                 *
+ERROR at line 2:
+ORA-01400: cannot insert NULL into 
+("KCSO"."QUESTIONNAIRE_QUESTIONS"."QUESTION_REF_ID_FK") 
+
+
+
+1 row created.
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Results from prior NSF support: Has the PI or any co-PI identified on the project received NSF funding in the past five (5) years?' AND SEQUENCE_NUMBER = 1),9,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                                                                                                                                                                 *
+ERROR at line 2:
+ORA-01400: cannot insert NULL into 
+("KCSO"."QUESTIONNAIRE_QUESTIONS"."QUESTION_REF_ID_FK") 
+
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
