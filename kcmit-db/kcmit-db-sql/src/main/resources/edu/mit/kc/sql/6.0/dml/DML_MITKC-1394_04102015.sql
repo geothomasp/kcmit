@@ -4,7 +4,7 @@ NEW_DOC_NUMBER  VARCHAR2(40)
 )
 /
 INSERT INTO TMP_MIG_PROTO_DOC_MAPING(DOCUMENT_NUMBER, NEW_DOC_NUMBER)
-SELECT protocol_number,document_number,'MP'||document_number FROM protocol 
+SELECT document_number,'MP'||document_number FROM protocol 
 WHERE SUBSTR(document_number,1,2) <> 'MP'
 AND protocol_number in ( select distinct protocol_number from osp$protocol@coeus.kuali)
 /
