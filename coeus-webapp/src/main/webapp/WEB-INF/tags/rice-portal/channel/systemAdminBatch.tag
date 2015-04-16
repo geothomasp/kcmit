@@ -21,6 +21,7 @@
 <channel:portalChannelTop channelTitle="Batch" />
 <div class="body">
   <ul class="chan">
+   <li><a class="portal_link" href="${ConfigProperties.application.url}/personMassChangeHome.do?methodToCall=docHandler&amp;command=initiate&amp;docFormKey=88888888&amp;docTypeName=PersonMassChangeDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView">Perform Person Mass Change</a></li>
     <li>Batch Schedule</li>
   </ul>
 </div>
