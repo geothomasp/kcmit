@@ -20,7 +20,6 @@ package org.kuali.coeus.common.impl.unit;
 
 import org.kuali.coeus.common.framework.unit.Unit;
 import org.kuali.coeus.common.framework.unit.UnitService;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.krms.KcKrmsConstants;
 import org.kuali.rice.core.api.data.DataType;
 import org.kuali.rice.core.api.exception.RiceIllegalArgumentException;

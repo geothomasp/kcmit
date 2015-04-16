@@ -27,6 +27,7 @@ import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
 import org.kuali.coeus.common.budget.framework.core.BudgetSaveEvent;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.ApplyToPeriodsBudgetEvent;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetDirectCostLimitEvent;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetFormulatedCostDetail;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetPeriodCostLimitEvent;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
@@ -36,6 +37,7 @@ import org.kuali.coeus.common.budget.framework.personnel.BudgetSavePersonnelEven
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetControllerBase;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetForm;
+import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.krad.uif.UifConstants;
 import org.kuali.rice.krad.uif.UifParameters;
@@ -433,6 +435,17 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    getCollectionControllerService().deleteLine(form);
 		calculateAndUpdateFormulatedCost(form);
         return getModelAndViewService().getModelAndView(form);
+	}
+	
+	@Transactional @RequestMapping(params="methodToCall=refreshFormulatedUnitCost")
+	public ModelAndView refreshFormulatedUnitCost(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+		String newLineItemPath = "addProjectBudgetLineItemHelper.budgetLineItem.budgetFormulatedCosts";
+		BudgetFormulatedCostDetail newBudgetFormulatedCostDetail = ((BudgetFormulatedCostDetail)form.getNewCollectionLines().get(newLineItemPath));
+		String leadUnitNumber = form.getBudget().getDevelopmentProposal().getOwnedByUnitNumber();
+		String formulatedType = newBudgetFormulatedCostDetail.getFormulatedTypeCode();
+		ScaleTwoDecimal unitCost = getBudgetRatesService().getUnitFormulatedCost(leadUnitNumber, formulatedType);
+		newBudgetFormulatedCostDetail.setUnitCost(unitCost);
+		return getModelAndViewService().getModelAndView(form);
 	}
 	
 	protected void calculateAndUpdateFormulatedCost(ProposalBudgetForm form) {
