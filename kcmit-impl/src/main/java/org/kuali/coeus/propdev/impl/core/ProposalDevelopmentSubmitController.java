@@ -283,7 +283,7 @@ public class ProposalDevelopmentSubmitController extends
        if (successMessageKey != null) {
            getGlobalVariableService().getMessageMap().putInfo(KRADConstants.GLOBAL_MESSAGES, successMessageKey);
        }
-	   
+       form.setEvaluateFlagsAndModes(true);
 	   return getModelAndViewService().getModelAndView(form);
   } 
   
