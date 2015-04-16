@@ -141,7 +141,7 @@
         <extra-enforcer-rules.version>1.0-beta-2</extra-enforcer-rules.version>
         <cas-client-core.version>3.3.3</cas-client-core.version>
         <moo-mvel.version>2.0</moo-mvel.version>
-        <mvel.version>2.1.8.Final</mvel.version>
+        <mvel.version>2.1.5.Final</mvel.version>
 
         <!-- plugin versions -->
         <cxf-codegen-plugin.version>${cxf.version}</cxf-codegen-plugin.version>
