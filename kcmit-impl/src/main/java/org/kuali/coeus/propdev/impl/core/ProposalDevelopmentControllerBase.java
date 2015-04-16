@@ -46,6 +46,7 @@ import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReviewExemption
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;

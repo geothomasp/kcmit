@@ -5,7 +5,7 @@
   <parent>
       <groupId>edu.mit.kc</groupId>
       <artifactId>kcmit</artifactId>
-      <version>6.0.1.1</version>
+      <version>6.0.2.1</version>
   </parent>
   <artifactId>kcmit-impl</artifactId>
   <name>KC MIT Impl </name>
