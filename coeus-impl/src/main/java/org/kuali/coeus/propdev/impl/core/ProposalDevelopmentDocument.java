@@ -624,7 +624,6 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
     void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
     }
-<<<<<<< HEAD
     
     public Boolean getCerttifyViewOnly() {
 		return certtifyViewOnly;
@@ -632,11 +631,9 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
 	public void setCerttifyViewOnly(Boolean certtifyViewOnly) {
 		this.certtifyViewOnly = certtifyViewOnly;
 	}
-=======
 
     @Override
     public String getCustomLockDescriptor(Person user) {
         return this.getDocumentBoNumber() + "-" + KraAuthorizationConstants.LOCK_DESCRIPTOR_PROPOSAL;
     }
->>>>>>> RESKC-318:remove narrative locking region
 }

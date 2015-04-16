@@ -406,11 +406,10 @@ public class ProposalDevelopmentDocumentAuthorizer extends KcKradTransactionalDo
     
     protected boolean canSaveCertification(ProposalDevelopmentDocument document, Person user) {
         for(ProposalPerson person : document.getDevelopmentProposal().getProposalPersons()) {
-<<<<<<< HEAD
             if (getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, user, person)) {
-=======
-            if (hasCertificationPermissions(document, user, person) && document.getDocumentHeader().getWorkflowDocument().isEnroute()) {
->>>>>>> RESKC-318:remove narrative locking region
+//=======
+//            if (hasCertificationPermissions(document, user, person) && document.getDocumentHeader().getWorkflowDocument().isEnroute()) {
+//>>>>>>> RESKC-318:remove narrative locking region
                 return true;
             }
         }
