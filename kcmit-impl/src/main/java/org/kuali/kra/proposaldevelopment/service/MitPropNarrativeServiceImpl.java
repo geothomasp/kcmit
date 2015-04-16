@@ -64,19 +64,19 @@ public class MitPropNarrativeServiceImpl implements MitPropNarrativeService {
   
     
     public ActionForward sendNotification(ActionMapping mapping, ActionForm form, Narrative modifiedNarrative){
-        ProposalDevelopmentForm proposalDevelopmentForm = (ProposalDevelopmentForm) form;
-        ProposalDevelopmentDocument pd = proposalDevelopmentForm.getProposalDevelopmentDocument();
-        ActionForward forward = mapping.findForward(MAPPING_BASIC);
-        ProposalDevelopmentNotificationContext context = 
-                new ProposalDevelopmentNotificationContext(pd.getDevelopmentProposal(),"102", "Narrative Attachment Replaced");
-        ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setModifiedNarrative(modifiedNarrative);
-        if (proposalDevelopmentForm.getNotificationHelper().getPromptUserForNotificationEditor(context)) {
-           proposalDevelopmentForm.getNotificationHelper().initializeDefaultValues(context);
-          forward = mapping.findForward("notificationEditor");
-        } else {
-            getNotificationService().sendNotification(context);                
-        }
-        return forward;
+//        ProposalDevelopmentForm proposalDevelopmentForm = (ProposalDevelopmentForm) form;
+//        ProposalDevelopmentDocument pd = proposalDevelopmentForm.getProposalDevelopmentDocument();
+//        ActionForward forward = mapping.findForward(MAPPING_BASIC);
+//        ProposalDevelopmentNotificationContext context = 
+//                new ProposalDevelopmentNotificationContext(pd.getDevelopmentProposal(),"102", "Narrative Attachment Replaced");
+//        ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setModifiedNarrative(modifiedNarrative);
+//        if (proposalDevelopmentForm.getNotificationHelper().getPromptUserForNotificationEditor(context)) {
+//           proposalDevelopmentForm.getNotificationHelper().initializeDefaultValues(context);
+//          forward = mapping.findForward("notificationEditor");
+//        } else {
+//            getNotificationService().sendNotification(context);                
+//        }
+        return null;
     }
     protected KcNotificationService getNotificationService() {
         if (notificationService == null) {
