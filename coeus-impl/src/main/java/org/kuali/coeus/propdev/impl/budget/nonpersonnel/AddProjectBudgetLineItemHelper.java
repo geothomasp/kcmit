@@ -116,7 +116,10 @@ public class AddProjectBudgetLineItemHelper extends AddLineHelper {
             Interval periodInterval = new Interval(budgetLineItem.getStartDate().getTime(), budgetLineItem.getEndDate().getTime());
             Interval rateInterval = new Interval(budgetRateStartDate.getMillis(),budgetRateEndDate.getMillis());
             if (StringUtils.equals(rateTypeCode, budgetRate.getRateTypeCode()) &&
+<<<<<<< HEAD
                     StringUtils.equals(budgetRate.getRateClassType(),RateClassType.INFLATION.getRateClassType()) &&
+=======
+>>>>>>> RESKC-228:add inflation rate info to add budget line item modals
                     budgetLineItem.getOnOffCampusFlag().equals(budgetRate.getOnOffCampusFlag()) &&
                     periodInterval.overlaps(rateInterval)) {
                 inflationRates.add(budgetRate);

@@ -401,7 +401,11 @@
                       p:label="Object Code Name"
                       p:optionsFinder="#{#getService('budgetNonPersonnelCostElementValuesFinder')}"
                       p:optionsFinder.addBlankOption="false" p:order="30"
+<<<<<<< HEAD
                       p:readOnly="@{#fp.budgetLineItem.formulatedCostElementFlag or #parent.readOnly}"
+=======
+                      p:readOnly="@{#fp.budgetLineItem.formulatedCostElementFlag}"
+>>>>>>> RESKC-228:add inflation rate info to add budget line item modals
                       p:onChangeScript="ajaxSubmitForm('refresh',{'refreshCaller': 'PropBudget-EditNonPersonnelPeriod-Section'})">
                 </bean>
 				<bean parent="Uif-InputField" p:propertyName="budgetLineItem.lineItemCost"
@@ -430,7 +434,10 @@
     <bean id="PropBudget-LineItem-InflationRateSection-parentBean" abstract="true" parent="Uif-TableCollectionSection"
           p:headerText="Inflation Rates"
           p:layoutManager.richTable.render="false"
+<<<<<<< HEAD
           p:layoutManager.id="InflationRateTable"
+=======
+>>>>>>> RESKC-228:add inflation rate info to add budget line item modals
           p:collectionObjectClass="org.kuali.coeus.common.budget.framework.rate.AbstractBudgetRate"
           p:propertyName="inflationType" p:layoutManager.renderSequenceField="false" p:renderInactiveToggleButton="false"
           p:renderAddLine="false" p:renderLineActions="false">
