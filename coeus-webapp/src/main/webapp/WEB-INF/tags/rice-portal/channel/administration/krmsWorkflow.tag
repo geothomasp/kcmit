@@ -15,7 +15,7 @@
 --%>
 <%@ include file="/rice-portal/jsp/sys/riceTldHeader.jsp" %>
 
-<channel:portalChannelTop channelTitle="Workflow"/>
+<channel:portalChannelTop channelTitle="KRMS Workflow"/>
 <div class="body">
     
   <ul class="chan">

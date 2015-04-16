@@ -30,7 +30,7 @@
 </td>
 
 <td class="content" valign="top">
-      <administrationChannel:workflow />
+      <administrationChannel:krmsWorkflow />
       <administrationChannel:sendNotification />
       <administrationChannel:serviceBus />
       <administrationChannel:workflow />
