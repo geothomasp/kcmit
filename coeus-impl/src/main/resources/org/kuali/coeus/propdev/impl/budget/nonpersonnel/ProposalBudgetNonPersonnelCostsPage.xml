@@ -430,10 +430,7 @@
     <bean id="PropBudget-LineItem-InflationRateSection-parentBean" abstract="true" parent="Uif-TableCollectionSection"
           p:headerText="Inflation Rates"
           p:layoutManager.richTable.render="false"
-<<<<<<< HEAD
           p:layoutManager.id="InflationRateTable"
-=======
->>>>>>> RESKC-228:add inflation rate info to add budget line item modals
           p:collectionObjectClass="org.kuali.coeus.common.budget.framework.rate.AbstractBudgetRate"
           p:propertyName="inflationType" p:layoutManager.renderSequenceField="false" p:renderInactiveToggleButton="false"
           p:renderAddLine="false" p:renderLineActions="false">
