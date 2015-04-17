@@ -45,6 +45,7 @@ public interface KcMitConstants {
     public static final String ERROR_AWARD_TRANSACTION_TYPE = "error.award.no.transaction.type";
     //Award Hold Prompts
     public static final String ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE = "error.award.status.hold.sponsor.code";
+    public static final String ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW_MAIN= "error.award.status.hold.human.review.main";
     public static final String ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW ="error.award.status.hold.human.review"; 
     public static final String ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW ="error.award.status.hold.multiple.human.review"; 
     public static final String ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW ="error.award.status.hold.animal.review"; 
