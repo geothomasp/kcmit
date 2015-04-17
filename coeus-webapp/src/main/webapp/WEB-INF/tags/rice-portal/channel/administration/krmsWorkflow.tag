@@ -27,8 +27,8 @@
    <li><a class="portal_link" href="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=org.kuali.rice.krms.impl.repository.RuleBo&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true">View Business Rules</a></li>
    <li><a class="portal_link" href="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=org.kuali.rice.krms.impl.repository.TermSpecificationBo&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true">View Term Specifications</a></li>
    <li><a class="portal_link" href="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=org.kuali.rice.krms.impl.repository.TermBo&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true">View Terms</a></li>
-   <li><portal:portalLink displayTitle="true" title="Krms Functions" url="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=edu.mit.kc.bo.KrmsFunctions&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-   <li><portal:portalLink displayTitle="true" title="Krms Functions" url="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=edu.mit.kc.bo.KrmsFunctionsParams&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+   <li><portal:portalLink displayTitle="true" title="View KRMS Functions" url="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=edu.mit.kc.bo.KrmsFunctions&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+   <li><portal:portalLink displayTitle="true" title="View KRMS Function Params" url="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=edu.mit.kc.bo.KrmsFunctionsParams&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
   </ul>
 
 </div>
