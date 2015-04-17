@@ -63,8 +63,11 @@ loop
 
 IF ls_AwardNumber IS NULL THEN
 	ls_AwardNumber := ' ';
+	
 END IF;
 
+   ls_AwardNumber := replace(ls_AwardNumber,'-00','-');	
+	
 IF lrec_feed.SAP_TRANSACTION IS NULL THEN
 	lrec_feed.SAP_TRANSACTION := ' ';
 END IF;
