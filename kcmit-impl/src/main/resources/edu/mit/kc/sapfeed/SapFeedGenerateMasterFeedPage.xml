@@ -142,7 +142,7 @@
 			        p:order="30" p:render="@{pageId eq 'SapFeed-GenerateMasterFeed'}" />
 				
 				<bean parent="Sap-Feed_ErrorList" 
-					p:order="40" p:render="@{#lp.errorInRecords ne 0}" /> 
+					p:order="40" p:render="@{#lp.errorInRecords ne 0 and pageId eq 'SapFeed-GenerateMasterFeed' }" /> 
 			</list>
 		</property>
 

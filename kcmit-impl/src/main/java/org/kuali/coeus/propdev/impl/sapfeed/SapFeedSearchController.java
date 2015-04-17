@@ -182,7 +182,7 @@ public class SapFeedSearchController {
     @Transactional
     @RequestMapping(params = "methodToCall=restoreFeed")
     public ModelAndView restoreFeed(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
-        String feedId = request.getParameter("feedId");
+        String feedId = request.getParameter("feedId").trim();
         sapFeedService.performUndoReject(Integer.valueOf(feedId));
         
         return getRefreshControllerService().refresh(form);
@@ -191,7 +191,7 @@ public class SapFeedSearchController {
     @Transactional
     @RequestMapping(params = "methodToCall=rejectFeed")
     public ModelAndView rejectFeed(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
-        String feedId = request.getParameter("feedId");
+        String feedId = request.getParameter("feedId").trim();
         sapFeedService.performRejectAction(Integer.valueOf(feedId));
 
         return getRefreshControllerService().refresh(form);

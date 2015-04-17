@@ -21,7 +21,7 @@
   <ul class="chan">
                          
    <li><a class="portal_link" href="${ConfigProperties.application.url}/kc-pd-krad/sapFeedsCommon?methodToCall=retrieveCollectionPage&amp;viewId=SapFeed-DefaultView">Generate SAP Feeds</a></li>
-   <li><a class="portal_link" href="${ConfigProperties.application.url}/kc-pd-krad/sapFeedsCommon?methodToCall=retrieveCollectionPage&amp;viewId=SapFeed-MaintainView">Maintain SAP Feeds</a></li>
+   <li><a class="portal_link" href="${ConfigProperties.application.url}/kc-pd-krad/sapFeedSearch?methodToCall=start&amp;viewId=SapFeedSearch-View">Maintain SAP Feeds</a></li>
                            
   </ul>
 
