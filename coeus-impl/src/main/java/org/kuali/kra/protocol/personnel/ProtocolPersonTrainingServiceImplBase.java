@@ -19,7 +19,9 @@
 package org.kuali.kra.protocol.personnel;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.coeus.common.framework.module.CoeusModule;
 import org.kuali.coeus.common.framework.person.attr.PersonTraining;
+import org.kuali.coeus.common.training.TrainingModules;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
@@ -60,11 +62,15 @@ public abstract class ProtocolPersonTrainingServiceImplBase implements ProtocolP
     private boolean isTrained(String personId) {
         if (StringUtils.isNotEmpty(personId)) {
             Map<String, Object> matchingKeys = new HashMap<String, Object>();
+            Map<String, Object> params = new HashMap<String, Object>();
             matchingKeys.put(PERSON_ID_FIELD, personId);
             matchingKeys.put(ACTIVE_FLAG_FIELD, IS_ACTIVE_VALUE);
             Collection<PersonTraining> personTrainings = getBusinessObjectService().findMatchingOrderBy(PersonTraining.class, matchingKeys, FOLLOWUP_DATE_FIELD, false);
             for (PersonTraining personTraining : personTrainings) {
-                if (personTraining.getFollowupDate() == null ||
+            	 params.put("trainingCode", personTraining.getTrainingCode());
+                 params.put("moduleCode", CoeusModule.IRB_MODULE_CODE);
+            	 Collection<TrainingModules> tainingModules = getBusinessObjectService().findMatchingOrderBy(TrainingModules.class, params, "trainingModulesId", false);
+                if (tainingModules!=null && personTraining.getFollowupDate() == null ||
                     getDateTimeService().getCurrentDate().before(personTraining.getFollowupDate())) {
                     return true;
                 }
