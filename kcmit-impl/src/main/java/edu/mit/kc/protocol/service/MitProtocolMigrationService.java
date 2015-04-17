@@ -1,4 +1,4 @@
-package edu.mit.kra.protocol.service;
+package edu.mit.kc.protocol.service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
