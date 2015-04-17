@@ -17,26 +17,25 @@
     </tr>
      <c:set var="viewSharedDoc" value="${KualiForm.awardProjectDocView}" />      
      <c:if test="${viewSharedDoc}"> 
-    <c:forEach items="${node.bo.awardAttachments}" var="attachment" varStatus="itrStatus">
-    <c:if test="${attachment.documentStatusCode == 'A'}">
-          <tr>
-         <td style="text-align: center;" colspan="2">
-            <c:out value="${attachment.type.description}"/>
-        </td>
-        <td style="text-align: center;" colspan="2">
-            <c:out value="${attachment.description}"/>
-        </td>
-         <td style="text-align: center;" colspan="2">
-            <c:out value="${attachment.file.name}"/>
-        </td>
-        <td colspan="2"> 
-        <html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}.id${attachment.awardId}"
-		src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
-		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
-        </td>
-        </tr>
-        </c:if>
-   
-      </c:if>
-      </c:forEach>     
+	    <c:forEach items="${node.bo.awardAttachments}" var="attachment" varStatus="itrStatus">
+	    	<c:if test="${attachment.documentStatusCode == 'A'}">
+	          <tr>
+		         <td style="text-align: center;" colspan="2">
+		            <c:out value="${attachment.type.description}"/>
+		        </td>
+		        <td style="text-align: center;" colspan="2">
+		            <c:out value="${attachment.description}"/>
+		        </td>
+		         <td style="text-align: center;" colspan="2">
+		            <c:out value="${attachment.file.name}"/>
+		        </td>
+		        <td colspan="2"> 
+			        <html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}.id${attachment.awardId}"
+					src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
+					alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
+			        </td>
+	          </tr>
+	        </c:if>
+	    </c:forEach>     
+    </c:if>
   </table>

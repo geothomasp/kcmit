@@ -34,6 +34,7 @@
 	<param name="SAP.TEST.PATH">TEST</param>
 	<!--   <param name="kns.css.files">kr/css/kuali.css,kr/scripts/jscalendar-1.0/calendar-win2k-1.css,scripts/fancybox2.1.5/jquery.fancybox.css,css/kuali_application.css</param> -->
 	<!-- <param name="kc.kc.core.additionalSpringFiles">classpath:edu/mit/kc/MitKcSpringBeans.xml,classpath:edu/mit/kc/MitKcSchedulerSpringBeans.xml</param> -->
+	<param name="spring.profiles.active"></param>
 </config>
 
 
