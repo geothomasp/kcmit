@@ -125,7 +125,7 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
             HashMap<String, String> criteria = new HashMap<String, String>();
             criteria.put(PERSON_ID, capacity.getPersonId());
             List<WlFlexibility> flexibilities = findMatching(WlFlexibility.class, criteria, form);
-
+            flexibilities = new ArrayList<>(flexibilities);
             workloadLineItem.setWlflexibilityList(flexibilities);
 
             KcPerson person = kcPersonService.getKcPersonByPersonId(capacity.getPersonId());
@@ -169,6 +169,13 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
                     }
                 }
             }
+
+            Collections.sort(flexibilities, new Comparator<WlFlexibility>() {
+                @Override
+                public int compare(WlFlexibility o1, WlFlexibility o2) {
+                    return o1.getSponsorGroup().compareTo(o2.getSponsorGroup());
+                }
+            });
 
             form.getWorkloadLineItems().add(workloadLineItem);
         }
