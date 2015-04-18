@@ -26,7 +26,6 @@ import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.mit.kc.protocol.service.MitProtocolMigrationService;
 
-
 public class MitProtocolProtocolActionsAction extends ProtocolProtocolActionsAction {
     private static final String SUBMISSION_ID = "submissionId";
     private MitProtocolMigrationService mitProtocolMigrationService;

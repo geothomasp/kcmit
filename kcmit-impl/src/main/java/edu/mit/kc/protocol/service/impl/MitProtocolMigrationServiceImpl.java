@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.mit.kc.protocol.service.MitProtocolMigrationService;
 
-
 @Component("mitProtocolMigrationService")
 @Transactional
 public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationService{

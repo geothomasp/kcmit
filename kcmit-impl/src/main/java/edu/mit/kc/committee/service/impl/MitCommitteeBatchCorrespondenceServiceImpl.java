@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.mit.kra.protocol.service.MitProtocolMigrationService;
+import edu.mit.kc.protocol.service.MitProtocolMigrationService;
+
+
 
 @Component("committeeBatchCorrespondenceService")
 @Transactional
