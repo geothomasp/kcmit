@@ -102,7 +102,7 @@
          <dependency>
             <groupId>org.kuali.coeus</groupId>
             <artifactId>coeus-impl</artifactId>
-            <version>6.0.2.21-SNAPSHOT</version>
+            <version>1504.4</version>
         </dependency>
        
          <dependency>
@@ -148,7 +148,7 @@
         <printing.xmlbeans.gen.mrk.base>${project.build.directory}/xmlbeans-markers/xmlbeans-printing</printing.xmlbeans.gen.mrk.base>
   	<javax.servlet.version>3.0.0.v201112011016</javax.servlet.version>
   	<jmock.version>2.6.0</jmock.version>
-  	<junit.version>4.11</junit.version>
+  	<junit.version>4.12</junit.version>
   	<timestamp>${maven.build.timestamp}</timestamp>
   	<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
   </properties>  
