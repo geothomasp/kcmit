@@ -182,4 +182,12 @@ public class ProposalPersonBiographyServiceImpl implements ProposalPersonBiograp
         this.dataObjectService = dataObjectService;
     }
 
+    public DataObjectService getDataObjectService() {
+        return dataObjectService;
+    }
+
+    public void setDataObjectService(DataObjectService dataObjectService) {
+        this.dataObjectService = dataObjectService;
+    }
+
 }

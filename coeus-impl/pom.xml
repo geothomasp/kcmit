@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.kuali.coeus</groupId>
         <artifactId>coeus</artifactId>
-        <version>6.0.2.21-SNAPSHOT</version>
+        <version>1504.4</version>
     </parent>
     <artifactId>coeus-impl</artifactId>
     <packaging>jar</packaging>
@@ -705,19 +705,14 @@
             <artifactId>xstream</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.mvel</groupId>
-			<artifactId>mvel2</artifactId>
+		    <groupId>com.codiform</groupId>
+	    	<artifactId>moo-mvel</artifactId>
 		</dependency>
-     	<dependency>
-			<groupId>com.codiform</groupId>
-			<artifactId>moo-mvel</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+       	<dependency>
+      		<groupId>org.mvel</groupId>
+      		<artifactId>mvel2</artifactId>
+      	</dependency>
+	  
     </dependencies>
 
     <profiles>

@@ -135,7 +135,7 @@ public class AwardBudgetServiceImpl extends AbstractBudgetService<Award> impleme
      * Need to move this to AwardBudgetService service
      */
     
-    public AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException {
+    protected AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException {
         AwardDocument awardDocument = (AwardDocument)budgetDocument.getBudget().getBudgetParent().getDocument();
 		String parentDocumentNumber = awardDocument.getDocumentNumber();
         budgetDocument.toCopy();

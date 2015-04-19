@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.kuali.coeus.common.budget.api.rate.RateClassType;
+import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetFormulatedCostDetail;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.rate.AbstractBudgetRate;
@@ -38,6 +39,8 @@ public class AddProjectBudgetLineItemHelper extends AddLineHelper {
     private BudgetLineItem budgetLineItem;
     private BudgetPeriod currentTabBudgetPeriod;
     private String budgetCategoryTypeCode;
+    private BudgetFormulatedCostDetail budgetFormulatedCostDetail;
+    private String budgetFormulatedCostIndex;
 
     public AddProjectBudgetLineItemHelper() {
        super();
@@ -116,12 +119,28 @@ public class AddProjectBudgetLineItemHelper extends AddLineHelper {
             Interval periodInterval = new Interval(budgetLineItem.getStartDate().getTime(), budgetLineItem.getEndDate().getTime());
             Interval rateInterval = new Interval(budgetRateStartDate.getMillis(),budgetRateEndDate.getMillis());
             if (StringUtils.equals(rateTypeCode, budgetRate.getRateTypeCode()) &&
-	                StringUtils.equals(budgetRate.getRateClassType(),RateClassType.INFLATION.getRateClassType()) &&
-	                budgetLineItem.getOnOffCampusFlag().equals(budgetRate.getOnOffCampusFlag()) &&
-	                periodInterval.overlaps(rateInterval)) {
+                    StringUtils.equals(budgetRate.getRateClassType(),RateClassType.INFLATION.getRateClassType()) &&
+                    budgetLineItem.getOnOffCampusFlag().equals(budgetRate.getOnOffCampusFlag()) &&
+                    periodInterval.overlaps(rateInterval)) {
                 inflationRates.add(budgetRate);
             }
         }
         return inflationRates;
+    }
+
+    public BudgetFormulatedCostDetail getBudgetFormulatedCostDetail() {
+        return budgetFormulatedCostDetail;
+    }
+
+    public void setBudgetFormulatedCostDetail(BudgetFormulatedCostDetail budgetFormulatedCostDetail) {
+        this.budgetFormulatedCostDetail = budgetFormulatedCostDetail;
+    }
+
+    public String getBudgetFormulatedCostIndex() {
+        return budgetFormulatedCostIndex;
+    }
+
+    public void setBudgetFormulatedCostIndex(String budgetFormulatedCostIndex) {
+        this.budgetFormulatedCostIndex = budgetFormulatedCostIndex;
     }
 }

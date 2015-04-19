@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kuali.coeus.common.budget.framework.nonpersonnel;
+package org.kuali.coeus.award.summary;
 
-import org.kuali.coeus.common.budget.framework.core.Budget;
-import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
+import com.codiform.moo.annotation.Property;
 
-public class SaveBudgetLineItemEvent extends BudgetLineItemEventBase {
+public class AwardStatusDto {
 
-	private BudgetPeriod budgetPeriod;
-	
-	public SaveBudgetLineItemEvent(Budget budget, String errorPath, BudgetLineItem budgetLineItem, BudgetPeriod budgetPeriod) {
-		super(budget, errorPath, budgetLineItem);
-		this.budgetPeriod = budgetPeriod;
+	@Property(source="statusCode")
+	private String code;
+	private String description;
+	public String getCode() {
+		return code;
 	}
-
-	public BudgetPeriod getBudgetPeriod() {
-		return budgetPeriod;
+	public void setCode(String code) {
+		this.code = code;
 	}
-
-	public void setBudgetPeriod(BudgetPeriod budgetPeriod) {
-		this.budgetPeriod = budgetPeriod;
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

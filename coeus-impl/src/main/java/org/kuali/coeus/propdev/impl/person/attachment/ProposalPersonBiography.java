@@ -455,7 +455,7 @@ public class ProposalPersonBiography extends KcPersistableBusinessObjectBase imp
         this.kcAttachmentService = kcAttachmentService;
     }
 
-    @PreRemove
+    @PostRemove
     public void removeData() {
         if (getPersonnelAttachment().getFileDataId() != null) {
             getKcAttachmentDao().removeData(getPersonnelAttachment().getFileDataId());

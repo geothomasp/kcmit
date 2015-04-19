@@ -142,9 +142,7 @@ public interface AwardBudgetService extends BudgetCommonService<Award> {
     public boolean checkRateChange(Collection<BudgetRate> allPropRates,Award award);
     
     public AwardBudgetDocument getNewBudgetVersionDocument(BudgetParentDocument<Award> parentBudgetDocument, String documentDescription, Map<String, Object> options)
-    	    throws WorkflowException;    
-    
-    public AwardBudgetDocument copyBudgetVersion(AwardBudgetDocument budgetDocument, boolean onlyOnePeriod) throws WorkflowException;
+    	    throws WorkflowException;
     /**
      *
      * This method will clear the BudgetSumamryPeriodCalcAmounts

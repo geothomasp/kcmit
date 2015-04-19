@@ -49,7 +49,6 @@ public class UnitServiceImpl implements UnitService {
     private static final String SEPARATOR = ";1;";
     private static final String DASH = "-";
     private static final String UNIT_NUMBER = "unitNumber";
-    
     private static final String PARENT_UNIT_NUMBER = "parentUnitNumber";
 
     @Autowired
