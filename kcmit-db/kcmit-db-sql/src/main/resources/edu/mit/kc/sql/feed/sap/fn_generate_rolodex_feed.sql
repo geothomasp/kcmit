@@ -35,7 +35,10 @@ ls_control_line						varchar2(112);
 li_batch_id								number(3);
 ld_now									DATE;
 li_RecordCount							number(6);
-ls_postal_code 			VARCHAR2(100);
+
+ls_PostalCode                       ROLODEX.POSTAL_CODE%type;
+ls_PostalCodeOrig                   ROLODEX.POSTAL_CODE%type;
+ls_CountryCode                      ROLODEX.COUNTRY_CODE%type;
 
 cursor cur_feeds  is
   SELECT RPAD(DECODE(ROLODEX.LAST_NAME , NULL, ' ', regexp_replace(ROLODEX.LAST_NAME,'[^ -~]', ' ')), 20, ' ' ) ,
@@ -51,8 +54,7 @@ cursor cur_feeds  is
 		RPAD(DECODE(ROLODEX.EMAIL_ADDRESS, NULL, ' ', ROLODEX.EMAIL_ADDRESS), 60, ' ') ,
 		RPAD(DECODE(ROLODEX.CITY, NULL, ' ', regexp_replace(ROLODEX.CITY,'[^ -~]', ' ')), 30, ' ') ,
 		RPAD(DECODE(ROLODEX.STATE, NULL, ' ', ROLODEX.STATE), 30, ' ') ,
-		--RPAD(DECODE(ROLODEX.POSTAL_CODE,  NULL, ' ', ROLODEX.POSTAL_CODE), 15, ' ') ,
-		ROLODEX.POSTAL_CODE,
+		RPAD(DECODE(ROLODEX.POSTAL_CODE,  NULL, ' ', ROLODEX.POSTAL_CODE), 15, ' ') ,		
 		RPAD(DECODE(ROLODEX.PHONE_NUMBER, NULL, ' ', ROLODEX.PHONE_NUMBER), 20, ' ') ,
 		RPAD(DECODE(ROLODEX.COUNTRY_CODE, NULL, ' ', ROLODEX.COUNTRY_CODE), 3, ' ') ,
 		RPAD(DECODE(ROLODEX.SPONSOR_CODE, NULL, ' ', ROLODEX.SPONSOR_CODE), 6, ' ') ,
@@ -85,21 +87,30 @@ loop
 
 --Create output record.
 	-- Added for MITKC-1442
-		ls_postal_code := trim(lrec_feed.postal_code);
-		
-		if length(ls_postal_code) = 5 then
-			ls_postal_code :=  to_char(ls_postal_code,'000000000');
-		end if;
-		
-		if ls_postal_code is NULL then
-			ls_postal_code := ' ';
+		--Coeus-935 Begin
+			ls_PostalCodeOrig := lrec_feed.postal_code;
+			ls_PostalCode := trim(lrec_feed.postal_code);
+			ls_CountryCode := trim(lrec_feed.country_code);
 			
-		end if;		
-		
-		ls_postal_code := RPAD(ls_postal_code, 15, ' ');
-		
-	-- Added for MITKC-1442 
-
+			if upper(ls_CountryCode) = 'USA' then
+				if length (ls_PostalCode) = 9 then
+				
+					--Check if last 4 digits are 00000
+					if substr(ls_PostalCode, 6, 4) = '0000' then
+						ls_PostalCode := substr(ls_PostalCode, 1, 5);
+					else
+						ls_PostalCode := substr(ls_PostalCode, 1, 5) || '-' || substr(ls_PostalCode, 6, 4);
+					end if;
+				else
+					ls_PostalCode := ls_PostalCodeOrig;
+					
+				end if;
+			else
+				ls_PostalCode := ls_PostalCodeOrig;
+			end if;
+		  
+		--Coeus-935 End
+	
 
 ls_output_line := lrec_feed.last_name   ||
             		lrec_feed.first_name  ||
@@ -114,10 +125,10 @@ ls_output_line := lrec_feed.last_name   ||
 						lrec_feed.email_address  ||
 						lrec_feed.city ||
 						lrec_feed.state ||
-						ls_postal_code  ||
+						RPAD(ls_PostalCode, 15, ' ') ||
 						lrec_feed.phone_number ||
-						lrec_feed.country_code  ||
-						lrec_feed.sponsor_code  ||
+						trim(lrec_feed.country_code)  ||
+						trim(lrec_feed.sponsor_code)  ||
 						'86' ||
 						 lpad(lrec_feed.rolodex_id ,8 ,'0') ||
 						lrec_feed.dun_and_bradstreet_number;
