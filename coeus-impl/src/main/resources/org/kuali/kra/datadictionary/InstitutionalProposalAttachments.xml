@@ -54,18 +54,22 @@
 	   </bean>
 	   
 	   <bean id="InstitutionalProposalAttachments-fileName" parent="InstitutionalProposalAttachments-fileName-parentBean" />
-       <bean id="InstitutionalProposalAttachments-fileName-parentBean"  parent="AttachmentFile-id">
+       <bean id="InstitutionalProposalAttachments-fileName-parentBean"  parent="AttributeDefinition">
 	    <property name="name" value="fileName" />
 	    <property name="forceUppercase" value="false" />
 	    <property name="label" value="File Name" />
 	    <property name="shortLabel" value="File Name" />
 	    <property name="maxLength" value="150" />
+	    
 	    <property name="validationPattern" >
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
-        </property>
-        <property name="validCharactersConstraint">
-            <bean parent="AnyCharacterPatternConstraint"/>
-        </property>
+      		<bean p:allowWhitespace="true" parent="AnyCharacterValidationPattern" />
+		</property>
+	    <property name="validCharactersConstraint">
+	      <bean parent="AnyCharacterPatternConstraint">
+	        <property name="allowWhitespace" value="true"/>
+	      </bean>
+	    </property>
+        
 	  </bean>
 	
 	    <bean id="InstitutionalProposalAttachments-comments" parent="InstitutionalProposalAttachments-comments-parentBean" />
