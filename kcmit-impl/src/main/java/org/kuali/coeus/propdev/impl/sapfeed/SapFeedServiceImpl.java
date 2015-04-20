@@ -3,6 +3,7 @@ package org.kuali.coeus.propdev.impl.sapfeed;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -17,6 +18,13 @@ public class SapFeedServiceImpl implements SapFeedService
 
 {
 	private static final String DEFAULT_TRANSACTION_ID= "9999999999";
+	
+	private static final String SAPFEED_FEEDTYPE_NEW = "N";
+	private static final String SAPFEED_FEEDTYPE_CHANGED = "C";
+	private static final String SAPFEED_FEEDSTATUS_PENDING = "P";
+	private static final String SAPFEED_FEEDSTATUS_FED = "F";
+	private static final String SAPFEED_FEEDSTATUS_REJECTED = "R";
+	private static final String SAPFEED_FEEDSTATUS_ERROR = "E";
 	
 	@Autowired
 	@Qualifier("dbFunctionService")
@@ -176,5 +184,48 @@ public class SapFeedServiceImpl implements SapFeedService
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	@Override
+	public void updateSapFeedDetails(String awardNumber,Integer sequenceNumber) {
+		String feedType = null;
+		String feedStatus = null;
+		String newAwardNumber = awardNumber;
+		Integer newSequenceNumber = sequenceNumber;
+		BusinessObjectService businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
+		HashMap<String, String> fieldValues = new HashMap<String, String>();
+		fieldValues.put("awardNumber", newAwardNumber);
+		
+		// Get sapfeed details
+		List<SapFeedDetails> sapFeedDetails = (List<SapFeedDetails>) businessObjectService.findMatchingOrderBy(SapFeedDetails.class, fieldValues, "sequenceNumber", false);
+
+		if (sapFeedDetails != null && sapFeedDetails.size() > 0) {
+		SapFeedDetails latestFeedDetails=sapFeedDetails.get(0);
+		
+		if ((latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_FED) ||latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_PENDING)) && (latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_NEW) || latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_CHANGED)) ){
+			  	feedType = SAPFEED_FEEDTYPE_CHANGED;
+			  	feedStatus = SAPFEED_FEEDSTATUS_PENDING;
+				insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
+			}
+		else if(latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_ERROR) || latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_REJECTED)){
+				feedType = SAPFEED_FEEDTYPE_NEW;
+				feedStatus = SAPFEED_FEEDSTATUS_PENDING;
+				insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
+			}
+		else{
+				feedType = SAPFEED_FEEDTYPE_CHANGED;
+			  	feedStatus = latestFeedDetails.getFeedStatus();
+			  	latestFeedDetails.setFeedType(feedType);
+			  	latestFeedDetails.setFeedStatus(feedStatus);
+			  	latestFeedDetails.setSequenceNumber(newSequenceNumber);
+			  	getBusinessObjectService().save(latestFeedDetails);
+			}
+		}
+		 else {
+			 	feedType = SAPFEED_FEEDTYPE_NEW;
+			 	feedStatus = SAPFEED_FEEDSTATUS_PENDING;
+			 	insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
+		}
+		
 	}
 }

@@ -22,5 +22,7 @@ public interface SapFeedService {
 	public void performUndoReject(Integer feedId);
 	
 	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,Boolean processSubsequentBatches, String path);
+	
+	public void updateSapFeedDetails(String awardNumber,Integer sequenceNumber);
 
 }
