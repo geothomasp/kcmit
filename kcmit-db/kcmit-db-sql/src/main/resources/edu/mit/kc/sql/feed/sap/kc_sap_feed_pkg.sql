@@ -608,10 +608,11 @@ PROJECT_TYPE column is dropped as of 5/6/02
 
 		ls_cfda := LTRIM(RTRIM(grec_award.cfda_number));
 
-		IF LENGTH(ls_cfda) > 3 THEN
-
-			ls_Cfda := SUBSTR(ls_cfda, 1, 2) || '.' || SUBSTR(ls_cfda, 3);
-		feed_record.cfdano := ls_Cfda;
+		IF (LENGTH(ls_cfda) > 3)  THEN
+			if(SUBSTR(ls_cfda, 3, 1) <> '.') THEN			
+				ls_Cfda := SUBSTR(ls_cfda, 1, 2) || '.' || SUBSTR(ls_cfda, 3);
+			END IF;
+			feed_record.cfdano := ls_Cfda;
 --dbms_output.put_line('done CFDANO');
 		END IF;
 
