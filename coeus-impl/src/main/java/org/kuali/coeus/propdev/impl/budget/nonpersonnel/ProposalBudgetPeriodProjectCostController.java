@@ -25,7 +25,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.coeus.common.budget.framework.core.BudgetConstants;
-<<<<<<< HEAD
 import org.kuali.coeus.common.budget.framework.core.BudgetSaveEvent;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.ApplyToPeriodsBudgetEvent;
 import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetDirectCostLimitEvent;
@@ -36,11 +35,9 @@ import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetAddPersonnelPeriodEvent;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetSavePersonnelEvent;
-=======
 import org.kuali.coeus.common.budget.framework.nonpersonnel.*;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.rate.BudgetRatesService;
->>>>>>> coeus-1504.4-r
 import org.kuali.coeus.common.budget.impl.nonpersonnel.BudgetExpensesRuleEvent;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetConstants;
 import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetControllerBase;
@@ -206,14 +203,6 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	    }
     	return getModelAndViewService().showDialog(EDIT_NONPERSONNEL_PERIOD_DIALOG_ID_SPE, true, form);
 	}
-
-    @Transactional @RequestMapping(params={"methodToCall=refresh", "refreshCaller=PropBudget-EditNonPersonnelPeriod-Section"})
-    public ModelAndView refreshNonPersonnelPeriodDetails(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
-        form.setAjaxReturnType(UifConstants.AjaxReturnTypes.UPDATECOMPONENT.getKey());
-        form.setUpdateComponentId("PropBudget-EditNonPersonnelPeriod-Section");
-        getDataObjectService().wrap(form.getAddProjectBudgetLineItemHelper().getBudgetLineItem()).fetchRelationship("costElementBO");
-        return getRefreshControllerService().refresh(form);
-    }
 
     @Transactional @RequestMapping(params={"methodToCall=refresh", "refreshCaller=PropBudget-EditNonPersonnelPeriod-Section"})
     public ModelAndView refreshNonPersonnelPeriodDetails(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
