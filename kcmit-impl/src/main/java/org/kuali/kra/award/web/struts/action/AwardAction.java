@@ -413,7 +413,7 @@ public class AwardAction extends BudgetParentActionBase {
         AwardForm awardForm = (AwardForm) form;
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
        
-       sapFeedService.updateSapFeedDetails(awardForm.getAwardDocument().getAward().getAwardNumber(),awardForm.getAwardDocument().getAward().getSequenceNumber());
+        getSapFeedService().updateSapFeedDetails(awardForm.getAwardDocument().getAward().getAwardNumber(),awardForm.getAwardDocument().getAward().getSequenceNumber());
         
         if(getTimeAndMoneyExistenceService().validateTimeAndMoneyRule(awardForm.getAwardDocument().getAward(), awardForm.getAwardHierarchyBean().getRootNode().getAwardNumber())){
             forward = super.route(mapping, form, request, response);
