@@ -1,4 +1,4 @@
-echo `date` 'Starting award sync from COEUS QA ***KCDEV***'
+echo `date` 'Starting award sync from COEUS QA ***KCPROD***'
 
 ORACLE_SID=KCDEV
 export ORACLE_SID
