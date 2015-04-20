@@ -314,9 +314,9 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
         DocumentService documentService = KcServiceLocator.getService(DocumentService.class);
         AwardBudgetDocument awardBudgetDocument = (AwardBudgetDocument) documentService.getByDocumentHeaderId(budgetToCopy.getDocumentNumber());
         
-        AwardBudgetDocument  awardBudgetDocumentCopy = getAwardBudgetService().copyBudgetVersion(awardBudgetDocument, copyPeriodOneOnly);
+        AwardBudgetExt  awardBudget = (AwardBudgetExt)getAwardBudgetService().copyBudgetVersion(awardBudgetDocument.getAwardBudget(), copyPeriodOneOnly);
         
-        awardForm.getAwardDocument().getBudgetParent().getBudgets().add(awardBudgetDocumentCopy.getBudget());
+        awardForm.getAwardDocument().getBudgetParent().getBudgets().add(awardBudget);
     }
     
     private StrutsConfirmation syncBudgetRateConfirmationQuestion(ActionMapping mapping, ActionForm form,

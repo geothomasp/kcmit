@@ -499,8 +499,8 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 	}
 
 	protected ModelAndView setUnitFormulatedCost(ProposalBudgetForm form, BudgetFormulatedCostDetail  budgetFormulatedCostDetail) {
-		ScaleTwoDecimal unitCost = new ScaleTwoDecimal(getBudgetRatesService().getUnitFormulatedCost(
-				form.getBudget().getDevelopmentProposal().getUnitNumber(), budgetFormulatedCostDetail.getFormulatedTypeCode()));
+		ScaleTwoDecimal unitCost = getBudgetRatesService().getUnitFormulatedCost(
+				form.getBudget().getDevelopmentProposal().getUnitNumber(), budgetFormulatedCostDetail.getFormulatedTypeCode());
 		budgetFormulatedCostDetail.setUnitCost(unitCost);
 		return getRefreshControllerService().refresh(form);
 	}

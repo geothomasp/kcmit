@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.budget.framework.core.*;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.kra.award.budget.AwardBudgetExt;
 import org.kuali.kra.award.budget.AwardBudgetService;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
 import org.kuali.kra.award.document.AwardDocument;
@@ -364,8 +365,8 @@ public class BudgetVersionsAction extends BudgetAction {
         Budget budgetToCopy = getSelectedVersion(budgetForm, request);
         DocumentService documentService = KcServiceLocator.getService(DocumentService.class);
         AwardBudgetDocument awardBudgetDocument = (AwardBudgetDocument) documentService.getByDocumentHeaderId(budgetToCopy.getDocumentNumber());
-        AwardBudgetDocument  awardBudgetDocumentCopy = getAwardBudgetService().copyBudgetVersion(awardBudgetDocument, copyPeriodOneOnly);
-        budgetForm.getBudgetDocument().getBudget().getBudgetParent().getBudgets().add(awardBudgetDocumentCopy.getBudget());
+        AwardBudgetExt  awardBudget = (AwardBudgetExt)getAwardBudgetService().copyBudgetVersion(awardBudgetDocument.getBudget(), copyPeriodOneOnly);
+        budgetForm.getBudgetDocument().getBudget().getBudgetParent().getBudgets().add(awardBudget);
     }
     
     
