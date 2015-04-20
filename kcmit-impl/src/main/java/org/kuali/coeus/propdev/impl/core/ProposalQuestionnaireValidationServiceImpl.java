@@ -50,7 +50,7 @@ public class ProposalQuestionnaireValidationServiceImpl implements ProposalQuest
 	protected void checkPIStatus(ProposalPerson proposalPerson) {
 		if((proposalPerson.isPrincipalInvestigator() || proposalPerson.isCoInvestigator()) && 
 				!proposalPerson.getFacultyFlag()) {
-        	getGlobalVariableService().getMessageMap().putError(PROPOSAL_SUBMIT_PAGE_ID, ERROR_PI_STATUS, new String[]{proposalPerson.getProposalPersonRoleId(), proposalPerson.getLastName()});
+        	getGlobalVariableService().getMessageMap().putWarning(PROPOSAL_SUBMIT_PAGE_ID, ERROR_PI_STATUS, new String[]{proposalPerson.getProposalPersonRoleId(), proposalPerson.getLastName()});
 		}
 	}
 			
@@ -67,7 +67,7 @@ public class ProposalQuestionnaireValidationServiceImpl implements ProposalQuest
 						if(questionId.equals(proposalQuestionnaireValidation.getQuestionId()) && 
 								answer.getAnswer() != null && answer.getAnswer().equalsIgnoreCase(proposalQuestionnaireValidation.getAnswer())) {
 							String validationMessage = proposalQuestionnaireValidation.getValidationMessage().concat(getAdditionalMessage(proposalPerson));
-	                    	getGlobalVariableService().getMessageMap().putError(PROPOSAL_SUBMIT_PAGE_ID, GENERIC_ERROR_KEY, validationMessage);
+	                    	getGlobalVariableService().getMessageMap().putWarning(PROPOSAL_SUBMIT_PAGE_ID, GENERIC_ERROR_KEY, validationMessage);
 	                    	break;
 						}
 					}
