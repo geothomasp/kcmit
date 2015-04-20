@@ -1264,7 +1264,12 @@ BEGIN
 													and	AMOUNT2.SEQUENCE_NUMBER <= gi_sequence_number	)
 	AND     AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
 														where    t1.AWARD_NUMBER =	AWARD_AMOUNT_INFO.AWARD_NUMBER	
-														and   t1.SEQUENCE_NUMBER = AWARD_AMOUNT_INFO.SEQUENCE_NUMBER )
+														and   t1.SEQUENCE_NUMBER = AWARD_AMOUNT_INFO.SEQUENCE_NUMBER 
+														and t1.tnm_document_number in ( select s0.DOC_HDR_ID from KREW_DOC_HDR_T s0 
+																						inner join TIME_AND_MONEY_DOCUMENT s1 on s0.DOC_HDR_ID = s1.DOCUMENT_NUMBER
+																						where s1.AWARD_NUMBER = gs_award_number
+																						and s0.DOC_HDR_STAT_CD = 'F')
+														)
 	AND		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) = ( SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
 																	FROM   AWARD_AMOUNT_INFO AMOUNT3
 															WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
