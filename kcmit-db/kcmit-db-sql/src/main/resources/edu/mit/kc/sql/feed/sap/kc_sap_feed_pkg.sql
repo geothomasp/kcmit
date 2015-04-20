@@ -770,7 +770,7 @@ select SEQ_SAP_ID.nextval into li_sp_feed_id from dual;
    return (0);
 	EXCEPTION 
 	WHEN OTHERS THEN
-	  upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||substr(SQLERRM,1,250));
+	  upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Exception happened while inserting to SAP_FEED, award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||substr(SQLERRM,1,250));
 	  Return (-1);
 	end generate_feed;
 
@@ -964,7 +964,7 @@ WHEN hold_account THEN																	--added on 03/16/98
 	  return (-1);
 
 WHEN OTHERS THEN
-    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, ' Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 200));
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Exception in fn_is_valid_award, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 200));
     return (-1);
 
 /*===========================*/
@@ -1233,7 +1233,7 @@ WHEN lu_not_found THEN
     return (-1);
 
 WHEN OTHERS THEN
-    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
+    upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_init_lead_unit, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
     return (0);
 
 /*===========================*/
@@ -1250,26 +1250,30 @@ begin
 --Change made for March 2000 release.
 --Need to get the amount for the transaction_id.
 --earlier we were retrieving max amount sequence for the given sequence_number
-
+BEGIN
   SELECT AWARD_AMOUNT_INFO.OBLIGATION_EXPIRATION_DATE,
          AWARD_AMOUNT_INFO.ANTICIPATED_TOTAL_AMOUNT,
          AWARD_AMOUNT_INFO.AMOUNT_OBLIGATED_TO_DATE
-	INTO gd_exp_date,
+	INTO  gd_exp_date,
 		  gn_anticipated_total,
 		  gn_obligated_total
     FROM AWARD_AMOUNT_INFO
-	WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number and
-		AWARD_AMOUNT_INFO.SEQUENCE_NUMBER =		 (SELECT MAX(AMOUNT2.SEQUENCE_NUMBER)
-		FROM AWARD_AMOUNT_INFO AMOUNT2 WHERE
-		AMOUNT2.AWARD_NUMBER =			 AWARD_AMOUNT_INFO.AWARD_NUMBER	and
-		AMOUNT2.SEQUENCE_NUMBER <= gi_sequence_number	) and
-		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) =
-			     		(SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
-				   	 FROM   AWARD_AMOUNT_INFO AMOUNT3
- 					 		WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
-						 	 AND    AWARD_AMOUNT_INFO.SEQUENCE_NUMBER  = AMOUNT3.SEQUENCE_NUMBER
-							 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
-
+	WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number 
+	AND		AWARD_AMOUNT_INFO.SEQUENCE_NUMBER =		 ( SELECT MAX(AMOUNT2.SEQUENCE_NUMBER) FROM AWARD_AMOUNT_INFO AMOUNT2
+													WHERE AMOUNT2.AWARD_NUMBER =			 AWARD_AMOUNT_INFO.AWARD_NUMBER
+													and	AMOUNT2.SEQUENCE_NUMBER <= gi_sequence_number	)
+	AND     AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
+														where    t1.AWARD_NUMBER =	AWARD_AMOUNT_INFO.AWARD_NUMBER	
+														and   t1.SEQUENCE_NUMBER = AWARD_AMOUNT_INFO.SEQUENCE_NUMBER )
+	AND		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) = ( SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
+																	FROM   AWARD_AMOUNT_INFO AMOUNT3
+															WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
+															 AND    AWARD_AMOUNT_INFO.SEQUENCE_NUMBER  = AMOUNT3.SEQUENCE_NUMBER
+															 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
+EXCEPTION
+WHEN OTHERS THEN
+ upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_get_money_and_dates, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
+END;
 
 return 0;
 
@@ -1594,7 +1598,7 @@ when NO_DATA_FOUND THEN
 	upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Entry for SAP_FEED_CURRENT_FISCAL_YEAR missing from KRCR_PARM_T table.');
     return (-1);
 WHEN others THEN
-	upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 350));
+	upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Exception in fn_get_fiscal_year, award number = '||gs_award_number||', sequence number = '||gi_sequence_number||'. Error is '||SUBSTR(SQLERRM, 1, 350));
     return (-1);
 
 /*===========================*/
@@ -2458,22 +2462,67 @@ begin
 
 --Check if there is a change in Indirect Cost
 --	IF (SUBSTR(grec_award.fy_recover_idc_indicator, 2, 1) = '1') THEN (3.0)
-		IF (SUBSTR(grec_award.idc_indicator, 2, 1) = '1') THEN
 
-		ls_Comment := ls_Comment || 'IDC ';
-	END IF;
+		select count(*) into li_Count from (           
+			select applicable_idc_rate,idc_rate_type_code,fiscal_year,
+			on_campus_flag,underrecovery_of_idc,source_account,destination_account,start_date,decode(end_date,null,'0',end_date) as  end_date
+			from award_idc_rate where award_number = gs_award_number and sequence_number = gi_sequence_number
+			minus           
+			 select applicable_idc_rate,idc_rate_type_code,fiscal_year,
+			on_campus_flag,underrecovery_of_idc,source_account,destination_account,start_date,decode(end_date,null,'0',end_date) as  end_date
+			from award_idc_rate where award_number = gs_award_number and sequence_number = ( gi_sequence_number - 1 )          
+		) idc_rate ;       
+
+		IF li_Count > 0 THEN
+			ls_Comment := ls_Comment || 'IDC ';
+		END IF;
 
 --Check if there is a change in CostSharing
-	IF (SUBSTR(grec_award.cost_sharing_indicator , 2, 1) = '1') THEN
-		ls_Comment := ls_Comment || 'Cost Sharing ';
-	END IF;
+		select count(*) into li_Count from (  
+			select decode(verification_date,null,'0',verification_date) verification_date,decode(cost_share_met,null,'0',cost_share_met) cost_share_met,
+			decode(project_period,null,'0',project_period) project_period, decode(cost_share_percentage,null,'0',cost_share_percentage) cost_share_percentage,
+			decode(cost_share_type_code,null,'0',cost_share_type_code) cost_share_type_code,decode(source,null,'0',source) source,
+			decode(destination,null,'0',destination) destination, decode(commitment_amount,null,'0',commitment_amount) commitment_amount,
+			decode(unit_number,null,'0',unit_number) unit_number
+			from award_cost_share where award_number = gs_award_number and sequence_number = gi_sequence_number
+		minus
+			select decode(verification_date,null,'0',verification_date) verification_date,decode(cost_share_met,null,'0',cost_share_met) cost_share_met,
+			decode(project_period,null,'0',project_period) project_period, decode(cost_share_percentage,null,'0',cost_share_percentage) cost_share_percentage,
+			decode(cost_share_type_code,null,'0',cost_share_type_code) cost_share_type_code,decode(source,null,'0',source) source,
+			decode(destination,null,'0',destination) destination, decode(commitment_amount,null,'0',commitment_amount) commitment_amount,
+			decode(unit_number,null,'0',unit_number) unit_number
+			from award_cost_share where award_number = gs_award_number and sequence_number = ( gi_sequence_number - 1 )
+		) cost_share;
+
+		IF li_Count > 0 THEN
+			ls_Comment := ls_Comment || 'Cost Sharing ';
+		END IF;
 
 --Check if there is a change in Payment Schedule
-	IF (SUBSTR(grec_award.payment_schedule_indicator, 2, 1) = '1') THEN
-		ls_Comment := ls_Comment || 'Payment Schedule ';
-	END IF;
 
+	
 --Check if there is invoice instructions for this sequence number.
+	select count(*) into li_Count from (  
+		select decode(due_date,null,'0',due_date) due_date,decode(amount,null,'0',amount) amount,decode(submit_date,null,'0',submit_date) submit_date,
+		decode(submitted_by,null,'0',submitted_by) submitted_by,decode(invoice_number,null,'0',invoice_number) invoice_number,
+		decode(status_description,null,'0',status_description) status_description,decode(status,null,'0',status) status,
+		decode(overdue,null,'0',overdue) overdue,decode(report_status_code,null,'0',report_status_code) report_status_code,
+		decode(submitted_by_person_id,null,'0',submitted_by_person_id) submitted_by_person_id,
+		decode(award_report_term_desc,null,'0',award_report_term_desc) award_report_term_desc
+		from award_payment_schedule where award_number = gs_award_number and sequence_number = gi_sequence_number
+			minus
+		select decode(due_date,null,'0',due_date) due_date,decode(amount,null,'0',amount) amount,decode(submit_date,null,'0',submit_date) submit_date,
+		decode(submitted_by,null,'0',submitted_by) submitted_by,decode(invoice_number,null,'0',invoice_number) invoice_number,
+		decode(status_description,null,'0',status_description) status_description,decode(status,null,'0',status) status,
+		decode(overdue,null,'0',overdue) overdue,decode(report_status_code,null,'0',report_status_code) report_status_code,
+		decode(submitted_by_person_id,null,'0',submitted_by_person_id) submitted_by_person_id,
+		decode(award_report_term_desc,null,'0',award_report_term_desc) award_report_term_desc
+		from award_payment_schedule where award_number = gs_award_number and sequence_number = (gi_sequence_number-1)
+		)	payment_schedule;
+
+		IF li_Count > 0 THEN
+			ls_Comment := ls_Comment || 'Payment Schedule ';
+		END IF;
 
 	SELECT COUNT(AWARD_NUMBER)
    		 INTO li_Count
