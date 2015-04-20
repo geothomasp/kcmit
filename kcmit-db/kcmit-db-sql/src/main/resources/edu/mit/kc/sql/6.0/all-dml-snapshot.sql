@@ -1,4 +1,0 @@
-@dml/DML_MITKC-281_20150420_1.sql
-@dml/DML_MITKC-824_20150420_2.sql
-commit
-/
