@@ -24,7 +24,7 @@ import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.util.KRADConstants;
 
-import edu.mit.kra.protocol.service.MitProtocolMigrationService;
+import edu.mit.kc.protocol.service.MitProtocolMigrationService;
 
 public class MitProtocolProtocolActionsAction extends ProtocolProtocolActionsAction {
     private static final String SUBMISSION_ID = "submissionId";
@@ -51,6 +51,51 @@ public class MitProtocolProtocolActionsAction extends ProtocolProtocolActionsAct
         loadDocument(protocolForm);
         protocolForm.initialize();
         return mapping.findForward(Constants.MAPPING_BASIC);
+    }
+    
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        ProtocolForm protocolForm = (ProtocolForm) form;
+        
+        if (protocolForm.getDocId().startsWith("MP")) { 
+        	boolean route = getMitProtocolMigrationService().createDocumentForMigratedProtocolAndRoute(mapping, request, response, protocolForm, protocolForm.getDocId()); 
+        	if(route) {
+        		route(mapping, protocolForm, request, response);
+        	}
+        } 
+        
+        // set the current task name on the action helper before the requested method is dispatched
+        // so that beans etc can access it when preparing view after/during the requested method's execution
+        String currentTaskName = getTaskName(request);
+        if(currentTaskName != null) {
+            protocolForm.getActionHelper().setCurrentTask(currentTaskName);
+        }
+        else {
+            protocolForm.getActionHelper().setCurrentTask("");
+        }
+        ActionForward actionForward = super.execute(mapping, form, request, response);
+        protocolForm.getActionHelper().prepareView();
+        // submit action may change "submission details", so re-initializa it
+        
+        if ("close".equals(protocolForm.getMethodToCall()) || protocolForm.getMethodToCall() == null) {
+            // If we're closing, we can just leave right here.
+            return mapping.findForward(KRADConstants.MAPPING_PORTAL);
+        }
+        protocolForm.getActionHelper().initSubmissionDetails();
+        
+        return actionForward;
+    }
+    
+    private String getTaskName(HttpServletRequest request) {
+        String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
+        
+        String taskName = "";
+        if (StringUtils.isNotBlank(parameterName)) {
+            taskName = StringUtils.substringBetween(parameterName, ".taskName", ".");
+        }
+        
+        return taskName;
     }
 
     @Override

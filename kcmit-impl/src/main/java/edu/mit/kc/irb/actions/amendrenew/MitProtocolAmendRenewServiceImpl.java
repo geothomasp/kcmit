@@ -10,7 +10,7 @@ import org.kuali.kra.protocol.ProtocolDocumentBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import edu.mit.kra.protocol.service.MitProtocolMigrationService;
+import edu.mit.kc.protocol.service.MitProtocolMigrationService;
 
 public class MitProtocolAmendRenewServiceImpl extends ProtocolAmendRenewServiceImpl {
 

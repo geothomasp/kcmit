@@ -23,7 +23,7 @@ import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.KRADPropertyConstants;
 
-import edu.mit.kra.protocol.service.MitProtocolMigrationService;
+import edu.mit.kc.protocol.service.MitProtocolMigrationService;
 
 public class MitCustomDocHandlerRedirectAction extends CustomDocHandlerRedirectAction {
     private MitProtocolMigrationService mitProtocolMigrationService;

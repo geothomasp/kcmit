@@ -1,4 +1,4 @@
-package edu.mit.kra.protocol.service.impl;
+package edu.mit.kc.protocol.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.mit.kra.protocol.service.MitProtocolMigrationService;
+import edu.mit.kc.protocol.service.MitProtocolMigrationService;
 
 @Component("mitProtocolMigrationService")
 @Transactional
@@ -61,7 +61,7 @@ public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationServ
 	   } 
 
 	public boolean createDocumentForMigratedProtocolAndRoute(ActionMapping mapping, HttpServletRequest request, HttpServletResponse response, ProtocolForm protocolForm, String docIdRequestParameter) throws Exception { 
-	   	String protocolId = StringUtils.substring(docIdRequestParameter, 2); 
+		long protocolId = protocolForm.getProtocolDocument().getProtocol().getProtocolId();
 	   	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class); 
 	       newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol"); 
 	       Protocol protocol = getBusinessObjectService().findBySinglePrimaryKey(Protocol.class, protocolId); 

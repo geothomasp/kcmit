@@ -36,6 +36,9 @@
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+    <context:annotation-config />
+    <context:component-scan base-package="edu.mit.kc.protocol.service.impl" />
+    
 	<bean id="permissionService"
 		class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
 		<property name="serviceName" value="kimPermissionService" />
