@@ -129,7 +129,7 @@
                                     </#if>
                                 </ul>
                             </div>
-
+                       <#if KualiForm.canEdit>
                             <button id="delete_workload_${row_index}"
                                     class="btn btn-default btn-xs uif-action"
                                     data-submit_data="{&quot;methodToCall&quot;:&quot;deleteAdministrator&quot;, &quot;deleteLineItem&quot;: &quot;${row_index}&quot;}"
@@ -137,7 +137,7 @@
                                     data-role="Action">
                                 Remove
                             </button>
-
+                         </#if>
                         </div>
                     </td>
 

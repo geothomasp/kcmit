@@ -5,6 +5,7 @@
 
     <bean id="Workload-Add-Dialog" parent="Uif-DialogGroup" p:retrieveViaAjax="true"
           p:enterKeyAction="Workload-Add-Button"
+          p:readOnly="@{!canEdit}"
           p:headerText="Add Contract Administrator" p:refreshWhenChangedPropertyNames="addPersonInfo.tempUserName">
         <property name="destroyDialogOnHidden" value="true"/>
         <property name="items">
@@ -53,6 +54,7 @@
 
     <bean id="Workload-Capacity-Edit" parent="Uif-DialogGroup" p:retrieveViaAjax="true"
           p:enterKeyAction="Workload-SaveFlex-Button"
+          p:readOnly="@{!canEdit}"
           p:headerText="@{#form.workloadLineItemEdit.personName}">
 
         <property name="destroyDialogOnHidden" value="true"/>

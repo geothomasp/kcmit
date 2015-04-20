@@ -5,7 +5,8 @@
 
 
     <bean id="Workload-Unit-Edit" parent="Uif-DialogGroup" p:retrieveViaAjax="true"
-          p:headerText="@{#form.workloadLineItemEdit.personName}" p:dialogCssClass="modal-lg">
+          p:headerText="@{#form.workloadLineItemEdit.personName}" p:dialogCssClass="modal-lg"
+          p:readOnly="@{!canEdit}">
         <property name="destroyDialogOnHidden" value="true"/>
         <property name="items">
             <list>

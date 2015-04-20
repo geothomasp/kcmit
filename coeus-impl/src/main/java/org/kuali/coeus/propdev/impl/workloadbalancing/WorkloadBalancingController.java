@@ -30,9 +30,11 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.criteria.QueryResults;
 import org.kuali.rice.krad.data.PersistenceOption;
+import org.kuali.rice.krad.exception.DocumentAuthorizationException;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.uif.field.AttributeQueryResult;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +88,13 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
     @RequestMapping(params = "methodToCall=start")
     public ModelAndView start(
             @ModelAttribute("KualiForm") WorkloadForm form) throws Exception {
-        // Get collection of sponsors
-        List<String> sponsors = getSponsorHierarchyDao().getUniqueNamesAtLevel(WL_HIERARCHY_NAME, 1);
+    	boolean canView=hasEditPermission(form);
+    	if(!canView)
+    	{
+    		throw new DocumentAuthorizationException(GlobalVariables.getUserSession().getPerson().getPrincipalId(), "Edit/View", "WorkLoad Balancing");    	
+    	}
+    	// Get collection of sponsors
+    	List<String> sponsors = getSponsorHierarchyDao().getUniqueNamesAtLevel(WL_HIERARCHY_NAME, 1);
         Collections.sort(sponsors);
         form.setSponsors(sponsors);
 
@@ -754,10 +761,13 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
     @RequestMapping(params = "methodToCall=enterSimulationMode")
     public ModelAndView enterSimulationMode(@ModelAttribute("KualiForm") WorkloadForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+    	if(hasSimulationPermission()){
         form.setSimulationMode(true);
         copyCurrentWorkloadToSimulation(form);
         getGlobalVariableService().getMessageMap().putInfoForSectionId("Workload-Table", "workload.info.simulationFromCurrent");
-
+    	}else{
+    	getGlobalVariableService().getMessageMap().putInfoForSectionId("Workload-Table", "workload.info.simulationPermission");
+    	}
         return getRefreshControllerService().refresh(form);
     }
 

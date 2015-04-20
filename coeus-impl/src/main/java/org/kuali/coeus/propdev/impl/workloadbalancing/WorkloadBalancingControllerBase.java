@@ -2,6 +2,8 @@ package org.kuali.coeus.propdev.impl.workloadbalancing;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
@@ -9,6 +11,7 @@ import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.document.TransactionalDocumentControllerService;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.rice.krad.web.service.CollectionControllerService;
 import org.kuali.rice.krad.web.service.FileControllerService;
@@ -76,6 +79,14 @@ public class WorkloadBalancingControllerBase {
 	@Autowired
 	@Qualifier("globalVariableService")
 	private GlobalVariableService globalVariableService;
+	
+	@Autowired
+	@Qualifier("kcAuthorizationService")
+	private KcAuthorizationService kraAuthorizationService;
+	 
+	@Autowired
+	@Qualifier("unitAuthorizationService")
+    private UnitAuthorizationService unitAuthorizationService;
 
 
 	public ModelAndView save(WorkloadForm form, BindingResult result,
@@ -85,6 +96,23 @@ public class WorkloadBalancingControllerBase {
 		getDataObjectService().save(form);
 		return getModelAndViewService().getModelAndView(form);
 	}
+	
+     protected boolean hasSimulationPermission() {
+    	 String userId = GlobalVariables.getUserSession().getPrincipalId();
+         return unitAuthorizationService.hasPermission(userId,"KC-PD","Run_WL_Simulation");
+     }
+     protected boolean hasEditPermission(WorkloadForm form) {
+     	boolean canView=false;
+        String userId = GlobalVariables.getUserSession().getPrincipalId();
+        if(unitAuthorizationService.hasPermission(userId,"KC-PD","View_WL"))
+           canView=true;
+        if(unitAuthorizationService.hasPermission(userId,"KC-PD","Edit_WL"))
+        {
+           canView=true;
+           form.setCanEdit(true) ;
+        }
+         return canView;
+     }
 
 	public UifExportControllerService getUifExportControllerService() {
 		return uifExportControllerService;
@@ -200,5 +228,20 @@ public class WorkloadBalancingControllerBase {
 			GlobalVariableService globalVariableService) {
 		this.globalVariableService = globalVariableService;
 	}
+	
+	protected KcAuthorizationService getKraAuthorizationService() {
+	      return kraAuthorizationService;
+	}
+    public void setKraAuthorizationService(KcAuthorizationService kraAuthorizationService) {
+	      this.kraAuthorizationService = kraAuthorizationService;
+	}
+    public UnitAuthorizationService getUnitAuthorizationService() {
+		return unitAuthorizationService;
+	}
+	public void setUnitAuthorizationService(
+		UnitAuthorizationService unitAuthorizationService) {
+		this.unitAuthorizationService = unitAuthorizationService;
+	}
+	    
 
 }
