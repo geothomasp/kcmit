@@ -4,7 +4,7 @@
 <c:set var="action" value="award"/>
   <table style="border: 1px solid rgb(147, 147, 147); padding: 0px; width: 97%; border-collapse: collapse;">
     <tr>
-      <th colspan="6" style="border-style: solid; text-align: left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Award ${node.bo.awardNumber} Accnt# ${node.bo.accountNumber} PI-${node.bo.principalInvestigatorName}</th>
+      <th colspan="6" style="border-style: solid; text-align: left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Award ${node.bo.awardNumber} Acct# ${node.bo.accountNumber} PI-${node.bo.principalInvestigatorName}</th>
     </tr>    
     <tr>
       <th colspan="8" style="border-style: solid; text-align:left; border-color: rgb(230, 230, 230) rgb(147, 147, 147) rgb(147, 147, 147); border-width: 1px; padding: 3px; border-collapse: collapse; background-color: rgb(184, 184, 184); background-image: none;">Attachments</th>
