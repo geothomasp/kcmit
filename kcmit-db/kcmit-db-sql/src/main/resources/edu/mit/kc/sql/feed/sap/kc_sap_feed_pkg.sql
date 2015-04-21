@@ -1249,32 +1249,57 @@ end fn_init_lead_unit;
 function fn_get_money_and_dates return number is
 /***************************************************************************/
 
+li_Count					NUMBER;
 begin
 
 --Change made for March 2000 release.
 --Need to get the amount for the transaction_id.
 --earlier we were retrieving max amount sequence for the given sequence_number
 BEGIN
-  SELECT AWARD_AMOUNT_INFO.OBLIGATION_EXPIRATION_DATE,
+	
+	SELECT count(s0.DOC_HDR_ID) INTO li_Count from KREW_DOC_HDR_T s0 
+	inner join TIME_AND_MONEY_DOCUMENT s1 on s0.DOC_HDR_ID = s1.DOCUMENT_NUMBER
+	where s1.AWARD_NUMBER = gs_award_number
+	and s0.DOC_HDR_STAT_CD = 'F';
+	
+	IF(li_Count > 0) THEN
+  		SELECT AWARD_AMOUNT_INFO.OBLIGATION_EXPIRATION_DATE,
          AWARD_AMOUNT_INFO.ANTICIPATED_TOTAL_AMOUNT,
          AWARD_AMOUNT_INFO.AMOUNT_OBLIGATED_TO_DATE
-	INTO  gd_exp_date,
+		INTO  gd_exp_date,
 		  gn_anticipated_total,
 		  gn_obligated_total
-    FROM AWARD_AMOUNT_INFO
-	WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number 
-	AND     AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
+    	FROM AWARD_AMOUNT_INFO
+		WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number 
+		AND     AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
 														where    t1.AWARD_NUMBER =	AWARD_AMOUNT_INFO.AWARD_NUMBER	
 														and t1.tnm_document_number in ( select s0.DOC_HDR_ID from KREW_DOC_HDR_T s0 
 																						inner join TIME_AND_MONEY_DOCUMENT s1 on s0.DOC_HDR_ID = s1.DOCUMENT_NUMBER
 																						where s1.AWARD_NUMBER = gs_award_number
 																						and s0.DOC_HDR_STAT_CD = 'F')
 														)
-	AND		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) = ( SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
+		AND		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) = ( SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
 																	FROM   AWARD_AMOUNT_INFO AMOUNT3
 															WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
 															 AND    AWARD_AMOUNT_INFO.SEQUENCE_NUMBER  = AMOUNT3.SEQUENCE_NUMBER
 															 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
+	ELSE
+  		SELECT AWARD_AMOUNT_INFO.OBLIGATION_EXPIRATION_DATE,
+         AWARD_AMOUNT_INFO.ANTICIPATED_TOTAL_AMOUNT,
+         AWARD_AMOUNT_INFO.AMOUNT_OBLIGATED_TO_DATE
+    	FROM AWARD_AMOUNT_INFO
+		WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number 
+		AND		AWARD_AMOUNT_INFO.SEQUENCE_NUMBER =		 ( SELECT MAX(AMOUNT2.SEQUENCE_NUMBER) FROM AWARD_AMOUNT_INFO AMOUNT2
+													WHERE AMOUNT2.TNM_DOCUMENT_NUMBER IS NULL AND AMOUNT2.AWARD_NUMBER = AWARD_AMOUNT_INFO.AWARD_NUMBER
+													and	AMOUNT2.SEQUENCE_NUMBER <= gi_sequence_number)
+		AND		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) = ( SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
+																	FROM   AWARD_AMOUNT_INFO AMOUNT3
+															WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
+															 AND    AWARD_AMOUNT_INFO.SEQUENCE_NUMBER  = AMOUNT3.SEQUENCE_NUMBER
+															 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
+
+	END IF;
+	
 EXCEPTION
 WHEN OTHERS THEN
  upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_get_money_and_dates, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
