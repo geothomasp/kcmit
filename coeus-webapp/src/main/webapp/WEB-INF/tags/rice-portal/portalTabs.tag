@@ -50,7 +50,7 @@
 
     </c:if>
 
-          <li><a href="${ConfigProperties.application.url}" title="KRAD Portal">KRAD Portal</a></li>
+          <li><a href="${ConfigProperties.application.url}" title="Kuali Coeus Home">HOME</a></li>
 
           <li class="feedback right-nav">
           <a class="portal_link" href="${ConfigProperties.feedback.link.url}" target="_blank" title="${ConfigProperties.feedback.link.text}">${ConfigProperties.feedback.link.text}</a>
