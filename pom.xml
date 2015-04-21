@@ -6,7 +6,7 @@
   
  <groupId>edu.mit.kc</groupId>
   <artifactId>kcmit</artifactId>
-  <version>6.0.1.1</version>
+  <version>6.0.2.1</version>
   <packaging>pom</packaging>
   <name>MIT Kuali Coeus</name>
   <description>MIT Kuali Coeus Project. This is the aprent project for all modules starting from 6.0. This project gets overlaid with Coeus project and shade plugin</description>
@@ -35,7 +35,7 @@
         <bouncycastle.version>1.51</bouncycastle.version>
         <cglib-nodep.version>3.1</cglib-nodep.version>
         <coeus-api.version>6.0.0.1</coeus-api.version>
-        <coeus-s2sgen.version>6.0.1</coeus-s2sgen.version>
+        <coeus-s2sgen.version>6.0.3</coeus-s2sgen.version>
         <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -72,9 +72,10 @@
         <jetty.version>${jetty9.version}</jetty.version>
         <jmock.version>2.6.0</jmock.version>
         <joda-time.version>2.4</joda-time.version>
+        <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
         <jsp.version>2.2.1</jsp.version>
         <jstl.version>1.2.1</jstl.version>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.12</junit.version>
         <kuali-cm.version>1.2.8</kuali-cm.version>
         <log4j.version>1.2.17</log4j.version>
         <logkit.version>1.2</logkit.version>
@@ -91,10 +92,11 @@
         <org.eclipse.persistence.version>2.5.2</org.eclipse.persistence.version>
         <pdfbox.version>1.8.6</pdfbox.version>
         <quartz.version>1.8.4</quartz.version>
-        <rice.version>2.5.3.0-kckualico</rice.version>
+        <rice.version>2.5.3.1504.1-kckualico</rice.version>
         <servlet.version>3.0.1</servlet.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring.version>3.2.12.RELEASE</spring.version>
+        <spring-security.version>3.2.7.RELEASE</spring-security.version>
         <spring-modules-ojb.version>0.8a</spring-modules-ojb.version>
         <struts.version>1.3.10</struts.version>
         <validation-api.version>1.0.0.GA</validation-api.version>
@@ -106,6 +108,9 @@
         <xmlsec.version>1.5.6</xmlsec.version>
         <xstream.version>1.2.2</xstream.version>
         <extra-enforcer-rules.version>1.0-beta-2</extra-enforcer-rules.version>
+        <cas-client-core.version>3.3.3</cas-client-core.version>
+        <moo-mvel.version>2.0</moo-mvel.version>
+        <mvel.version>2.1.8.Final</mvel.version>
 
         <!-- plugin versions -->
         <cxf-codegen-plugin.version>${cxf.version}</cxf-codegen-plugin.version>
@@ -116,19 +121,21 @@
         <jspc-maven-plugin.version>2.0.0</jspc-maven-plugin.version>
         <license-maven-plugin.version>1.6.4</license-maven-plugin.version>
         <maven-clean-plugin.version>2.6.1</maven-clean-plugin.version>
-        <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
-        <maven-dependency-plugin.version>2.9</maven-dependency-plugin.version>
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
-        <maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
-        <maven-failsafe-plugin.version>2.18</maven-failsafe-plugin.version>
+        <maven-enforcer-plugin.version>1.4</maven-enforcer-plugin.version>
+        <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
         <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-        <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>2.10.1</maven-javadoc-plugin.version>
+        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>2.5.1</maven-release-plugin.version>
         <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
+        <maven-scm-provider-gitexe.version>1.9.4</maven-scm-provider-gitexe.version>
         <maven-site-plugin.version>3.4</maven-site-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
-        <maven-surefire-plugin.version>2.18</maven-surefire-plugin.version>
-        <maven-war-plugin.version>2.5</maven-war-plugin.version>
+        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+        <maven-war-plugin.version>2.6</maven-war-plugin.version>
         <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
         <tomcat7-maven-plugin.version>${tomcat-maven-plugin.version}</tomcat7-maven-plugin.version>
         <xmlbeans-maven-plugin.version>2.3.3</xmlbeans-maven-plugin.version>
@@ -144,7 +151,7 @@
         <surefire.failIfNoTests>false</surefire.failIfNoTests>
         <surefire.forkCount>1</surefire.forkCount>
         <surefire.reuseForks>true</surefire.reuseForks>
-        <surefire.argLine></surefire.argLine>
+        <surefire.argLine />        
         <surefire.aggregate>true</surefire.aggregate>
         <surefire.skipTests>false</surefire.skipTests>
 
@@ -155,7 +162,8 @@
         <failsafe.failIfNoTests>false</failsafe.failIfNoTests>
         <failsafe.forkCount>1</failsafe.forkCount>
         <failsafe.reuseForks>true</failsafe.reuseForks>
-        <failsafe.argLine>-Xmx1024m -XX:MaxPermSize=512m ${javaagent.arg}</failsafe.argLine>
+	    <failsafe.memOpts>-Xmx1536m -XX:MaxPermSize=512m</failsafe.memOpts>
+        <failsafe.argLine>${failsafe.memOpts} ${javaagent.arg}</failsafe.argLine>
         <failsafe.aggregate>true</failsafe.aggregate>
         <failsafe.skipITs>true</failsafe.skipITs>
         <failsafe.include>**/*Test.java</failsafe.include>
@@ -177,18 +185,20 @@
         <project.compile.target>${project.java.version}</project.compile.target>
         <enforcer.require.java.version>${project.java.version}</enforcer.require.java.version>
         <enforcer.max.jdk.version>${project.java.version}</enforcer.max.jdk.version>
+        <javadoc.maxmemory>3g</javadoc.maxmemory>
 
         <!-- defaults to dev unless overriden -->
         <build.environment>dev</build.environment>
+        <build.spring.profiles.active />
 
         <!-- This is used in the licenses section as well as the jar/war plugins -->
         <kuali.agpl3.license.url>http://www.gnu.org/licenses/agpl-3.0.txt</kuali.agpl3.license.url>
 
         <maven.skip.packaging>false</maven.skip.packaging>
 
-        <error_prone_core.version>1.1.2</error_prone_core.version>
-        <plexus-compiler-javac.version>2.3</plexus-compiler-javac.version>
-        <plexus-compiler-javac-errorprone.version>2.3</plexus-compiler-javac-errorprone.version>
+        <error_prone_core.version>2.0.2</error_prone_core.version>
+        <plexus-compiler-javac.version>2.5</plexus-compiler-javac.version>
+        <plexus-compiler-javac-errorprone.version>2.5</plexus-compiler-javac-errorprone.version>
     </properties>
 
     <build>
@@ -264,8 +274,10 @@
                                         <phases>clean,deploy,site</phases>
                                     </requirePluginVersions>
 
-                                    <banCircularDependencies/>
-                                    <DependencyConvergence/>
+                                    <banCircularDependencies />
+                                    <DependencyConvergence />
+                                    <reactorModuleConvergence />
+                                    
                                     <!-- when executed from eclipse it fails
                                      <enforceBytecodeVersion>
                                      <maxJdkVersion>${enforcer.max.jdk.version}</maxJdkVersion>
@@ -480,10 +492,27 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <maxmemory>${javadoc.maxmemory}</maxmemory>
+                    </configuration>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-gitexe</artifactId>
+                            <version>${maven-scm-provider-gitexe.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven-resources-plugin.version}</version>
                 </plugin>
@@ -921,6 +950,12 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time-jsptags</artifactId>
+                <version>${joda-time-jsptags.version}</version>
             </dependency>
 
             <dependency>
@@ -1882,6 +1917,30 @@
                 <artifactId>spring-webmvc</artifactId>
                 <version>${spring.version}</version>
             </dependency>
+            
+            <dependency>
+            	<groupId>org.springframework</groupId>
+            	<artifactId>spring-expression</artifactId>
+            	<version>${spring.version}</version>
+            </dependency>
+
+			<dependency>
+			       <groupId>org.springframework.security</groupId>
+			       <artifactId>spring-security-core</artifactId>
+			       <version>${spring-security.version}</version>
+			</dependency>            
+			<dependency>
+			       <groupId>org.springframework.security</groupId>
+			       <artifactId>spring-security-web</artifactId>
+			       <version>${spring-security.version}</version>
+			</dependency>
+			<dependency>
+			        <groupId>org.springframework.security</groupId>
+			        <artifactId>spring-security-config</artifactId>
+			        <version>${spring-security.version}</version>
+			</dependency>
+
+            
             <dependency>
                 <groupId>org.springmodules</groupId>
                 <artifactId>spring-modules-ojb</artifactId>

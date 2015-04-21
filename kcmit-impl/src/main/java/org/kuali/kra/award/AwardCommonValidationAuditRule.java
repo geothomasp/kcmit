@@ -70,7 +70,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	}
 	 if (!retvalSpReview) {
 	    	String link4 = Constants.MAPPING_AWARD_SPECIAL_REVIEW_PAGE + "." + "SpecialReview";
-	        String messageKey = KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW;
+	        String messageKey = KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW_MAIN;
 	        String errorKey4 ="specialReviewHelper.newSpecialReview*";
 	    	auditWarnings.add(new AuditError(errorKey4, messageKey, link4));
 	    	 if (auditWarnings.size() > 0) {

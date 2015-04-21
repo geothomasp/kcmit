@@ -19,11 +19,13 @@ import org.kuali.kra.award.contacts.AwardPerson;
 import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardSponsorTerm;
+import org.kuali.kra.award.home.fundingproposal.AwardFundingProposal;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
 import org.kuali.kra.award.paymentreports.awardreports.reporting.ReportTracking;
 import org.kuali.kra.award.specialreview.AwardSpecialReview;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
 import org.kuali.coeus.common.framework.module.CoeusModule;
@@ -217,6 +219,43 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
 		}
 		return false;
 	}
+}}else{
+	String moduleSubItemCode="";
+	String moduleItemCode = ""; 
+	 moduleItemCode = CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE;
+	moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
+	//List<AwardFundingProposal> instProp=award.getFundingProposals();
+	for(AwardFundingProposal fundingProp: award.getFundingProposals()){
+	//Long instProp=fundingProp.getProposalId();
+	
+	}
+	for (AwardPerson person : award.getProjectPersons()) {
+	ModuleQuestionnaireBean moduleQuestionnaireBean=	getQuestionnaireAnswerService().getModuleSpecificBean(moduleItemCode,person.getPersonId(),moduleSubItemCode,"0", false);	
+		List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
+				QuestionnaireAnswerService.class).getQuestionnaireAnswer(
+				moduleQuestionnaireBean);
+		if(answerHeaders!=null && !answerHeaders.isEmpty()){
+		for (AnswerHeader header : answerHeaders) {
+			List<Answer> answers = header.getAnswers();
+			if(answers!=null && !answers.isEmpty()){
+			for (Answer answer : answers) {
+
+				if ((answer.getQuestion()!=null && answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
+					
+						if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
+							 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+					         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+							return false;
+						}
+					
+					if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
+						return true;
+					}
+				}
+			}}
+		}}
+	}
 }}
 /*if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
 	return false;
@@ -265,7 +304,7 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
 	}
 }}
 		*/
-}
+
   return true;
     }
     public boolean validateSponsorCodeIsNIH (Award award) {

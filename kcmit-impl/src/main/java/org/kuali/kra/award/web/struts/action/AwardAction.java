@@ -155,6 +155,8 @@ public class AwardAction extends BudgetParentActionBase {
     private static final String SUPER_USER_ACTION_REQUESTS = "superUserActionRequests";
     private static final Integer AWARD_STATUS_HOLD =6;    
     private KcAuthorizationService kraAuthorizationService;
+    
+   
     private enum SuperUserAction {
         SUPER_USER_APPROVE, TAKE_SUPER_USER_ACTIONS
     }
@@ -410,8 +412,8 @@ public class AwardAction extends BudgetParentActionBase {
     protected ActionForward submitAward(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm) form;
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
-        
-        updatingSapFeedDetails(awardForm);
+       
+        getSapFeedService().updateSapFeedDetails(awardForm.getAwardDocument().getAward().getAwardNumber(),awardForm.getAwardDocument().getAward().getSequenceNumber());
         
         if(getTimeAndMoneyExistenceService().validateTimeAndMoneyRule(awardForm.getAwardDocument().getAward(), awardForm.getAwardHierarchyBean().getRootNode().getAwardNumber())){
             forward = super.route(mapping, form, request, response);
@@ -2126,59 +2128,7 @@ public class AwardAction extends BudgetParentActionBase {
        
     }
     
-    public void updatingSapFeedDetails(AwardForm form) {
-		String feedType = null;
-		String feedStatus = null;
-		String newAwardNumber = form.getAwardDocument().getAward().getAwardNumber();
-		Integer newSequenceNumber = form.getAwardDocument().getAward().getSequenceNumber();
-		BusinessObjectService businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
-		HashMap<String, String> fieldValues = new HashMap<String, String>();
-		fieldValues.put("awardNumber", newAwardNumber);
-		
-		// Get sapfeed details
-		List<SapFeedDetails> sapFeedDetails = (List<SapFeedDetails>) businessObjectService.findMatchingOrderBy(SapFeedDetails.class, fieldValues, "sequenceNumber", false);
-
-		if (sapFeedDetails != null && sapFeedDetails.size() > 0) {
-		SapFeedDetails latestFeedDetails=sapFeedDetails.get(0);
-		
-		if (latestFeedDetails.getFeedStatus().equals("F") && latestFeedDetails.getFeedType().equals("N") ){
-			  	feedType = "C";
-			  	feedStatus = "F";
-			  	latestFeedDetails.setFeedType(feedType);
-			  	latestFeedDetails.setSequenceNumber(newSequenceNumber);
-			  	latestFeedDetails.setFeedStatus(feedStatus);
-			  	getBusinessObjectService().save(latestFeedDetails);
-			}
-		else if(latestFeedDetails.getFeedStatus().equals("E") && latestFeedDetails.getFeedType().equals("N")){
-				feedType = "N";
-				feedStatus = "P";
-				getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
-			}
-		else if(latestFeedDetails.getFeedStatus().equals("R")){
-			feedType = "N";
-			feedStatus = "P";
-			getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
-		}
-		else if(latestFeedDetails.getFeedStatus().equals("P") && latestFeedDetails.getFeedType().equals("N")){
-			feedType = "C";
-			feedStatus = "P";
-			getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
-		}
-		else{
-				feedType = "C";
-			  	feedStatus = latestFeedDetails.getFeedStatus();
-			  	latestFeedDetails.setFeedType(feedType);
-			  	latestFeedDetails.setFeedStatus(feedStatus);
-			  	latestFeedDetails.setSequenceNumber(newSequenceNumber);
-			  	getBusinessObjectService().save(latestFeedDetails);
-			}
-		}
-		 else {
-			 	feedType = "N";
-			 	feedStatus = "P";
-			 	getSapFeedService().insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
-		}
-	}
+  
 	
 	private PermissionService getPermissionService() {
         return KimApiServiceLocator.getPermissionService();

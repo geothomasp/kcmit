@@ -217,6 +217,8 @@ begin
 		
 		UPDATE SAP_BUDGET_FEED_DETAILS SET FEED_STATUS = 'F'  WHERE BATCH_ID = as_batch_id;
 		
+		UPDATE sap_budget_feed_batch_list SET no_of_records = li_no_of_records  WHERE sap_budget_feed_batch_id = li_sap_budget_feed_batch_id;
+		
 		COMMIT;		
 		
 		

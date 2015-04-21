@@ -264,5 +264,13 @@ public String coiAppointmentTypeRule(DevelopmentProposal developmentProposal);
  * This method will check Multi Pi required Certification
  */
 public String hasMultiPiRequiredCertification(DevelopmentProposal developmentProposal);
-
+/*** Create New Function "ORIGINAL INSTITUTIONAL PROPOSAL ID IS VALID"
+*  where if an IP # s entered in the field it's valid if the IP status is "Pending". 
+*/
+public boolean isOriginalIPIsValid(DevelopmentProposal developmentProposal);
+/**
+* Create New Function "PREVIOUS GRANTS.GOV TRACKING ID IS MISSING"
+* if the function is equal to true it means the field in the KC Dev Proposal is blank.
+*/
+public boolean confirmTrackingIDBlank(DevelopmentProposal developmentProposal);
 }

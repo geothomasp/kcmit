@@ -18,26 +18,6 @@
 This config file only contains properties that are set by the maven build process using property replacement.
 -->
 <config>
-	<param name="version">kc6011-s16-${timestamp}</param>
-<!-- 	<param name="KualiExceptionIncidentServiceImpl.REPORT_MAIL_LIST">kc-mit-dev@mit.edu</param>
-	<param name="mitKcBatchJobUserName">MITKC</param>
- 	<param name="kc.mit.core.mode">LOCAL</param>
- 	<param name="rolecentraldb.keystore.location">path to keystore</param>
-    <param name="rolecentraldb.keystore.password">keystore password</param>
-    <param name="rolecentraldb.truststore.location">path to truststore</param>
-    <param name="rolecentraldb.truststore.password">truststore password</param>
-	<param name="rolecentraldb.host">https://ws-test.mit.edu/rolesws/services/roles</param>
-    <param name="rolecentraldb.port">roles</param>
-    <param name="CAC.FILE">/opt/kc/feeds/cac/CAC.tab</param>
-	<param name="showPassword">true</param>
-    <param name="rice.kim.additionalSpringFiles">classpath:edu/mit/kc/MitKcKimOverridesSpringBeans.xml</param>
-    <param name="filter.login.class">org.kuali.rice.krad.web.filter.UserLoginFilter</param>
-    <param name="app.feedback.link">https://jira.mit.edu/jira/secure/CreateIssue.jspa?pid=12540&amp;issuetype=1&amp;Create=Create</param>
-    
-    Sap Feed Path
-	<param name="SAP.PRODUCTION.PATH">PROD</param>
-	<param name="SAP.TEST.PATH">TEST</param>
- -->
- 	<!--   <param name="kns.css.files">kr/css/kuali.css,kr/scripts/jscalendar-1.0/calendar-win2k-1.css,scripts/fancybox2.1.5/jquery.fancybox.css,css/kuali_application.css</param> -->
+	<param name="version">kc6021-s17-${timestamp}</param>
 	
 </config>
