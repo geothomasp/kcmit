@@ -73,18 +73,18 @@
         <property name="items">
             <list>
 
-                <bean parent="Uif-MenuAction" p:actionLabel="OSP Web Site"
-                      p:actionUrl.href="@{#ConfigProperties['mit.osp.website.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="COI"
-                      p:actionUrl.href="@{#ConfigProperties['mit.coeus.coi.application.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="NDA"
-                      p:actionUrl.href="@{#ConfigProperties['mit.nda.application.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="CITI Training"
-                      p:actionUrl.href="@{#ConfigProperties['citi.training.website.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="Grants.Gov"
-                      p:actionUrl.href="@{#ConfigProperties['grants.gov.url']}"/>
-                <bean parent="Uif-MenuAction" p:actionLabel="OSP Contacts"
-                      p:actionUrl.href="@{#ConfigProperties['mit.osp.contacts.url']}"/>
+                <bean parent="Uif-Link" p:linkText="OSP Web Site" p:target="_blank"
+                      p:href="@{#ConfigProperties['mit.osp.website.url']}"/>
+                <bean parent="Uif-Link" p:linkText="COI" p:target="_blank"
+                      p:href="@{#ConfigProperties['mit.coeus.coi.application.url']}"/>
+                <bean parent="Uif-Link" p:linkText="NDA" p:target="_blank"
+                      p:href="@{#ConfigProperties['mit.nda.application.url']}"/>
+                <bean parent="Uif-Link" p:linkText="CITI Training" p:target="_blank"
+                      p:href="@{#ConfigProperties['citi.training.website.url']}"/>
+                <bean parent="Uif-Link" p:linkText="Grants.Gov" p:target="_blank"
+                      p:href="@{#ConfigProperties['grants.gov.url']}"/>
+                <bean parent="Uif-Link" p:linkText="OSP Contacts" p:target="_blank"
+                      p:href="@{#ConfigProperties['mit.osp.contacts.url']}"/>
 
             </list>
         </property>
