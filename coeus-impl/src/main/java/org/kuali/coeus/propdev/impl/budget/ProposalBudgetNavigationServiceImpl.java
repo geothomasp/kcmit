@@ -62,6 +62,9 @@ public class ProposalBudgetNavigationServiceImpl implements  ProposalBudgetNavig
                 navigateToPageId = next? canGeneratePeriods(form)?"":SUBAWARD_PAGE_ID:ASSIGN_PERSONNEL_PAGE_ID;
                 methodToCall = next && canGeneratePeriods(form)?"readyGeneratePeriod":"";
                 break;
+            case SPE_PAGE_ID :
+                navigateToPageId = next?SUBAWARD_PAGE_ID:NON_PERSONNEL_PAGE_ID;
+                break;
             case SUBAWARD_PAGE_ID :
                 navigateToPageId = next?getSubawardNextPageId(form):getSubawardPreviousPageId(form);
                 break;
@@ -152,7 +155,7 @@ public class ProposalBudgetNavigationServiceImpl implements  ProposalBudgetNavig
 
     protected String getSubawardPreviousPageId(ProposalBudgetForm form) {
         if (!form.getBudget().getBudgetLineItems().isEmpty()) {
-            return NON_PERSONNEL_PAGE_ID;
+            return SPE_PAGE_ID;
         }
         return PERIODS_AND_TOTALS_PAGE_ID;
 
