@@ -20,6 +20,7 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedService;
 import org.kuali.coeus.sys.framework.controller.KcTransactionalDocumentActionBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.workflow.KcWorkflowService;
@@ -83,7 +84,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
     TransactionRuleImpl transactionRuleImpl;
     private ActivePendingTransactionsService activePendingTransactionsService;
     private TimeAndMoneyVersionService timeAndMoneyVersionService;
+    private SapFeedService sapFeedService;
     
+   
     @Override
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
@@ -609,6 +612,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         TimeAndMoneyForm timeAndMoneyForm = (TimeAndMoneyForm) form;
         TimeAndMoneyDocument timeAndMoneyDocument = timeAndMoneyForm.getTimeAndMoneyDocument();
         actionForward = super.route(mapping, form, request, response);  
+        
+        getSapFeedService().updateSapFeedDetails(timeAndMoneyForm.getTimeAndMoneyDocument().getAward().getAwardNumber(), timeAndMoneyForm.getTimeAndMoneyDocument().getAward().getSequenceNumber());
         // save report tracking items
         saveReportTrackingItems(timeAndMoneyForm);
         
@@ -1216,5 +1221,15 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         return KcServiceLocator.getService(ReportTrackingService.class);
     }
 
+    public SapFeedService getSapFeedService() {
+    	 if (sapFeedService == null) {
+    		 sapFeedService = KcServiceLocator.getService(SapFeedService.class);
+         }
+		return sapFeedService;
+	}
+
+	public void setSapFeedService(SapFeedService sapFeedService) {
+		this.sapFeedService = sapFeedService;
+	}
 }
 
