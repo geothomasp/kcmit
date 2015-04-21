@@ -27,6 +27,8 @@ import org.kuali.coeus.common.framework.unit.Unit;
 import org.kuali.coeus.common.framework.unit.admin.UnitAdministrator;
 import org.kuali.coeus.common.impl.sponsor.hierarchy.SponsorHierarchyDao;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.rice.core.api.criteria.OrderByField;
+import org.kuali.rice.core.api.criteria.OrderDirection;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.criteria.QueryResults;
 import org.kuali.rice.krad.data.PersistenceOption;
