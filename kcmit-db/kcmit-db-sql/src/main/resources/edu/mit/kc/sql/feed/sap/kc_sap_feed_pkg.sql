@@ -1277,8 +1277,8 @@ BEGIN
 															 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
 EXCEPTION
 WHEN OTHERS THEN
- return -1;
  upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_get_money_and_dates, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
+ return -1;
 END;
 
 return 0;
