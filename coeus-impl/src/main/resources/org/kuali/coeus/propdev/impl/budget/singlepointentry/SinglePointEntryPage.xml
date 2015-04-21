@@ -135,7 +135,7 @@
 				<bean parent="Uif-InputField" p:propertyName="endDate" p:order="20"
 					p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="costElement" 
-					p:optionsFinder="#{#getService('costElementKeyValuesFinder')}" 
+					p:optionsFinder="#{#getService('allCostElementKeyValuesFinder')}" 
 					p:optionsFinder.addBlankOption="false"
 					p:label="Object Code Name" p:order="30" p:required="true" p:readOnly="@{#line.personnelLineItem}"/>
 				<bean parent="Uif-InputField" p:propertyName="lineItemCost"
@@ -187,7 +187,7 @@
 	<bean id="PropBudget-EditSPELineItemPeriod-Section" parent="PropBudget-EditSPELineItemPeriod-Section-parent" />
 	<bean id="PropBudget-EditSPELineItemPeriod-Section-parent" abstract="true" parent="Uif-DialogGroup" 
 		p:readOnly="@{#parent.readOnly}"
-        p:onHideDialogScript="var kradRequest = new KradRequest();kradRequest.methodToCall = 'resetEditLineItem';kradRequest.ajaxReturnType = 'update-none';kradRequest.send();jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog'));});"
+        p:onHideDialogScript="jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-SinglePointEntryPage-EditNonPersonnel-Dialog'));});"
 		p:headerText="Edit Assigned Cost Element" p:enterKeyAction="@DEFAULT">
 		<property name="items">
 			<list>

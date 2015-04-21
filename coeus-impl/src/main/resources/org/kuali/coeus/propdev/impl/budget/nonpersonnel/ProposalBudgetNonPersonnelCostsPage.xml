@@ -167,7 +167,7 @@
 
 	<bean id="PropBudget-EditNonPersonnelPeriod-Section" parent="PropBudget-EditNonPersonnelPeriod-Section-parent" />
 	<bean id="PropBudget-EditNonPersonnelPeriod-Section-parent" abstract="true" parent="Uif-DialogGroup" 
-        p:onHideDialogScript="var kradRequest = new KradRequest();kradRequest.methodToCall = 'resetEditLineItem';kradRequest.ajaxReturnType = 'update-none';kradRequest.send();jQuery('#PropBudget-NonPersonnelCostsPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-NonPersonnelCostsPage-EditNonPersonnel-Dialog'));});"
+        p:onHideDialogScript="jQuery('#PropBudget-NonPersonnelCostsPage-EditNonPersonnel-Dialog').one(kradVariables.EVENTS.HIDDEN_MODAL, function(e){Kc.Dialog.resetDialogFields(jQuery('#PropBudget-NonPersonnelCostsPage-EditNonPersonnel-Dialog'));});"
 		p:headerText="Edit Assigned Non-Personnel" p:enterKeyAction="@DEFAULT">
 		<property name="items">
 			<list>
