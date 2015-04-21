@@ -324,8 +324,9 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
         form.getAbsenteeListEdit().clear();
         Map<String, Object> criteria = new HashMap<String, Object>();
         criteria.put(PERSON_ID, personId);
+        OrderByField sort = OrderByField.Builder.create("leaveStartDate", OrderDirection.DESCENDING).build();
         QueryResults<WlAbsentee> absentees = getDataObjectService().findMatching(WlAbsentee.class,
-                QueryByCriteria.Builder.andAttributes(criteria).build());
+                QueryByCriteria.Builder.andAttributes(criteria).setOrderByFields(sort).build());
 
         for (WlAbsentee absentee : absentees.getResults()) {
             AbsenteeWrapper absenteeWrapper = new AbsenteeWrapper(absentee);
@@ -535,9 +536,7 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
     public ModelAndView addAbsence(@ModelAttribute("KualiForm") WorkloadForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         String personId = form.getWorkloadLineItemEdit().getWlCapacity().getPersonId();
-
-        ModelAndView modelAndView = getCollectionControllerService().addLine(form);
-        AbsenteeWrapper wrapper = ((AbsenteeWrapper) form.getAddedCollectionItems().get(form.getAddedCollectionItems().size() - 1));
+        AbsenteeWrapper wrapper = (AbsenteeWrapper) form.getNewCollectionLines().get("absenteeListEdit");
 
         WlAbsentee newAbsentee = wrapper.getAbsentee();
         newAbsentee.setPersonId(personId);
@@ -545,6 +544,21 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
         // Translate the time into the date value and set
         newAbsentee.setLeaveStartDate(WorkloadUtils.translateTimeToDate(newAbsentee.getLeaveStartDate(), wrapper.getLeaveStartHour()));
         newAbsentee.setLeaveEndDate(WorkloadUtils.translateTimeToDate(newAbsentee.getLeaveEndDate(), wrapper.getLeaveEndHour()));
+
+        if (newAbsentee.getLeaveEndDate().getTime() < newAbsentee.getLeaveStartDate().getTime()) {
+            form.getAbsenteeListEdit().remove(wrapper);
+            getGlobalVariableService().getMessageMap().putError("newCollectionLines['absenteeListEdit'].absentee.leaveEndDate", "workload.error.endDateLessThanStart");
+            form.setUpdateComponentId("Workload-Absentee-Add-Dialog");
+            return getRefreshControllerService().refresh(form);
+        } else if (newAbsentee.getLeaveStartDate().getTime() < System.currentTimeMillis()) {
+            form.getAbsenteeListEdit().remove(wrapper);
+            getGlobalVariableService().getMessageMap().putError("newCollectionLines['absenteeListEdit'].absentee.leaveStartDate", "workload.error.startDateLessThanToday");
+            form.setUpdateComponentId("Workload-Absentee-Add-Dialog");
+            return getRefreshControllerService().refresh(form);
+        }
+
+        ModelAndView modelAndView = getCollectionControllerService().addLine(form);
+        //AbsenteeWrapper wrapper = ((AbsenteeWrapper) form.getAddedCollectionItems().get(form.getAddedCollectionItems().size() - 1));
 
         getDataObjectService().save(newAbsentee);
 
@@ -606,6 +620,16 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
         // Translate the time into the date value and set
         updatedAbsentee.setLeaveStartDate(WorkloadUtils.translateTimeToDate(updatedAbsentee.getLeaveStartDate(), wrapper.getLeaveStartHour()));
         updatedAbsentee.setLeaveEndDate(WorkloadUtils.translateTimeToDate(updatedAbsentee.getLeaveEndDate(), wrapper.getLeaveEndHour()));
+
+        if (updatedAbsentee.getLeaveEndDate().getTime() < updatedAbsentee.getLeaveStartDate().getTime()) {
+            getGlobalVariableService().getMessageMap().putError("absenteeEdit.absentee.leaveEndDate", "workload.error.endDateLessThanStart");
+            form.setUpdateComponentId("Workload-AbsenceEdit-Dialog");
+            return getRefreshControllerService().refresh(form);
+        }  else if (updatedAbsentee.getLeaveStartDate().getTime() < System.currentTimeMillis()) {
+            getGlobalVariableService().getMessageMap().putError("absenteeEdit.absentee.leaveStartDate", "workload.error.startDateLessThanToday");
+            form.setUpdateComponentId("Workload-AbsenceEdit-Dialog");
+            return getRefreshControllerService().refresh(form);
+        }
 
         getDataObjectService().save(updatedAbsentee);
 

@@ -1,96 +1,86 @@
-	add foreign key narrative_attachment_fk1 (file_data_id) references file_data (id)
-	                *
-ERROR at line 2:
-ORA-00906: missing left parenthesis 
+
+Table altered.
 
 
-	add foreign key eps_prop_person_bio_attach_fk1 (file_data_id) references file_data (id)
-	                *
-ERROR at line 2:
-ORA-00906: missing left parenthesis 
+Table altered.
 
 
-ALTER TABLE FILE_DATA MODIFY ID VARCHAR2(36) CHARACTER SET utf8 COLLATE utf8_bin
-                                             *
+Function created.
+
+ALTER TABLE BUDGET_SUB_AWARDS ADD FILE_DATA_ID VARCHAR2(36)
+                                  *
 ERROR at line 1:
-ORA-01735: invalid ALTER TABLE option 
+ORA-01430: column being added already exists in table 
 
 
-
-Table altered.
-
-
-Table altered.
-
-
-2 rows updated.
+ALTER TABLE BUDGET_SUB_AWARDS ADD XML_DATA_ID VARCHAR2(36)
+                                  *
+ERROR at line 1:
+ORA-01430: column being added already exists in table 
 
 
-1 row updated.
+UPDATE BUDGET_SUB_AWARDS SET FILE_DATA_ID = SYS_GUID() WHERE SUB_AWARD_XFD_FILE IS NOT NULL
+                                                             *
+ERROR at line 1:
+ORA-00904: "SUB_AWARD_XFD_FILE": invalid identifier 
+
+
+UPDATE BUDGET_SUB_AWARDS SET XML_DATA_ID = SYS_GUID() WHERE SUB_AWARD_XML_FILE IS NOT NULL
+                                                            *
+ERROR at line 1:
+ORA-00904: "SUB_AWARD_XML_FILE": invalid identifier 
+
 
 INSERT INTO FILE_DATA (SELECT FILE_DATA_ID, SUB_AWARD_XFD_FILE FROM BUDGET_SUB_AWARDS WHERE FILE_DATA_ID IS NOT NULL)
                                             *
 ERROR at line 1:
-ORA-00932: inconsistent datatypes: expected CHAR got BLOB 
-
-
-INSERT INTO FILE_DATA (SELECT XML_DATA_ID, SUB_AWARD_XML_FILE FROM BUDGET_SUB_AWARDS WHERE XML_DATA_ID IS NOT NULL)
-                                           *
-ERROR at line 1:
-ORA-22835: Buffer too small for CLOB to CHAR or BLOB to RAW conversion (actual: 
-8259, maximum: 4000) 
+ORA-00904: "SUB_AWARD_XFD_FILE": invalid identifier 
 
 
 
 Table altered.
 
-
-Table altered.
-
-ALTER TABLE BUDGET_SUB_AWARDS ADD FOREIGN KEY FK2_BUDGET_SUB_AWARDS (FILE_DATA_ID) REFERENCES FILE_DATA (ID)
-                                              *
-ERROR at line 1:
-ORA-00906: missing left parenthesis 
-
-
-ALTER TABLE BUDGET_SUB_AWARDS ADD FOREIGN KEY FK3_BUDGET_SUB_AWARDS (XML_DATA_ID) REFERENCES FILE_DATA (ID)
-                                              *
-ERROR at line 1:
-ORA-00906: missing left parenthesis 
-
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Does this proposal include a request for EArly-concept Grants for Exploratory Research? EAGER (GPG, Chapter II.D.2)' AND SEQUENCE_NUMBER = 1),4,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
-                                                                                                                                                                                 *
+    ADD CONSTRAINT FK3_BUDGET_SUB_AWARDS
+                   *
 ERROR at line 2:
-ORA-01400: cannot insert NULL into 
-("KCSO"."QUESTIONNAIRE_QUESTIONS"."QUESTION_REF_ID_FK") 
+ORA-02298: cannot validate (KCSO.FK3_BUDGET_SUB_AWARDS) - parent keys not found 
+
+
+DECLARE
+*
+ERROR at line 1:
+ORA-00904: "SUB_AWARD_XML_FILE": invalid identifier 
+ORA-06512: at line 7 
+
+
+ALTER TABLE BUDGET_SUB_AWARDS DROP COLUMN SUB_AWARD_XFD_FILE
+                                          *
+ERROR at line 1:
+ORA-00904: "SUB_AWARD_XFD_FILE": invalid identifier 
+
+
+ALTER TABLE BUDGET_SUB_AWARDS DROP COLUMN SUB_AWARD_XML_FILE
+                                          *
+ERROR at line 1:
+ORA-00904: "SUB_AWARD_XML_FILE": invalid identifier 
+
+
+INSERT INTO S2S_ERROR (S2S_ERROR_ID, MESSAGE_KEY, MESSAGE, FIX_LINK, UPDATE_TIMESTAMP, UPDATE_USER, VER_NBR, OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.UQ_S2S_ERROR) violated 
+
+
+insert into NARRATIVE_TYPE (NARRATIVE_TYPE_CODE,DESCRIPTION,SYSTEM_GENERATED,ALLOW_MULTIPLE,UPDATE_TIMESTAMP,UPDATE_USER,NARRATIVE_TYPE_GROUP,VER_NBR,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.NARRATIVE_TYPEP1) violated 
+
+
+insert into NARRATIVE_TYPE (NARRATIVE_TYPE_CODE,DESCRIPTION,SYSTEM_GENERATED,ALLOW_MULTIPLE,UPDATE_TIMESTAMP,UPDATE_USER,NARRATIVE_TYPE_GROUP,VER_NBR,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.NARRATIVE_TYPEP1) violated 
 
 
 
@@ -99,67 +89,146 @@ ORA-01400: cannot insert NULL into
 
 1 row created.
 
-VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Did you ensure both merit review criteria are described as an integral part of the narrative? See GPG Chapter II.C.2.d(I).2.' AND SEQUENCE_NUMBER = 1),7,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
-                                                                                                                                                                                 *
+
+1 row created.
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Are you currently serving (or have previously served) as a PI, co-PI or Program Director (PD) on any Federally funded project?' AND SEQUENCE_NUMBER = 1),1,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
 ERROR at line 2:
-ORA-01400: cannot insert NULL into 
-("KCSO"."QUESTIONNAIRE_QUESTIONS"."QUESTION_REF_ID_FK") 
+ORA-01427: single-row subquery returns more than one row 
 
 
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Are you an NSF Beginning Investigator (GPG Chapter I.G.2)?' AND SEQUENCE_NUMBER = 1),2,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
 
-1 row created.
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Does this proposal include a request for Rapid Response Grants? RAPID (GPG, Chapter II.D.1)' AND SEQUENCE_NUMBER = 1),3,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
+
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Does this proposal include a request for EArly-concept Grants for Exploratory Research?  EAGER (GPG, Chapter II.D.2)' AND SEQUENCE_NUMBER = 1),4,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
+
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Is this proposal an NSF Accomplishment Based renewal? (GPG, Chapter V.B.)' AND SEQUENCE_NUMBER = 1),5,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
+
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Is this a new full application related to a submission of a preliminary application?' AND SEQUENCE_NUMBER = 1),6,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
+
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Did you ensure both merit review criteria are described as an integral part of the narrative?  See GPG Chapter II.C.2.d(I).2.' AND SEQUENCE_NUMBER = 1),7,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
+
+
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Does your proposal include funding to support postdoctoral researcher(s)?' AND SEQUENCE_NUMBER = 1),8,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
+
 
 VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Results from prior NSF support: Has the PI or any co-PI identified on the project received NSF funding in the past five (5) years?' AND SEQUENCE_NUMBER = 1),9,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
-                                                                                                                                                                                 *
+                                          *
 ERROR at line 2:
-ORA-01400: cannot insert NULL into 
-("KCSO"."QUESTIONNAIRE_QUESTIONS"."QUESTION_REF_ID_FK") 
+ORA-01427: single-row subquery returns more than one row 
 
 
 
 1 row created.
 
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Select a Funding Mechanism' AND SEQUENCE_NUMBER = 1),10,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
 
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
 
 
 1 row created.
 
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL,(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),(SELECT max(QUESTION_REF_ID) FROM QUESTION WHERE QUESTION = 'Have lobbying activities been conducted on behalf of this proposal? Disclosure of Lobbying Activities (GPG, Chapter II.C.1.e)' AND SEQUENCE_NUMBER = 1),11,0,1,'N',null,null,'admin',sysdate,sys_guid(),1)
+                                          *
+ERROR at line 2:
+ORA-01427: single-row subquery returns more than one row 
 
 
-1 row created.
+(SELECT QUESTIONNAIRE_REF_ID FROM QUESTIONNAIRE WHERE NAME = 'NSF cover page 1-6 supporting questions' AND SEQUENCE_NUMBER = 1),
+ *
+ERROR at line 3:
+ORA-01427: single-row subquery returns more than one row 
 
 
-1 row created.
+VALUES (SEQ_QUESTIONNAIRE_REF_ID.NEXTVAL, 'http://apply.grants.gov/forms/NSF_CoverPage_1_6-V1.6', 'NSF_CoverPage_1_6-V1.6', (select questionnaire_id from questionnaire where name='NSF cover page 1-6 supporting questions'), sysdate, 'admin', sys_guid(), '1')
+                                                                                                                             *
+ERROR at line 3:
+ORA-01427: single-row subquery returns more than one row 
 
 
-1 row created.
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
 
 
-1 row created.
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
 
 
-1 row created.
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
 
 
-1 row created.
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
+
+
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
+
+
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
+
+
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
+
+
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
+
+
+insert into ARG_VALUE_LOOKUP (ARG_VALUE_LOOKUP_ID,ARGUMENT_NAME,VALUE,DESCRIPTION,UPDATE_USER,UPDATE_TIMESTAMP,OBJ_ID)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
+
 
 
 Commit complete.

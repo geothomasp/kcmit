@@ -44,23 +44,33 @@
             <list>
                 <bean parent="Uif-Action"
                       p:actionScript="writeHiddenToForm('absenceEditItem', @{#index}); showDialog('Workload-AbsenceEdit-Dialog')"
-                      p:actionLabel="Edit"
+                      p:actionLabel="Edit" p:render="@{(#line.absentee.leaveStartDate).getTime() > T(java.lang.System).currentTimeMillis()}"
                       p:additionalCssClasses="btn-default btn-xs"/>
                 <bean parent="Uif-Action" p:methodToCall="deleteAbsence"
-                      p:actionLabel="Delete"
+                      p:actionLabel="Delete" p:render="@{(#line.absentee.leaveStartDate).getTime() > T(java.lang.System).currentTimeMillis()}"
                       p:additionalCssClasses="btn-default btn-xs"/>
             </list>
         </property>
 
         <property name="items">
             <list>
-                <bean parent="Workload-FromDate" p:readOnly="true"/>
-                <bean parent="Workload-ToDate" p:readOnly="true"/>
+                <bean parent="Uif-InputField" p:label="From" p:required="true" p:readOnly="true" p:fieldLabel.render="false"
+                      p:propertyName="absentee.leaveStartDate">
+                    <property name="control">
+                        <bean parent="Uif-DateControl"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="To" p:required="true" p:readOnly="true" p:fieldLabel.render="false"
+                      p:propertyName="absentee.leaveEndDate">
+                    <property name="control">
+                        <bean parent="Uif-DateControl"/>
+                    </property>
+                </bean>
             </list>
         </property>
 
         <property name="addLineDialog">
-            <bean parent="Uif-AddLineDialog" p:headerText="Add Absence"
+            <bean id="Workload-Absentee-Add-Dialog" parent="Uif-AddLineDialog" p:headerText="Add Absence"
                   p:enterKeyAction="Workload-Absentee-Collection_add">
                 <property name="items">
                     <list>
@@ -70,8 +80,8 @@
                 </property>
                 <property name="footer.items">
                     <list>
-                        <bean parent="Uif-AddLineAction-Dialog"
-                              p:methodToCall="addAbsence"
+                        <bean parent="Uif-AddLineAction-Dialog" p:dialogDismissOption="" p:preSubmitCall="jQuery('#Workload-Absentee-Add-Dialog').removeClass('uif-hasError'); return true;"
+                              p:methodToCall="addAbsence" p:successCallback=" if(jQuery('#Workload-Absentee-Add-Dialog').find('.uif-hasError').length == 0) {jQuery('#Workload-Absentee-Add-Dialog').detach();} Kc.Dialog.closeDialogWithoutError('Workload-Absentee-Add-Dialog');"
                               p:actionLabel="Add Absence"/>
                         <bean parent="Uif-DialogDismissButton" p:actionLabel="Cancel"/>
                     </list>
@@ -97,17 +107,20 @@
                 <bean id="Workload-EditAbsence-Button" parent="Uif-PrimaryActionButton"
                       p:actionLabel="Save Changes" p:methodToCall="updateAbsence"
                       p:refreshId="Workload-Absentee-Collection"
-                      p:dialogDismissOption="REQUEST"
+                      p:dialogDismissOption=""
+                      p:successCallback="Kc.Dialog.closeDialogWithoutError('Workload-AbsenceEdit-Dialog');"
                       p:performClientSideValidation="true"/>
             </list>
         </property>
     </bean>
 
     <bean id="Workload-FromDate" parent="Uif-HorizontalFieldGroup" p:label="From">
+        <property name="group.validationMessages.displayMessages" value="false"/>
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:required="true" p:fieldLabel.render="false"
                       p:propertyName="absentee.leaveStartDate">
+
                     <property name="control">
                         <bean parent="Uif-DateControl"/>
                     </property>
@@ -125,6 +138,7 @@
     </bean>
 
     <bean id="Workload-ToDate" parent="Uif-HorizontalFieldGroup" p:label="To">
+        <property name="group.validationMessages.displayMessages" value="false"/>
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:required="true" p:fieldLabel.render="false"
