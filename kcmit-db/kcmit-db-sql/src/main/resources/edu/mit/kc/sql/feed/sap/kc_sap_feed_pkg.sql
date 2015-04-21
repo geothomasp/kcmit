@@ -191,6 +191,9 @@ function  generate_feed  (ai_sap_feed_batch_id number, ai_batch_id in number, ai
 --get money and end dates
 
 		li_Ret := fn_get_money_and_dates;
+		IF li_Ret = -1 THEN
+			Return(-1);
+		END IF;
 
 --upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id, 'Pass 5');
 		feed_record.batch_id := ai_batch_id;
@@ -1260,12 +1263,8 @@ BEGIN
 		  gn_obligated_total
     FROM AWARD_AMOUNT_INFO
 	WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number 
-	AND		AWARD_AMOUNT_INFO.SEQUENCE_NUMBER =		 ( SELECT MAX(AMOUNT2.SEQUENCE_NUMBER) FROM AWARD_AMOUNT_INFO AMOUNT2
-													WHERE AMOUNT2.AWARD_NUMBER =			 AWARD_AMOUNT_INFO.AWARD_NUMBER
-													and	AMOUNT2.SEQUENCE_NUMBER <= gi_sequence_number	)
 	AND     AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
 														where    t1.AWARD_NUMBER =	AWARD_AMOUNT_INFO.AWARD_NUMBER	
-														and   t1.SEQUENCE_NUMBER = AWARD_AMOUNT_INFO.SEQUENCE_NUMBER 
 														and t1.tnm_document_number in ( select s0.DOC_HDR_ID from KREW_DOC_HDR_T s0 
 																						inner join TIME_AND_MONEY_DOCUMENT s1 on s0.DOC_HDR_ID = s1.DOCUMENT_NUMBER
 																						where s1.AWARD_NUMBER = gs_award_number
@@ -1278,6 +1277,7 @@ BEGIN
 															 AND TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)) <= TO_NUMBER(nvl(gs_transaction_id,0)));
 EXCEPTION
 WHEN OTHERS THEN
+ return -1;
  upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_get_money_and_dates, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
 END;
 
