@@ -21,12 +21,17 @@ package org.kuali.coeus.common.budget.impl.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.CostElement;
+import org.kuali.coeus.propdev.impl.budget.core.ProposalBudgetForm;
+import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.uif.control.UifKeyValuesFinderBase;
+import org.kuali.rice.krad.uif.view.ViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -39,13 +44,19 @@ public class CostElementKeyValuesFinder extends UifKeyValuesFinderBase {
 	DataObjectService dataObjectService;
     
     @Override
-    public List<KeyValue> getKeyValues() {
-        return getCostElementKeyValues();
+    public List<KeyValue> getKeyValues(ViewModel model) {
+        String budgetCategoryCode = ((ProposalBudgetForm)model).getAddProjectBudgetLineItemHelper().getBudgetLineItem().getBudgetCategoryCode();
+        return getCostElementKeyValues(budgetCategoryCode);
     }
     
-    protected List<KeyValue> getCostElementKeyValues() {
+    protected List<KeyValue> getCostElementKeyValues(String budgetCategoryCode) {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();        
     	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        if (StringUtils.isNotEmpty(budgetCategoryCode)) {
+            predicates.add(PredicateFactory.equal("budgetCategory.code", budgetCategoryCode));
+        	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+        }
     	builder.setOrderByAscending("description");
         List<CostElement> costElements = (List<CostElement>)getDataObjectService().findMatching(CostElement.class, builder.build()).getResults();    
         for (CostElement costElement : costElements) {

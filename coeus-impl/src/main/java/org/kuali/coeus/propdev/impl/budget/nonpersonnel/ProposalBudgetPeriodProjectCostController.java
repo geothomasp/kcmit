@@ -54,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -477,6 +478,13 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 		BudgetPeriod currentTabBudgetPeriod = form.getAddProjectBudgetLineItemHelper().getCurrentTabBudgetPeriod();
         getBudgetService().recalculateBudgetPeriod(budget, currentTabBudgetPeriod);
 	}
+
+    @ResponseBody
+	@Transactional @RequestMapping(params="methodToCall=resetEditLineItem")
+	public void resetEditLineItem(@ModelAttribute("KualiForm") ProposalBudgetForm form) throws Exception {
+		form.getAddProjectBudgetLineItemHelper().reset();
+	}
+	
 	public boolean isBudgetSinglePointEntry() {
 		return budgetSinglePointEntry;
 	}
