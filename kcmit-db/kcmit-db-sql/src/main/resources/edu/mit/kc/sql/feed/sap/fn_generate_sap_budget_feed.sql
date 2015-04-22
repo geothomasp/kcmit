@@ -162,9 +162,9 @@ begin
 			exit when c_award_budget%notfound;
 			
 				if r_award_budget.amount >= 0 then
-						ls_amount := '+'||LPAD(r_award_budget.amount, 9, '0');
+						ls_amount := '+'||LPAD( ( to_number(r_award_budget.amount) * 100 ), 9, '0');
 				else
-						ls_amount := '-'||LPAD(ABS(r_award_budget.amount), 9, '0');
+						ls_amount := '-'||LPAD(ABS( ( to_number(r_award_budget.amount) * 100 )), 9, '0');
 				end if;
 				
 				begin
