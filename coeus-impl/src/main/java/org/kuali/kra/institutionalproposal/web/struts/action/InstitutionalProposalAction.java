@@ -370,8 +370,7 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         if(hasPermission("KC-IP","VIEW_INST_PROPOSAL_DOC") || 
         		hasPermission("KC-IP","VIEW_SHARED_INST_PROPOSAL_DOC") ||
         		   hasPermission("KC-IP","Create Institutional Proposal") ||
-        		      hasPermission("KC-IP","Edit Institutional Proposal") ||
-        		         hasPermission("KC-IP","View Proposal") ||
+        		      hasPermission("KC-IP","Edit Institutional Proposal") ||        		         
         		            hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC") ||
         		               hasPermission("KC-IP","Cancel Institutional Proposal") ||
         		                  hasPermission("KC-IP","Save Institutional Proposal") ||
