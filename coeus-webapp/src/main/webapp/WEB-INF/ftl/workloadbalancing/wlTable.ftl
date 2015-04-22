@@ -68,12 +68,14 @@
                     <#if cell_index == 0>
                         <th class="table-title-cell" >
                             <div><span>${cell!}</span>
+                            <#if KualiForm.canEdit>
                                 <a id="show_add_dialog"
                                    class="uif-actionLink" tabindex="0"
                                    data-onclick="showDialog(&quot;Workload-Add-Dialog&quot;);"
                                    data-role="Action">
                                     <span class="icon-plus"></span> Add
                                 </a>
+                                </#if>
                             </div>
                         </th>
                     <#else>

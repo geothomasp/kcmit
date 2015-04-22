@@ -5,8 +5,7 @@
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="Workload-Absentee-Edit" parent="Uif-DialogGroup" p:retrieveViaAjax="true"
-          p:headerText="@{#form.workloadLineItemEdit.personName}" p:dialogCssClass="modal-lg"
-          p:readOnly="@{!canEdit}">
+          p:headerText="@{#form.workloadLineItemEdit.personName}" p:dialogCssClass="modal-lg">
         <property name="destroyDialogOnHidden" value="true"/>
         <property name="items">
             <list>
@@ -15,7 +14,7 @@
                         <list>
                             <ref bean="Workload-Absentee-Collection"/>
                         </list>
-                    </property>
+                    </property> 
                 </bean>
 
             </list>
@@ -37,7 +36,7 @@
         <property name="layoutManager.richTable.render" value="false"/>
         <property name="addWithDialogAction">
             <bean parent="Uif-AddWithDialogAction" p:actionLabel="Add Absence"
-                  p:iconClass="icon-plus"/>
+                  p:iconClass="icon-plus" p:hidden="@{!canEdit}"/>
         </property>
 
         <property name="lineActions">
@@ -45,10 +44,10 @@
                 <bean parent="Uif-Action"
                       p:actionScript="writeHiddenToForm('absenceEditItem', @{#index}); showDialog('Workload-AbsenceEdit-Dialog')"
                       p:actionLabel="Edit" p:render="@{(#line.absentee.leaveStartDate).getTime() > T(java.lang.System).currentTimeMillis()}"
-                      p:additionalCssClasses="btn-default btn-xs"/>
+                      p:additionalCssClasses="btn-default btn-xs" p:hidden="@{!canEdit}"/>
                 <bean parent="Uif-Action" p:methodToCall="deleteAbsence"
                       p:actionLabel="Delete" p:render="@{(#line.absentee.leaveStartDate).getTime() > T(java.lang.System).currentTimeMillis()}"
-                      p:additionalCssClasses="btn-default btn-xs"/>
+                      p:additionalCssClasses="btn-default btn-xs" p:hidden="@{!canEdit}"/>
             </list>
         </property>
 

@@ -37,7 +37,7 @@
         <property name="layoutManager.richTable.render" value="false"/>
         <property name="addWithDialogAction">
             <bean parent="Uif-AddWithDialogAction" p:actionLabel="Add Assignment"
-                  p:iconClass="icon-plus"/>
+                  p:iconClass="icon-plus" p:hidden="@{!canEdit}"/>
         </property>
 
         <property name="items">
@@ -52,10 +52,10 @@
                 <bean parent="Uif-Action"
                       p:actionScript="writeHiddenToForm('reassignUnitItem', @{#index}); showDialog('Workload-ReassignUnit-Dialog')"
                       p:actionLabel="Reassign Unit"
-                      p:additionalCssClasses="btn-default btn-xs"/>
+                      p:additionalCssClasses="btn-default btn-xs" p:hidden="@{!canEdit}"/>
                 <bean parent="Uif-Action" p:methodToCall="deleteUnitAssignment"
                       p:actionLabel="Unassign Unit"
-                      p:additionalCssClasses="btn-default btn-xs"/>
+                      p:additionalCssClasses="btn-default btn-xs" p:hidden="@{!canEdit}"/>
             </list>
         </property>
 
