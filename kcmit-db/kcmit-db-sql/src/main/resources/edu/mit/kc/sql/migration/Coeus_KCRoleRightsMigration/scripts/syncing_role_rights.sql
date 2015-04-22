@@ -1,24 +1,27 @@
 set serveroutput on;
 begin
 dbms_output.enable(6500000000);
+dbms_output.put_line('Sync role rights begin!!');
+
 end;
 /
 delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
       select role_mbr_id from krim_role_mbr_t where role_id in (
-		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
+		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')and ROLE_NM not in('OSP Administrator')
 		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%'))
-      ))
+		))
 /
 delete from krim_role_mbr_t where role_id in (
-		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
-		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')))
+		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW') and ROLE_NM not in('OSP Administrator')
+		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%'))
+		)
 /
 delete from krim_role_perm_t where role_id in (
-		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
+		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW') and ROLE_NM not in('OSP Administrator')
 		and role_id not in (select role_id from krim_role_t where kim_typ_id in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')))
 /
 delete from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')
-and kim_typ_id not in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%')
+and kim_typ_id not in (select kim_typ_id from krim_typ_t where nm like 'Derived Role:%') and ROLE_NM not in('OSP Administrator')
 /
 commit
 /
@@ -29,7 +32,8 @@ li_count         NUMBER;
 
 cursor c_role is  
    select  distinct t1.role_type ,t1.DESCRIPTION, t1.role_name 
-   from  osp$role t1;  
+   from  osp$role t1 
+   where t1.role_name not in (select COEUS_ROLES from KC_COEUS_ROLE_MAPPING);  
    r_role c_role%rowtype;
   
 ls_namespace VARCHAR2(40);
@@ -90,6 +94,85 @@ begin
 	
   end loop;
   close c_role;
+  
+end;
+/
+declare
+li_coeus_role_id NUMBER(5,0);
+li_kc_role_id    krim_role_t.role_id%type;
+li_count         NUMBER;
+ls_role_nm varchar2(80);
+cursor c_role is  
+   select  distinct t1.role_type ,t1.DESCRIPTION, t1.role_name 
+   from  osp$role t1 
+   where t1.role_name in (select COEUS_ROLES from KC_COEUS_ROLE_MAPPING);  
+   r_role c_role%rowtype;
+  
+ls_namespace VARCHAR2(40);
+ls_kim_typ_id NUMBER(8);
+li_role_count number;
+
+begin
+
+  open c_role;
+  loop
+  fetch c_role into r_role;
+  exit when c_role%notfound;
+  
+  select kc_roles into  ls_role_nm from kc_coeus_role_mapping where coeus_roles = r_role.role_name and rownum = 1;
+  
+ 
+  select count(role_id) into li_role_count from krim_role_t where trim(upper(role_nm)) = trim(upper(ls_role_nm));
+  
+  -- role is missing in KC we need to add that role to KC
+  -- Adding role START
+	if li_role_count = 0 then
+	
+		if UPPER(TRIM(r_role.role_type)) = 'P' then
+			ls_namespace:='KC-PD';
+			
+		elsif  upper(trim(r_role.role_type))='R' or upper(trim(r_role.role_type))='I' then 
+			ls_namespace:='KC-PROTOCOL';     
+
+		elsif  upper(trim(r_role.role_type))='S'  then 	
+			ls_namespace:='KC-ADM';
+			
+		else   	
+			ls_namespace:='KC-SYS';
+		end if;	
+	
+
+			  begin
+				select k.KIM_TYP_ID into ls_kim_typ_id from KRIM_TYP_T k where k.nm='UnitHierarchy'; 
+			  EXCEPTION
+			  WHEN OTHERS THEN
+			  dbms_output.put_line('There is not KIM_TYP_ID for UnitHierarchy'); 
+			  continue;
+			  end;	
+						
+			   --dbms_output.put_line('Inserting role '||r_role.role_name);			
+			   BEGIN
+					SELECT KRIM_ROLE_ID_S.NEXTVAL INTO li_kc_role_id FROM DUAL;
+					INSERT INTO KRIM_ROLE_T(ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND)  
+					VALUES(li_kc_role_id,SYS_GUID(),1,r_role.role_name,ls_namespace,r_role.DESCRIPTION,ls_kim_typ_id,'Y');					
+								
+			   EXCEPTION
+			   WHEN OTHERS THEN
+				dbms_output.put_line('Error while inserting into KRIM_ROLE_T , role name is'||r_role.role_name||'.  The error is: '||sqlerrm);
+			   continue;
+			   END;
+				
+
+	end if;
+			
+	
+	
+  end loop;
+  close c_role;
+  
+  Insert into KRIM_ROLE_T (ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND,LAST_UPDT_DT) 
+  values (KRIM_ROLE_ID_S.NEXTVAL,sys_guid(),1,'Investigators Document Level','KC-PD','Proposal Investigator','KC10000','Y',sysdate);
+  
 end;
 /
 -- Adding role ENDS
@@ -112,6 +195,87 @@ select KRIM_ROLE_PERM_ID_S.NEXTVAL from dual
 /
 alter sequence KRIM_ROLE_PERM_ID_S increment by 1
 /
+declare
+	li_count         NUMBER; 
+	li_role_id 	krim_role_t.role_id%type;
+	cursor c_role_right is 
+		select distinct role_nm,role_nmspc_cd from KC_COEUS_ROLE_PERM_MAPPING;
+	r_role_right c_role_right%rowtype;
+	
+	cursor c_perm is
+		select  t2.perm_id
+		from kc_coeus_role_perm_mapping t1 
+		inner join krim_perm_t t2 on t1.PERM_NM = t2.nm
+		where t1.role_nm = r_role_right.role_nm
+		and t1.role_nmspc_cd = r_role_right.role_nmspc_cd
+		and t2.perm_id not in (select perm_id from krim_role_perm_t where role_id = li_role_id);
+		r_perm c_perm%rowtype;
+	
+begin 
+ 
+      open c_role_right;
+      loop
+      fetch c_role_right into r_role_right;
+      exit when c_role_right%notfound; 	  
+			BEGIN
+				select role_id into li_role_id from krim_role_t where role_nm = r_role_right.role_nm and nmspc_cd = r_role_right.role_nmspc_cd;	
+			EXCEPTION
+			WHEN OTHERS THEN
+			   dbms_output.put_line('Role is not in krim_role_t , role_nm is '||r_role_right.role_nm||' and nmspc_cd is '||r_role_right.role_nmspc_cd||'.  The error is: '||sqlerrm);
+			   continue;
+			END;   
+	 
+	 -- delete the permission which now obsolete in the specific role
+				delete from krim_role_perm_t 
+				where role_id = li_role_id
+				and perm_id not in (
+						select t2.perm_id from kc_coeus_role_perm_mapping t1 
+						inner join krim_perm_t t2 on t1.PERM_NM = t2.nm
+						where t1.role_nm = r_role_right.role_nm
+						and t1.role_nmspc_cd = r_role_right.role_nmspc_cd );
+
+			
+
+					  open c_perm;
+					  loop
+					  fetch c_perm into r_perm;
+					  exit when c_perm%notfound;
+					  
+							BEGIN
+								INSERT INTO KRIM_ROLE_PERM_T(
+									ROLE_PERM_ID,
+									OBJ_ID,
+									VER_NBR,
+									ROLE_ID,
+									PERM_ID,
+									ACTV_IND
+								  )
+								  VALUES(
+									KRIM_ROLE_PERM_ID_S.nextval,
+									sys_guid(),
+									1,
+									li_role_id,
+									r_perm.perm_id,
+									'Y'
+								  );
+								 dbms_output.put_line('Inserted to KRIM_ROLE_PERM_T , role name is '||r_role_right.role_nm||' and perm id is '||r_perm.perm_id);  
+							EXCEPTION
+							WHEN OTHERS THEN
+							   dbms_output.put_line('Error while inserting into KRIM_ROLE_PERM_T , role name is '||r_role_right.role_nm||' and perm id is '||r_perm.perm_id||'.  The error is: '||sqlerrm);
+							   continue;
+							END;
+			
+					 
+					  end loop;
+					  close c_perm;
+
+			
+      end loop;
+      close c_role_right;
+end;
+/
+
+/*
 declare
 	li_count         NUMBER;  
 	
@@ -162,8 +326,10 @@ begin
 	 
       end loop;
       close c_role_right;
+
 end;
 /
+*/
 /*
 INSERT INTO KRIM_ROLE_PERM_T(
 					ROLE_PERM_ID,
@@ -182,6 +348,22 @@ sys_guid(),
 'Y'
 )
 */
+declare
+li_count NUMBER;
+li_perm_id_seq KRIM_PERM_T.PERM_ID%type;
+begin
+select count(PERM_ID) 
+into li_count 
+FROM KRIM_PERM_T WHERE nm = 'Allow Backdoor Login';
+  if li_count = 0 then
+      Insert into KRIM_PERM_T (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) 
+      values (KRIM_PERM_ID_S.NEXTVAL,sys_guid(),1, NULL,'KC-SYS','Allow Backdoor Login','Allow Backdoor Login','Y');
+  end if;
+
+end;
+/
+commit
+/
 INSERT INTO KRIM_ROLE_PERM_T(
 					ROLE_PERM_ID,
 					OBJ_ID,
@@ -195,7 +377,7 @@ KRIM_ROLE_PERM_ID_S.nextval,
 sys_guid(),
 1,
 (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Technical Administrator')) and rownum = 1),
-(select PERM_ID from KC_PERM_BOOTSTRAP where nm = 'Allow Backdoor Login'),
+(select PERM_ID from KRIM_PERM_T where nm = 'Allow Backdoor Login'),
 'Y'
 )
 /
@@ -239,7 +421,7 @@ begin
 	if li_count = 0 then
 		li_role_id := KRIM_ROLE_ID_S.NEXTVAL;		
 		INSERT INTO KRIM_ROLE_T(ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND, LAST_UPDT_DT)  
-		VALUES(li_role_id,SYS_GUID(),1,'Negotiation Administrator','KC-NEGOTIATION','The Negotiation Administrator role','69','Y',sysdate);	
+		VALUES(li_role_id,SYS_GUID(),1,'Negotiation Administrator','KC-NEGOTIATION','The Negotiation Administrator role','1','Y',sysdate);	
 	end if;
 	
 	select count(role_id) into li_count from KRIM_ROLE_T where role_nm = 'Protocol Aggregator' and nmspc_cd = 'KC-PROTOCOL-DOC';
@@ -265,7 +447,6 @@ begin
 	
 	
 	commit;
-
 end;
 /
 commit
@@ -347,6 +528,21 @@ end;
 commit
 /
 --MITKC-438
+declare
+	li_count NUMBER;
+	li_role_id KRIM_ROLE_T.ROLE_ID%type;
+begin
+
+	select count(role_id) into li_count from KRIM_ROLE_T where ROLE_NM = 'OSP Administrator';
+	if li_count = 0 then
+		INSERT INTO KRIM_ROLE_T(ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND, LAST_UPDT_DT)  
+		VALUES(KRIM_ROLE_ID_S.NEXTVAL,SYS_GUID(),1,'OSP Administrator','KC-SYS','OSP Administrator','69','Y',sysdate);	
+	end if;
+	
+end;
+/
+commit
+/
 INSERT INTO KRIM_ROLE_PERM_T(ROLE_PERM_ID,OBJ_ID,VER_NBR,ROLE_ID,PERM_ID,ACTV_IND)
 VALUES(KRIM_ROLE_PERM_ID_S.nextval,sys_guid(),1,
 (select role_id from krim_role_t where  role_nm = 'OSP Administrator'),
@@ -383,6 +579,8 @@ select 'Negotiator' role_nm from dual;
 r_data c_data%rowtype;
 
 li_count number;
+li_num number;
+ls_role_nm VARCHAR2(80);
 begin
 
 open c_data;
@@ -390,17 +588,22 @@ loop
 fetch c_data into r_data;
 exit when c_data%notfound;
 
+
+     ls_role_nm:= r_data.role_nm;
+	 
+
+
   select distinct count(r4.nm) into li_count
   from krim_role_t r1
   inner join krim_role_perm_t r3 on r1.role_id = r3.role_id
   inner join krim_perm_t r4 on r4.perm_id = r3.perm_id
-  where  r1.role_nm = r_data.role_nm
+  where  r1.role_nm = ls_role_nm
   and  r4.nm = 'Initiate Document';
   
   if li_count = 0 then
     INSERT INTO KRIM_ROLE_PERM_T(ROLE_PERM_ID,OBJ_ID,VER_NBR,ROLE_ID,PERM_ID,ACTV_IND)
     VALUES(KRIM_ROLE_PERM_ID_S.nextval,sys_guid(),1,
-    (select role_id from krim_role_t where  role_nm = r_data.role_nm),
+    (select role_id from krim_role_t where  role_nm = ls_role_nm),
     (select perm_id from krim_perm_t where nm = 'Initiate Document'),
     'Y');    
    
@@ -436,6 +639,7 @@ begin
     end if;
     
   END LOOP;
+
 end;
 /
 commit
@@ -464,6 +668,7 @@ begin
     end if;
     
   END LOOP;
+
 end;
 /
 commit
@@ -528,13 +733,29 @@ VALUES(
 KRIM_ROLE_PERM_ID_S.nextval,
 sys_guid(),
 1,
-(select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('OSP Administrator'))and nmspc_cd ='KC-ADM'),
+(select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('OSP Administrator')) and nmspc_cd ='KC-ADM'),
 (select PERM_ID from KRIM_PERM_T where nm = 'Export Any Record' and nmspc_cd='KR-NS'),
 'Y'
 )
 /
+declare
+li_count NUMBER;
+li_perm_id_seq KRIM_PERM_T.PERM_ID%type;
+begin
+select count(PERM_ID) 
+into li_count 
+FROM KRIM_PERM_T WHERE nm = 'NOTIFY_PROPOSAL_PERSONS' and nmspc_cd = 'KC-PD';
+  if li_count = 0 then
+      Insert into KRIM_PERM_T (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) 
+      values (KRIM_PERM_ID_S.NEXTVAL,sys_guid(),1,'58','KC-PD','NOTIFY_PROPOSAL_PERSONS','Allows user to send person ceritification notifications','Y');
+  end if;
+
+end;
+/
+commit
+/
 delete from krim_role_perm_t
-where role_id in (select role_id from krim_role_t where role_nm = 'Aggregator')
+where role_id in (select role_id from krim_role_t where role_nm = 'Aggregator Document Level')
 and perm_id in (select perm_id from krim_perm_t where nm ='Certify')
 /
 declare
@@ -544,7 +765,7 @@ begin
     select count(role_perm_id)
     into li_count
     from KRIM_ROLE_PERM_T
-    where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Aggregator')))
+    where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Aggregator Document Level')))
     and   PERM_ID = (select PERM_ID from KRIM_PERM_T where nm = 'NOTIFY_PROPOSAL_PERSONS');
     
     if li_count = 0 then
@@ -560,7 +781,7 @@ begin
       KRIM_ROLE_PERM_ID_S.nextval,
       sys_guid(),
       1,
-      (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Aggregator'))),
+      (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Aggregator Document Level'))),
       (select PERM_ID from KRIM_PERM_T where nm = 'NOTIFY_PROPOSAL_PERSONS'),
       'Y'
       );    
@@ -575,7 +796,7 @@ begin
     select count(role_perm_id)
     into li_count
     from KRIM_ROLE_PERM_T
-    where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Investigators Document Level'))and nmspc_cd ='KC-PD')
+    where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Investigators Document Level')) and nmspc_cd ='KC-PD')
     and   PERM_ID = (select PERM_ID from KRIM_PERM_T where nm = 'Certify');
     
     if li_count = 0 then
@@ -632,3 +853,63 @@ end;
 /
 commit
 /
+declare
+  li_count number;
+begin
+
+    select count(role_perm_id)
+    into li_count
+    from KRIM_ROLE_PERM_T
+    where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Aggregator Document Level')))
+    and   PERM_ID = (select PERM_ID from KRIM_PERM_T where nm = 'Delete Proposal');
+    
+    if li_count = 0 then
+      INSERT INTO KRIM_ROLE_PERM_T(
+           ROLE_PERM_ID,
+           OBJ_ID,
+           VER_NBR,
+           ROLE_ID,
+           PERM_ID,
+           ACTV_IND
+            )
+      VALUES(
+      KRIM_ROLE_PERM_ID_S.nextval,
+      sys_guid(),
+      1,
+      (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('Aggregator Document Level'))),
+      (select PERM_ID from KRIM_PERM_T where nm = 'Delete Proposal'),
+      'Y'
+      );    
+    end if;
+dbms_output.put_line('Sync role rights end!!');
+end;
+/
+update krim_role_t set kim_typ_id = 1 where role_nm = 'Negotiation Administrator'
+/
+delete from krim_role_mbr_attr_data_t where role_mbr_id
+in (
+select role_mbr_id from krim_role_mbr_t where role_id in  (select role_id from KRIM_ROLE_T where kim_typ_id='KC10000') 
+)
+/
+commit
+/
+delete from krim_role_mbr_t where role_id in  (select role_id from KRIM_ROLE_T where kim_typ_id='KC10000')
+/
+commit
+/
+delete from KRIM_ROLE_PERM_T
+where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('PI')) and nmspc_cd ='KC-WKFLW')
+and   PERM_ID in (select PERM_ID from krim_perm_t where upper(nm) like '%NEGOTIATION%')
+/
+delete from KRIM_ROLE_PERM_T
+where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('COI')) and nmspc_cd ='KC-WKFLW')
+and   PERM_ID in (select PERM_ID from krim_perm_t where upper(nm) like '%NEGOTIATION%')
+/
+delete from KRIM_ROLE_PERM_T
+where role_id = (select  ROLE_ID from KRIM_ROLE_T where trim(upper(ROLE_NM)) = trim(upper('KP')) and nmspc_cd ='KC-WKFLW')
+and   PERM_ID in (select PERM_ID from krim_perm_t where upper(nm) like '%NEGOTIATION%')
+/
+commit
+/
+
+

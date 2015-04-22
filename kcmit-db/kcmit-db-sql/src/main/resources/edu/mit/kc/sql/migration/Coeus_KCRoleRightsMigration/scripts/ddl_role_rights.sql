@@ -51,6 +51,11 @@ begin
     execute immediate('drop table KC_COEUS_ROLE_PERM_MAPPING');
   end if;
   
+  select  count(table_name) into li_count  from all_tables   where table_name = 'TMP_ROLE_PERM_MAPPING';
+  if li_count > 0 then
+    execute immediate('drop table TMP_ROLE_PERM_MAPPING');
+  end if; 
+    
   
   select  count(table_name) into li_count  from all_tables   where table_name = 'KC_ROLE_BOOTSTRAP';
   if li_count > 0 then
@@ -199,8 +204,18 @@ OBJ_ID VARCHAR2(36) NOT NULL ENABLE,
 )
 /
 CREATE TABLE KC_COEUS_ROLE_PERM_MAPPING(
-ROLE_NM VARCHAR2(80),
-KC_PERM_NM	VARCHAR2(120),
-NMSPC_CD	VARCHAR2(40)
+  ROLE_NM VARCHAR2(80),
+  ROLE_NMSPC_CD	VARCHAR2(40),
+  PERM_NM	VARCHAR2(100),
+  PERM_NMSPC_CD	VARCHAR2(40)
+)
+/
+
+CREATE TABLE TMP_ROLE_PERM_MAPPING(
+  ROLE_NM VARCHAR2(80),
+  ROLE_NMSPC_CD	VARCHAR2(40),
+  ROLE_KIM_TYP_NM	VARCHAR2(100),
+  PERM_NM	VARCHAR2(100),
+  PERM_NMSPC_CD	VARCHAR2(40)
 )
 /

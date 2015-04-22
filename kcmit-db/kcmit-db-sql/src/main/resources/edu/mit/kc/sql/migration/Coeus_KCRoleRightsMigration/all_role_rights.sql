@@ -19,6 +19,7 @@ select 'role_perm_bootstrap.sql started '|| localtimestamp from dual;
 @scripts/truncate_and_apply_bootstrap.sql
 select 'truncate_and_apply_bootstrap.sql started '|| localtimestamp from dual;
 @scripts/kc_coeus_role_perm_mapping.sql
+select 'kc_coeus_role_perm_mapping.sql started '|| localtimestamp from dual;
 commit;
 @scripts/syncing_role_rights.sql
 select 'syncing_role_rights.sql started '|| localtimestamp from dual;
