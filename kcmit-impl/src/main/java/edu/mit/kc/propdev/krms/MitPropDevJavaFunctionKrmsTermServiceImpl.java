@@ -1139,7 +1139,7 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 		for (ProposalAdminDetailsContract propAdminDetails : adminDetails) {
 			proposalNumber = propAdminDetails.getInstProposalId().toString();
 		}
-		if(!proposalNumber.isEmpty()){
+		if(proposalNumber!=null){
 		  Map<String, String> proposalKeys = new HashMap<String, String>();
 	        proposalKeys.put("proposalNumber", proposalNumber);
 	        List<InstitutionalProposal> instList = getDataObjectService().findMatching(InstitutionalProposal.class,QueryByCriteria.Builder.andAttributes(proposalKeys).build()).getResults();
