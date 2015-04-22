@@ -52,8 +52,7 @@
                                   and !#parent.readOnly}"/>
                             <bean parent="Uif-PrimaryActionButton" p:actionLabel="COI Disclosure Status"
                                                p:order="35"  p:actionScript="showDialog('PropDev-PersonnelPage-COIStatus-Dialog');"
-                                                p:render="@{document.developmentProposal.proposalPersons.size() > 0
-                                  and #ViewHelper.areAllCertificationsComplete(document.developmentProposal.proposalPersons)}"/>
+                                                p:render="@{document.developmentProposal.proposalPersons.size() > 0}"/>
                         </list>
                     </property>
                 </bean>
