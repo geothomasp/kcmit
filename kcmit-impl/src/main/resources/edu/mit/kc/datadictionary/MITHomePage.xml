@@ -452,7 +452,7 @@
 
     <bean id="Kc-Home-Quicklinks" parent="Kc-Home-Quicklinks-parentBean"/>
     <bean id="Kc-Home-Quicklinks-parentBean" abstract="true"
-          parent="Kc-Home-LinkGroup" p:headerText="Quicklinks">
+          parent="Kc-Home-LinkGroup" p:headerText="Quick Links">
         <property name="items">
             <list>
              <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
@@ -495,7 +495,7 @@
                     </property>
                 </bean>
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                      p:actionLabel="View Pessimistic Lock(Locked Records)" p:order="50">
+                      p:actionLabel="View Pessimistic Lock (Locked Records)" p:order="50">
                     <property name="actionUrl.requestParameters">
                         <map>
                             <entry key="href"
