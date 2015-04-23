@@ -194,7 +194,7 @@
       <list>
         <bean parent="FieldDefinition" p:attributeName="sharedDocumentTypeId"/>
         <bean parent="FieldDefinition" p:attributeName="moduleCode"/>
-        <bean parent="FieldDefinition" p:attributeName="coeusmodule.description"/>       
+        <bean parent="FieldDefinition" p:attributeName="coeusModule.description"/>       
         <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/>       
       </list>
     </property>
@@ -224,7 +224,7 @@
 					p:order="10" />
 				<bean parent="Uif-DataField" p:propertyName="moduleCode"
 					p:order="10" />
-				<bean parent="Uif-DataField" p:propertyName="coeusmodule.description"
+				<bean parent="Uif-DataField" p:propertyName="coeusModule.description"
 					p:order="10" />	
 					<bean parent="Uif-DataField" p:propertyName="documentTypeCode"
 					p:order="20" />			
