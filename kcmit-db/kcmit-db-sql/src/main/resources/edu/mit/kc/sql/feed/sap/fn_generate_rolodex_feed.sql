@@ -1,26 +1,26 @@
 create or replace function fn_generate_rolodex_feed (as_path in varchar2,as_user in VARCHAR2) return number is
 
 TYPE t_rolodex_feed IS RECORD (
-		 LAST_NAME 				VARCHAR2(20),
-       FIRST_NAME 			VARCHAR2(20),
-       SUFFIX 					VARCHAR2(10),
-       PREFIX 					VARCHAR2(10),
-       TITLE 					VARCHAR2(35),
-       ORGANIZATION 			VARCHAR2(200),
-       ADDRESS_LINE_1 		VARCHAR2(200),
-       ADDRESS_LINE_2 		VARCHAR2(200),
-       ADDRESS_LINE_3 		VARCHAR2(200),
-  		 FAX_NUMBER 			VARCHAR2(50),
-       EMAIL_ADDRESS 		VARCHAR2(100),
-       CITY 					VARCHAR2(100),
-       STATE 					VARCHAR2(100),
-       POSTAL_CODE 			VARCHAR2(100),
-       PHONE_NUMBER 			VARCHAR2(50),
-       COUNTRY_CODE 			CHAR(30),
-		 SPONSOR_CODE			CHAR(60),
-		 DUMMY					CHAR(20),
-		 ROLODEX_ID			   number(6) ,
-	    DUN_AND_BRADSTREET_NUMBER  VARCHAR2(200));
+		LAST_NAME 				VARCHAR2(20),
+		FIRST_NAME 			VARCHAR2(20),
+        SUFFIX 					VARCHAR2(10),
+        PREFIX 					VARCHAR2(10),
+        TITLE 					VARCHAR2(35),
+        ORGANIZATION 			VARCHAR2(200),
+        ADDRESS_LINE_1 		VARCHAR2(80),
+        ADDRESS_LINE_2 		VARCHAR2(80),
+        ADDRESS_LINE_3 		VARCHAR2(80),
+  		FAX_NUMBER 			VARCHAR2(20),
+        EMAIL_ADDRESS 		VARCHAR2(60),
+        CITY 					VARCHAR2(30),
+        STATE 					VARCHAR2(30),
+        POSTAL_CODE 			VARCHAR2(15),
+        PHONE_NUMBER 			VARCHAR2(20),
+        COUNTRY_CODE 			CHAR(3),
+		SPONSOR_CODE			CHAR(6),
+		DUMMY					CHAR(2),
+		ROLODEX_ID			   number(6) ,
+	    DUN_AND_BRADSTREET_NUMBER  VARCHAR2(20));
 
 
 lrec_feed       						t_rolodex_Feed;
@@ -127,8 +127,8 @@ ls_output_line := lrec_feed.last_name   ||
 						lrec_feed.state ||
 						RPAD(ls_PostalCode, 15, ' ') ||
 						lrec_feed.phone_number ||
-						trim(lrec_feed.country_code)  ||
-						trim(lrec_feed.sponsor_code)  ||
+						lrec_feed.country_code  ||
+						lrec_feed.sponsor_code  ||
 						'86' ||
 						 lpad(lrec_feed.rolodex_id ,8 ,'0') ||
 						lrec_feed.dun_and_bradstreet_number;
