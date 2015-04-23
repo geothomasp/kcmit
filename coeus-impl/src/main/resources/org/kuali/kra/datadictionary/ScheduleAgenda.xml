@@ -121,11 +121,13 @@
         <property name="label" value="Agenda Name" />
         <property name="shortLabel" value="Agenda Name" />
         <property name="maxLength" value="200" />
-        <property name="validationPattern" >
-            <bean parent="AlphaNumericValidationPattern" />
-        </property>
+       	<property name="validationPattern" >
+      		<bean p:allowWhitespace="true" parent="AnyCharacterValidationPattern" />
+		</property>
     <property name="validCharactersConstraint">
-      <bean parent="AlphaNumericPatternConstraint"/>
+      <bean parent="AnyCharacterPatternConstraint">
+        <property name="allowWhitespace" value="true"/>
+      </bean>
     </property>
         <property name="control" >
       <bean parent="TextControlDefinition" p:size="10"/>

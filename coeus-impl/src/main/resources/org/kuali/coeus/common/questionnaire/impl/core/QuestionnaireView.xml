@@ -67,7 +67,7 @@
 			</list>
 		</property>
 		<property name="layoutManager.subCollectionFieldGroupPrototype">
-			<bean parent="Uif-VerticalFieldGroup" p:fieldLabel.labelText="@{#lp.questionnaireQuestion.question.question} [0]"
+			<bean parent="Uif-VerticalFieldGroup" p:fieldLabel.labelText="@{#lp.questionnaireQuestion.questionNumber+' . '+ #lp.questionnaireQuestion.question.question} [0]"
 				p:fieldLabel.renderColon="false" p:additionalCssClasses="question"
 				p:hidden="@{!#lp.childMatched}">
                 <property name="fieldLabel.inlineComponents">
