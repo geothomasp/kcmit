@@ -2,17 +2,18 @@ package org.kuali.coeus.propdev.impl.workloadbalancing;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.kra.infrastructure.PermissionConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.document.TransactionalDocumentControllerService;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.rice.krad.web.service.CollectionControllerService;
 import org.kuali.rice.krad.web.service.FileControllerService;
 import org.kuali.rice.krad.web.service.ModelAndViewService;
@@ -22,8 +23,8 @@ import org.kuali.rice.krad.web.service.RefreshControllerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
+
 import edu.mit.kc.workloadbalancing.core.WorkloadForm;
 
 public class WorkloadBalancingControllerBase {
@@ -99,17 +100,17 @@ public class WorkloadBalancingControllerBase {
 	
      protected boolean hasSimulationPermission() {
     	 String userId = GlobalVariables.getUserSession().getPrincipalId();
-         return unitAuthorizationService.hasPermission(userId,"KC-PD","Run_WL_Simulation");
+         return unitAuthorizationService.hasPermission(userId,"KC-PD",PermissionConstants.RUN_SIMULATION);
      }
      protected boolean hasEditPermission(WorkloadForm form) {
      	boolean canView=false;
         String userId = GlobalVariables.getUserSession().getPrincipalId();
-        if(unitAuthorizationService.hasPermission(userId,"KC-PD","View_WL"))
-           canView=true;
-        if(unitAuthorizationService.hasPermission(userId,"KC-PD","Edit_WL"))
+        if(unitAuthorizationService.hasPermission(userId,"KC-PD",PermissionConstants.EDIT_WL))
         {
            canView=true;
            form.setCanEdit(true) ;
+        }else if(unitAuthorizationService.hasPermission(userId,"KC-PD",PermissionConstants.VIEW_WL)){
+        	   canView=true;
         }
          return canView;
      }

@@ -3,9 +3,14 @@
 
     <@krad.groupWrap group=group>
 
-
+ <#if !KualiForm.hasAccess>
+  <div>
+&nbsp;
+  </div>    
+   <#else>
+    <div>
     <div id="wlTable">
-
+ 
             <#if !KualiForm.simulationMode>
                 <div class="row workload-button-bar">
                     <div class="col-md-6"></div>
@@ -172,8 +177,12 @@
                 </#list>
             </tbody>
         </table>
+        
 
+ 
     </div>
+      </div>   
+ </#if>
     </@krad.groupWrap>
 
 </#macro>

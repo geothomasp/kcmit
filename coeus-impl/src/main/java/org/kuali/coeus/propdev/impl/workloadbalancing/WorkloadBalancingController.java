@@ -16,10 +16,18 @@
 package org.kuali.coeus.propdev.impl.workloadbalancing;
 
 
-import edu.mit.kc.workloadbalancing.bo.*;
-import edu.mit.kc.workloadbalancing.core.WorkloadForm;
-import edu.mit.kc.workloadbalancing.sim.WorkloadSimulatorService;
-import edu.mit.kc.workloadbalancing.util.WorkloadUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
@@ -32,11 +40,9 @@ import org.kuali.rice.core.api.criteria.OrderDirection;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.criteria.QueryResults;
 import org.kuali.rice.krad.data.PersistenceOption;
-import org.kuali.rice.krad.exception.DocumentAuthorizationException;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.uif.field.AttributeQueryResult;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
-import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +55,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.*;
+import edu.mit.kc.workloadbalancing.bo.AbsenteeWrapper;
+import edu.mit.kc.workloadbalancing.bo.WlAbsentee;
+import edu.mit.kc.workloadbalancing.bo.WlCapacity;
+import edu.mit.kc.workloadbalancing.bo.WlFlexibility;
+import edu.mit.kc.workloadbalancing.bo.WlSimCapacity;
+import edu.mit.kc.workloadbalancing.bo.WlSimFlexibility;
+import edu.mit.kc.workloadbalancing.bo.WlSimHeader;
+import edu.mit.kc.workloadbalancing.bo.WlSimUnitAssignment;
+import edu.mit.kc.workloadbalancing.bo.WorkloadBalancing;
+import edu.mit.kc.workloadbalancing.core.WorkloadForm;
+import edu.mit.kc.workloadbalancing.sim.WorkloadSimulatorService;
+import edu.mit.kc.workloadbalancing.util.WorkloadUtils;
 
 @Controller("workloadBalancingController")
 @RequestMapping(value = "/workloadbalancing")
@@ -89,11 +103,12 @@ public class WorkloadBalancingController extends WorkloadBalancingControllerBase
     @Transactional
     @RequestMapping(params = "methodToCall=start")
     public ModelAndView start(
-            @ModelAttribute("KualiForm") WorkloadForm form) throws Exception {
+            @ModelAttribute("KualiForm") WorkloadForm form){
     	boolean canView=hasEditPermission(form);
-    	if(!canView)
-    	{
-    		throw new DocumentAuthorizationException(GlobalVariables.getUserSession().getPerson().getPrincipalId(), "Edit/View", "WorkLoad Balancing");    	
+    	form.setHasAccess(canView);
+    	if(!canView){
+        form.setCanEdit(false);
+        getGlobalVariableService().getMessageMap().putError("Workload-Table", "workload.error.authorization");
     	}
     	// Get collection of sponsors
     	List<String> sponsors = getSponsorHierarchyDao().getUniqueNamesAtLevel(WL_HIERARCHY_NAME, 1);

@@ -97,7 +97,7 @@
                       p:methodToCall="saveFlexCapacity"
                       p:refreshId="Workload-Table"
                       p:dialogDismissOption="REQUEST" p:defaultEnterKeyAction="true"
-                      p:performClientSideValidation="true"/>
+                      p:performClientSideValidation="true" p:hidden="@{!canEdit}"/>
             </list>
         </property>
     </bean>

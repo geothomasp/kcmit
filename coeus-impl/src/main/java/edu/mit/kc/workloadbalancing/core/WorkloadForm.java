@@ -18,6 +18,7 @@ public class WorkloadForm extends UifFormBase {
     // Line Item editing variables
     private WorkloadBalancing workloadLineItemEdit = new WorkloadBalancing();
     private boolean canEdit=false;
+    private boolean hasAccess=false;
 
     private List<String> sponsors = new ArrayList<String>();
 
@@ -157,6 +158,15 @@ public class WorkloadForm extends UifFormBase {
 
 	public void setCanEdit(boolean canEdit) {
 		this.canEdit = canEdit;
+	}
+
+
+	public boolean isHasAccess() {
+		return hasAccess;
+	}
+
+	public void setHasAccess(boolean hasAccess) {
+		this.hasAccess = hasAccess;
 	}
 
 

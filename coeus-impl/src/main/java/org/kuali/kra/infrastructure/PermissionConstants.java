@@ -263,5 +263,10 @@ public interface PermissionConstants {
      
      /* COI Undisclosed events */
      public static final String VIEW_COI_UNDISCLOSED_EVENTS = "View COI Undisclosed Events";
+     
+     /* Workload Balancing Permissions */
+     public static final String RUN_SIMULATION = "Run_WL_Simulation";
+     public static final String EDIT_WL = "Edit_WL";
+     public static final String VIEW_WL = "View_WL";
 
 }
