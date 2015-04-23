@@ -18,14 +18,10 @@
 --
 
 INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
-VALUES ('KC-IACUC','Document','iacucBatchCorrespondenceHelpUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/iacucbatchcorrespondence1.htm','IACUC batch corresspondence help','A','KC')
-/
+VALUES ('KC-IACUC','Document','iacucBatchCorrespondenceHelpUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/iacucbatchcorrespondence1.htm','IACUC batch corresspondence help','A','KC');
 INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
-VALUES ('KC-PROTOCOL','Document','irbBatchCorrespondenceHelpUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/batchcorrespondence3.htm','IRB batch corresspondence help','A','KC')
-/
+VALUES ('KC-PROTOCOL','Document','irbBatchCorrespondenceHelpUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/batchcorrespondence3.htm','IRB batch corresspondence help','A','KC');
 INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
-VALUES ('KC-PROTOCOL','Document','irbCorrespondenceTemplateUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/correspondencetemplate.htm','IRB correspondence template help','A','KC')
-/
+VALUES ('KC-PROTOCOL','Document','irbCorrespondenceTemplateUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/correspondencetemplate.htm','IRB correspondence template help','A','KC');
 INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
-VALUES ('KC-IACUC','Document','iacucCorrespondenceTemplateUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/iacuccorrespondencetemplate.htm','IACUC correspondence template help','A','KC')
-/
+VALUES ('KC-IACUC','Document','iacucCorrespondenceTemplateUrl',SYS_GUID(),1,'HELP','default.htm?turl=Documents/iacuccorrespondencetemplate.htm','IACUC correspondence template help','A','KC');

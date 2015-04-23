@@ -17,9 +17,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --
 
-alter table narrative_attachment
-	add foreign key narrative_attachment_fk1 (file_data_id) references file_data (id)
-/
-alter table eps_prop_person_bio_attachment
-	add foreign key eps_prop_person_bio_attach_fk1 (file_data_id) references file_data (id)
-/
+ALTER TABLE narrative_attachment
+    ADD CONSTRAINT narrative_attachment_fk1
+    FOREIGN KEY (file_data_id)
+    REFERENCES FILE_DATA (ID);
+ALTER TABLE eps_prop_person_bio_attachment
+    ADD CONSTRAINT eps_prop_person_bio_attach_fk1
+    FOREIGN KEY (file_data_id)
+    REFERENCES FILE_DATA (ID);
+

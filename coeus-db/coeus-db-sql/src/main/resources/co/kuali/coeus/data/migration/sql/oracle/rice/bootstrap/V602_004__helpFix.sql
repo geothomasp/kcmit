@@ -18,10 +18,7 @@
 --
 
 INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
-VALUES ('KC-IACUC','Document','iacucProtocolCustomDataHelp',SYS_GUID(),1,'HELP','default.htm?turl=Documents/customdata5.htm','IACUC protocol custom data help','A','KC')
-/
-UPDATE KRCR_PARM_T set VAL = 'default.htm?turl=Documents/disclosures.htm' where PARM_NM = 'coiDisclosure1Help'
-/
-UPDATE KRCR_PARM_T set VAL = 'default.htm?turl=Document/contactinformation.htm' where PARM_NM = 'disclosureReporterhelp'
-/
+VALUES ('KC-IACUC','Document','iacucProtocolCustomDataHelp',SYS_GUID(),1,'HELP','default.htm?turl=Documents/customdata5.htm','IACUC protocol custom data help','A','KC');
+UPDATE KRCR_PARM_T set VAL = 'default.htm?turl=Documents/disclosures.htm' where PARM_NM = 'coiDisclosure1Help';
+UPDATE KRCR_PARM_T set VAL = 'default.htm?turl=Document/contactinformation.htm' where PARM_NM = 'disclosureReporterhelp';
 

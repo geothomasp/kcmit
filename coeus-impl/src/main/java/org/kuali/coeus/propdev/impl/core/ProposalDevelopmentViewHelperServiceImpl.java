@@ -32,6 +32,7 @@ import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeService;
 import org.kuali.coeus.common.framework.person.KcPersonService;
+import org.kuali.coeus.common.framework.print.KcAttachmentDataSource;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
 import org.kuali.coeus.common.framework.sponsor.SponsorSearchResult;
 import org.kuali.coeus.common.framework.sponsor.SponsorSearchService;
@@ -40,7 +41,6 @@ import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.question.Question;
 import org.kuali.coeus.common.questionnaire.framework.question.QuestionExplanation;
 import org.apache.log4j.Logger;
-import org.kuali.coeus.propdev.impl.attachment.ProposalDevelopmentAttachment;
 import org.kuali.coeus.propdev.impl.attachment.ProposalDevelopmentAttachmentHelper;
 import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.propdev.impl.custom.ProposalDevelopmentCustomDataGroupDto;
@@ -57,7 +57,6 @@ import org.kuali.coeus.propdev.impl.questionnaire.ProposalDevelopmentQuestionnai
 import org.kuali.coeus.propdev.impl.s2s.question.ProposalDevelopmentS2sQuestionnaireHelper;
 import org.kuali.coeus.sys.framework.controller.KcFileService;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
-import org.kuali.kra.authorization.KraAuthorizationConstants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.protocol.actions.ProtocolStatusBase;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
@@ -228,6 +227,7 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
             ProposalAbstract proposalAbstract = (ProposalAbstract) addLine;
             proposalAbstract.setProposalNumber(proposal.getProposalNumber());
             proposalAbstract.refreshReferenceObject("abstractType");
+            proposalAbstract.setUpdateDisplayFields();
         } else if (addLine instanceof ProposalSpecialReview) {
         	ProposalSpecialReview proposalSpecialReview = (ProposalSpecialReview) addLine;
         	proposalSpecialReview.setDevelopmentProposal(document.getDevelopmentProposal());
@@ -742,8 +742,8 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         return false;
     }
 
-    public String displayAttachmentFullName(ProposalDevelopmentAttachment attachment){
-        String name = getPersonService().getPersonByPrincipalName(attachment.getUploadUserDisplay()).getName();
+    public String displayFullName(String userName){
+        String name = getPersonService().getPersonByPrincipalName(userName).getName();
         return name;
     }
 
@@ -824,10 +824,10 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
         }
     }
 
-    public void updateAttachmentInformation(KcPersistableBusinessObjectBase attachment){
+    public void updateAttachmentInformation(KcAttachmentDataSource attachment){
         if (attachment != null){
-            attachment.setUpdateUser(getGlobalVariableService().getUserSession().getPrincipalName());
-            attachment.setUpdateTimestamp(getDateTimeService().getCurrentTimestamp());
+            attachment.setUploadUser(getGlobalVariableService().getUserSession().getPrincipalName());
+            attachment.setUploadTimestamp(getDateTimeService().getCurrentTimestamp());
         }
     }
 

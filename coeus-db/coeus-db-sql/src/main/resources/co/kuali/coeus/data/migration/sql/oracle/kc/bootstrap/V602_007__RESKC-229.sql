@@ -18,5 +18,4 @@
 --
 
 INSERT INTO S2S_ERROR (S2S_ERROR_ID, MESSAGE_KEY, MESSAGE, FIX_LINK, UPDATE_TIMESTAMP, UPDATE_USER, VER_NBR, OBJ_ID)
-VALUES (SEQ_S2S_ERROR_ID.NEXTVAL,'/GrantApplication/Forms/PHS398_CareerDevelopmentAwardSup_2_0/Citizenship', 'A proposal person(s) does not have a Citizenship Type listed. Please fix in key personnel extended details.', 'keyPersonnel',SYSDATE,'admin',1,SYS_GUID())
-/
+VALUES (SEQ_S2S_ERROR_ID.NEXTVAL,'/GrantApplication/Forms/PHS398_CareerDevelopmentAwardSup_2_0/Citizenship', 'A proposal person(s) does not have a Citizenship Type listed. Please fix in key personnel extended details.', 'keyPersonnel',SYSDATE,'admin',1,SYS_GUID());
