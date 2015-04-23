@@ -53,24 +53,31 @@
             			<kul:htmlControlAttribute property="${docAward}.awardComment[${commentIndex}].comments" attributeEntry="${commentAttributes.comments}"/>
 					</div>	 
     	        </td>	     	 
-        	    <td>
-					<c:choose>
-    	        		<c:when test="${!commentEntered}">
-    	        		
-	    	        		&nbsp;
-	        	    	</c:when>
-	            		<c:otherwise>
-            				<div align="center">
-            					<a href="${pageContext.request.contextPath}/awardNotesAndAttachments.do?command=redirectAwardCommentHistoryForPopup&awardCommentTypeCode=${commentTypeCode}&awardId=${awardId}" target="_blank" >
-    							<img alt="View History" src="${ConfigProperties.kra.externalizable.images.url}tinybutton-viewhistory.gif" styleClass="tinybutton" /></a>
-									<c:if test="${KualiForm.syncMode}">
-		 								<html:image property="methodToCall.syncComment.awardCommentIdx${commentIndex}.anchor${currentTabIndex}"
- 											src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif' alt="sync" styleClass="tinybutton" disabled="${readOnly}"/>
-									</c:if>				        
-    						</div>
+        	    <td><c:choose>
+						<c:when test="${!readOnly}">
+							<div align="center">
+								<html:image
+									property="methodToCall.syncComment.awardCommentIdx${commentIndex}.anchor${currentTabIndex}"
+									src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif'
+									alt="sync" styleClass="tinybutton" />
+							</div>
+						</c:when>
+						<c:otherwise>
+					          &nbsp;
+					     </c:otherwise>
+					</c:choose> <c:choose>
+						<c:when test="${!commentEntered}">
+			                &nbsp;
+			             </c:when>
+						<c:otherwise>
+							<div align="center">
+								<a href="${pageContext.request.contextPath}/awardNotesAndAttachments.do?command=redirectAwardCommentHistoryForPopup&awardCommentTypeCode=${commentTypeCode}&awardId=${awardId}"
+									target="_blank"> <img alt="View History"
+									src="${ConfigProperties.kra.externalizable.images.url}tinybutton-viewhistory.gif"
+									styleClass="tinybutton" /></a>
+							</div>
 						</c:otherwise>
-					</c:choose>
-	    		</td>
+					</c:choose></td>
     		</tr>
         	</table>
   		</kul:innerTab>	
