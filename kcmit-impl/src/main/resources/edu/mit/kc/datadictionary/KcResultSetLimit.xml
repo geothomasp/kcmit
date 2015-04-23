@@ -102,7 +102,7 @@
 	<bean id="Protocol-lookupDefinition" parent="MIT-Protocol-lookupDefinition-parentBean" />
 	<bean id="MIT-Protocol-lookupDefinition-parentBean"
 		parent="Protocol-lookupDefinition-parentBean">
-		<property name="resultSetLimit" value="500" />
+		<property name="resultSetLimit" value="100" />
 	</bean>
 
 	<bean id="ProtocolPerson-lookupDefinition" parent="MIT-ProtocolPerson-lookupDefinition-parentBean" />
