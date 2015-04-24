@@ -5,6 +5,18 @@ dbms_output.put_line('Sync role rights begin!!');
 
 end;
 /
+ALTER TABLE KRIM_DLGN_T DISABLE CONSTRAINT KRIM_DLGN_TR1 ;
+ALTER TABLE KRIM_ROLE_MBR_T DISABLE CONSTRAINT KRIM_ROLE_MBR_TR1 ;
+ALTER TABLE KRIM_PERM_ATTR_DATA_T DISABLE CONSTRAINT KRIM_PERM_ATTR_DATA_TR3 ;
+ALTER TABLE KRIM_ROLE_PERM_T DISABLE CONSTRAINT KRIM_ROLE_PERM_TR1 ;
+ALTER TABLE KRIM_ROLE_PERM_T DISABLE CONSTRAINT KRIM_ROLE_PERM_TP1 ;
+ALTER TABLE KRIM_ROLE_PERM_T DISABLE CONSTRAINT KRIM_ROLE_PERM_TC0 ;
+ALTER TABLE KRIM_PERM_T DISABLE CONSTRAINT KRIM_PERM_TP1 ;
+ALTER TABLE KRIM_PERM_T DISABLE CONSTRAINT KRIM_PERM_TC0 ;
+ALTER TABLE KRIM_PERM_T DISABLE CONSTRAINT KRIM_PERM_T_TC1 ;
+ALTER TABLE ROLE_CNTRL_MAP_T DISABLE CONSTRAINT FK_ROLE_CNTRL_MAP_T ;
+ALTER TABLE KC_ROLE_CNTRAL_MAP DISABLE CONSTRAINT FK_KC_ROLE_CNTRAL_MAP ;
+
 delete from krim_role_mbr_attr_data_t  where role_mbr_id in (
       select role_mbr_id from krim_role_mbr_t where role_id in (
 		select role_id from krim_role_t where nmspc_cd not in ('KR-BUS','KR-SYS','KR-IDM','KR-NS','KR-NTFCN','KR-WKFLW','KUALI','KR-RULE','KR-KRAD','KR-RULE-TEST','KC-SYS','KC-GEN','KC-KRMS','KC-M','KC-WKFLW')and ROLE_NM not in('OSP Administrator')
@@ -25,6 +37,18 @@ and kim_typ_id not in (select kim_typ_id from krim_typ_t where nm like 'Derived 
 /
 commit
 /
+ALTER TABLE KRIM_DLGN_T ENABLE CONSTRAINT KRIM_DLGN_TR1 ;
+ALTER TABLE KRIM_ROLE_MBR_T ENABLE CONSTRAINT KRIM_ROLE_MBR_TR1 ;
+ALTER TABLE KRIM_PERM_ATTR_DATA_T ENABLE CONSTRAINT KRIM_PERM_ATTR_DATA_TR3 ;
+ALTER TABLE KRIM_ROLE_PERM_T ENABLE CONSTRAINT KRIM_ROLE_PERM_TR1 ;
+ALTER TABLE KRIM_ROLE_PERM_T ENABLE CONSTRAINT KRIM_ROLE_PERM_TP1 ;
+ALTER TABLE KRIM_ROLE_PERM_T ENABLE CONSTRAINT KRIM_ROLE_PERM_TC0 ;
+ALTER TABLE KRIM_PERM_T ENABLE CONSTRAINT KRIM_PERM_TP1 ;
+ALTER TABLE KRIM_PERM_T ENABLE CONSTRAINT KRIM_PERM_TC0 ;
+ALTER TABLE KRIM_PERM_T ENABLE CONSTRAINT KRIM_PERM_T_TC1 ;
+ALTER TABLE ROLE_CNTRL_MAP_T ENABLE CONSTRAINT FK_ROLE_CNTRL_MAP_T ;
+ALTER TABLE KC_ROLE_CNTRAL_MAP ENABLE CONSTRAINT FK_KC_ROLE_CNTRAL_MAP ;
+
 declare
 li_coeus_role_id NUMBER(5,0);
 li_kc_role_id    krim_role_t.role_id%type;
@@ -258,7 +282,7 @@ begin
 									r_perm.perm_id,
 									'Y'
 								  );
-								 dbms_output.put_line('Inserted to KRIM_ROLE_PERM_T , role name is '||r_role_right.role_nm||' and perm id is '||r_perm.perm_id);  
+								-- dbms_output.put_line('Inserted to KRIM_ROLE_PERM_T , role name is '||r_role_right.role_nm||' and perm id is '||r_perm.perm_id);  
 							EXCEPTION
 							WHEN OTHERS THEN
 							   dbms_output.put_line('Error while inserting into KRIM_ROLE_PERM_T , role name is '||r_role_right.role_nm||' and perm id is '||r_perm.perm_id||'.  The error is: '||sqlerrm);

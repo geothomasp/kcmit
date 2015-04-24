@@ -305,7 +305,7 @@ where t1.kc_roles is not null
 commit
 /
 INSERT INTO KC_COEUS_ROLE_PERM_MAPPING(ROLE_NM,ROLE_NMSPC_CD,PERM_NM,PERM_NMSPC_CD)
-select distinct t1.role_name, decode(t1.role_type,'P','KC-PD','R','KC-PROTOCOL','S','KC-ADM','KC-SYS')ROLE_NMSPC_CD ,as t4.kc_perm_nm, t4.nmspc_cd
+select distinct t1.role_name, decode(t1.role_type,'P','KC-PD','R','KC-PROTOCOL','S','KC-ADM','KC-SYS') as ROLE_NMSPC_CD , t4.kc_perm_nm, t4.nmspc_cd
 from osp$role t1
 inner join osp$role_rights t3 on t3.role_id = t1.role_id
 inner join kc_coeus_right_mapping t4 on t4.coeus_right_id = t3.right_id

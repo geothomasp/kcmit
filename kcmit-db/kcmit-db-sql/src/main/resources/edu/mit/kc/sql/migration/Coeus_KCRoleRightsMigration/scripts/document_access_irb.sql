@@ -1,7 +1,3 @@
-delete from DOCUMENT_ACCESS where DOC_HDR_ID IN(SELECT DOCUMENT_NUMBER FROM PROTOCOL t1 inner join OSP$PROTOCOL_USER_ROLES e  on t1.protocol_number = e.protocol_number and t1.sequence_number = e.sequence_number)
-/
-commit
-/
 alter table document_access disable constraint UQ_DOCUMENT_ACCESS1
 /
 alter table document_access disable constraint UQ_DOCUMENT_ACCESS2
@@ -37,7 +33,7 @@ begin
       UPDATE_USER
       )
       SELECT PROTOCOL_NUMBER,
-	  SEQUENCE_NUMBER,
+	  (SEQUENCE_NUMBER - 1),
       ROLE_ID,
       USER_ID,
       UPDATE_TIMESTAMP,
@@ -51,6 +47,10 @@ end;
 commit
 /
 CREATE INDEX OSP$PROTOCOL_USER_ROLES_I ON OSP$PROTOCOL_USER_ROLES(PROTOCOL_NUMBER,SEQUENCE_NUMBER,ROLE_ID,USER_ID)
+/
+delete from DOCUMENT_ACCESS where DOC_HDR_ID IN(SELECT DOCUMENT_NUMBER FROM PROTOCOL t1 inner join OSP$PROTOCOL_USER_ROLES e  on t1.protocol_number = e.protocol_number and t1.sequence_number = e.sequence_number)
+/
+commit
 /
 DECLARE 
 ls_mbr_id VARCHAR2(40);

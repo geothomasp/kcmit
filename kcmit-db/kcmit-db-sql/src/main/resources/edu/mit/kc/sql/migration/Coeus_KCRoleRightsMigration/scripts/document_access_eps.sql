@@ -1,7 +1,3 @@
-delete from DOCUMENT_ACCESS where DOC_HDR_ID IN(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL t1 inner join OSP$EPS_PROP_USER_ROLES e  on t1.proposal_number = e.PROPOSAL_NUMBER)
-/
-commit
-/
 alter table document_access disable constraint UQ_DOCUMENT_ACCESS1
 /
 alter table document_access disable constraint UQ_DOCUMENT_ACCESS2
@@ -36,7 +32,7 @@ begin
       UPDATE_TIMESTAMP,
       UPDATE_USER
       )
-      SELECT PROPOSAL_NUMBER,
+      SELECT to_number(PROPOSAL_NUMBER),
       ROLE_ID,
       USER_ID,
       UPDATE_TIMESTAMP,
@@ -51,6 +47,10 @@ begin
 end;
 /
 CREATE INDEX OSP$EPS_PROP_USER_ROLES_I ON OSP$EPS_PROP_USER_ROLES(PROPOSAL_NUMBER,ROLE_ID,USER_ID)
+/
+delete from DOCUMENT_ACCESS where DOC_HDR_ID IN(SELECT DOCUMENT_NUMBER FROM EPS_PROPOSAL t1 inner join OSP$EPS_PROP_USER_ROLES e  on t1.proposal_number = e.PROPOSAL_NUMBER)
+/
+commit
 /
 DECLARE 
 ls_mbr_id VARCHAR2(40);
