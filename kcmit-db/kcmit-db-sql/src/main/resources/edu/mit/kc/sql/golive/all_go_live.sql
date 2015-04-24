@@ -3,6 +3,7 @@
 @rolodex.sql
 @unit.sql
 @award_budget.sql
+@questionnaire.sql
 @krms/krms.sql
 commit
 /
