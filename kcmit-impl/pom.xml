@@ -102,7 +102,7 @@
          <dependency>
             <groupId>org.kuali.coeus</groupId>
             <artifactId>coeus-impl</artifactId>
-            <version>1504.4</version>
+            <version>1504.10</version>
         </dependency>
        
          <dependency>
