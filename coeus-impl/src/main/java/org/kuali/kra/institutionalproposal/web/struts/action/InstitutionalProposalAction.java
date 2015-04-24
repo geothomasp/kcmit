@@ -433,6 +433,14 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
        institutionalProposalForm.getMedusaBean().setModuleName("IP");
        institutionalProposalForm.getMedusaBean().setModuleIdentifier(document.getInstitutionalProposal().getProposalId());
        institutionalProposalForm.getMedusaBean().generateParentNodes();
+       String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+               ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+       if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+   		InstitutionalProposalAttachmentFormBean instProposalAttachment = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
+   		if(instProposalAttachment != null) {
+   			instProposalAttachment.setDisableAttachmentRemovalIndicator(true);
+   		}
+   	}
        return mapping.findForward(Constants.MAPPING_INSTITUTIONAL_PROPOSAL_MEDUSA_PAGE);
    }
    

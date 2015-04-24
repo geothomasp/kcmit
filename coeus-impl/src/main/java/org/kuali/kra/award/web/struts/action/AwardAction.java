@@ -1200,6 +1200,14 @@ public class AwardAction extends BudgetParentActionBase {
        awardForm.getMedusaBean().setModuleName("award");
        awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
        awardForm.getMedusaBean().generateParentNodes();
+       String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+               ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+   	   if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+   		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
+   		if(awardAttachment != null) {
+   			awardAttachment.setDisableAttachmentRemovalIndicator(true);
+   		}
+   	  }
        return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
    }
 

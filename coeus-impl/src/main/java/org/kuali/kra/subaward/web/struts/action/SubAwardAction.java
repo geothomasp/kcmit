@@ -575,6 +575,14 @@ public ActionForward blanketApprove(ActionMapping mapping,
       subAwardForm.getMedusaBean().setModuleName("subaward");
       subAwardForm.getMedusaBean().setModuleIdentifier(subAwardForm.getSubAwardDocument().getSubAward().getSubAwardId());
       subAwardForm.getMedusaBean().generateParentNodes();
+      String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+              ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+  	  if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+  		SubAwardAttachmentFormBean subAwardAttachment = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
+  		if(subAwardAttachment != null) {
+  			subAwardAttachment.setDisableAttachmentRemovalIndicator(true);
+  		}
+  	}
       return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
   }
 
