@@ -960,6 +960,14 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     	Person person = getPersonService().getPersonByPrincipalName(currentUser);
     	return getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, person, proposalPerson);
     }
+    public boolean filterProposalPersonsForCOIStatus(ProposalDevelopmentDocument document){
+    	List<ProposalPerson> proposalPerson = document.getDevelopmentProposal().getProposalPersonsCoi();
+    	if(proposalPerson.size() <= 0)
+    	{
+    		return false;
+    	}
+    	return true;
+    }
  
     public boolean isCertQuestViewOnly(ProposalDevelopmentDocument document ,ProposalPerson proposalPerson){
     	 if(proposalPerson.getPerson()==null){
