@@ -24,4 +24,5 @@ spool KC-RELEASE-6_0_2-Upgrade-ORACLE-Install.log
 @kc/6_0_2/bootstrap/V602_001__RESKC-1.sql
 @kc/6_0_2/bootstrap/V602_007__RESKC-229.sql
 @kc/6_0_2/bootstrap/V602_010__RESKC-204.sql
+@kc/6_0_2/bootstrap/V602_014__RESOPS-58.sql
 commit;
