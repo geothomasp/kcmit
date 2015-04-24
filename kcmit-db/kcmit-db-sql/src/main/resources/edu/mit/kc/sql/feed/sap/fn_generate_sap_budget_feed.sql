@@ -167,14 +167,17 @@ begin
 						ls_amount := '-'||LPAD(ABS( ( to_number(r_award_budget.amount) * 100 )), 9, '0');
 				end if;
 				
-				begin
-					SELECT SAP_OBJ_CD into ls_cost_element FROM SAP_KC_OBJ_CD_MAPPING
-					WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
+				
+				select count(sap_obj_cd) into li_count FROM SAP_KC_OBJ_CD_MAPPING WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
+				
+				if li_count = 1 then
+					SELECT SAP_OBJ_CD into ls_cost_element FROM SAP_KC_OBJ_CD_MAPPING WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
 					
-				exception
-				when others then
+				else
 					ls_cost_element := r_award_budget.gl_account_key;
-				end;
+					
+				end if;
+								
 			
 				INSERT INTO SAP_BUDGET_FEED(
 							SAP_BUDGET_FEED_ID,
