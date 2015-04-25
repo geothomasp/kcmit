@@ -127,7 +127,7 @@ SELECT SUBSTR(ls_proto_num,11,1) INTO ls_proto FROM DUAL;
 			commit;
 
 			begin
-				SELECT PERSON_ID INTO ls_person_id FROM PROTOCOL_PERSONS WHERE  PROTOCOL_NUMBER=ls_proto_num AND SEQUENCE_NUMBER=li_seq
+				SELECT PROTOCOL_PERSON_ID INTO ls_person_id FROM PROTOCOL_PERSONS WHERE  PROTOCOL_NUMBER=ls_proto_num AND SEQUENCE_NUMBER=li_seq
 				AND PROTOCOL_ID=li_protocol_id AND PROTOCOL_PERSON_ROLE_ID = 'PI' ;
 			exception
 			when others then
