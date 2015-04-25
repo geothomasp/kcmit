@@ -52,7 +52,7 @@
                                   and !#parent.readOnly}"/>
                             <bean parent="Uif-PrimaryActionButton" p:actionLabel="COI Disclosure Status"
                                                p:order="35"  p:actionScript="showDialog('PropDev-PersonnelPage-COIStatus-Dialog');"
-                                                p:render="@{document.developmentProposal.proposalPersons.size() > 0}"/>
+                                                p:render="@{#ViewHelper.filterProposalPersonsForCOIStatus(document)}"/>
                         </list>
                     </property>
                 </bean>
@@ -765,7 +765,7 @@
         <bean id="PropDev-PersonnelPage-COIStatus-Collection1" parent="PropDev-PersonnelPage-COIStatus-Collection1-parent" />
         <bean id="PropDev-PersonnelPage-COIStatus-Collection1-parent" 
          parent="Uif-TableCollectionSection" p:collectionObjectClass="org.kuali.coeus.propdev.impl.person.ProposalPerson"
-          p:propertyName="document.developmentProposal.proposalPersons" p:addWithDialog="false"
+          p:propertyName="document.developmentProposal.proposalPersonsCoi" p:addWithDialog="false"
 		p:renderAddLine="false" p:layoutManager.renderSequenceField="false"
 		p:renderInactiveToggleButton="false" p:layoutManager.richTable.render="true" p:renderLineActions="false">
 		

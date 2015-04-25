@@ -52,6 +52,7 @@ import org.kuali.coeus.propdev.impl.location.CongressionalDistrict;
 import org.kuali.coeus.propdev.impl.location.ProposalSite;
 import org.kuali.coeus.propdev.impl.person.KeyPersonnelService;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.propdev.impl.person.ProposalPersonCoiIntegrationService;
 import org.kuali.coeus.propdev.impl.person.ProposalPersonDegree;
 import org.kuali.coeus.propdev.impl.person.ProposalPersonUnit;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
@@ -375,8 +376,26 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
 
     @Transient
     private List<YnqGroupName> ynqGroupNames;
-
+    
     @Transient
+    private List<ProposalPerson> proposalPersonsCoi;
+    
+
+    public List<ProposalPerson> getProposalPersonsCoi() {
+    	List<ProposalPerson> filteredCollection =  new ArrayList();
+    	for(ProposalPerson person:this.proposalPersons){
+    		if(getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person)){// and kp hastobecertified
+    			filteredCollection.add(person);
+    		}
+    	}
+		return filteredCollection;
+	}
+
+	public void setProposalPersonsCoi(List<ProposalPerson> proposalPersonsCoi) {
+		this.proposalPersonsCoi = proposalPersonsCoi;
+	}
+
+	@Transient
     private Map<String, List<ProposalChangedData>> proposalChangeHistory;
 
     @Transient
@@ -389,6 +408,23 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     private String hierarchyStatusName;
 
     @Transient
+    private transient ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
+    
+    
+    
+    public ProposalPersonCoiIntegrationService getProposalPersonCoiIntegrationService() {
+    	if(this.proposalPersonCoiIntegrationService == null){
+    		this.proposalPersonCoiIntegrationService = KcServiceLocator.getService(ProposalPersonCoiIntegrationService.class);
+    	}
+		return proposalPersonCoiIntegrationService;
+	}
+
+	public void setProposalPersonCoiIntegrationService(
+			ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService) {
+		this.proposalPersonCoiIntegrationService = proposalPersonCoiIntegrationService;
+	}
+
+	@Transient
     private transient BusinessObjectService businessObjectService;
 
     @Transient
