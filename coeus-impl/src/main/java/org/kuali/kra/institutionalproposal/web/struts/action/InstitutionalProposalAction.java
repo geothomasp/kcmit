@@ -357,7 +357,16 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
             forward = institutionalProposalActions(mapping, form, request, response);
         }  
         
-        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        handleAttachmentsDocument(form);
+    	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
+    	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
+    		((InstitutionalProposalForm) form).setDisplayKeywordPanel(true);
+    	}
+       
+        return forward;
+    }
+    private void handleAttachmentsDocument(ActionForm form) {
+    	String currentUser = GlobalVariables.getUserSession().getPrincipalId();
         if(hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC") || 
         		hasPermission("KC-IP","Create Institutional Proposal") ||
         		     hasPermission("KC-IP","Edit Institutional Proposal")) {
@@ -390,14 +399,7 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
     			instProposalAttachment.setDisableAttachmentRemovalIndicator(true);
     		}
     	}
-    	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
-    	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
-    		((InstitutionalProposalForm) form).setDisplayKeywordPanel(true);
-    	}
-       
-        return forward;
     }
-    
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
         super.loadDocument(kualiDocumentFormBase);
@@ -433,14 +435,7 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
        institutionalProposalForm.getMedusaBean().setModuleName("IP");
        institutionalProposalForm.getMedusaBean().setModuleIdentifier(document.getInstitutionalProposal().getProposalId());
        institutionalProposalForm.getMedusaBean().generateParentNodes();
-       String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-               ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
-       if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
-   		InstitutionalProposalAttachmentFormBean instProposalAttachment = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
-   		if(instProposalAttachment != null) {
-   			instProposalAttachment.setDisableAttachmentRemovalIndicator(true);
-   		}
-   	}
+       handleAttachmentsDocument(form);
        return mapping.findForward(Constants.MAPPING_INSTITUTIONAL_PROPOSAL_MEDUSA_PAGE);
    }
    

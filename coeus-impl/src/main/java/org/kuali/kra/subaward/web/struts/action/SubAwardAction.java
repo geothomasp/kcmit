@@ -159,7 +159,13 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
         SubAward subAward = KcServiceLocator.getService(
                 SubAwardService.class).getAmountInfo(subAwardDocument.getSubAward());
         subAwardForm.getSubAwardDocument().setSubAward(subAward);
+        handleAttachmentsDocument(form);
         
+        return forward;
+    }
+    
+    protected void handleAttachmentsDocument(ActionForm form) {
+
 
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
                
@@ -186,8 +192,7 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
     			subAwardAttachment.setDisableAttachmentRemovalIndicator(true);
     		}
     	}
-        return forward;
-    }
+   }
 
     /**.
      * this method is for handleDocument
@@ -575,14 +580,7 @@ public ActionForward blanketApprove(ActionMapping mapping,
       subAwardForm.getMedusaBean().setModuleName("subaward");
       subAwardForm.getMedusaBean().setModuleIdentifier(subAwardForm.getSubAwardDocument().getSubAward().getSubAwardId());
       subAwardForm.getMedusaBean().generateParentNodes();
-      String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-              ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
-  	  if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
-  		SubAwardAttachmentFormBean subAwardAttachment = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
-  		if(subAwardAttachment != null) {
-  			subAwardAttachment.setDisableAttachmentRemovalIndicator(true);
-  		}
-  	}
+      handleAttachmentsDocument(form);
       return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
   }
 

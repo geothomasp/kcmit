@@ -191,7 +191,38 @@ public class AwardAction extends BudgetParentActionBase {
             handlePlaceHolderDocument(awardForm, awardDocument);
         }
         
-        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        handleAttachmentsDocument(form);
+    	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
+    	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
+    		((AwardForm) form).setDisplayKeywordPanel(true);
+    	}
+       
+        return forward;
+    }
+
+    private void handlePlaceHolderDocument(AwardForm form, AwardDocument awardDocument) {
+        if(awardDocument.isPlaceHolderDocument()) {
+            Long awardId = form.getPlaceHolderAwardId();
+            //If it is a placeholder document, we want to initialize it with the award that the user is viewing
+            int currentAwardIndex = -1;
+            Award currentAward = null;
+            for(Award award : awardDocument.getAwardList()) {
+                currentAwardIndex++;
+                if(ObjectUtils.equals(award.getAwardId(), awardId)) {
+                	currentAward = award;
+                    break;
+                }
+            }
+            if(currentAward != null) {
+                awardDocument.getAwardList().remove(currentAwardIndex);
+                awardDocument.getAwardList().add(0, currentAward);
+                form.setViewOnly(true);                
+            }
+        }
+    }
+    
+    protected void handleAttachmentsDocument(ActionForm form) {
+    	String currentUser = GlobalVariables.getUserSession().getPrincipalId();
         if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
         		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
         		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
@@ -221,33 +252,6 @@ public class AwardAction extends BudgetParentActionBase {
     			awardAttachment.setDisableAttachmentRemovalIndicator(true);
     		}
     	}
-    	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
-    	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
-    		((AwardForm) form).setDisplayKeywordPanel(true);
-    	}
-       
-        return forward;
-    }
-
-    private void handlePlaceHolderDocument(AwardForm form, AwardDocument awardDocument) {
-        if(awardDocument.isPlaceHolderDocument()) {
-            Long awardId = form.getPlaceHolderAwardId();
-            //If it is a placeholder document, we want to initialize it with the award that the user is viewing
-            int currentAwardIndex = -1;
-            Award currentAward = null;
-            for(Award award : awardDocument.getAwardList()) {
-                currentAwardIndex++;
-                if(ObjectUtils.equals(award.getAwardId(), awardId)) {
-                	currentAward = award;
-                    break;
-                }
-            }
-            if(currentAward != null) {
-                awardDocument.getAwardList().remove(currentAwardIndex);
-                awardDocument.getAwardList().add(0, currentAward);
-                form.setViewOnly(true);                
-            }
-        }
     }
     
     protected void cleanUpUserSession() {
@@ -1200,14 +1204,7 @@ public class AwardAction extends BudgetParentActionBase {
        awardForm.getMedusaBean().setModuleName("award");
        awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
        awardForm.getMedusaBean().generateParentNodes();
-       String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-               ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
-   	   if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
-   		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
-   		if(awardAttachment != null) {
-   			awardAttachment.setDisableAttachmentRemovalIndicator(true);
-   		}
-   	  }
+       handleAttachmentsDocument(form);
        return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
    }
 
