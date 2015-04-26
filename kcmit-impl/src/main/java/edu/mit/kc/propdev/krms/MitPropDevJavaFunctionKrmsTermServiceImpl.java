@@ -586,7 +586,7 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 					mostCurrentHeader = header;
 				}
 			}
-			if (mostCurrentHeader.getQuestionnaire().getQuestionnaireRefIdAsLong()
+			if (mostCurrentHeader.getQuestionnaire().getQuestionnaireSeqId()
 					.equals(questionnaireId)) {
 
 				List<Answer> answers = mostCurrentHeader.getAnswers();
