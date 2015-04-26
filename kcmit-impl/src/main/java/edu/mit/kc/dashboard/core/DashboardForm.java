@@ -5,6 +5,7 @@ import edu.mit.kc.dashboard.bo.Expenditures;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
+import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.negotiations.bo.Negotiation;
 import org.kuali.rice.kim.api.identity.Person;
@@ -23,7 +24,7 @@ public class DashboardForm extends UifFormBase {
 
     private KcPerson dashboardPerson;
     private String tempUserName;
-    private List<ProposalDevelopmentDocument> myProposals = new ArrayList<>();
+    private List<ProposalPerson> myProposals = new ArrayList<>();
     private List<Award> myAwards;
     private List<Expenditures> expenditureData = new ArrayList<>();
     private List<Alert> alerts = new ArrayList<>();
@@ -44,11 +45,11 @@ public class DashboardForm extends UifFormBase {
         this.tempUserName = tempUserName;
     }
 
-    public List<ProposalDevelopmentDocument> getMyProposals() {
+    public List<ProposalPerson> getMyProposals() {
         return myProposals;
     }
 
-    public void setMyProposals(List<ProposalDevelopmentDocument> myProposals) {
+    public void setMyProposals(List<ProposalPerson> myProposals) {
         this.myProposals = myProposals;
     }
 

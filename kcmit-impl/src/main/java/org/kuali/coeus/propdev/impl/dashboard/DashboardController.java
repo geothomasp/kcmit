@@ -16,41 +16,47 @@
 package org.kuali.coeus.propdev.impl.dashboard;
 
 
-import edu.mit.kc.dashboard.bo.Alert;
-import edu.mit.kc.dashboard.bo.Expenditures;
-import edu.mit.kc.dashboard.core.DashboardForm;
-import edu.mit.kc.workloadbalancing.core.WorkloadForm;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
-import org.kuali.coeus.common.impl.version.history.VersionHistoryLookupDaoOjb;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
+import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
-import org.kuali.kra.award.dao.AwardLookupDao;
-import org.kuali.kra.award.dao.ojb.AwardLookupDaoOjb;
 import org.kuali.kra.award.document.authorization.AwardDocumentAuthorizer;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.criteria.OrderByField;
+import org.kuali.rice.core.api.criteria.OrderDirection;
+import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kew.api.document.WorkflowDocumentService;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.document.TransactionalDocumentControllerService;
-import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.kuali.rice.krad.service.LookupService;
 import org.kuali.rice.krad.uif.field.AttributeQueryResult;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.MethodAccessible;
 import org.kuali.rice.krad.web.form.UifFormBase;
-import org.kuali.rice.krad.web.service.*;
+import org.kuali.rice.krad.web.service.CollectionControllerService;
+import org.kuali.rice.krad.web.service.ModelAndViewService;
+import org.kuali.rice.krad.web.service.NavigationControllerService;
+import org.kuali.rice.krad.web.service.QueryControllerService;
+import org.kuali.rice.krad.web.service.RefreshControllerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -61,12 +67,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.*;
+import edu.mit.kc.dashboard.bo.Alert;
+import edu.mit.kc.dashboard.bo.Expenditures;
+import edu.mit.kc.dashboard.core.DashboardForm;
+import edu.mit.kc.workloadbalancing.core.WorkloadForm;
 
 @Controller("dashboard")
 @RequestMapping(value = "/dashboard")
@@ -203,25 +207,35 @@ public class DashboardController {
     }
 
     protected void populateProposals(DashboardForm form) {
-        DocumentSearchCriteria.Builder builder = DocumentSearchCriteria.Builder.create();
-        builder.setInitiatorPrincipalId(form.getDashboardPerson().getPersonId());
-        builder.setDocumentTypeName("ProposalDevelopmentDocument");
-        DocumentSearchResults results = workflowDocumentService.documentSearch(form.getDashboardPerson().getPersonId(), builder.build());
+//        DocumentSearchCriteria.Builder builder = DocumentSearchCriteria.Builder.create();
+//        builder.setInitiatorPrincipalId(form.getDashboardPerson().getPersonId());
+//        builder.setDocumentTypeName("ProposalDevelopmentDocument");
+//        DocumentSearchResults results = workflowDocumentService.documentSearch(form.getDashboardPerson().getPersonId(), builder.build());
+//
+//        if (results.getSearchResults().size() == 0) {
+//            return;
+//        }
+//
+//        List<String> documentIds = new ArrayList<String>();
+//        for (DocumentSearchResult result : results.getSearchResults()) {
+//            documentIds.add(result.getDocument().getDocumentId());
+//        }
+//
+//        QueryByCriteria queryByCriteria = QueryByCriteria.Builder.andAttributes(Collections.singletonMap("documentNumber",documentIds)).build();
+//        List<ProposalDevelopmentDocument> myProposals = getDataObjectService().findMatching(ProposalDevelopmentDocument.class,queryByCriteria).getResults();
+//
+//        myProposals = new ArrayList<>(myProposals);
 
-        if (results.getSearchResults().size() == 0) {
-            return;
-        }
+    	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(PredicateFactory.equal("personId", form.getDashboardPerson().getPersonId()));
+        predicates.add(PredicateFactory.equal("proposalPersonRoleId", form.getDashboardPerson().getPersonId()));
+    	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+        builder.setOrderByFields(OrderByField.Builder.create("proposalNumber", OrderDirection.DESCENDING).build());
 
-        List<String> documentIds = new ArrayList<String>();
-        for (DocumentSearchResult result : results.getSearchResults()) {
-            documentIds.add(result.getDocument().getDocumentId());
-        }
-
-        QueryByCriteria queryByCriteria = QueryByCriteria.Builder.andAttributes(Collections.singletonMap("documentNumber",documentIds)).build();
-        List<ProposalDevelopmentDocument> myProposals = getDataObjectService().findMatching(ProposalDevelopmentDocument.class,queryByCriteria).getResults();
+        List<ProposalPerson> myProposals = getDataObjectService().findMatching(ProposalPerson.class, builder.build()).getResults();
 
         myProposals = new ArrayList<>(myProposals);
-
         form.setMyProposals(myProposals);
     }
 
@@ -275,7 +289,7 @@ public class DashboardController {
         }
 
         form.setTempUserName(null);
-        form.setMyProposals(new ArrayList<ProposalDevelopmentDocument>());
+        form.setMyProposals(new ArrayList<ProposalPerson>());
         form.setMyAwards(null);
         if (form.getClientStateForSyncing() != null) {
             form.getClientStateForSyncing().remove("Dashboard-Activity");

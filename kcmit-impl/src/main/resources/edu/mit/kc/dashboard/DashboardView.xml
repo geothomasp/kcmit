@@ -145,15 +145,15 @@
 
         <property name="items">
             <list>
-                <bean parent="Uif-LinkField" p:label="Proposal" p:linkText="@{#line.documentNumber}"
-                      p:href="@{T(org.kuali.coeus.propdev.impl.dashboard.DashboardViewHelperService).buildPropDevLink(#line.documentNumber)}">
+                <bean parent="Uif-LinkField" p:label="Proposal" p:linkText="@{#line.developmentProposal.proposalDocument.documentNumber}"
+                      p:href="@{T(org.kuali.coeus.propdev.impl.dashboard.DashboardViewHelperService).buildPropDevLink(#line.developmentProposal.proposalDocument.documentNumber)}">
                 </bean>
                 <bean parent="Uif-DataField" p:label="Project Title" p:propertyName="developmentProposal.title"></bean>
                 <bean parent="Uif-DataField" p:label="Sponsor Name"
                       p:propertyName="developmentProposal.sponsorName">
                 </bean>
                 <bean parent="Uif-InputField" p:label="Status" p:readOnly="true" p:enableAutoQuickfinder="false"
-                      p:propertyName="developmentProposal.proposalStateTypeCode">
+                      p:propertyName="developmentProposal.proposalState.description">
                     <property name="optionsFinder">
                         <bean class="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder">
                             <property name="businessObjectClass"
