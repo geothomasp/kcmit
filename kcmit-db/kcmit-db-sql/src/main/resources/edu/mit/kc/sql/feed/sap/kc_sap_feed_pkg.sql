@@ -1487,7 +1487,7 @@ begin
 
 --	IF (SUBSTR(grec_award.fy_recover_idc_indicator, 1, 1) = 'P') THEN (3.0)
 
-		IF (SUBSTR(grec_award.idc_indicator, 1, 1) = 'P') THEN
+--		IF (SUBSTR(grec_award.idc_indicator, 1, 1) = 'P') THEN
 		OPEN cur_idc;
 
 		--Fetch only once. We only need the first row that is returned.
@@ -1499,9 +1499,9 @@ begin
 		END IF;
 
 		close cur_idc;
-	ELSE
-		ls_description := ' ';
-	END IF;
+--	ELSE
+--		ls_description := ' ';
+--	END IF;
 
 
 --check if this award has an underrecovery for the current fiscal_year or earlier.
@@ -1662,10 +1662,7 @@ cursor cur_idc_on is
    WHERE ( AWARD_IDC_RATE.AWARD_NUMBER = gs_award_number ) AND
          ( AWARD_IDC_RATE.START_DATE <= SYSDATE )   AND         --Added on 8/13/03
          ( AWARD_IDC_RATE.ON_CAMPUS_FLAG = 'N' ) AND
-			   AWARD_IDC_RATE.SEQUENCE_NUMBER =		 (SELECT MAX(IDC2.SEQUENCE_NUMBER)
-				FROM AWARD_IDC_RATE IDC2 WHERE
-				IDC2.AWARD_NUMBER =			AWARD_IDC_RATE.AWARD_NUMBER	and
-				IDC2.SEQUENCE_NUMBER <= gi_sequence_number	)
+		(AWARD_IDC_RATE.SEQUENCE_NUMBER =	gi_sequence_number)
 	order by AWARD_IDC_RATE.START_DATE DESC;
 
 --Declare a cursor to retrieve IDC Off campus rates rates
@@ -1680,10 +1677,7 @@ cursor cur_idc_off (as_fy in AWARD_IDC_RATE.FISCAL_YEAR%TYPE,
          ( AWARD_IDC_RATE.FISCAL_YEAR = as_fy)   AND
          ( AWARD_IDC_RATE.START_DATE = ad_sd)   AND  -- Added on 8/13/03
          ( AWARD_IDC_RATE.ON_CAMPUS_FLAG = 'F' ) AND
-			   AWARD_IDC_RATE.SEQUENCE_NUMBER =		 (SELECT MAX(IDC2.SEQUENCE_NUMBER)
-				FROM AWARD_IDC_RATE IDC2 WHERE
-				IDC2.AWARD_NUMBER =			 AWARD_IDC_RATE.AWARD_NUMBER	and
-				IDC2.SEQUENCE_NUMBER <= gi_sequence_number	)
+		 ( AWARD_IDC_RATE.SEQUENCE_NUMBER = gi_sequence_number	)
 	order by AWARD_IDC_RATE.START_DATE DESC;
 
 
@@ -1727,7 +1721,7 @@ END IF;
 --Check IF IDC exists for this sequence of the award
 --IF not set idc_on and off to null
 
-	IF (SUBSTR(grec_award.idc_indicator, 1, 1) = 'P') THEN
+--	IF (SUBSTR(grec_award.idc_indicator, 1, 1) = 'P') THEN
 
 		OPEN cur_idc_on;
 
@@ -1779,11 +1773,11 @@ END IF;
 
 
 
-	ELSE  --Fist character of indicator was 'N'. i.e no IDC
+--	ELSE  --Fist character of indicator was 'N'. i.e no IDC
 
-		gs_oh_adjustment_key := '      ';
+--		gs_oh_adjustment_key := '      ';
 
-	END IF;
+--	END IF;
 
 	return (0);
 
@@ -1991,17 +1985,14 @@ END IF;
 
 --Check if Costsharing exists for this sequence of the award.
 
-IF (SUBSTR(grec_award.cost_sharing_indicator , 1, 1) = 'P') THEN
+--IF (SUBSTR(grec_award.cost_sharing_indicator , 1, 1) = 'P') THEN
 
   	SELECT SUM(AWARD_COST_SHARE.COMMITMENT_AMOUNT)
 		INTO lc_temp_amt
     	FROM AWARD_COST_SHARE
 		WHERE ( AWARD_COST_SHARE.AWARD_NUMBER = gs_award_number ) AND
-         ( AWARD_COST_SHARE.PROJECT_PERIOD <= gs_fiscal_year )   AND
-			   AWARD_COST_SHARE.SEQUENCE_NUMBER =		 (SELECT MAX(CS2.SEQUENCE_NUMBER)
-				FROM AWARD_COST_SHARE CS2 WHERE
-				CS2.AWARD_NUMBER =AWARD_COST_SHARE.AWARD_NUMBER	and
-				CS2.SEQUENCE_NUMBER <= gi_sequence_number	) and
+         	( AWARD_COST_SHARE.PROJECT_PERIOD <= gs_fiscal_year )   AND
+			(AWARD_COST_SHARE.SEQUENCE_NUMBER = gi_sequence_number	) and
 			(SUBSTR(LTRIM(SOURCE), 1, 1) <> '0') ;      --SUBSTR condition added on 4/11/03
 
 	IF lc_temp_amt IS NULL THEN
@@ -2009,7 +2000,7 @@ IF (SUBSTR(grec_award.cost_sharing_indicator , 1, 1) = 'P') THEN
 	END IF;
 
 	lc_auth_total := lc_auth_total + lc_temp_amt;
-END IF;
+--END IF;
 
 return lc_auth_total;
 
@@ -2594,16 +2585,13 @@ begin
 	ls_CostShare := '1';
 
 
-	IF SUBSTR(grec_award.cost_sharing_indicator, 1, 1) = 'P' THEN
+--	IF SUBSTR(grec_award.cost_sharing_indicator, 1, 1) = 'P' THEN
 
 		select count(award_number)
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				cost_share_type_code = 2;
 
 		IF li_Count > 0 THEN
@@ -2615,10 +2603,7 @@ begin
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				cost_share_type_code = 3;
 
 		IF li_Count > 0 THEN
@@ -2630,10 +2615,7 @@ begin
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				cost_share_type_code = 4;
 
 		IF li_Count > 0 THEN
@@ -2645,10 +2627,7 @@ begin
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				cost_share_type_code = 5;
 
 		IF li_Count > 0 THEN
@@ -2660,10 +2639,7 @@ begin
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				cost_share_type_code = 6;
 
 		IF li_Count > 0 THEN
@@ -2675,10 +2651,7 @@ begin
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				cost_share_type_code = 7;
 
 		IF li_Count > 0 THEN
@@ -2690,10 +2663,7 @@ begin
 		into li_count
 		from award_cost_share
 		where award_number = gs_award_number and
-				sequence_number = (select max(cs.sequence_number) from
-										 award_cost_share cs
-										 where award_cost_share.award_number = cs.award_number and
-										 cs.sequence_number <= gi_sequence_number) and
+				sequence_number =  gi_sequence_number and
 				cost_share_type_code = 1;
 
 		IF li_Count > 0 THEN
@@ -2701,7 +2671,7 @@ begin
 			Return (ls_CostShare);
 		END IF;
 
-	ELSE   --IF indicator is N0 or N1
+	--ELSE   --IF indicator is N0 or N1
 		--There are no cost sharing rows, but check to see if there is a cost sharing comment
 		-- if cost sharing comment exists set cost_share to 5 else set to 1
 
@@ -2710,10 +2680,7 @@ begin
 			into ls_comment
 			from award_comment
 			where award_number = gs_award_number and
-				sequence_number = (select max(com.sequence_number) from
-										 award_comment com
-										 where award_comment.award_number = com.award_number and
-										 com.sequence_number <= gi_sequence_number) and
+				sequence_number = gi_sequence_number and
 				comment_type_code = 9;
 
 			IF ls_comment is null then
@@ -2728,7 +2695,7 @@ begin
 				Return (ls_CostShare);
 		end;
 
-	END IF;
+--	END IF;
 
 
 Return (ls_CostShare);
