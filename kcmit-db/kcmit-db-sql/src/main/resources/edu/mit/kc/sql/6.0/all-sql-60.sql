@@ -168,3 +168,7 @@
 @all-dml-201504231554.sql
 @all-dml-201504231714.sql
 @all-dml-201504231720.sql
+commit
+/
+EXIT
+/
