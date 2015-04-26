@@ -29,14 +29,15 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
-import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.kra.award.document.authorization.AwardDocumentAuthorizer;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardService;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.OrderByField;
 import org.kuali.rice.core.api.criteria.OrderDirection;
@@ -207,36 +208,39 @@ public class DashboardController {
     }
 
     protected void populateProposals(DashboardForm form) {
-//        DocumentSearchCriteria.Builder builder = DocumentSearchCriteria.Builder.create();
-//        builder.setInitiatorPrincipalId(form.getDashboardPerson().getPersonId());
-//        builder.setDocumentTypeName("ProposalDevelopmentDocument");
-//        DocumentSearchResults results = workflowDocumentService.documentSearch(form.getDashboardPerson().getPersonId(), builder.build());
-//
-//        if (results.getSearchResults().size() == 0) {
-//            return;
-//        }
-//
-//        List<String> documentIds = new ArrayList<String>();
-//        for (DocumentSearchResult result : results.getSearchResults()) {
-//            documentIds.add(result.getDocument().getDocumentId());
-//        }
-//
-//        QueryByCriteria queryByCriteria = QueryByCriteria.Builder.andAttributes(Collections.singletonMap("documentNumber",documentIds)).build();
-//        List<ProposalDevelopmentDocument> myProposals = getDataObjectService().findMatching(ProposalDevelopmentDocument.class,queryByCriteria).getResults();
-//
-//        myProposals = new ArrayList<>(myProposals);
-
     	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
         List<Predicate> predicates = new ArrayList<Predicate>();
         predicates.add(PredicateFactory.equal("personId", form.getDashboardPerson().getPersonId()));
-        predicates.add(PredicateFactory.equal("proposalPersonRoleId", form.getDashboardPerson().getPersonId()));
+        predicates.add(PredicateFactory.equal("proposalPersonRoleId", Constants.PRINCIPAL_INVESTIGATOR_ROLE));
     	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
-        builder.setOrderByFields(OrderByField.Builder.create("proposalNumber", OrderDirection.DESCENDING).build());
+        builder.setOrderByFields(OrderByField.Builder.create("developmentProposal.proposalNumber", OrderDirection.DESCENDING).build());
 
         List<ProposalPerson> myProposals = getDataObjectService().findMatching(ProposalPerson.class, builder.build()).getResults();
 
-        myProposals = new ArrayList<>(myProposals);
-        form.setMyProposals(myProposals);
+        List<ProposalPerson> myArrangedProposals = new ArrayList<ProposalPerson>();
+        if(myProposals != null && !myProposals.isEmpty()) {
+            myArrangedProposals = getReArrangedProposals(myProposals);
+            myProposals.removeAll(myArrangedProposals);
+            myArrangedProposals.addAll(myProposals);
+        }
+        form.setMyProposals(myArrangedProposals);
+    }
+    
+    protected List<ProposalPerson> getReArrangedProposals(List<ProposalPerson> myProposals) {
+    	List<ProposalPerson> myArrangedProposals = new ArrayList<ProposalPerson>();
+    	myArrangedProposals.addAll(getProposalsForStatus(myProposals, ProposalState.IN_PROGRESS));
+    	myArrangedProposals.addAll(getProposalsForStatus(myProposals, ProposalState.REVISIONS_REQUESTED));
+    	return myArrangedProposals;
+    }
+    
+    protected List<ProposalPerson> getProposalsForStatus(List<ProposalPerson> myProposals, String proposalStateCode) {
+    	List<ProposalPerson> myFilteredProposals = new ArrayList<ProposalPerson>();
+    	for(ProposalPerson proposalPerson : myProposals) {
+    		if(proposalPerson.getDevelopmentProposal().getProposalStateTypeCode().equals(proposalStateCode)) {
+    			myFilteredProposals.add(proposalPerson);
+    		}
+    	}
+    	return myFilteredProposals;
     }
 
     protected void populateAwards(DashboardForm form) {

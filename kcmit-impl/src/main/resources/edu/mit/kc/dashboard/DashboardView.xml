@@ -152,23 +152,13 @@
                 <bean parent="Uif-DataField" p:label="Sponsor Name"
                       p:propertyName="developmentProposal.sponsorName">
                 </bean>
-                <bean parent="Uif-InputField" p:label="Status" p:readOnly="true" p:enableAutoQuickfinder="false"
-                      p:propertyName="developmentProposal.proposalState.description">
-                    <property name="optionsFinder">
-                        <bean class="org.kuali.coeus.sys.framework.keyvalue.ExtendedPersistableBusinessObjectValuesFinder">
-                            <property name="businessObjectClass"
-                                      value="org.kuali.coeus.propdev.impl.state.ProposalState"/>
-                            <property name="includeKeyInDescription" value="false"/>
-                            <property name="keyAttributeName" value="code"/>
-                            <property name="labelAttributeName" value="description"/>
-                        </bean>
-                    </property>
-                    <property name="control">
-                        <bean parent="Uif-DropdownControl"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-DataField" p:label="Investigator"
-                      p:propertyName="developmentProposal.principalInvestigatorName"></bean>
+                <bean parent="Uif-DataField" p:label="Status" p:propertyName="developmentProposal.proposalState.description"></bean>
+                <bean parent="Uif-DataField" p:label="Deadline Date"
+                      p:propertyName="developmentProposal.deadlineDate"></bean>
+                <bean parent="Uif-DataField" p:label="Start Date"
+                      p:propertyName="developmentProposal.requestedStartDateInitial"></bean>
+                <bean parent="Uif-DataField" p:label="End Date"
+                      p:propertyName="developmentProposal.requestedEndDateInitial"></bean>
             </list>
         </property>
     </bean>
