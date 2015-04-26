@@ -48,6 +48,7 @@ import org.kuali.coeus.s2sgen.api.generate.FormGeneratorService;
 import org.kuali.coeus.common.framework.compliance.core.SaveSpecialReviewLinkEvent;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewService;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewType;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.workflow.KcWorkflowService;
 import org.kuali.kra.bo.FundingSourceType;
@@ -58,6 +59,9 @@ import org.kuali.kra.institutionalproposal.proposaladmindetails.ProposalAdminDet
 import org.kuali.kra.institutionalproposal.service.InstitutionalProposalService;
 import org.kuali.kra.institutionalproposal.specialreview.InstitutionalProposalSpecialReview;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -88,6 +92,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
 
 @Controller
 public class ProposalDevelopmentSubmitController extends
@@ -650,6 +656,8 @@ public class ProposalDevelopmentSubmitController extends
         }
 
         form.setEvaluateFlagsAndModes(true);
+        updateWlcurrentLoad(form.getDevelopmentProposal().getProposalNumber());
+
         return updateProposalState(form);
     }
 
@@ -743,6 +751,7 @@ public class ProposalDevelopmentSubmitController extends
     }
 
     form.setEvaluateFlagsAndModes(true);
+    updateWlcurrentLoad(form.getDevelopmentProposal().getProposalNumber());
     return getTransactionalDocumentControllerService().reload(form);
     }
 
@@ -759,6 +768,31 @@ public class ProposalDevelopmentSubmitController extends
         return getTransactionalDocumentControllerService().sendAdHocRequests(form);
     }
 
+    private void updateWlcurrentLoad(String proposalNumber){
+    	List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
+    			(PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
+    	if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
+    		List<WLCurrentLoad> workLoadLatestList = new ArrayList<WLCurrentLoad>();
+    		for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
+    			if(workLoadLatestList.isEmpty()){
+    				workLoadLatestList.add(0,wLCurrentLoad);
+    			}else{
+    				WLCurrentLoad wLCurrentLoadlatest = workLoadLatestList.get(0);
+    				if(Integer.parseInt(wLCurrentLoadlatest.getRoutingNumber()) < Integer.parseInt(wLCurrentLoad.getRoutingNumber())){
+    					workLoadLatestList.remove(0);
+    					workLoadLatestList.add(0,wLCurrentLoad);
+    				}
+    			}
+    		}
+    		//	 getDateTimeService().getCurrentTimestamp()
+    		WLCurrentLoad currentWorkLoad = workLoadLatestList.get(0);
+    		currentWorkLoad.setActiveFlag("N");
+    		currentWorkLoad.setInactiveDate(KcServiceLocator.getService(DateTimeService.class).getCurrentTimestamp());
+    		getDataObjectService().save(currentWorkLoad);
+    	}
+    }
+    
+    
     public GlobalVariableService getGlobalVariableService() {
       return globalVariableService;
     }

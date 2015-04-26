@@ -65,7 +65,7 @@ public class WLCurrentLoadSim extends KcPersistableBusinessObjectBase{
 	
 	@Id
 	@Column(name = "COMPLEXITY")
-    private Double complexity; 
+    private Long complexity; 
 	
 	@Id
 	@Column(name = "LEAD_UNIT")
@@ -84,7 +84,7 @@ public class WLCurrentLoadSim extends KcPersistableBusinessObjectBase{
 	
 	@Id
 	@Column(name = "INACTIVE_DATE")
-    private Date inactiveDate; 
+    private Timestamp inactiveDate; 
 	
 	@Id
 	@Column(name = "REROUTED_FLAG")
@@ -244,13 +244,13 @@ public class WLCurrentLoadSim extends KcPersistableBusinessObjectBase{
 	/**
 	 * @return the complexity
 	 */
-	public Double getComplexity() {
+	public Long getComplexity() {
 		return complexity;
 	}
 	/**
 	 * @param complexity the complexity to set
 	 */
-	public void setComplexity(Double complexity) {
+	public void setComplexity(Long complexity) {
 		this.complexity = complexity;
 	}
 	/**
@@ -292,13 +292,13 @@ public class WLCurrentLoadSim extends KcPersistableBusinessObjectBase{
 	/**
 	 * @return the inactiveDate
 	 */
-	public Date getInactiveDate() {
+	public Timestamp getInactiveDate() {
 		return inactiveDate;
 	}
 	/**
 	 * @param inactiveDate the inactiveDate to set
 	 */
-	public void setInactiveDate(Date inactiveDate) {
+	public void setInactiveDate(Timestamp inactiveDate) {
 		this.inactiveDate = inactiveDate;
 	}
 	/**

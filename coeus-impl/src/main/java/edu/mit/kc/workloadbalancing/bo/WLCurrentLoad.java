@@ -6,11 +6,13 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.rice.krad.data.DataObjectService;
+import org.kuali.rice.krad.data.jpa.PortableSequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @Table(name = "WL_CURRENT_LOAD")
 public class WLCurrentLoad extends KcPersistableBusinessObjectBase{
 	
+    @PortableSequenceGenerator(name = "SEQ_WL_CURRENT_LOAD_ID")
+    @GeneratedValue(generator = "SEQ_WL_CURRENT_LOAD_ID")
 	@Id
 	@Column(name = "LOAD_ID")
 	private Long loadId;
@@ -68,7 +72,7 @@ public class WLCurrentLoad extends KcPersistableBusinessObjectBase{
 	private Timestamp arrivalDate;
 	
 	@Column(name = "INACTIVE_DATE")
-	private Date inactiveDate;
+	private Timestamp inactiveDate;
 	
 	 
 	/**
@@ -203,10 +207,10 @@ public class WLCurrentLoad extends KcPersistableBusinessObjectBase{
 	public void setArrivalDate(Timestamp arrivalDate) {
 		this.arrivalDate = arrivalDate;
 	}
-	public Date getInactiveDate() {
+	public Timestamp getInactiveDate() {
 		return inactiveDate;
 	}
-	public void setInactiveDate(Date inactiveDate) {
+	public void setInactiveDate(Timestamp inactiveDate) {
 		this.inactiveDate = inactiveDate;
 	}
 	

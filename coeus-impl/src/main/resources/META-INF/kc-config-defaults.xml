@@ -233,4 +233,6 @@
     
     <param name="kc.rest.admin.username" override="false"></param>
     <param name="kc.rest.admin.password" override="false"></param>
+    <param name="rice.kew.additionalSpringFiles">classpath:edu/mit/kc/workloadbalancing/KcKrmsOverridesSpringBeans.xml</param>
+    
 </config>

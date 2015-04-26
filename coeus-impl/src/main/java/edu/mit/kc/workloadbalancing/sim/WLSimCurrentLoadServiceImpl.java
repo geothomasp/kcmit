@@ -94,15 +94,15 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 	public String getLeastLoadedOspPerson(Integer simNumber,Timestamp arrivalDate) {
 		
 		String leastLoadedOspPerson = null;
-		Double complexityValue = 0.0;
+		Long complexityValue = 0L;
 		Calendar calendar  = getDateTimeService().getCalendar(arrivalDate);
 	    calendar.add(Calendar.DAY_OF_MONTH, -6);
 		List<WLCurrentLoadSim> wLCurrentLoadSimList = getDataObjectService().findMatching(WLCurrentLoadSim.class,QueryByCriteria.Builder.fromPredicates(
 				 PredicateFactory.equal("simId", simNumber),
 				 PredicateFactory.between("arrivalDate", calendar.getTime(), arrivalDate))).getResults();
 		
-		Map<String,Double> personComplexityMap = new HashMap<String,Double>();
-		List<Double> complextyList = new ArrayList<Double>();
+		Map<String,Long> personComplexityMap = new HashMap<String,Long>();
+		List<Long> complextyList = new ArrayList<Long>();
 		List<String> ospPersonList = getAllOspPeople(simNumber);
 		for(WLCurrentLoadSim wLCurrentLoadSim : wLCurrentLoadSimList){
 			if(ospPersonList.contains(wLCurrentLoadSim.getSimulatedPersonId()) && !isAbsent(wLCurrentLoadSim.getSimulatedPersonId(),arrivalDate)){
@@ -116,11 +116,13 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 				}
 			}
 		}
-		 
-		 complextyList = (List<Double>) personComplexityMap.values();
+		for(Long complextyValue :personComplexityMap.values()){
+			 complextyList.add(complextyValue);
+		 }
+		 //complextyList = (List<Double>) personComplexityMap.values();
 		 Collections.sort(complextyList);
-		 for(Double complexity : complextyList){
-			 for (Entry<String, Double> personComplexityMapentry :personComplexityMap.entrySet() ){
+		 for(Long complexity : complextyList){
+			 for (Entry<String, Long> personComplexityMapentry :personComplexityMap.entrySet() ){
 				 if(personComplexityMapentry.getValue().equals(complexity)){
 					 leastLoadedOspPerson = personComplexityMapentry.getKey();
 					 break;
@@ -140,15 +142,15 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 	public List<String> getOspAdminsByCurrentLoad(Integer simNumber,String sponsorGroup,Timestamp arrivalDate){
 		
 		List<String> sortedPersons = new ArrayList<String>();
-		Double complexityValue = 0.0;
+		Long complexityValue = 0L;
 		Calendar calendar  = getDateTimeService().getCalendar(arrivalDate);
 	    calendar.add(Calendar.DAY_OF_MONTH, -6);
 		List<WLCurrentLoadSim> wLCurrentLoadSimList = getDataObjectService().findMatching(WLCurrentLoadSim.class,QueryByCriteria.Builder.fromPredicates(
 				 PredicateFactory.equal("simId", simNumber),
 				 PredicateFactory.between("arrivalDate", calendar.getTime(), arrivalDate))).getResults();
 		
-		Map<String,Double> personComplexityMap = new HashMap<String,Double>();
-		List<Double> complextyList = new ArrayList<Double>();
+		Map<String,Long> personComplexityMap = new HashMap<String,Long>();
+		List<Long> complextyList = new ArrayList<Long>();
 		List<String> ospPersonList = getAllOspPeople(simNumber);
 		for(WLCurrentLoadSim wLCurrentLoadSim : wLCurrentLoadSimList){
 			if(ospPersonList.contains(wLCurrentLoadSim.getSimulatedPersonId()) && !isAbsent(wLCurrentLoadSim.getSimulatedPersonId(),arrivalDate)){
@@ -162,11 +164,14 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 				}
 			}
 		}
-		 
-		 complextyList = (List<Double>) personComplexityMap.values();
+		
+		for(Long complextyValue :personComplexityMap.values()){
+			 complextyList.add(complextyValue);
+		 }
+		// complextyList = (List<Long>) personComplexityMap.values();
 		 Collections.sort(complextyList);
-		 for(Double complexity : complextyList){
-			 for (Entry<String, Double> personComplexityMapentry :personComplexityMap.entrySet() ){
+		 for(Long complexity : complextyList){
+			 for (Entry<String, Long> personComplexityMapentry :personComplexityMap.entrySet() ){
 				 if(personComplexityMapentry.getValue().equals(complexity)){
 					 if(!sortedPersons.contains(personComplexityMapentry.getKey())){
 						 sortedPersons.add(personComplexityMapentry.getKey());
@@ -268,7 +273,7 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 						 simBean.setWlAssignedUserId(wLCurrentLoad.getUserId());
 						 simBean.setSponsorCode(wLCurrentLoad.getSponsorCode());
 						 simBean.setSponsorGroup(wLCurrentLoad.getSponsorGroup());
-						 simBean.setComplexity(wLCurrentLoad.getComplexity().doubleValue());
+						 simBean.setComplexity(wLCurrentLoad.getComplexity());
 						 simBean.setLeadUnit(wLCurrentLoad.getLeadUnit());
 						 simBean.setActiveFlag(wLCurrentLoad.getActiveFlag());
 						 simBean.setArrivalDate(wLCurrentLoad.getArrivalDate());
