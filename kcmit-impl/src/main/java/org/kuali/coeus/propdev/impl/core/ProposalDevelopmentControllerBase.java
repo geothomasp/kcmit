@@ -577,8 +577,11 @@ public abstract class ProposalDevelopmentControllerBase {
 			if(checkForCOIquestions(answerHeader) && completed){
 				 updateToCOI(pdForm,person);
 			}
-			coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
-			
+			String loggedInUser = getGlobalVariableService().getUserSession().getPrincipalId();
+
+			if(person.getPersonId().equals(loggedInUser)){
+				coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
+			}
 			if(coiQuestionsAnswered){
 				return coiQuestionsAnswered;
 			}
