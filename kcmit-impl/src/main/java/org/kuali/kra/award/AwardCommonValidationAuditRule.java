@@ -107,11 +107,11 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	        }             
     }
     if (!retvalCoi){
-    	 String link5 = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
-	      String errorKey5 = "document.awardList[0].statusCode";
+    	 String link5 = Constants.MAPPING_AWARD_CONTACTS_PAGE + "." + Constants.CONTACTS_PANEL_ANCHOR;
+	      String errorKey5 = "document.awardList[0].projectPersons";
   	auditWarnings5.add(new AuditError(errorKey5, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link5));
   	 if (auditWarnings5.size() > 0) {
-	            GlobalVariables.getAuditErrorMap().put("homePageAuditWarnings",new AuditCluster(Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_NAME, auditWarnings5, HOLD_PROMPT)); 
+	            GlobalVariables.getAuditErrorMap().put("contactsAuditWarnings",new AuditCluster(Constants.MAPPING_AWARD_CONTACTS_PAGE, auditWarnings5, HOLD_PROMPT)); 
 	            retval=false;
 	        }  
     }
