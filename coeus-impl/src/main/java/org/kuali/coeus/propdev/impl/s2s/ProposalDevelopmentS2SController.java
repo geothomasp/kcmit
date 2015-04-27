@@ -109,7 +109,7 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
            proposal.getS2sOpportunity().setDevelopmentProposal(proposal);
 
            //Set default S2S Submission Type
-           if (StringUtils.isBlank(form.getNewS2sOpportunity().getS2sSubmissionTypeCode())){
+           //if (StringUtils.isBlank(form.getNewS2sOpportunity().getS2sSubmissionTypeCode())){
         	   String defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, KeyConstants.S2S_SUBMISSIONTYPE_APPLICATION);
                if(getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
                        ParameterConstants.DOCUMENT_COMPONENT,"DEFAULT_S2S_SUBMISSION_TYPE")!=null) {
@@ -128,7 +128,7 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
         	   }
                proposal.getS2sOpportunity().setS2sSubmissionTypeCode(defaultS2sSubmissionTypeCode);
                getDataObjectService().wrap(proposal.getS2sOpportunity()).fetchRelationship("s2sSubmissionType");
-           }
+          // }
 
            //Set Opportunity Title and Opportunity ID in the Sponsor & Program Information section
            proposal.setProgramAnnouncementTitle(form.getNewS2sOpportunity().getOpportunityTitle());
