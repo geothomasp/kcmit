@@ -574,16 +574,13 @@ public abstract class ProposalDevelopmentControllerBase {
 
 	public boolean updateCOIOnPDCerificationComplete(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person, boolean completed,AnswerHeader answerHeader) {
 			boolean coiQuestionsAnswered = false;
-			if(checkForCOIquestions(answerHeader) && completed){
+			if(person.getPersonId()!=null && checkForCOIquestions(answerHeader) && completed){
 				 updateToCOI(pdForm,person);
 			}
 			String loggedInUser = getGlobalVariableService().getUserSession().getPrincipalId();
 
-			if(person.getPersonId().equals(loggedInUser)){
+			if(person.getPersonId()!=null && person.getPersonId().equals(loggedInUser)){
 				coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
-			}
-			if(coiQuestionsAnswered){
-				return coiQuestionsAnswered;
 			}
             return coiQuestionsAnswered;
     }
