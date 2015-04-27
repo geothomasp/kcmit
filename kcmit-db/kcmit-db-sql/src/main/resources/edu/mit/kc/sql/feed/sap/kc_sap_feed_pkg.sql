@@ -1474,10 +1474,7 @@ cursor cur_idc is
    WHERE (AWARD_IDC_RATE.idc_rate_type_code =idc_rate_type.idc_rate_type_code) AND
 		(AWARD_IDC_RATE.AWARD_NUMBER = gs_award_number ) AND
          (AWARD_IDC_RATE.START_DATE <= SYSDATE )   AND                 --Added on 8/13/03
-			   AWARD_IDC_RATE.SEQUENCE_NUMBER =		 (SELECT MAX(IDC2.SEQUENCE_NUMBER)
-				FROM AWARD_IDC_RATE IDC2 WHERE
-				IDC2.AWARD_NUMBER =			AWARD_IDC_RATE.AWARD_NUMBER	and
-				IDC2.SEQUENCE_NUMBER <= gi_sequence_number	)
+	     (AWARD_IDC_RATE.SEQUENCE_NUMBER = gi_sequence_number)
 	order by AWARD_IDC_RATE.start_date DESC;             --Changed order by to start_date
 
 begin
