@@ -14,3 +14,4 @@ target
 .idea
 coeus.iml
 **/bin
+coeus-webapp/src/main/resources/META-INF/kc-alt-config.xml
