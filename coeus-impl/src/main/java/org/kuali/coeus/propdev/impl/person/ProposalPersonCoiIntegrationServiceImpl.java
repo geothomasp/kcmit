@@ -63,4 +63,51 @@ public class ProposalPersonCoiIntegrationServiceImpl implements ProposalPersonCo
 	public void setParameterService(ParameterService parameterService) {
 		this.parameterService = parameterService;
 	}
+	
+
+	@Override
+	public boolean isCoiQuestionsAnsweredN(ProposalPerson proposalPerson) {
+		Boolean isCoiQuestionsAnswered= false;
+		for (AnswerHeader answerHeader : proposalPerson.getQuestionnaireHelper().getAnswerHeaders()) {
+			boolean wasComplete = answerHeader.isCompleted();
+			boolean isComplete = proposalPerson.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
+			if(isComplete || wasComplete){
+				isCoiQuestionsAnswered = checkForCOIquestionsAnsweredN(answerHeader);
+			}
+		}
+		return isCoiQuestionsAnswered;
+	}
+/**
+ * check if the person has entered 'N' for all
+ * @param answerHeader
+ * @return
+ */
+	private boolean checkForCOIquestionsAnsweredN(AnswerHeader answerHeader){
+
+		boolean hasCOIquestions = false;
+		String coiCertificationQuestionIds = getParameterService().getParameterValueAsString("KC-GEN", "All", "PROP_PERSON_COI_CERTIFY_QID");
+		List<String> coiCertificationQuestionIdList = new ArrayList<String>();
+		if(coiCertificationQuestionIds!=null){
+			String[] questionIds = coiCertificationQuestionIds.split(",");
+			for (String questionid : questionIds){
+				coiCertificationQuestionIdList.add(questionid);
+			}
+		}
+		
+		
+		int coiIdSize = coiCertificationQuestionIdList.size();
+		for(Answer answer :answerHeader.getAnswers()){
+			for(String coiCertificationQuestionId : coiCertificationQuestionIdList){
+				int i =  0;
+				if(coiCertificationQuestionId.equals(answer.getQuestionSeqId().toString()) && answer.getAnswer().equals("N")){
+					i++;
+				}
+				if(i == coiIdSize){
+					hasCOIquestions = true;
+					break;
+				}
+			}
+		}
+		return hasCOIquestions;
+	}
 }
