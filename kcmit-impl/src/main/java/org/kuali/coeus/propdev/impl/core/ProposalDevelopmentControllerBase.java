@@ -629,6 +629,7 @@ public abstract class ProposalDevelopmentControllerBase {
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
                 ProposalDevelopmentNotificationContext context = new ProposalDevelopmentNotificationContext(developmentProposal,"106","Proposal Person Certification Completed");
                 ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(developmentProposal);
+                ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setProposalPerson(person);
                 KcNotification notification = getKcNotificationService().createNotificationObject(context);
                 NotificationTypeRecipient recipient = new NotificationTypeRecipient();
                 recipient.setPersonId(person.getPersonId());

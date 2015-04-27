@@ -273,4 +273,10 @@ public boolean isOriginalIPIsValid(DevelopmentProposal developmentProposal);
 * if the function is equal to true it means the field in the KC Dev Proposal is blank.
 */
 public boolean confirmTrackingIDBlank(DevelopmentProposal developmentProposal);
+
+/**
+ *This function will check if proposal reached OSP
+ */
+public String hasReachedOspInRouting(DevelopmentProposal developmentProposal);
+
 }
