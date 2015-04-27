@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
 import org.kuali.coeus.propdev.impl.attachment.ProposalDevelopmentProposalAttachmentsAuditRule;
+import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentConstants;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentUtils;
@@ -34,6 +35,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.coeus.propdev.impl.person.question.ProposalPersonModuleQuestionnaireBean;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.util.AuditCluster;
 import org.kuali.rice.krad.util.AuditError;
@@ -53,8 +55,9 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
     
     private static final Log LOG = LogFactory.getLog(ProposalDevelopmentProposalAttachmentsAuditRule.class);
     private QuestionnaireAnswerService questionnaireAnswerService;
-
-    protected QuestionnaireAnswerService getQuestionnaireAnswerService(){
+    private ParameterService parameterService;
+    
+	protected QuestionnaireAnswerService getQuestionnaireAnswerService(){
         if (questionnaireAnswerService == null)
             questionnaireAnswerService = KcServiceLocator.getService(QuestionnaireAnswerService.class);
         return questionnaireAnswerService;
@@ -63,6 +66,7 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
     public boolean processRunAuditBusinessRules(Document document) {
         boolean valid = true;
         ProposalDevelopmentDocument pdDoc = (ProposalDevelopmentDocument) document;
+
         if(getKeyPersonCertDeferralParm().equalsIgnoreCase(ProposalDevelopmentConstants.ParameterValues.KEY_PERSON_CERTIFICATION_BEFORE_SUBMIT)) {
             valid &= this.validateAllCertificationsComplete(pdDoc);
         }
@@ -76,15 +80,38 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
         return valid;
     }
 
+    private boolean checkProposalType(ProposalDevelopmentDocument pdDoc){
+    	
+        String proposalTypeNew =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString
+        		(ProposalDevelopmentDocument.class,ProposalDevelopmentConstants.PropDevParameterConstants.PROPOSAL_TYPE_CODE_NEW_PARM);
+        String proposalResubmission =  KcServiceLocator.getService(ParameterService.class).
+        		getParameterValueAsString(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.PropDevParameterConstants.PROPOSAL_TYPE_CODE_RESUBMISSION_PARM);
+        String proposalRenewalParam =  KcServiceLocator.getService(ParameterService.class).
+        		getParameterValueAsString(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.PropDevParameterConstants.PROPOSAL_TYPE_CODE_RENEWAL_PARM);
+        String proposalTypeTaskOrder =  KcServiceLocator.getService(ParameterService.class).
+        		getParameterValueAsString(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.PropDevParameterConstants.PROPOSAL_TYPE_CODE_TASK_ORDER_PARM);
+        String proposalTypeSuppliment =  KcServiceLocator.getService(ParameterService.class).
+        		getParameterValueAsString(ProposalDevelopmentDocument.class, ProposalDevelopmentConstants.PropDevParameterConstants.PROPOSAL_TYPE_CODE_REVISION_PARM);
+
+        if(pdDoc.getDevelopmentProposal().getProposalTypeCode().equals(proposalTypeNew) || pdDoc.getDevelopmentProposal().getProposalTypeCode().equals(proposalResubmission)
+        		|| pdDoc.getDevelopmentProposal().getProposalTypeCode().equals(proposalRenewalParam) || pdDoc.getDevelopmentProposal().getProposalTypeCode().equals(proposalTypeTaskOrder)
+        		|| pdDoc.getDevelopmentProposal().getProposalTypeCode().equals(proposalTypeSuppliment)){
+        	return true;
+        	
+        }
+    	return false;
+    }
     protected boolean isRouterPiAndCertified(ProposalDevelopmentDocument pdDoc) {
         String loggedInUser = getGlobalVariableService().getUserSession().getPrincipalId();
-        for (ProposalPerson person : pdDoc.getDevelopmentProposal().getProposalPersons()) {
-            if (StringUtils.equalsIgnoreCase(person.getPersonId(), loggedInUser) && (person.isCoInvestigator() || person.isPrincipalInvestigator())) {
-                if (hasCertification(person) && !validKeyPersonCertification(person)) {
-                    generateAuditError(0,person.getFullName());
-                    return false;
-                }
-            }
+        if(checkProposalType(pdDoc)){
+        	for (ProposalPerson person : pdDoc.getDevelopmentProposal().getProposalPersons()) {
+        		if (StringUtils.equalsIgnoreCase(person.getPersonId(), loggedInUser) && (person.isCoInvestigator() || person.isPrincipalInvestigator())) {
+        			if (hasCertification(person,pdDoc) && !validKeyPersonCertification(person)) {
+        				generateAuditError(0,person.getFullName());
+        				return false;
+        			}
+        		}
+        	}
         }
         return true;
     }
@@ -108,16 +135,18 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
     }    
     
     protected boolean validateAllCertificationsComplete(ProposalDevelopmentDocument document) {
-        boolean retval = true;
-        int count = 0;
-        for (ProposalPerson person : document.getDevelopmentProposal().getProposalPersons()) {
-            if (hasCertification(person) && !validKeyPersonCertification(person)) {
-                generateAuditError(count,person.getFullName());
-                retval = false;
-            }
-            count++;
-        }
-        return retval;
+    	boolean retval = true;
+    	int count = 0;
+    	if(checkProposalType(document)){
+    		for (ProposalPerson person : document.getDevelopmentProposal().getProposalPersons()) {
+    			if (hasCertification(person,document) && !validKeyPersonCertification(person)) {
+    				generateAuditError(count,person.getFullName());
+    				retval = false;
+    			}
+    			count++;
+    		}
+    	}
+    	return retval;
     }
     
     /*
@@ -129,7 +158,7 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
         int count = 0;
         for (ProposalPerson person : document.getDevelopmentProposal().getProposalPersons()) {
             if(StringUtils.equals(user.getPrincipalId(),person.getPersonId())
-                    && hasCertification(person) && !validKeyPersonCertification(person)) {
+                    && hasCertification(person,document) && !validKeyPersonCertification(person)) {
                 generateAuditError(count,person.getFullName());
                 return false;
             }
@@ -142,14 +171,17 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
         return validateYesNoQuestions(person);
     }
 
-    protected boolean hasCertification(ProposalPerson person) {
+    protected boolean hasCertification(ProposalPerson person,ProposalDevelopmentDocument document) {
         
         //questionnaires should continue to be answerable only to the following approvers,
         //possibly as well as other roles. i.e. Aggregator.
         PropAwardPersonRole personRole = person.getRole();
-        if (personRole.getRoleCode().equals(Constants.CO_INVESTIGATOR_ROLE)
+        Person loggedinPerson = getGlobalVariableService().getUserSession().getPerson();
+        boolean haskeyPersonCertification = KcServiceLocator.getService(ProposalDevelopmentPermissionsService.class).hasCertificationPermissions(document,loggedinPerson,person);
+        if ((personRole.getRoleCode().equals(Constants.CO_INVESTIGATOR_ROLE)
                 || personRole.getRoleCode().equals(Constants.PRINCIPAL_INVESTIGATOR_ROLE)
-                || (personRole.getRoleCode().equals(Constants.KEY_PERSON_ROLE) && person.getOptInCertificationStatus())) {
+                || personRole.getRoleCode().equals(Constants.MULTI_PI_ROLE)
+                || (personRole.getRoleCode().equals(Constants.KEY_PERSON_ROLE) && haskeyPersonCertification)) && person.getPersonId()!=null) {
                 return true;
         }
         
@@ -221,4 +253,14 @@ public class KeyPersonnelCertificationRule extends KcTransactionalDocumentRuleBa
     public GlobalVariableService getGlobalVariableService() {
         return KcServiceLocator.getService(GlobalVariableService.class);
     }
+    
+    public ParameterService getParameterService() {
+   	 if (parameterService == null)
+   		 parameterService = KcServiceLocator.getService(ParameterService.class);
+		return parameterService;
+	}
+
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
+	}
 }
