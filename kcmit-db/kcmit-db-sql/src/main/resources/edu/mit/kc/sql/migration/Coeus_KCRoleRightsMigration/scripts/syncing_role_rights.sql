@@ -381,7 +381,7 @@ into li_count
 FROM KRIM_PERM_T WHERE nm = 'Allow Backdoor Login';
   if li_count = 0 then
       Insert into KRIM_PERM_T (PERM_ID,OBJ_ID,VER_NBR,PERM_TMPL_ID,NMSPC_CD,NM,DESC_TXT,ACTV_IND) 
-      values (KRIM_PERM_ID_S.NEXTVAL,sys_guid(),1, NULL,'KC-SYS','Allow Backdoor Login','Allow Backdoor Login','Y');
+      values (KRIM_PERM_ID_S.NEXTVAL,sys_guid(),1, '1','KC-UNT','Allow Backdoor Login','Allow Backdoor Login','Y');
   end if;
 
 end;
