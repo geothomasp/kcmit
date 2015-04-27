@@ -60,7 +60,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	boolean awardHoldPromptEnabled = getParameterService().getParameterValueAsBoolean(
              "KC-AWARD", "Document", "ENABLE_AWARD_VALIDATIONS");
 	if(awardHoldPromptEnabled && status!=6){
-	retvalSponsor &= getAwardCommonValidationService().validateSponsorCodeIsNIH(award);
+//	retvalSponsor &= getAwardCommonValidationService().validateSponsorCodeIsNIH(award);
 	 retvalSpReview &= getAwardCommonValidationService().validateSpecialReviews(award);
 	 retvalReports &= getAwardCommonValidationService().validateReports(award);
 	 retvalTerm &= getAwardCommonValidationService().validateAwardTerm(award);
@@ -91,7 +91,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
     if (!retvalTerm) {
     	 String link3 = Constants.MAPPING_AWARD_PAYMENT_REPORTS_AND_TERMS_PAGE + "." + Constants.TERMS_PANEL_ANCHOR;
 	      String errorKey3 = "document.awardList[0].awardSponsorTerms*";
-    	auditWarnings3.add(new AuditError(errorKey3, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW, link3));
+    	auditWarnings3.add(new AuditError(errorKey3, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_TERM_AND_SP_REV, link3));
     	 if (auditWarnings3.size() > 0) {
 	            GlobalVariables.getAuditErrorMap().put("termsAuditWarnings",new AuditCluster(Constants.TERMS_PANEL_NAME, auditWarnings3, HOLD_PROMPT));
     		     retval=false;
