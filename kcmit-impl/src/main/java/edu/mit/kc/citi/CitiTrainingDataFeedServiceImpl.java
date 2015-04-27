@@ -125,7 +125,7 @@ public class CitiTrainingDataFeedServiceImpl implements CitiTrainingDataFeedServ
 	                    citiTraining.setUserName(words[institutionalUsername]);
 	                    citiTraining.setCustomField1(words[customField1]);
 	                    citiTraining.setCustomField2(words[customField2]);
-	                    citiTraining.setUserName("MITKC");
+	                    citiTraining.setUserName(words[institutionalUsername]);
 	                    citiTraining.setUpdateTimestamp(updateTimestamp);
 	                    citiTrainings.add(citiTraining);
 	                    
