@@ -153,16 +153,6 @@ commit
 /
 CREATE TABLE TMP_STAG_BUDGET AS SELECT BUDGET_ID,BUDGET_JUSTIFICATION,COMMENTS FROM BUDGET@KC_STAG_DB_LINK
 /
-/*INSERT INTO BUDGET(BUDGET_ID,BUDGET_JUSTIFICATION,ON_OFF_CAMPUS_FLAG,VERSION_NUMBER,DOCUMENT_NUMBER,PARENT_DOCUMENT_TYPE_CODE,
-START_DATE,END_DATE,TOTAL_COST,TOTAL_DIRECT_COST,TOTAL_INDIRECT_COST,COST_SHARING_AMOUNT,UNDERRECOVERY_AMOUNT,RESIDUAL_FUNDS,
-TOTAL_COST_LIMIT,OH_RATE_CLASS_CODE,OH_RATE_TYPE_CODE,COMMENTS,FINAL_VERSION_FLAG,UPDATE_TIMESTAMP,UPDATE_USER,UR_RATE_CLASS_CODE,
-MODULAR_BUDGET_FLAG,VER_NBR,OBJ_ID,TOTAL_DIRECT_COST_LIMIT,SUBMIT_COST_SHARING)
-SELECT t1.prod_budget_id,t2.BUDGET_ID, t2.budget_justification,t2.on_off_campus_flag,t2.version_number,t1.prod_bud_doc_id,t2.parent_document_type_code,
-t2.start_date,t2.end_date,t2.total_cost,t2.total_direct_cost,t2.total_indirect_cost,t2.cost_sharing_amount,t2.underrecovery_amount,t2.residual_funds,
-t2.total_cost_limit,t2.oh_rate_class_code,t2.oh_rate_type_code,t2.comments,t2.final_version_flag,t2.update_timestamp,t2.update_user,t2.ur_rate_class_code,
-t2.modular_budget_flag,t2.ver_nbr,t2.total_direct_cost_limit,t2.submit_cost_sharing
-from go_live_awd_bgt_mapping t1 inner join BUDGET@KC_STAG_DB_LINK t2 on t1.stage_budget_id = t2.budget_id
-*/
 declare
 cursor c_data is
 	SELECT t1.prod_budget_id,t2.BUDGET_ID,t2.on_off_campus_flag,t2.version_number,t1.prod_bud_doc_id,t2.parent_document_type_code,
@@ -289,6 +279,8 @@ begin
 	dbms_output.put_line('BUDGET_ID:'||r_data.prod_budget_id);
 	END;
 	
+	BEGIN
+	
 	INSERT INTO go_live_bud_person_mapping(stage_person_sequence_num,stage_budget_id,prod_budget_id,prod_person_sequence_num)
 	VALUES(r_data.person_sequence_number,r_data.budget_id,r_data.prod_budget_id,li_per_seq_number);
 	
@@ -299,6 +291,11 @@ begin
 	Values(li_per_seq_number,r_data.prod_budget_id,r_data.ROLODEX_ID,r_data.APPOINTMENT_TYPE_CODE,r_data.TBN_ID,
 	r_data.HIERARCHY_PROPOSAL_NUMBER,r_data.HIDE_IN_HIERARCHY,r_data.PERSON_ID,r_data.JOB_CODE,r_data.EFFECTIVE_DATE,r_data.CALCULATION_BASE,
 	r_data.PERSON_NAME,r_data.NON_EMPLOYEE_FLAG,r_data.UPDATE_TIMESTAMP,r_data.UPDATE_USER,r_data.VER_NBR,sys_guid(),r_data.SALARY_ANNIVERSARY_DATE);	
+	
+	EXCEPTION
+	WHEN OTHERS THEN
+	dbms_output.put_line('BUDGET_PERSONS : '||r_data.prod_budget_id ||', error is '||sqlerrm);	
+	END;
 	
 	
 	end loop;

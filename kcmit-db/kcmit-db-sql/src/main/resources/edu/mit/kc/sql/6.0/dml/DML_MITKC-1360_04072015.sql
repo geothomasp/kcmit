@@ -4,6 +4,10 @@ create table sap_kc_obj_cd_mapping(
   SAP_OBJ_CD	varchar2(10) 
 )
 /
+delete from sap_kc_obj_cd_mapping
+/
+commit
+/
 INSERT INTO sap_kc_obj_cd_mapping(kc_obj_cd, kc_obj_cd_desc, sap_obj_cd)
 VALUES('P00005','Senior Personnel (Summer Months)','400005')
 /

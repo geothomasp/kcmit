@@ -484,7 +484,7 @@
                     </property>
                 </bean>
                 <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
-                      p:actionLabel="Search for Grants.gov Opportunity" p:order="40">
+                      p:actionLabel="View S2S Opportunities" p:order="40">
                     <property name="actionUrl.requestParameters">
                         <map>
                             <entry key="href"

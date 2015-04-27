@@ -574,13 +574,13 @@ public abstract class ProposalDevelopmentControllerBase {
 
 	public boolean updateCOIOnPDCerificationComplete(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person, boolean completed,AnswerHeader answerHeader) {
 			boolean coiQuestionsAnswered = false;
-			if(checkForCOIquestions(answerHeader) && completed){
+			if(person.getPersonId()!=null && checkForCOIquestions(answerHeader) && completed){
 				 updateToCOI(pdForm,person);
 			}
-			coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
-			
-			if(coiQuestionsAnswered){
-				return coiQuestionsAnswered;
+			String loggedInUser = getGlobalVariableService().getUserSession().getPrincipalId();
+
+			if(person.getPersonId()!=null && person.getPersonId().equals(loggedInUser)){
+				coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
 			}
             return coiQuestionsAnswered;
     }
@@ -626,6 +626,7 @@ public abstract class ProposalDevelopmentControllerBase {
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
                 ProposalDevelopmentNotificationContext context = new ProposalDevelopmentNotificationContext(developmentProposal,"106","Proposal Person Certification Completed");
                 ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(developmentProposal);
+                ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setProposalPerson(person);
                 KcNotification notification = getKcNotificationService().createNotificationObject(context);
                 NotificationTypeRecipient recipient = new NotificationTypeRecipient();
                 recipient.setPersonId(person.getPersonId());

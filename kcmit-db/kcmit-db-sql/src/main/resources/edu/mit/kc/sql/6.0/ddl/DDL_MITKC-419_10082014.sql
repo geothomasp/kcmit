@@ -14,6 +14,7 @@ START WITH 1
 NOCACHE 
 ORDER NOCYCLE
 /
+/*
 UPDATE award_person_confirm t1 SET t1.award_person_id = (
 SELECT s1.award_person_id  FROM award_persons s1
 WHERE s1.award_id = t1.award_id
@@ -61,5 +62,6 @@ ALTER TABLE  award_person_remove MODIFY PERSON_ID NOT NULL
 ALTER TABLE  award_person_remove MODIFY SEQUENCE_NUMBER NOT NULL
 /
 ALTER TABLE  award_person_remove MODIFY UPDATE_TIMESTAMP_CONFIRM  NULL
+/*/
 /
 

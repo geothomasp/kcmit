@@ -42,6 +42,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposalBoLite;
 import org.kuali.kra.institutionalproposal.proposaladmindetails.ProposalAdminDetails;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -51,6 +52,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import edu.mit.coeus.utils.xml.v2.propdev.PROPOSALDocument.PROPOSAL;
 import edu.mit.kc.infrastructure.KcMitConstants;
+import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
 
 /**
  * @author kc-mit-dev
@@ -586,7 +588,7 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 					mostCurrentHeader = header;
 				}
 			}
-			if (mostCurrentHeader.getQuestionnaire().getQuestionnaireRefIdAsLong()
+			if (mostCurrentHeader.getQuestionnaire().getQuestionnaireSeqId()
 					.equals(questionnaireId)) {
 
 				List<Answer> answers = mostCurrentHeader.getAnswers();
@@ -1207,6 +1209,18 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 			if(proposalPerson.getPerson()!=null && proposalPerson.getProposalPersonRoleId().equals(Constants.MULTI_PI_ROLE) && proposalPerson.getCertifiedBy()==null)  {
 				return TRUE;
 	           }
+		}
+		return FALSE;
+	}
+	
+	@Override
+	public String hasReachedOspInRouting(
+			DevelopmentProposal developmentProposal) {
+		List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class,QueryByCriteria.Builder.fromPredicates(
+				 PredicateFactory.equal("proposalNumber", developmentProposal.getProposalNumber())		 
+				 )).getResults();
+		if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
+			return TRUE;
 		}
 		return FALSE;
 	}

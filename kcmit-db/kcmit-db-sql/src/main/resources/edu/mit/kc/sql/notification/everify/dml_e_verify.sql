@@ -1,46 +1,5 @@
 set define off
 /
-INSERT INTO SAP_FEED_DETAILS(
-	FEED_ID,
-	AWARD_NUMBER,
-	SEQUENCE_NUMBER,
-	FEED_TYPE,
-	FEED_STATUS,
-	BATCH_ID,
-	UPDATE_USER,
-	UPDATE_TIMESTAMP,
-	TRANSACTION_ID,
-	VER_NBR,
-	OBJ_ID
-)
-SELECT FEED_ID,
-	MIT_AWARD_NUMBER,
-	SEQUENCE_NUMBER,
-	FEED_TYPE,
-	FEED_STATUS,
-	BATCH_ID,
-	UPDATE_USER,
-	UPDATE_TIMESTAMP,
-	TRANSACTION_ID,
-	1,	
-	SYS_GUID()
-FROM OSP$SAP_FEED_DETAILS@coeus.kuali
-/
-declare
-li_max number(10);
-ls_query VARCHAR2(400);
-begin
-select max(FEED_ID) into li_max from SAP_FEED_DETAILS;
-ls_query:='alter sequence SEQ_SAP_FEED_ID increment by '||li_max;     
-if li_max is not null then 
-	execute immediate(ls_query);  
-end if;
-end;
-/
-select SEQ_SAP_FEED_ID.NEXTVAL from dual
-/
-alter sequence SEQ_SAP_FEED_ID increment by 1
-/
 INSERT INTO EVERIFY_NOTIFICATIONS (
    NOTIFICATION_ID, NOTIFICATION_DATE, UPDATE_TIMESTAMP, 
    UPDATE_USER, VER_NBR	,  OBJ_ID) 

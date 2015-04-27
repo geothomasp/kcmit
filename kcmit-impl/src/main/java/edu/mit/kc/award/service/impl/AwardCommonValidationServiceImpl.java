@@ -453,7 +453,7 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
         boolean valid=true;
         String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
         String errorKey = "document.awardList[0].statusCode";
-        int noOfSpreviewHumanAnimal = 0;
+        int noOfAwardTerms = 0;
         int noOfSpecialReview = 0;
         boolean awardHoldOnTermReview = getParameterService().getParameterValueAsBoolean(
                 "KC-AWARD", "Document", "ENABLE_AWARD_TERM_REVIEW_VALID");
@@ -465,7 +465,7 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
         if(awardSponsorTerms!=null){
         for(AwardSponsorTerm awardSponsorTerm:awardSponsorTerms){
          if(awardHoldOnTermReview && awardSponsorTerm.getSponsorTermCode().equals(SPONSOR_TERM_CODE_HOLD)){
-             noOfSpreviewHumanAnimal++; 
+             noOfAwardTerms++; 
          }
     }}List<AwardSpecialReview>awardSpecialReviews = award.getSpecialReviews();
     if(awardSpecialReviews!=null){
@@ -475,20 +475,21 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
         }
     }}
     if(noOfSpecialReview > 0){
-       if(noOfSpreviewHumanAnimal ==0){
+       if(noOfAwardTerms ==0){
            valid = false;
            auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW, link));
            GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW);
-       }else if(noOfSpreviewHumanAnimal > 0){
+       }}else if(noOfAwardTerms > 0){
+    	   if(noOfSpecialReview ==0){
            valid = false;
            auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW, link)); 
            GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW);
-       }else{
+       }}/*else{
            valid=false;
            auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW, link));
            GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW,KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW);
-       }
-    }
+       }*/
+    
         return valid;
     }
     

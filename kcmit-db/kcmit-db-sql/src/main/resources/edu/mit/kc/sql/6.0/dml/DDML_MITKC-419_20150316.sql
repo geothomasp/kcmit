@@ -1,6 +1,6 @@
 --REMOVING PERMISSION 'Maintain Keyperson' FROM ROLE 'Aggregator' BASED ON MITKC-997
-DELETE FROM KRIM_ROLE_PERM_T WHERE ROLE_ID = (select ROLE_ID from KRIM_ROLE_T where role_nm = 'Aggregator')
-AND PERM_ID = (select PERM_ID from KRIM_PERM_T where      nm = 'Maintain Keyperson')
+DELETE FROM KRIM_ROLE_PERM_T WHERE ROLE_ID IN (select ROLE_ID from KRIM_ROLE_T where role_nm = 'Aggregator')
+AND PERM_ID IN (select PERM_ID from KRIM_PERM_T where      nm = 'Maintain Keyperson')
 /
 DELETE FROM KRIM_ROLE_T WHERE NMSPC_CD = 'KC-AWARD' AND ROLE_NM = 'Maintain Key Person'
 /
@@ -49,7 +49,9 @@ SYS_GUID(),
 69,
 'Y'
 )
-/      
+/
+commit
+/ 
 INSERT INTO KRIM_ROLE_PERM_T(
 ROLE_PERM_ID,
 OBJ_ID,
@@ -62,8 +64,8 @@ VALUES(
 KRIM_ROLE_PERM_ID_S.nextval,
 sys_guid(),
 1,
-(select ROLE_ID from KRIM_ROLE_T where role_nm = 'Maintain Key Person'),
-(select PERM_ID from KRIM_PERM_T where      nm = 'Maintain Keyperson'),
+(select ROLE_ID from KRIM_ROLE_T where role_nm = 'Maintain Key Person' and NMSPC_CD= 'KC-AWARD' ),
+(select PERM_ID from KRIM_PERM_T where      nm = 'Maintain Keyperson' and NMSPC_CD= 'KC-AWARD' ),
 'Y'
 )
 /

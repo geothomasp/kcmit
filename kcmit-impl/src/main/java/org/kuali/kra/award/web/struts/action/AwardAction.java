@@ -229,35 +229,7 @@ public class AwardAction extends BudgetParentActionBase {
         }
         awardForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
         
-        String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
-        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
-        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
-        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
-          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
-          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
-        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
-    		if(awardAttachmentform != null) {
-    			awardAttachmentform.setCanViewAttachment(true);
-    		}
-        }
-        
-        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
-        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
-        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
-        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
-    		if(awardAttachmentform != null) {
-    			awardAttachmentform.setMaintainAwardAttachment(true);
-    		}
-        }
-        String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-                ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
-    	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
-    		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
-    		if(awardAttachment != null) {
-    			awardAttachment.setDisableAttachmentRemovalIndicator(true);
-    		}
-    	}
+        handleAttachmentsDocument(form);
     	
     	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
     	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
@@ -310,6 +282,40 @@ public class AwardAction extends BudgetParentActionBase {
             }
         }
     }
+    
+    protected void handleAttachmentsDocument(ActionForm form) {
+    	String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
+        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
+        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
+        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
+          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
+          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
+        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachmentform != null) {
+    			awardAttachmentform.setCanViewAttachment(true);
+    		}
+        }
+        
+        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
+        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
+        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
+        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachmentform != null) {
+    			awardAttachmentform.setMaintainAwardAttachment(true);
+    		}
+        }
+        
+        String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+                ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
+    	if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
+    		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
+    		if(awardAttachment != null) {
+    			awardAttachment.setDisableAttachmentRemovalIndicator(true);
+    		}
+    	}
+    }
+    
     protected void cleanUpUserSession() {
         GlobalVariables.getUserSession().removeObject(GlobalVariables.getUserSession().getKualiSessionId() + Constants.TIME_AND_MONEY_DOCUMENT_STRING_FOR_SESSION);
     }
@@ -1311,14 +1317,7 @@ public class AwardAction extends BudgetParentActionBase {
        awardForm.getMedusaBean().setModuleName("award");
        awardForm.getMedusaBean().setModuleIdentifier(awardForm.getAwardDocument().getAward().getAwardId());
        awardForm.getMedusaBean().generateParentNodes();
-       String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-               ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
-   	   if(attachmentRemovalParameterValue != null && attachmentRemovalParameterValue.equalsIgnoreCase("Y")) {
-   		AwardAttachmentFormBean awardAttachment = ((AwardForm) form).getAwardAttachmentFormBean();
-   		if(awardAttachment != null) {
-   			awardAttachment.setDisableAttachmentRemovalIndicator(true);
-   		}
-   	   }
+       handleAttachmentsDocument(form);
        return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
    }
 
