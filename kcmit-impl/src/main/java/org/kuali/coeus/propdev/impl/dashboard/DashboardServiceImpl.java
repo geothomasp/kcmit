@@ -69,17 +69,31 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	public List<Award> getAwardsForInvestigator(String investigatorPersonId) {
-        Map<String, Object> awardCriteria = new HashMap<String, Object>();
-        awardCriteria.put("projectPersons.personId", investigatorPersonId);
-        awardCriteria.put("projectPersons.roleCode", Constants.PRINCIPAL_INVESTIGATOR_ROLE);
-        Collection<Award> myAwards = getAwardService().retrieveAwardsByCriteria(awardCriteria);
-
+        Collection<Award> myAwards = getAllAwardsForInvestigator(investigatorPersonId);
         List<Award> myArrangedAwards = new ArrayList<Award>();
         if(myAwards != null && !myAwards.isEmpty()) {
             myArrangedAwards = getReArrangedAwards(myAwards);
         }
         return myArrangedAwards;
 	}
+	
+	public List<Award> getActiveAwardsForInvestigator(String investigatorPersonId) {
+        Collection<Award> myAwards = getAllAwardsForInvestigator(investigatorPersonId);
+        List<Award> myAwardsFiltered = new ArrayList<Award>();
+        for (Award award : myAwards) {
+            if (award.getVersionHistory().isActiveVersion()) {
+                myAwardsFiltered.add(award);
+            }
+        }
+        return myAwardsFiltered;
+ }
+	protected Collection<Award> getAllAwardsForInvestigator(String investigatorPersonId) {
+        Map<String, Object> awardCriteria = new HashMap<String, Object>();
+        awardCriteria.put("projectPersons.personId", investigatorPersonId);
+        awardCriteria.put("projectPersons.roleCode", Constants.PRINCIPAL_INVESTIGATOR_ROLE);
+        Collection<Award> myAwards = getAwardService().retrieveAwardsByCriteria(awardCriteria);
+        return myAwards;
+ }
 	
     protected List<ProposalPerson> getReArrangedProposals(List<ProposalPerson> myProposals) {
     	List<ProposalPerson> allMyArrangedProposals = new ArrayList<ProposalPerson>();
