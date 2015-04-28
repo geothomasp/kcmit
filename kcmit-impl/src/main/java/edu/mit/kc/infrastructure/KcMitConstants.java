@@ -75,5 +75,11 @@ public interface KcMitConstants {
     public static final String COI_QUESTION_ANSWERED = "proposal.info.coiQuestionAnswered";
     public static final String MIT_COEUS_COI_APPLICATION_URL = "mit.coeus.coi.application.url";
     
+    public static final String COI_DISCLOSURE_EXPIRATION_DATE_ALERT = "coi.expirationDate.alert";
+    public static final String COI_DISCLOSURE_EXPIRATION_NULLDATE_ALERT = "coi.expirationNullDate.alert";
+    public static final String AWARD_FINAL_EXPIRATION_DATE_ALERT = "award.finalExpirationDate.alert";
+    public static final String FINAL_TECHNICAL_REPORT_ALERT = "final.technicalReportsDue.alert";
+    public static final String FINAL_PATENT_REPORT_ALERT = "final.patentReportsDue.alert";
+    
     
 }

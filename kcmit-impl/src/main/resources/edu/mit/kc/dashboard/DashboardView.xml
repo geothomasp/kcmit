@@ -195,6 +195,7 @@
                 </bean>
                 <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
                 <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
+                <bean parent="Uif-DataField" p:label="Status" p:propertyName="awardStatus.description"></bean>
                 <bean parent="Uif-DataField" p:label="Account Number" p:propertyName="accountNumber"></bean>
                 <bean parent="Uif-DataField" p:label="Start Date" p:propertyName="requestedStartDateInitial"></bean>
                 <bean parent="Uif-DataField" p:label="End Date" p:propertyName="requestedEndDateInitial"></bean>

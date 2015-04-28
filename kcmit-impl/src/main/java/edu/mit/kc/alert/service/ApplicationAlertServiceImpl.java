@@ -52,8 +52,8 @@ public class ApplicationAlertServiceImpl implements ApplicationAlertService {
 	}
 	
 	protected List<AlertType> getAllAlertTypes() {
-        Map<String, Boolean> alertKeys = new HashMap<String, Boolean>();
-        alertKeys.put("active", true);
+        Map<String, String> alertKeys = new HashMap<String, String>();
+        alertKeys.put("active", "Y");
         List<AlertType> alertTypes = getDataObjectService().findMatching(AlertType.class, QueryByCriteria.Builder.andAttributes(alertKeys).build()).getResults();
 		return alertTypes;
 	}
