@@ -420,4 +420,44 @@
         <property name="serviceName" value="documentDictionaryService" />
      </bean>
      	<bean id="dashboardMenuService" class="edu.mit.kc.dashboard.DashboardMenuService"/>
+     	
+       <bean id="applicationAlertService"
+	class="edu.mit.kc.alert.service.ApplicationAlertServiceImpl">
+	<property name="dataObjectService" ref="dataObjectService" />
+	</bean>
+	<bean id="coiDisclosureAlertService" class="edu.mit.kc.alert.CoiDisclosureAlertServiceImpl">
+		<property name="dataObjectService" ref="dataObjectService" />
+		<property name="kualiConfigurationService" ref="kualiConfigurationService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="dbFunctionExecuteService" ref="dbFunctionExecuteService" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="awardExpireAlertService" class="edu.mit.kc.alert.AwardExpireAlertServiceImpl">
+		<property name="dataObjectService" ref="dataObjectService" />
+		<property name="kualiConfigurationService" ref="kualiConfigurationService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="dashboardService" ref="dashboardService" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="finalTechnicalReportAlertService" class="edu.mit.kc.alert.FinalTechnicalReportAlertServiceImpl">
+		<property name="dataObjectService" ref="dataObjectService" />
+		<property name="kualiConfigurationService" ref="kualiConfigurationService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="reportFetchingService" ref="reportFetchingService" />
+		<property name="dashboardService" ref="dashboardService" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="finalPatentReportAlertService" class="edu.mit.kc.alert.FinalPatentReportAlertServiceImpl">
+		<property name="kualiConfigurationService" ref="kualiConfigurationService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="dataObjectService" ref="dataObjectService" />
+		<property name="reportFetchingService" ref="reportFetchingService" />
+		<property name="dashboardService" ref="dashboardService" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="reportFetchingService" class="edu.mit.kc.alert.ReportFetchingServiceImpl" />
+	<bean id="dashboardService" class="org.kuali.coeus.propdev.impl.dashboard.DashboardServiceImpl">
+		<property name="dataObjectService" ref="dataObjectService" />
+		<property name="awardService" ref="awardService" />
+	</bean>  
 </beans>
