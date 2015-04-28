@@ -19,6 +19,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
+import edu.mit.kc.alert.service.ApplicationAlertService;
 import edu.mit.kc.common.BackDoorLoginAuthorizationService;
 import edu.mit.kc.infrastructure.KcMitConstants;
 import edu.mit.kc.roleintegration.RoleIntegrationService;
@@ -78,6 +79,15 @@ public class MitKcFilter implements Filter {
 					LOG.error(ex.getMessage(), ex);
 				}
 			}
+			
+			ApplicationAlertService applicationAlertService = KcServiceLocator.getService(ApplicationAlertService.class);
+
+			try {
+				applicationAlertService.processAllAlerts(user);
+			} catch (Throwable  ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
+			
 		}
 		chain.doFilter(request, response);
 		

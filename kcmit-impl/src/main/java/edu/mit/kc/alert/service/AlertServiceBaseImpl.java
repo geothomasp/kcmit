@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.kuali.coeus.common.framework.person.KcPerson;
+import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -24,6 +26,10 @@ public class AlertServiceBaseImpl {
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
+    
+    @Autowired
+    @Qualifier("kcPersonService")
+    private KcPersonService kcPersonService;
     
     private enum AlertPriority {
         HIGH (1),
@@ -68,6 +74,10 @@ public class AlertServiceBaseImpl {
 		return GlobalVariables.getUserSession().getLoggedInUserPrincipalName();		
 	}
 	
+	protected KcPerson getKcPerson(String userName) {
+        return getKcPersonService().getKcPersonByUserName(userName);
+ 	}
+	
 	public DataObjectService getDataObjectService() {
 		return dataObjectService;
 	}
@@ -82,6 +92,14 @@ public class AlertServiceBaseImpl {
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+
+	public KcPersonService getKcPersonService() {
+		return kcPersonService;
+	}
+
+	public void setKcPersonService(KcPersonService kcPersonService) {
+		this.kcPersonService = kcPersonService;
 	}
 	
 }

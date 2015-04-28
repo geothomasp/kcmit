@@ -4,7 +4,7 @@ import edu.mit.kc.alert.AlertType;
 
 public interface ApplicationAlertService {
 	
-	public void processAllAlerts();
+	public void processAllAlerts(String userName);
 	
 	public void processAlert(AlertType alertType);
 

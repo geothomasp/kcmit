@@ -59,6 +59,7 @@ import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.exception.RiceRuntimeException;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.data.DataObjectService;
@@ -206,6 +207,10 @@ public abstract class ProposalDevelopmentControllerBase {
     @Autowired
     @Qualifier("proposalPersonCoiIntegrationService")
     private ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
+    
+    @Autowired
+    @Qualifier("proposalTypeService")
+    private ProposalTypeService proposalTypeService;
    
 	
 	private transient boolean updatedToCoi = false;
@@ -306,6 +311,9 @@ public abstract class ProposalDevelopmentControllerBase {
          }
          if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.DETAILS_PAGE_ID)) {
              handleSponsorChange(proposalDevelopmentDocument);
+             if (proposalDevelopmentDocument.getDevelopmentProposal().getS2sOpportunity() != null) {
+            	 handleProposalTypeChange(proposalDevelopmentDocument.getDevelopmentProposal());
+             }
          }
 
          preSave(proposalDevelopmentDocument);
@@ -784,6 +792,26 @@ public abstract class ProposalDevelopmentControllerBase {
             }
         }
     }
+    
+    public void handleProposalTypeChange(DevelopmentProposal proposal){
+	    if (!StringUtils.isBlank(proposal.getS2sOpportunity().getS2sSubmissionTypeCode())) {
+	 	   String defaultS2sSubmissionTypeCode = proposal.getS2sOpportunity().getS2sSubmissionTypeCode();
+	       if(StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+	     		   || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
+	     				   || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode())
+	     						  || StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())) {
+	     	   defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+	                    ParameterConstants.DOCUMENT_COMPONENT, ProposalDevelopmentConstants.PropDevParameterConstants.CHANGE_CORRECTED_CODE); 
+	 	   } else if(StringUtils.equals(proposal.getProposalTypeCode(),getProposalTypeService().getPreProposalProposalTypeCode())) {
+	 		   defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,
+	                    ParameterConstants.ALL_COMPONENT, ProposalDevelopmentConstants.PropDevParameterConstants.S2S_SUBMISSION_TYPE_CODE_PREAPPLICATION_PARM);
+	 	   } else {
+	 		  defaultS2sSubmissionTypeCode = getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, KeyConstants.S2S_SUBMISSIONTYPE_APPLICATION);
+	 	   }
+	        proposal.getS2sOpportunity().setS2sSubmissionTypeCode(defaultS2sSubmissionTypeCode);
+	        getDataObjectService().wrap(proposal.getS2sOpportunity()).fetchRelationship("s2sSubmissionType");
+	    }
+    }
 
     public void populateDeferredMessages(ProposalDevelopmentDocumentForm proposalDevelopmentDocumentForm){
         if (proposalDevelopmentDocumentForm.getDeferredMessages() != null
@@ -954,5 +982,9 @@ public abstract class ProposalDevelopmentControllerBase {
 	public void setProposalPersonCoiIntegrationService(
 			ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService) {
 		this.proposalPersonCoiIntegrationService = proposalPersonCoiIntegrationService;
+	}
+	
+	public ProposalTypeService getProposalTypeService() {
+		return proposalTypeService;
 	}
 }

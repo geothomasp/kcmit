@@ -292,9 +292,11 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 	public String budgetPeriodAmountRule(DevelopmentProposal developmentProposal) {
 		ScaleTwoDecimal totalCost = new ScaleTwoDecimal(2000000);
 		Budget finalBudget = developmentProposal.getFinalBudget();
-		for (BudgetPeriod budgetPeriod : finalBudget.getBudgetPeriods()) {
-			if (budgetPeriod.getTotalCost().isGreaterThan(totalCost)) {
-				return TRUE;
+		if(finalBudget != null) {
+			for (BudgetPeriod budgetPeriod : finalBudget.getBudgetPeriods()) {
+				if (budgetPeriod.getTotalCost().isGreaterThan(totalCost)) {
+					return TRUE;
+				}
 			}
 		}
 		return FALSE;

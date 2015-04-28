@@ -17,10 +17,8 @@ package org.kuali.coeus.propdev.impl.dashboard;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,19 +28,13 @@ import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.ruleengine.KcBusinessRulesEngine;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
-import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.kra.award.document.authorization.AwardDocumentAuthorizer;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardService;
-import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.criteria.OrderByField;
-import org.kuali.rice.core.api.criteria.OrderDirection;
-import org.kuali.rice.core.api.criteria.Predicate;
-import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kew.api.document.WorkflowDocumentService;
 import org.kuali.rice.kim.api.identity.Person;
@@ -141,6 +133,10 @@ public class DashboardController {
     @Qualifier("kcPersonService")
     private KcPersonService kcPersonService;
 
+    @Autowired
+    @Qualifier("dashboardService")
+    private DashboardService dashboardService;
+    
     @ModelAttribute(value = "KualiForm")
     public UifFormBase initForm(HttpServletRequest request,
                                 HttpServletResponse response) throws Exception {
@@ -208,56 +204,13 @@ public class DashboardController {
     }
 
     protected void populateProposals(DashboardForm form) {
-    	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
-        List<Predicate> predicates = new ArrayList<Predicate>();
-        predicates.add(PredicateFactory.equal("personId", form.getDashboardPerson().getPersonId()));
-        predicates.add(PredicateFactory.equal("proposalPersonRoleId", Constants.PRINCIPAL_INVESTIGATOR_ROLE));
-    	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
-        builder.setOrderByFields(OrderByField.Builder.create("developmentProposal.proposalNumber", OrderDirection.DESCENDING).build());
-
-        List<ProposalPerson> myProposals = getDataObjectService().findMatching(ProposalPerson.class, builder.build()).getResults();
-
-        List<ProposalPerson> myArrangedProposals = new ArrayList<ProposalPerson>();
-        if(myProposals != null && !myProposals.isEmpty()) {
-            myArrangedProposals = getReArrangedProposals(myProposals);
-            myProposals.removeAll(myArrangedProposals);
-            myArrangedProposals.addAll(myProposals);
-        }
-        form.setMyProposals(myArrangedProposals);
+    	form.setMyProposals(getDashboardService().getProposalsForInvestigator(form.getDashboardPerson().getPersonId()));
     }
     
-    protected List<ProposalPerson> getReArrangedProposals(List<ProposalPerson> myProposals) {
-    	List<ProposalPerson> myArrangedProposals = new ArrayList<ProposalPerson>();
-    	myArrangedProposals.addAll(getProposalsForStatus(myProposals, ProposalState.IN_PROGRESS));
-    	myArrangedProposals.addAll(getProposalsForStatus(myProposals, ProposalState.REVISIONS_REQUESTED));
-    	return myArrangedProposals;
-    }
-    
-    protected List<ProposalPerson> getProposalsForStatus(List<ProposalPerson> myProposals, String proposalStateCode) {
-    	List<ProposalPerson> myFilteredProposals = new ArrayList<ProposalPerson>();
-    	for(ProposalPerson proposalPerson : myProposals) {
-    		if(proposalPerson.getDevelopmentProposal().getProposalStateTypeCode().equals(proposalStateCode)) {
-    			myFilteredProposals.add(proposalPerson);
-    		}
-    	}
-    	return myFilteredProposals;
-    }
-
     protected void populateAwards(DashboardForm form) {
-        Map<String, Object> awardCriteria = new HashMap<String, Object>();
-        awardCriteria.put("projectPersons.personId", form.getDashboardPerson().getPersonId());
-        Collection<Award> myAwards = awardService.retrieveAwardsByCriteria(awardCriteria);
-
-        List<Award> myAwardsFiltered = new ArrayList<Award>();
-        for (Award award : myAwards) {
-            if (award.getVersionHistory().isActiveVersion()) {
-                myAwardsFiltered.add(award);
-            }
-        }
-
-        form.setMyAwards(myAwardsFiltered);
+        form.setMyAwards(getDashboardService().getAwardsForInvestigator(form.getDashboardPerson().getPersonId()));
     }
-
+    
     // TODO unknown if need to filter on permission
     public List<Award> filterForPermissions(List<Award> results) {
         Person user = GlobalVariables.getUserSession().getPerson();
@@ -458,4 +411,13 @@ public class DashboardController {
     public void setKcPersonService(KcPersonService kcPersonService) {
         this.kcPersonService = kcPersonService;
     }
+
+	public DashboardService getDashboardService() {
+		return dashboardService;
+	}
+
+	public void setDashboardService(DashboardService dashboardService) {
+		this.dashboardService = dashboardService;
+	}
+
 }

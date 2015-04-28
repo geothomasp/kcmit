@@ -142,10 +142,21 @@
         <property name="headerText" value="Proposals"/>
         <property name="propertyName" value="myProposals"/>
         <property name="readOnly" value="true"/>
+        <property name="richTable.templateOptions">
+            <map>
+                <entry key="bAutoWidth" value="false" />
+                <entry key="sDom" value="tip" />
+                <entry key="bRetrieve" value="true" />
+                <entry key="sPaginationType" value="full_numbers" />
+                <entry key="aaSorting" value="[]" />
+                <entry key="aoColumnDefs"
+                       value="[{'sWidth' : '20px', 'bSortable':false, 'aTargets' : [0]}]" />
+            </map>
+        </property>
 
         <property name="items">
             <list>
-                <bean parent="Uif-LinkField" p:label="Proposal" p:linkText="@{#line.developmentProposal.proposalDocument.documentNumber}"
+                <bean parent="Uif-LinkField" p:label="Proposal" p:linkText="@{#line.developmentProposal.proposalNumber}"
                       p:href="@{T(org.kuali.coeus.propdev.impl.dashboard.DashboardViewHelperService).buildPropDevLink(#line.developmentProposal.proposalDocument.documentNumber)}">
                 </bean>
                 <bean parent="Uif-DataField" p:label="Project Title" p:propertyName="developmentProposal.title"></bean>
@@ -166,6 +177,17 @@
     <bean id="Dashboard-MyAwards" parent="Uif-LightTableSection" p:retrieveViaAjax="true">
         <property name="headerText" value="Awards"/>
         <property name="propertyName" value="myAwards"/>
+        <property name="richTable.templateOptions">
+            <map>
+                <entry key="bAutoWidth" value="false" />
+                <entry key="sDom" value="tip" />
+                <entry key="bRetrieve" value="true" />
+                <entry key="sPaginationType" value="full_numbers" />
+                <entry key="aaSorting" value="[]" />
+                <entry key="aoColumnDefs"
+                       value="[{'sWidth' : '20px', 'bSortable':false, 'aTargets' : [0]}]" />
+            </map>
+        </property>
         <property name="items">
             <list>
                 <bean parent="Uif-LinkField" p:label="Award" p:linkText="@{#line.awardNumber}"
@@ -173,7 +195,9 @@
                 </bean>
                 <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
                 <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
-                <bean parent="Uif-DataField" p:label="Investigator" p:propertyName="principalInvestigatorName"></bean>
+                <bean parent="Uif-DataField" p:label="Account Number" p:propertyName="accountNumber"></bean>
+                <bean parent="Uif-DataField" p:label="Start Date" p:propertyName="requestedStartDateInitial"></bean>
+                <bean parent="Uif-DataField" p:label="End Date" p:propertyName="requestedEndDateInitial"></bean>
             </list>
         </property>
     </bean>
