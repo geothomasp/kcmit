@@ -94,13 +94,15 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         List<ProposalUserRoles> proposalUserRoles =  developmentProposal.getWorkingUserRoles();
         StringBuilder aggregators = new StringBuilder();
         int proposalUserCount = 0;
-        for(ProposalUserRoles proposalUserRole : proposalUserRoles){
-        	
-        	if(proposalUserRole.getRoleNames().contains(RoleConstants.AGGREGATOR_DOCUMENT_LEVEL)){
-        		proposalUserCount = proposalUserCount ++;
-        		aggregators.append(proposalUserRole.getUsername());
-        		if(proposalUserCount!=proposalUserRoles.size()-1){
-        			aggregators.append(",");
+        if(proposalUserRoles!=null){
+        	for(ProposalUserRoles proposalUserRole : proposalUserRoles){
+
+        		if(proposalUserRole.getRoleNames().contains(RoleConstants.AGGREGATOR_DOCUMENT_LEVEL)){
+        			proposalUserCount = proposalUserCount ++;
+        			aggregators.append(proposalUserRole.getUsername());
+        			if(proposalUserCount!=proposalUserRoles.size()-1){
+        				aggregators.append(",");
+        			}
         		}
         	}
         }
