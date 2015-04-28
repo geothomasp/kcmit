@@ -102,10 +102,8 @@ public class AwardSharedDocAction extends AwardAction {
 			
 		 sharedDocForm.setKpMaintenanceRole(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", KcMitConstants.AWARD_KEYPERSON_MAINTENANCE_ROLE));  //Move to Constants
 		 sharedDocForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
-		/* List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
-		 for(SharedDocumentType sharedDocType:sharedDocTypeNew){
-			 if(sharedDocType.getModuleCode().equals()
-		 }*/
+		 List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
+		 sharedDocForm.setSharedDocType(sharedDocTypeNew);
 		 if(!sharedDocForm.isAwardProjectDocView()){
 			/* if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
 					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS"))||
@@ -118,7 +116,7 @@ public class AwardSharedDocAction extends AwardAction {
 				 sharedDocForm.setAwardProjectDocView(true);			 
 				
 			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))){
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
 				 sharedDocForm.setAwardProjectSharedDocView(true);
 			 }
 		 if(!sharedDocForm.isSubAwardProjectDocView()){
@@ -127,7 +125,7 @@ public class AwardSharedDocAction extends AwardAction {
 							 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS"))){
 				 sharedDocForm.setSubAwardProjectDocView(true);
 			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_SUBAWARD_DOC"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))){
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
 				 sharedDocForm.setSubAwardProjectSharedDocView(true);
 			 }}	}	
 		 if(!sharedDocForm.isIpProjectDocView()){
@@ -137,13 +135,13 @@ public class AwardSharedDocAction extends AwardAction {
 									 (getPermissionService().hasPermission(currentUser, "KC-IP", "VIEW_INST_PROPOSAL_DOC")))){
 				 sharedDocForm.setIpProjectDocView(true);
 			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_INST_PROPOSAL_DOC"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))){
+					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
 				 sharedDocForm.setIpProjectSharedDocView(true);
 			 }}	
 		 if(!sharedDocForm.isPropProjectDocView()){
 			 if (getPermissionService().hasPermission(currentUser, "KC-PD", "VIEW_DEV_PROPOSAL_DOC")){
 									 sharedDocForm.setPropProjectDocView(true);
-			 }else if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC")){
+			 }else if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC")){
 				 sharedDocForm.setPropProjectSharedDocView(true);
 			 }
 			 }	
