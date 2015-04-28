@@ -479,7 +479,7 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
     	String hasDisclosure="";           		
     	try {
     		hasDisclosure = this.getCoiDbFunctionService().getKeyPersonnelCoiDisclosureStatus(this.getDevelopmentProposal().getProposalNumber(), this.getPersonId(),isQuestionnairesCompleted());
-    		if(hasDisclosure == null){
+    		if(hasDisclosure == null || hasDisclosure.equalsIgnoreCase("Not Disclosed")){
     			setStatusNull(true);
     		 if(this.getRolodexId() != null){
 				hasDisclosure = "COI from External";//"COI_STATUS_FOR_RODOLEX";
