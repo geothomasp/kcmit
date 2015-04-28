@@ -94,6 +94,7 @@ import org.kuali.rice.kns.web.ui.HeaderField;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.mit.kc.award.contacts.AwardPersonRemove;
+import edu.mit.kc.bo.SharedDocumentType;
 
 /**
  * 
@@ -212,6 +213,7 @@ public class SharedDocForm extends AwardForm implements MultiLookupForm,Auditabl
     private transient ReportTrackingService reportTrackingService;
     
     private List<ReportTrackingBean> reportTrackingBeans;
+    private List<SharedDocumentType> sharedDocType;
     public  Collection<AwardPersonRemove> awardPersonRemovalHistory = new ArrayList<AwardPersonRemove>();
     private AccountCreationPresentationHelper accountCreationHelper;
     private boolean kpMaintenanceRole = false;
@@ -1532,6 +1534,14 @@ public void setNavigateFlag(String navigateFlag) {
 
 	public void setSubAwardProjectSharedDocView(boolean subAwardProjectSharedDocView) {
 		this.subAwardProjectSharedDocView = subAwardProjectSharedDocView;
+	}
+
+	public List<SharedDocumentType> getSharedDocType() {
+		return sharedDocType;
+	}
+
+	public void setSharedDocType(List<SharedDocumentType> sharedDocType) {
+		this.sharedDocType = sharedDocType;
 	}
 
 	
