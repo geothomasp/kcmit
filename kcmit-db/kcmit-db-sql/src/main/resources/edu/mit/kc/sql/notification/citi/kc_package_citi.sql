@@ -61,10 +61,10 @@ FUNCTION FN_MAP_TRAINING_TYPE( LS_TRAINING_GROUP VARCHAR2 ,  li_stage_number NUM
         li_training_code := 63;
     elsif (upper(ls_training_group) = 'WILDLIFE RESEARCH') then
         li_training_code := 64;
-    elsif (upper(ls_training_group) = 'WORKING WITH AMPHIBIANS IN RESEARCH SETTINGS') then
+    elsif (upper(ls_training_group) = 'WORKING WITH AMPHIBIANS IN RESEARCH SETTINGS.') then
         li_training_code := 65;
-    elsif (upper(ls_training_group) = 'WORKING WITH CATS IN RESEARCH SETTINGS') then
-        li_training_code := 66;
+    --elsif (upper(ls_training_group) = 'WORKING WITH CATS IN RESEARCH SETTINGS') then
+        --li_training_code := 66;
     elsif (upper(ls_training_group) = 'WORKING WITH DOGS IN RESEARCH SETTINGS') then
         li_training_code := 67;
     elsif (upper(ls_training_group) = 'WORKING WITH FERRETS IN RESEARCH SETTINGS') then
@@ -118,6 +118,8 @@ FUNCTION FN_MAP_TRAINING_TYPE( LS_TRAINING_GROUP VARCHAR2 ,  li_stage_number NUM
         li_training_code := 51;
     elsif (upper(ls_training_group) = 'WORKING WITH THE IACUC - REFRESHER') then
         li_training_code :=58;
+    elsif (upper(ls_training_group) = 'WORKING WITH CATS IN RESEARCH SETTINGS') then
+        li_training_code := 66;
     end if;
     
     END IF;
@@ -166,6 +168,8 @@ FUNCTION FN_POPULATE_PERS_TRAINING return number is
  li_count         number;
  li_count_rcr     number;
  li_count_human   number;
+ li_count_coi     number;
+ li_count_iacuc   number;
  li_training_no   number;
  li_loop          number;
  ld_followup_date  date;
@@ -174,6 +178,8 @@ FUNCTION FN_POPULATE_PERS_TRAINING return number is
  li_inserts       number;
  li_humsubj_rows  number;
  li_rcr_rows      number;
+ li_coi_rows      number;
+ li_iacuc_rows    number;
  li_module_code   number;
  ls_name          varchar2(90);
  ls_training_desc TRAINING.DESCRIPTION%type;
@@ -200,7 +206,9 @@ BEGIN
     
     li_humsubj_rows := 0;
     li_rcr_rows := 0;
+    li_coi_rows := 0;
     li_inserts := 0;
+    li_iacuc_rows :=0;
     li_rows := 0;
     
     open cur_citi_data;
@@ -291,6 +299,8 @@ BEGIN
                 
                          li_count_human := 0;
                          li_count_rcr := 0;
+                         li_count_coi := 0;
+                         li_count_iacuc := 0;
                 
                         if (li_module_code = 7 ) then
                              --only need followup date for human subjects
@@ -306,10 +316,32 @@ BEGIN
                             and    TO_CHAR(p.date_submitted,'MM/DD/YYYY') = TO_CHAR(rec_citi_data.date_completed,'MM/DD/YYYY')
                             and    TO_CHAR(p.followup_date,'MM/DD/YYYY') = TO_CHAR(ld_followup_date,'MM/DD/YYYY')
                             and    p.score = 'P';
-                   
-                        else
+                        
+                        elsif (li_module_code = 100) then
+                        
                             select count(*)
                             into   li_count_rcr
+                            from   PERSON_TRAINING p
+	                        where  p.person_id = rec_citi_data.custom_field2
+                            and    p.training_code = li_training_code
+                            and     TO_CHAR(p.date_submitted,'MM/DD/YYYY') = TO_CHAR(rec_citi_data.date_completed,'MM/DD/YYYY')
+                            and    p.score = 'P';
+  
+                       elsif (li_module_code = 8) then
+                           -- followupdate for coi is 4 years 
+                            ld_followup_date := add_months(rec_citi_data.date_completed, 48 ) - 1;
+                            
+                            select count(*)
+                            into   li_count_coi
+                            from   PERSON_TRAINING p
+                            where  p.person_id = rec_citi_data.custom_field2
+                            and    p.training_code = li_training_code
+                            and    TO_CHAR(p.date_submitted,'MM/DD/YYYY') = TO_CHAR(rec_citi_data.date_completed,'MM/DD/YYYY')
+                            and    TO_CHAR(p.followup_date,'MM/DD/YYYY') = TO_CHAR(ld_followup_date,'MM/DD/YYYY')
+                            and    p.score = 'P';
+                     elsif (li_module_code = 9) then
+                            select count(*)
+                            into   li_count_iacuc
                             from   PERSON_TRAINING p
                             where  p.person_id = rec_citi_data.custom_field2
                             and    p.training_code = li_training_code
@@ -318,7 +350,7 @@ BEGIN
                 
                         end if;              
                  
-                        if (li_count_human = 0) and (li_count_rcr = 0) then
+                        if (li_count_human = 0) and (li_count_rcr = 0) and (li_count_coi = 0) and (li_count_iacuc = 0) then
                             begin
                     
                                 li_module_code :=FN_GET_TRAINING_MODULE (li_training_code );
@@ -342,6 +374,26 @@ BEGIN
                                          'P', sysdate, user,1,sys_guid(),'Y');
                          
                                     li_rcr_rows := li_rcr_rows + 1;
+                                    
+                                elsif (li_module_code = 8) then
+                     
+                                    insert into PERSON_TRAINING
+                                        (person_training_id,person_id, training_number, training_code, date_submitted, date_acknowledged,
+                                            followup_date, score, update_timestamp, update_user,ver_nbr,obj_id,active_flag)
+                                    values (SEQ_PERSON_TRAINING_ID.nextval,rec_citi_data.custom_field2,li_training_no + 1,  li_training_code, rec_citi_data.date_completed, sysdate,
+                                        ld_followup_date, 'P', sysdate, user,1,sys_guid(),'Y');
+                         
+                                    li_coi_rows := li_coi_rows + 1;
+                                    
+                                elsif (li_module_code = 9) then
+                     
+                                    insert into PERSON_TRAINING
+                                        (person_training_id,person_id, training_number, training_code, date_submitted, date_acknowledged,
+                                        score, update_timestamp, update_user,ver_nbr,obj_id,active_flag)
+                                    values (SEQ_PERSON_TRAINING_ID.nextval,rec_citi_data.custom_field2,li_training_no + 1,  li_training_code, rec_citi_data.date_completed, sysdate,
+                                         'P', sysdate, user,1,sys_guid(),'Y');
+                         
+                                    li_iacuc_rows := li_iacuc_rows + 1;
                         
                                 end if;
                   
