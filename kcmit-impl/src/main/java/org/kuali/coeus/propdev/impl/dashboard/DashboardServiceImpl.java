@@ -117,7 +117,8 @@ public class DashboardServiceImpl implements DashboardService {
     	List<Award> allMyArrangedAwards = new ArrayList<Award>();
     	for (AwardStatus awardStatus : AwardStatus.values()) {
     		for(Award award : myAwards) {
-    			if(award.getStatusCode().equals(awardStatus.getStatusCode())) {
+    			String awardStatusCode = Integer.toString(award.getStatusCode());
+    			if(awardStatusCode.equals(awardStatus.getStatusCode())) {
     				allMyArrangedAwards.add(award);
     			}
     		}
