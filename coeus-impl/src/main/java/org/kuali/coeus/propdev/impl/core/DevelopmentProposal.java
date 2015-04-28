@@ -74,6 +74,7 @@ import org.kuali.coeus.propdev.api.core.DevelopmentProposalContract;
 import org.kuali.coeus.propdev.impl.abstrct.ProposalAbstract;
 import org.kuali.coeus.propdev.impl.attachment.LegacyNarrativeService;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
+import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetStatusService;
 import org.kuali.coeus.propdev.impl.budget.ProposalDevelopmentBudgetExt;
 import org.kuali.coeus.propdev.impl.budget.editable.BudgetChangedData;
@@ -110,6 +111,7 @@ import org.kuali.kra.coi.Disclosurable;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocumentFactory;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.data.jpa.FilterGenerator;
 import org.kuali.rice.krad.data.jpa.PortableSequenceGenerator;
@@ -405,11 +407,21 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     public List<ProposalPerson> getProposalPersonsCoi() {
     	List<ProposalPerson> filteredCollection =  new ArrayList();
     	for(ProposalPerson person:this.proposalPersons){
-    		if(person.isStatusNull())
+    		if(person.isStatusNull() || person.getCoiDisclosureStatus().equalsIgnoreCase("Not Disclosed"))
     		{
     			if(getProposalPersonCoiIntegrationService().isCoiQuestionsAnsweredN(person)){ 
     				person.setCoiDisclosureStatus("Disclosure Not Required");
     			}
+    			
+    			//Few KP's are not required certification
+    			ProposalDevelopmentDocument document=this.proposalDocument;
+    			Person user = GlobalVariables.getUserSession().getPerson();
+    			if((person.getCoiDisclosureStatus().equalsIgnoreCase("Not Disclosed"))
+    					 && !getProposalDevelopmentPermissionsService().hasCertificationPermissions(document,user,person))
+    					 { 
+     				person.setCoiDisclosureStatus("Disclosure Not Required");
+     			}
+    			
     		}
     		filteredCollection.add(person);
     	}
@@ -433,6 +445,22 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     private String hierarchyStatusName;
 
     @Transient
+    private transient ProposalDevelopmentPermissionsService proposalDevelopmentPermissionsService;
+    
+    
+    public ProposalDevelopmentPermissionsService getProposalDevelopmentPermissionsService() {
+    	
+    	if(this.proposalDevelopmentPermissionsService == null){
+    		this.proposalDevelopmentPermissionsService = KcServiceLocator.getService(ProposalDevelopmentPermissionsService.class);
+    	}
+		return proposalDevelopmentPermissionsService;
+	}
+	public void setProposalDevelopmentPermissionsService(
+			ProposalDevelopmentPermissionsService proposalDevelopmentPermissionsService) {
+		this.proposalDevelopmentPermissionsService = proposalDevelopmentPermissionsService;
+	}
+
+	@Transient
     private transient ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
     
     
@@ -2371,17 +2399,4 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
 	public void setLastSyncedBudget(ProposalDevelopmentBudgetExt lastSyncedBudget) {
 		this.lastSyncedBudget = lastSyncedBudget;
 	}
-	
-
-@Transient
-    private S2sAppSubmission s2sAppsubmission;
-
-public S2sAppSubmission getS2sAppsubmission() {
-		return s2sAppsubmission;
-	}
-
-	public void setS2sAppsubmission(S2sAppSubmission s2sAppsubmission) {
-		this.s2sAppsubmission = s2sAppsubmission;
-	}
-
 }
