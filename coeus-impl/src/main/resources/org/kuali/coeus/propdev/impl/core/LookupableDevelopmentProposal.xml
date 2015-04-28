@@ -303,5 +303,54 @@
     <property name="dataObjectClassName" value="org.kuali.coeus.propdev.impl.core.LookupableDevelopmentProposal"/>
   </bean>
 
+<bean id="AllNewDevelopmentProposals-LookupViewId" parent="AllNewDevelopmentProposals-LookupViewId-parentBean" />
+   <bean id="AllNewDevelopmentProposals-LookupViewId-parentBean" abstract="true" parent="DevelopmentProposal-LookupView" p:viewName="AllNewLookupableDevelopmentProposals-LookupViewName" 
+	p:headerText="View S2S Submission List" >
+	<property name="criteriaFields">
+      <list >
+        <bean p:propertyName="proposalNumber" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+          <bean p:propertyName="proposalDocument.documentNumber" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+          <bean p:propertyName="deadlineDate" parent="Uif-LookupCriteriaInputField"  p:ranged="true"/>
+      
+        <bean p:propertyName="s2sAppsubmission.ggTrackingId" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="s2sAppsubmission.status" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+        <bean p:propertyName="s2sAppsubmission.agencyTrackingId" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+        
+        
+         <bean p:propertyName="cfdaNumber" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField"/>
+          <bean p:propertyName="principalInvestigatorName" parent="Uif-LookupCriteriaInputField"/>          
+        <bean p:propertyName="title" parent="Uif-LookupCriteriaInputField"/>
+      
+      <bean p:propertyName="ownedByUnitNumber" p:enableAutoQuickfinder="false" parent="Uif-LookupCriteriaInputField">
+            <property name="inquiry">
+                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.coeus.common.framework.unit.Unit"
+                      p:inquiryParameters="ownedByUnitNumber:unitNumber"/>
+            </property>
+        </bean>
+        <bean p:propertyName="ownedByUnit.unitName" parent="Uif-LookupCriteriaInputField">
+            <property name="inquiry">
+                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.coeus.common.framework.unit.Unit"
+                      p:inquiryParameters="ownedByUnit.unitName:unitName"/>
+            </property>
+        </bean>
+       
+        <bean p:propertyName="sponsorCode" parent="Uif-LookupCriteriaInputField">
+          <property name="inquiry">
+              <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.coeus.common.framework.sponsor.Sponsor"
+                    p:inquiryParameters="sponsorCode:sponsorCode"/>
+          </property>
+        </bean>
+        <bean p:propertyName="sponsor.sponsorName" parent="Uif-LookupCriteriaInputField">
+            <property name="inquiry">
+                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.coeus.common.framework.sponsor.Sponsor"
+                      p:inquiryParameters="sponsorCode:sponsorCode"/>
+            </property>
+        </bean>
+       
+        <bean p:propertyName="s2sAppsubmission.comments" parent="Uif-LookupCriteriaInputField"/>
+        
+      </list>
+    </property>
+  </bean>
 
 </beans>

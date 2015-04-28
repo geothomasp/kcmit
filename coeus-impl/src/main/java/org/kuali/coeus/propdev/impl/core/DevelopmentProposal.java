@@ -2371,4 +2371,17 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
 	public void setLastSyncedBudget(ProposalDevelopmentBudgetExt lastSyncedBudget) {
 		this.lastSyncedBudget = lastSyncedBudget;
 	}
+	
+
+@Transient
+    private S2sAppSubmission s2sAppsubmission;
+
+public S2sAppSubmission getS2sAppsubmission() {
+		return s2sAppsubmission;
+	}
+
+	public void setS2sAppsubmission(S2sAppSubmission s2sAppsubmission) {
+		this.s2sAppsubmission = s2sAppsubmission;
+	}
+
 }
