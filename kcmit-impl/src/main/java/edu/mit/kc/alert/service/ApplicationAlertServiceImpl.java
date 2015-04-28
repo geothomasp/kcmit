@@ -21,8 +21,11 @@ public class ApplicationAlertServiceImpl implements ApplicationAlertService {
 	@Qualifier("dataObjectService")
 	private DataObjectService dataObjectService;
 
+	private String userName;
+	
 	@Override
-	public void processAllAlerts() {
+	public void processAllAlerts(String userName) {
+		this.userName = userName;
 		List<AlertType> alertTypes = getAllAlertTypes();
 		for(AlertType alertType : alertTypes) {
 			processAlert(alertType);
@@ -32,15 +35,15 @@ public class ApplicationAlertServiceImpl implements ApplicationAlertService {
 	@Override
 	public void processAlert(AlertType alertType) {
 		SystemAlertService alertService = getAlertService(alertType);
-		alertService.cleanUpAlerts(alertType);
-		alertService.updateAlerts(alertType);
-		alertService.createAlerts(alertType);
+		alertService.cleanUpAlerts(alertType, getUserName());
+		alertService.updateAlerts(alertType, getUserName());
+		alertService.createAlerts(alertType, getUserName());
 	}
 
 	@Override
 	public void deactivateAlert(AlertType alertType) {
 		SystemAlertService alertService = getAlertService(alertType);
-		alertService.cleanUpAlerts(alertType);
+		alertService.cleanUpAlerts(alertType, getUserName());
 	}
 
 	private SystemAlertService getAlertService(AlertType alertType) {
@@ -54,13 +57,21 @@ public class ApplicationAlertServiceImpl implements ApplicationAlertService {
         List<AlertType> alertTypes = getDataObjectService().findMatching(AlertType.class, QueryByCriteria.Builder.andAttributes(alertKeys).build()).getResults();
 		return alertTypes;
 	}
-
+	
 	public DataObjectService getDataObjectService() {
 		return dataObjectService;
 	}
 
 	public void setDataObjectService(DataObjectService dataObjectService) {
 		this.dataObjectService = dataObjectService;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

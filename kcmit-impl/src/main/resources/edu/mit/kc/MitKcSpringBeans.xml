@@ -37,8 +37,10 @@
                            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <context:annotation-config />
-    <context:component-scan base-package="edu.mit.kc.protocol.service.impl" />
+    <context:component-scan base-package="edu.mit.kc.protocol.service.impl, edu.mit.kc.alert.service" />
     
+    <bean id="ccImporter" abstract="true" class="org.kuali.coeus.sys.framework.service.ConfigContextConfigObjectFactoryBean" p:singleton="true" p:mustExist="true" />
+    <bean id="dataSource" parent="ccImporter" p:objectName="datasource" />
 	<bean id="permissionService"
 		class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
 		<property name="serviceName" value="kimPermissionService" />

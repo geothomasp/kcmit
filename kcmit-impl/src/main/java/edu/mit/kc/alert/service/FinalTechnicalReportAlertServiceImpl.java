@@ -8,15 +8,15 @@ import edu.mit.kc.alert.AlertType;
 public class FinalTechnicalReportAlertServiceImpl extends AlertServiceBaseImpl implements SystemAlertService {
 
 	@Override
-	public void createAlerts(AlertType alertType) {
+	public void createAlerts(AlertType alertType, String userName) {
 	}
 
 	@Override
-	public void updateAlerts(AlertType alertType) {
+	public void updateAlerts(AlertType alertType, String userName) {
 	}
 
 	@Override
-	public void cleanUpAlerts(AlertType alertType) {
+	public void cleanUpAlerts(AlertType alertType, String userName) {
 		deactivateAllAlerts(alertType);
 	}
 
