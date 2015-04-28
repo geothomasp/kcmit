@@ -86,3 +86,5 @@ and ep.FISCAL_YEAR = sub.FISCAL_YEAR (+);
 
 commit;
 
+exit;
+
