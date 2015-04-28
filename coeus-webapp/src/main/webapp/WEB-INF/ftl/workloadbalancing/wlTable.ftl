@@ -9,6 +9,17 @@
   </div>    
    <#else>
     <div>
+    <script type="text/javascript">
+    function GetProducionCharts(){    
+    var uri = "https://reports.mit.edu/cognos/cgi-bin/cognos.cgi?b_action=cognosViewer&ui.action=run&ui.object=%2fcontent%2ffolder[%40name%3d%27School%20%26%20Area%20Reports%27]%2ffolder[%40name%3d%27OSP%27]%2ffolder[%40name%3d%27OSP%20Internal%27]%2ffolder[%40name%3d%27Work%20Load%20Balancing%27]%2freport[%40name%3d%27Work%20Load%20Distribution%20by%20CA%27]&ui.name=Work%20Load%20Distribution%20by%20CA&run.outputFormat=&run.prompt=true&ui.backURL=%2fcognos%2fcgi-bin%2fcognos.cgi%3fb_action%3dxts.run%26m%3dportal%2fcc.xts%26m_folder%3diF85368B4A6274AB8A4F6395C027B5F38";
+    window.location = uri;
+    }
+     function GetComparisonCharts(){    
+    var uri_c ="https://reports.mit.edu/cognos/cgi-bin/cognos.cgi?b_action=cognosViewer&ui.action=run&ui.object=%2fcontent%2ffolder[%40name%3d%27School%20%26%20Area%20Reports%27]%2ffolder[%40name%3d%27OSP%27]%2ffolder[%40name%3d%27OSP%20Internal%27]%2ffolder[%40name%3d%27Code%20Tables%27]%2freport[%40name%3d%27Work%20Load%20Distribution%20by%20CA%20-%20Simulation%27]&ui.name=Work%20Load%20Distribution%20by%20CA%20-%20Simulation&run.outputFormat=&run.prompt=true&ui.backURL=%2fcognos%2fcgi-bin%2fcognos.cgi%3fb_action%3dxts.run%26m%3dportal%2fcc.xts%26m_folder%3di967A13FDEF3F4B70AEBBA1097F42BE24";
+    window.location = uri_c;
+    }
+</script>
+
     <div id="wlTable">
  
             <#if !KualiForm.simulationMode>
@@ -17,7 +28,7 @@
                     <div class="col-md-6 text-right">
                         <button id="production_charts_button"
                                 class="btn btn-default btn-xs uif-action"
-                                data-submit_data="{&quot;methodToCall&quot;:&quot;showProductionCharts&quot;}"
+                                data-onclick="javascript:GetProducionCharts()"
                                 data-refreshid="Workload-Table"
                                 data-role="Action">
                             Production Charts
@@ -47,7 +58,7 @@
                         </button>
                         <button id="comparison_charts_button"
                                 class="btn btn-default btn-xs uif-action"
-                                data-submit_data="{&quot;methodToCall&quot;:&quot;showComparisonCharts&quot;}"
+                                data-onclick="javascript:GetComparisonCharts()"
                                 data-refreshid="Workload-Table"
                                 data-role="Action">
                             Comparison Charts
