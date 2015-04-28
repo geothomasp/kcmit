@@ -375,16 +375,13 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
     			instProposalAttachmentform.setMaintainInstituteProposal(true);
     		}
         }
-        
+       
         if(hasPermission("KC-IP","VIEW_INST_PROPOSAL_DOC") || 
         		hasPermission("KC-IP","VIEW_SHARED_INST_PROPOSAL_DOC") ||
         		   hasPermission("KC-IP","Create Institutional Proposal") ||
         		      hasPermission("KC-IP","Edit Institutional Proposal") ||        		         
-        		            hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC") ||
-        		               hasPermission("KC-IP","Cancel Institutional Proposal") ||
-        		                  hasPermission("KC-IP","Save Institutional Proposal") ||
-        		                     hasPermission("KC-IP","Submit Institutional Proposal") ||
-        		                    	hasPermission("KC-SYS","Initiate Document"))  {
+        		            hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC"))
+        		                {
         	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
     		if(instProposalAttachmentform != null) {
     			instProposalAttachmentform.setCanViewAttachment(true);
