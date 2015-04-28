@@ -60,6 +60,7 @@ import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.validation.AuditHelper.ValidationState;
+import org.kuali.coeus.sys.framework.workflow.KcDocumentRejectionService;
 import org.kuali.kra.award.AwardAmountInfoService;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.AwardLockService;
@@ -154,6 +155,8 @@ public class AwardAction extends BudgetParentActionBase {
     private static final String COMFIRMATION_PARAM_STRING = "After Award {0} information is synchronized, make sure that the Award Sponsor Contacts information is also synchronized with the same sponsor template. Failing to do so will result in data inconsistency. Are you sure you want to replace current {0} information with selected {1} template information?";
     private static final String SUPER_USER_ACTION_REQUESTS = "superUserActionRequests";
     private static final Integer AWARD_STATUS_HOLD =6;    
+	private static final String DOCUMENT_REJECT_QUESTION="DocReject";
+
     private KcAuthorizationService kraAuthorizationService;
     
    
@@ -2135,7 +2138,43 @@ public class AwardAction extends BudgetParentActionBase {
        
     }
     
-  
+    public ActionForward reject(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        
+        Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+        String reason = request.getParameter(KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME);
+        String methodToCall = ((KualiForm) form).getMethodToCall();
+        final String questionText = "Are you sure you want to reject this document?";
+        ActionForward forward;
+        if (question == null) {
+            forward =  this.performQuestionWithInput(mapping, form, request, response, DOCUMENT_REJECT_QUESTION,
+                    questionText , KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+        } else if ((DOCUMENT_REJECT_QUESTION.equals(question)) && ConfirmationQuestion.NO.equals(buttonClicked))  {
+            forward =  mapping.findForward(Constants.MAPPING_BASIC);
+        } else {
+            if (StringUtils.isEmpty(reason)) {
+                String context = "";
+                String errorKey = KeyConstants.ERROR_BUDGET_REJECT_NO_REASON;
+                String errorPropertyName = DOCUMENT_REJECT_QUESTION;
+                String errorParameter = "";
+                reason = reason == null ? "" : reason;
+                forward = this.performQuestionWithInputAgainBecauseOfErrors(mapping, form, request, response, DOCUMENT_REJECT_QUESTION, 
+                        questionText, KRADConstants.CONFIRMATION_QUESTION, methodToCall, context, reason, errorKey, errorPropertyName, 
+                        errorParameter);
+            } else {
+                //reject the document using the service.
+                AwardDocument document = ((AwardForm)form).getAwardDocument();
+                document.documentHasBeenRejected(reason);
+                KcServiceLocator.getService(KcDocumentRejectionService.class).reject(document.getDocumentHeader().getWorkflowDocument(), reason,
+                        GlobalVariables.getUserSession().getPrincipalId(), null);
+                //tell the document it is being rejected and returned to the initial node.
+                forward = super.returnToSender(request, mapping, kualiDocumentFormBase);
+            }
+            
+        }
+        return forward;
+    }
 	
 	private PermissionService getPermissionService() {
         return KimApiServiceLocator.getPermissionService();
