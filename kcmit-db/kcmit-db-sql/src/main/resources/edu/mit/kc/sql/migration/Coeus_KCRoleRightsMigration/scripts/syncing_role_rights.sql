@@ -48,7 +48,7 @@ ALTER TABLE KRIM_PERM_T ENABLE CONSTRAINT KRIM_PERM_TC0 ;
 ALTER TABLE KRIM_PERM_T ENABLE CONSTRAINT KRIM_PERM_T_TC1 ;
 ALTER TABLE ROLE_CNTRL_MAP_T ENABLE CONSTRAINT FK_ROLE_CNTRL_MAP_T ;
 ALTER TABLE KC_ROLE_CNTRAL_MAP ENABLE CONSTRAINT FK_KC_ROLE_CNTRAL_MAP ;
-
+-- Adding roles from Coeus which are not in role-to-role mapping table
 declare
 li_coeus_role_id NUMBER(5,0);
 li_kc_role_id    krim_role_t.role_id%type;
@@ -121,6 +121,7 @@ begin
   
 end;
 /
+-- Adding roles from Coeus which are in role-to-role mapping table
 declare
 li_coeus_role_id NUMBER(5,0);
 li_kc_role_id    krim_role_t.role_id%type;
@@ -199,6 +200,74 @@ begin
   
 end;
 /
+commit
+/
+-- Adding roles from final mapping which are krim_role_table
+declare
+li_coeus_role_id NUMBER(5,0);
+li_kc_role_id    krim_role_t.role_id%type;
+li_count         NUMBER;
+
+cursor c_role is       
+   select distinct t1.role_nm as role_name,t1.role_nm as DESCRIPTION, t1.role_nmspc_cd from KC_COEUS_ROLE_PERM_MAPPING t1
+   left outer join krim_role_t t2 on t1.role_nm = t2.role_nm
+   where t2.role_id is null;   
+   r_role c_role%rowtype;
+  
+ls_namespace VARCHAR2(40);
+ls_kim_typ_id NUMBER(8);
+li_role_count number;
+
+begin
+
+  open c_role;
+  loop
+  fetch c_role into r_role;
+  exit when c_role%notfound;
+  
+ 
+  select count(role_id) into li_role_count from krim_role_t where trim(upper(role_nm)) = trim(upper(r_role.role_name));
+  
+  -- role is missing in KC we need to add that role to KC
+  -- Adding role START
+	if li_role_count = 0 then
+			
+			if r_role.role_nmspc_cd is null then
+				ls_namespace := 'KC-SYS';
+			else
+				ls_namespace := r_role.role_nmspc_cd;
+			end if;
+					
+
+			  begin
+				select k.KIM_TYP_ID into ls_kim_typ_id from KRIM_TYP_T k where k.nm='UnitHierarchy'; 
+			  EXCEPTION
+			  WHEN OTHERS THEN
+			  dbms_output.put_line('There is not KIM_TYP_ID for UnitHierarchy'); 
+			  continue;
+			  end;	
+						
+			   --dbms_output.put_line('Inserting role '||r_role.role_name);			
+			   BEGIN
+					SELECT KRIM_ROLE_ID_S.NEXTVAL INTO li_kc_role_id FROM DUAL;
+					INSERT INTO KRIM_ROLE_T(ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND)  
+					VALUES(li_kc_role_id,SYS_GUID(),1,r_role.role_name,ls_namespace,r_role.DESCRIPTION,ls_kim_typ_id,'Y');					
+								
+			   EXCEPTION
+			   WHEN OTHERS THEN
+				dbms_output.put_line('Error while inserting into KRIM_ROLE_T , role name is'||r_role.role_name||'.  The error is: '||sqlerrm);
+			   continue;
+			   END;
+				
+			
+			
+	end if;
+	
+  end loop;
+  close c_role;
+  
+end;
+/
 -- Adding role ENDS
 declare
 li_max number(10);
@@ -240,9 +309,22 @@ begin
       open c_role_right;
       loop
       fetch c_role_right into r_role_right;
-      exit when c_role_right%notfound; 	  
-			BEGIN
-				select role_id into li_role_id from krim_role_t where role_nm = r_role_right.role_nm and nmspc_cd = r_role_right.role_nmspc_cd;	
+      exit when c_role_right%notfound; 
+	  
+			BEGIN  
+				select count(role_id) into li_count from krim_role_t where trim(upper(role_nm)) = trim(upper(r_role_right.role_nm));					
+				if li_count = 1 then
+					select role_id into li_role_id from krim_role_t where trim(upper(role_nm)) = trim(upper(r_role_right.role_nm));	
+						
+				elsif li_count > 1 then			
+					select role_id into li_role_id from krim_role_t where trim(upper(role_nm)) = trim(upper(r_role_right.role_nm)) and nmspc_cd = r_role_right.role_nmspc_cd;	
+					
+				else
+					dbms_output.put_line('Role is not in krim_role_t , role_nm is '||r_role_right.role_nm||' and nmspc_cd is '||r_role_right.role_nmspc_cd);
+					continue;
+					
+				end if;				
+				
 			EXCEPTION
 			WHEN OTHERS THEN
 			   dbms_output.put_line('Role is not in krim_role_t , role_nm is '||r_role_right.role_nm||' and nmspc_cd is '||r_role_right.role_nmspc_cd||'.  The error is: '||sqlerrm);
