@@ -20,6 +20,7 @@ package org.kuali.coeus.propdev.impl.core;
 
 
 import java.sql.Time;
+
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -31,6 +32,7 @@ import org.kuali.coeus.common.framework.custom.DocumentCustomData;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeService;
+import org.kuali.coeus.common.framework.org.OrganizationYnq;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.print.KcAttachmentDataSource;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
@@ -85,6 +87,7 @@ import org.kuali.rice.krad.file.FileMeta;
 import org.kuali.rice.krad.util.*;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.service.LookupService;
 import org.kuali.rice.krad.service.NoteService;
@@ -186,7 +189,28 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
 
     @Autowired
     @Qualifier("kcFileService")
-    private KcFileService kcFileService;    
+    private KcFileService kcFileService;  
+    
+    @Autowired
+    @Qualifier("businessObjectService")
+    private BusinessObjectService businessObjectService;
+    
+    private String LOW_RISK = "1";
+    
+    private String HIGH_RISK = "2";
+    
+    private String UNKNOWN_RISK = "3";
+    
+    private String LOW_RISK_LABEL = "Low Risk";
+    
+    private String HIGH_RISK_LABEL = "High Risk";
+    
+    private String UNKNOWN_RISK_LABEL = "Unknown Risk";
+    
+    private int LOCATION_TYPE_CODE = 3;
+    
+    private String ORGANIZATION_RISK_CATEGORY_CODE = "organizationRiskCategoryCode";
+    
  
 
     @Override
@@ -1097,6 +1121,63 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
 
     public void setKcFileService(KcFileService kcFileService) {
         this.kcFileService = kcFileService;
+    }
+    
+    public String riskPriority(DevelopmentProposal proposal){
+    	String riskPriority=UNKNOWN_RISK;
+    	List<OrganizationYnq> organizationYnqs=organisationRiskPriority(proposal);
+    	if(organizationYnqs != null || !organizationYnqs.isEmpty()) {
+            for(OrganizationYnq organizationYnq:organizationYnqs) {
+        		if(organizationYnq.getAnswer().equals("Y")) {
+        			riskPriority=LOW_RISK;
+        		} else if(organizationYnq.getAnswer().equals("N")) {
+        			riskPriority=HIGH_RISK;
+        		}
+        	}
+    	}
+    	return riskPriority;
+    }
+    
+    public String riskPriorityLabel(DevelopmentProposal proposal) {
+    	String riskPriorityLabel=UNKNOWN_RISK_LABEL;
+    	List<OrganizationYnq> organizationYnqs=organisationRiskPriority(proposal);
+    	if(organizationYnqs != null || !organizationYnqs.isEmpty()) {
+            for(OrganizationYnq organizationYnq:organizationYnqs) {
+        		if(organizationYnq.getAnswer().equals("Y")) {
+        			riskPriorityLabel=LOW_RISK_LABEL;
+        		} else if(organizationYnq.getAnswer().equals("N")) {
+        			riskPriorityLabel=HIGH_RISK_LABEL;
+        		}
+        	}
+    	}
+    	return riskPriorityLabel;
+    }
+    
+    public List<OrganizationYnq> organisationRiskPriority(DevelopmentProposal proposal) {
+    	String organizationId=null;
+    	List<OrganizationYnq> organizationYnqs = null;
+    	List<ProposalSite> proposalSites=proposal.getProposalSites();
+    	for(ProposalSite proposalSite:proposalSites) {
+    		if(proposalSite.getLocationTypeCode() == LOCATION_TYPE_CODE) {
+    			organizationId=proposalSite.getOrganizationId();
+    		}
+    	}
+    	String questionId=getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, ParameterConstants.ALL_COMPONENT,ORGANIZATION_RISK_CATEGORY_CODE);
+        if(organizationId != null && questionId != null) {
+        	Map<String, String> organizationYnqMap = new HashMap<String, String>();
+            organizationYnqMap.put("QUESTION_ID",questionId);
+            organizationYnqMap.put("ORGANIZATION_ID",organizationId);
+            organizationYnqs = (List<OrganizationYnq>) businessObjectService.findMatching(OrganizationYnq.class,
+                    organizationYnqMap);
+        }
+        return organizationYnqs;
+    }
+
+    
+    
+    
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
     }
 
 }

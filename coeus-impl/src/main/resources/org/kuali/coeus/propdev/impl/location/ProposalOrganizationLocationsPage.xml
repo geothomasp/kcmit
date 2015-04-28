@@ -190,7 +190,10 @@
                     </property>
                 </bean>
                 <bean parent="Uif-DataField"  p:order="30" p:propertyName="organization.address" />
-			</list>
+                <bean parent="Uif-MessageField"
+                               p:fieldLabel.LabelText="Risk" p:messageText="[span class='icon-warning-sign alert-priority@{#ViewHelper.riskPriority(document.developmentProposal)}'][/span] @{#ViewHelper.riskPriorityLabel(document.developmentProposal)}" 
+                               p:render="true" p:order="40"/>
+             </list>
 		</property>
 		<property name="lineActions">
             <list>
