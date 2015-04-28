@@ -51,6 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import edu.mit.coeus.utils.xml.v2.propdev.PROPOSALDocument.PROPOSAL;
+import edu.mit.kc.bo.PiAppointmentType;
 import edu.mit.kc.infrastructure.KcMitConstants;
 import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
 
@@ -1226,5 +1227,36 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 		}
 		return FALSE;
 	}
+	
+	/**
+     * This method is to check if the PI or any multi-PI has PI status
+     * FN_PI_APPOINTMENT_TYPE_RULE
+     */
+    public String piAppointmentTypeRuleNew(DevelopmentProposal developmentProposal) {
+        List<ProposalPerson> people = developmentProposal.getProposalPersons();
+        List<PiAppointmentType> piAppointmentTypes = (List<PiAppointmentType>)getBusinessObjectService().findAll(PiAppointmentType.class);
+        for (ProposalPerson person : people) {
+            if ((person.isInvestigator() && person.isPrincipalInvestigator()) || (person.isMultiplePi())
+            		&& person.getPerson() != null && person.getPerson().getExtendedAttributes() != null) {
+                List<PersonAppointment> appointments = person.getPerson().getExtendedAttributes().getPersonAppointments();
+                for(PersonAppointment personAppointment : appointments) {
+                    if(isPiAppointmentTypeEqualsJobTitle(piAppointmentTypes, personAppointment.getJobTitle())) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+        return FALSE;
+    }
+	
+	   private boolean isPiAppointmentTypeEqualsJobTitle(List<PiAppointmentType> piAppointmentTypes, String jobTitle) {
+	        for(PiAppointmentType piAppointmentType : piAppointmentTypes) {
+	            if(piAppointmentType.getDescription().equalsIgnoreCase(jobTitle)) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+
 	
 }
