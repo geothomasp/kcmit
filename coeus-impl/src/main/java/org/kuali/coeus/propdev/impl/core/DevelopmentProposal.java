@@ -78,6 +78,7 @@ import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsServ
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetStatusService;
 import org.kuali.coeus.propdev.impl.budget.ProposalDevelopmentBudgetExt;
 import org.kuali.coeus.propdev.impl.budget.editable.BudgetChangedData;
+import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.editable.ProposalChangedData;
 import org.kuali.coeus.propdev.impl.hierarchy.HierarchyStatusConstants;
 import org.kuali.coeus.propdev.impl.hierarchy.ProposalHiddenInHierarchyCustomizerValue;
@@ -403,7 +404,9 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     @Transient
     private List<ProposalPerson> proposalPersonsCoi;
     
-
+    @Transient
+    private List<ProposalUserRoles> workingUserRoles;
+    
     public List<ProposalPerson> getProposalPersonsCoi() {
     	List<ProposalPerson> filteredCollection =  new ArrayList();
     	for(ProposalPerson person:this.proposalPersons){
@@ -2398,5 +2401,13 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
 
 	public void setLastSyncedBudget(ProposalDevelopmentBudgetExt lastSyncedBudget) {
 		this.lastSyncedBudget = lastSyncedBudget;
+	}
+	
+	public List<ProposalUserRoles> getWorkingUserRoles() {
+		return workingUserRoles;
+	}
+
+	public void setWorkingUserRoles(List<ProposalUserRoles> workingUserRoles) {
+		this.workingUserRoles = workingUserRoles;
 	}
 }

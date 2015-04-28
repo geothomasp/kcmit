@@ -31,6 +31,7 @@ import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotification
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.framework.person.PersonTypeConstants;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
@@ -59,6 +60,9 @@ import java.util.*;
 @Controller
 public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentControllerBase {
 
+	private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
+	private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
+	
     @Autowired
     @Qualifier("wizardControllerService")
     private WizardControllerService wizardControllerService;
@@ -72,7 +76,9 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 	@Qualifier("dataObjectService")
 	private DataObjectService dataObjectService;
 
-   
+	@Autowired
+    @Qualifier("sponsorHierarchyService")
+    private SponsorHierarchyService sponsorHierarchyService;
 
 	@Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-PersonnelPage"})
     public ModelAndView navigateToPersonnel(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -239,8 +245,15 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
     public void sendPersonNotification(ProposalDevelopmentDocumentForm form, String selectedLine) throws Exception {
         ProposalPerson person = form.getDevelopmentProposal().getProposalPerson(Integer.parseInt(selectedLine));
         String currentUser=getGlobalVariableService().getUserSession().getPrincipalId();
-        ProposalDevelopmentNotificationContext context =
-                new ProposalDevelopmentNotificationContext(form.getDevelopmentProposal(), "104", "Certify Notification");
+        ProposalDevelopmentNotificationContext context = null;
+        String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+        String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1);
+        form.getDevelopmentProposal().setWorkingUserRoles(form.getWorkingUserRoles());
+        if (getSponsorHierarchyService().isSponsorInHierarchy(form.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName)) {
+        	  context =  new ProposalDevelopmentNotificationContext(form.getDevelopmentProposal(), "107", "Certify Notification");
+        }else{
+        	  context =  new ProposalDevelopmentNotificationContext(form.getDevelopmentProposal(), "104", "Certify Notification");
+        }
         ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(form.getDevelopmentProposal());
         ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setProposalPerson(person);
         KcNotification notification = getKcNotificationService().createNotificationObject(context);
@@ -404,4 +417,12 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 		public void setDataObjectService(DataObjectService dataObjectService) {
 			this.dataObjectService = dataObjectService;
 		}
+		
+	public SponsorHierarchyService getSponsorHierarchyService() {
+	 return sponsorHierarchyService;
+	}
+
+	public void setSponsorHierarchyService(SponsorHierarchyService sponsorHierarchyService) {
+		this.sponsorHierarchyService = sponsorHierarchyService;
+	}
 }

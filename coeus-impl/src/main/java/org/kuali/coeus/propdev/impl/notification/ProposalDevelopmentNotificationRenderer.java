@@ -21,10 +21,15 @@ package org.kuali.coeus.propdev.impl.notification;
 import org.kuali.coeus.common.notification.impl.NotificationRendererBase;
 import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentService;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.RoleConstants;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.editable.ProposalChangedData;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,7 +59,12 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
     @Qualifier("proposalDevelopmentService")
     private transient ProposalDevelopmentService proposalDevelopmentService;
     
-    public ProposalDevelopmentNotificationRenderer() {
+    @Autowired
+    @Qualifier("parameterService")
+    private transient ParameterService parameterService;
+    
+
+	public ProposalDevelopmentNotificationRenderer() {
         
     }
     
@@ -80,6 +91,25 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         result.put("{PROGRAM_ANNOUNCEMENT_NUMBER}", developmentProposal.getProgramAnnouncementNumber());
         result.put("{PROGRAM_ANNOUNCEMENT_TITLE}", developmentProposal.getProgramAnnouncementTitle());
         result.put("{CFDA_NUMBER}", developmentProposal.getCfdaNumber());
+        List<ProposalUserRoles> proposalUserRoles =  developmentProposal.getWorkingUserRoles();
+        StringBuilder aggregators = new StringBuilder();
+        int proposalUserCount = 0;
+        for(ProposalUserRoles proposalUserRole : proposalUserRoles){
+        	
+        	if(proposalUserRole.getRoleNames().contains(RoleConstants.AGGREGATOR_DOCUMENT_LEVEL)){
+        		proposalUserCount = proposalUserCount ++;
+        		aggregators.append(proposalUserRole.getUsername());
+        		if(proposalUserCount!=proposalUserRoles.size()-1){
+        			aggregators.append(",");
+        		}
+        	}
+        }
+        result.put("{AGGREGATOR}", aggregators.toString());
+        String coiLink =  getParameterService().
+        		getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "LINK_TO_COI");
+        result.put("{LINK_TO_COI}", coiLink);
+        String certificatioPage =result.get("{APP_LINK_PREFIX}")+"/kc-pd-krad/proposalDevelopment?methodToCall=docHandler&docId="+developmentProposal.getProposalDocument().getDocumentNumber()+"&command=displayDocSearchView&pageId=PropDev-PersonnelPage";
+        result.put("{CERT_PAGE}", certificatioPage);
         if (developmentProposal.getDeadlineDate() != null) {
             result.put("{DEADLINE_DATE}", dateFormatter.format(developmentProposal.getDeadlineDate()));
         } else {
@@ -149,4 +179,12 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
     public void setProposalPerson(ProposalPerson proposalPerson) {
         this.proposalPerson = proposalPerson;
     }
+    
+    public ParameterService getParameterService() {
+		return parameterService;
+	}
+
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
+	}
 }
