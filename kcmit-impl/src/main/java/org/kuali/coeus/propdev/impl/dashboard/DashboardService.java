@@ -1,5 +1,6 @@
 package org.kuali.coeus.propdev.impl.dashboard;
 
+
 import java.util.List;
 
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
@@ -10,5 +11,6 @@ public interface DashboardService {
 	public List<ProposalPerson> getProposalsForInvestigator(String investigatorPersonId);
 	
 	public List<Award> getAwardsForInvestigator(String investigatorPersonId);
-
+	public List<Award> getActiveAwardsForInvestigator(String investigatorPersonId);
+	
 }

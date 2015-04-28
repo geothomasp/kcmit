@@ -314,22 +314,15 @@ begin
   select count(*)
     into   ll_count
     from award where (trim(account_number)  = trim(ll_wbs_ip_num))
-         and AWARD_SEQUENCE_STATUS = 'ACTIVE'
-         and    AWARD.SEQUENCE_NUMBER IN
-              ( SELECT MAX(A.SEQUENCE_NUMBER)
-                FROM     AWARD A
-                WHERE A.AWARD_NUMBER = award.award_number);
+         and AWARD_SEQUENCE_STATUS = 'ACTIVE';
 
   if ll_count = 1 then
         DECLARE cursor c_award_num is
             select  award_number,sponsor_award_number,account_number,award_id
           from award
           where (trim(account_number)  = trim(ll_wbs_ip_num))
-          and AWARD_SEQUENCE_STATUS = 'ACTIVE'
-              AND AWARD.SEQUENCE_NUMBER IN
-                 ( SELECT MAX(A.SEQUENCE_NUMBER)
-                   FROM AWARD A
-               WHERE A.AWARD_NUMBER = award.award_number);
+          and AWARD_SEQUENCE_STATUS = 'ACTIVE';
+          
     begin
       for award_number in c_award_num
       loop
@@ -342,6 +335,7 @@ begin
           if ( ll_ret = 1 ) then
 
                 ll_award_num := fn_cac_get_parent_award(ll_award_num);
+                ll_award_id := 0;
 
                     exit when (SUBSTR(ll_award_num, 8,5) = '00000' );
           else
@@ -349,7 +343,13 @@ begin
             exit;
 
           end if;
-
+	    if ll_award_id = 0 then
+		select  award_id
+		into ll_award_id
+		from award
+		where award_number = ll_award_num
+		  and AWARD_SEQUENCE_STATUS = 'ACTIVE';
+	    end if;
           end loop;
         --else
           --approval date is null
@@ -405,11 +405,7 @@ begin
           into ll_status,ll_proposal_id
           from proposal
           where (trim(proposal_number)  = trim(as_WBS_IP))
-          and PROPOSAL_SEQUENCE_STATUS = 'ACTIVE'
-              AND PROPOSAL.SEQUENCE_NUMBER IN
-                 ( SELECT MAX(A.SEQUENCE_NUMBER)
-                   FROM PROPOSAL A
-               WHERE A.PROPOSAL_NUMBER = PROPOSAL.PROPOSAL_NUMBER);
+          and PROPOSAL_SEQUENCE_STATUS = 'ACTIVE';
 
         select  COUNT(*)
 	    into gl_p_sprev_count
@@ -473,15 +469,15 @@ begin
       into ll_funded_prop
       from award
       where award_id in (select award_id from award_funding_proposals
-                        where PROPOSAL_ID in (select proposal_id from proposal where proposal_number = trim(as_WBS_IP)and PROPOSAL_SEQUENCE_STATUS <> 'PENDING'))
-              and AWARD_SEQUENCE_STATUS <> 'PENDING';
+                        where PROPOSAL_ID in (select proposal_id from proposal where proposal_number = trim(as_WBS_IP)and PROPOSAL_SEQUENCE_STATUS <> 'PENDING' and PROPOSAL_SEQUENCE_STATUS <> 'CANCELED'))
+              and (AWARD_SEQUENCE_STATUS <> 'PENDING' and AWARD_SEQUENCE_STATUS <> 'CANCELED');
       if ll_funded_prop = 1 then
         select  distinct substr( award_number,1,6)
         into ll_award_num
         from award
         where award_id in (select award_id from award_funding_proposals
-                        where PROPOSAL_ID in (select proposal_id from proposal where proposal_number = trim(as_WBS_IP)and PROPOSAL_SEQUENCE_STATUS <> 'PENDING'))
-                and AWARD_SEQUENCE_STATUS <> 'PENDING';
+                        where PROPOSAL_ID in (select proposal_id from proposal where proposal_number = trim(as_WBS_IP)and PROPOSAL_SEQUENCE_STATUS <> 'PENDING'and PROPOSAL_SEQUENCE_STATUS <> 'CANCELED'))
+              and (AWARD_SEQUENCE_STATUS <> 'PENDING' and AWARD_SEQUENCE_STATUS <> 'CANCELED');
 
         ll_award_num := ll_award_num || '-00001' ;
 
@@ -489,12 +485,8 @@ begin
         into ll_award_id
         from award
         where award_number = ll_award_num
-            and AWARD_SEQUENCE_STATUS = 'ACTIVE'
-              AND AWARD.SEQUENCE_NUMBER IN
-                 ( SELECT MAX(A.SEQUENCE_NUMBER)
-                   FROM AWARD A
-               WHERE A.AWARD_NUMBER = award.award_number);
-
+            and AWARD_SEQUENCE_STATUS = 'ACTIVE';
+            
         ll_ret := fn_CACaward( as_WBS_IP, ll_award_num,ll_award_id);
 
 
@@ -1075,7 +1067,7 @@ ls_parent_award  AWARD_HIERARCHY.PARENT_AWARD_NUMBER%TYPE;
 
 begin
 
-	     SELECT AWARD_HIERARCHY.PARENT_AWARD_NUMBER
+	     SELECT  distinct AWARD_HIERARCHY.PARENT_AWARD_NUMBER
     	 INTO 	ls_parent_award
     	 FROM 	AWARD_HIERARCHY
    	     WHERE 	AWARD_HIERARCHY.AWARD_NUMBER = as_award_num;
@@ -1084,7 +1076,7 @@ begin
 
  EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        RETURN Null ;
+        RETURN '000000-00000' ;
 
 end;
 
@@ -1336,7 +1328,7 @@ BEGIN
 		close cur_osp_email;
        ls_recipients := 'coeus-data@mit.edu' ;
        ll_MAIL_SENT_STATUS := 'Y';
-       --mail_message := '';
+       li_notification_type_id := null;
        -- sending email start
 		begin
 			 KC_MAIL_GENERIC_PKG.GET_NOTIFICATION_TYP_DETS(li_notification_type_id,200,'502',mail_subject,mail_message_in_table);
