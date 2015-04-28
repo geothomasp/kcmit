@@ -4,19 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.state.ProposalState;
+import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardService;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.core.api.criteria.OrderByField;
 import org.kuali.rice.core.api.criteria.OrderDirection;
 import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +37,10 @@ public class DashboardServiceImpl implements DashboardService {
     @Autowired
     @Qualifier("awardService")
     private AwardService awardService;
+    
+    @Autowired
+    @Qualifier("parameterService")
+    private ParameterService parameterService;
     
     public enum AwardStatus {
     	HOLD ("6"),
@@ -69,7 +79,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	public List<Award> getAwardsForInvestigator(String investigatorPersonId) {
-        Collection<Award> myAwards = getAllAwardsForInvestigator(investigatorPersonId);
+		List<Award> myAwards = getAllAwardsForInvestigator(investigatorPersonId);
         List<Award> myArrangedAwards = new ArrayList<Award>();
         if(myAwards != null && !myAwards.isEmpty()) {
             myArrangedAwards = getReArrangedAwards(myAwards);
@@ -78,7 +88,27 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 	
 	public List<Award> getActiveAwardsForInvestigator(String investigatorPersonId) {
-        Collection<Award> myAwards = getAllAwardsForInvestigator(investigatorPersonId);
+		List<Award> myAwards = getAllAwardsForInvestigator(investigatorPersonId);
+        List<Award> myAwardsFiltered = new ArrayList<Award>();
+        String activeAwardStatusCodes = getActiveAwardStatusCodes();
+        if(activeAwardStatusCodes != null) {
+    		for(Award award : myAwards) {
+    			String awardStatusCode = Integer.toString(award.getStatusCode());
+    			if(activeAwardStatusCodes.contains(awardStatusCode)) {
+    				myAwardsFiltered.add(award);
+    			}
+    		}
+        }else {
+        	myAwardsFiltered.addAll(myAwards);
+        }
+        return myAwardsFiltered;
+	}
+	
+	protected List<Award> getAllAwardsForInvestigator(String investigatorPersonId) {
+        Map<String, Object> awardCriteria = new HashMap<String, Object>();
+        awardCriteria.put("projectPersons.personId", investigatorPersonId);
+        awardCriteria.put("projectPersons.roleCode", Constants.PRINCIPAL_INVESTIGATOR_ROLE);
+        Collection<Award> myAwards = getAwardService().retrieveAwardsByCriteria(awardCriteria);
         List<Award> myAwardsFiltered = new ArrayList<Award>();
         for (Award award : myAwards) {
             if (award.getVersionHistory().isActiveVersion()) {
@@ -86,14 +116,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
         }
         return myAwardsFiltered;
- }
-	protected Collection<Award> getAllAwardsForInvestigator(String investigatorPersonId) {
-        Map<String, Object> awardCriteria = new HashMap<String, Object>();
-        awardCriteria.put("projectPersons.personId", investigatorPersonId);
-        awardCriteria.put("projectPersons.roleCode", Constants.PRINCIPAL_INVESTIGATOR_ROLE);
-        Collection<Award> myAwards = getAwardService().retrieveAwardsByCriteria(awardCriteria);
-        return myAwards;
- }
+	 }
 	
     protected List<ProposalPerson> getReArrangedProposals(List<ProposalPerson> myProposals) {
     	List<ProposalPerson> allMyArrangedProposals = new ArrayList<ProposalPerson>();
@@ -140,6 +163,10 @@ public class DashboardServiceImpl implements DashboardService {
     	return allMyArrangedAwards;
     }
 
+    protected String getActiveAwardStatusCodes() {
+        return getParameterService().getParameterValueAsString(AwardDocument.class, KeyConstants.AWARD_ACTIVE_STATUS_CODES_PARM);
+    }
+    
 	public DataObjectService getDataObjectService() {
 		return dataObjectService;
 	}
@@ -154,6 +181,14 @@ public class DashboardServiceImpl implements DashboardService {
 
 	public void setAwardService(AwardService awardService) {
 		this.awardService = awardService;
+	}
+
+	public ParameterService getParameterService() {
+		return parameterService;
+	}
+
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
 	}
 
 }
