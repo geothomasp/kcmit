@@ -208,6 +208,8 @@ public abstract class ProposalDevelopmentControllerBase {
     @Qualifier("proposalPersonCoiIntegrationService")
     private ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
     
+    @Autowired
+    @Qualifier("proposalTypeService")
     private ProposalTypeService proposalTypeService;
    
 	
@@ -983,9 +985,6 @@ public abstract class ProposalDevelopmentControllerBase {
 	}
 	
 	public ProposalTypeService getProposalTypeService() {
-        if (proposalTypeService == null) {
-            proposalTypeService = KcServiceLocator.getService(ProposalTypeService.class);
-        }
-        return proposalTypeService;
-    }
+		return proposalTypeService;
+	}
 }
