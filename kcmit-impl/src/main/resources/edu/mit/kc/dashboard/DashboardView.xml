@@ -205,6 +205,7 @@
 
     <bean id="Dashboard-ProjectDocuments" parent="Dashboard-MyAwards">
         <property name="headerText" value="Project Documents"/>
+        <property name="propertyName" value="myProjects"/>
         <property name="items">
             <list>
                 <bean parent="Uif-LinkField" p:label="Actions" p:linkText="View"
@@ -221,6 +222,7 @@
     </bean>
 
     <bean id="Dashboard-KeyPerson" parent="Dashboard-MyAwards">
+        <property name="propertyName" value="myProjects"/>
         <property name="headerText" value="Key Person Maintenance"/>
         <property name="items">
             <list>

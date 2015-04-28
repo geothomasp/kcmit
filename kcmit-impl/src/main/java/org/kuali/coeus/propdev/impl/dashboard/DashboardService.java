@@ -12,5 +12,6 @@ public interface DashboardService {
 	
 	public List<Award> getAwardsForInvestigator(String investigatorPersonId);
 	public List<Award> getActiveAwardsForInvestigator(String investigatorPersonId);
+	public List<Award> getInvestigatorAwardsForProjectDocument(List<Award> myAwards);
 	
 }

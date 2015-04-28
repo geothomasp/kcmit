@@ -150,13 +150,10 @@ public class DashboardController {
         DashboardForm form = new DashboardForm();
         Person currentUser = GlobalVariables.getUserSession().getPerson();
         KcPerson kcPerson = kcPersonService.getKcPersonByPersonId(currentUser.getPrincipalId());
-
         form.setDashboardPerson(kcPerson);
-
         populateProposals(form);
         populateGraphData(form);
         populateAlerts(form);
-
         return form;
     }
 
@@ -208,7 +205,9 @@ public class DashboardController {
     }
     
     protected void populateAwards(DashboardForm form) {
-        form.setMyAwards(getDashboardService().getAwardsForInvestigator(form.getDashboardPerson().getPersonId()));
+    	List<Award> myAwards = getDashboardService().getAwardsForInvestigator(form.getDashboardPerson().getPersonId());
+        form.setMyAwards(myAwards);
+        form.setMyProjects(getDashboardService().getInvestigatorAwardsForProjectDocument(myAwards));
     }
     
     // TODO unknown if need to filter on permission
@@ -248,6 +247,7 @@ public class DashboardController {
         form.setTempUserName(null);
         form.setMyProposals(new ArrayList<ProposalPerson>());
         form.setMyAwards(null);
+        form.setMyProjects(null);
         if (form.getClientStateForSyncing() != null) {
             form.getClientStateForSyncing().remove("Dashboard-Activity");
         }

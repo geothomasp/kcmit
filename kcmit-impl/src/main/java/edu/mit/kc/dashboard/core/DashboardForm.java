@@ -26,6 +26,7 @@ public class DashboardForm extends UifFormBase {
     private String tempUserName;
     private List<ProposalPerson> myProposals = new ArrayList<>();
     private List<Award> myAwards;
+    private List<Award> myProjects;
     private List<Expenditures> expenditureData = new ArrayList<>();
     private List<Alert> alerts = new ArrayList<>();
 
@@ -80,4 +81,12 @@ public class DashboardForm extends UifFormBase {
     public String getExpenditureDataAsJSON () {
         return ScriptUtils.translateValue(expenditureData).replaceAll("\"", "'");
     }
+
+	public List<Award> getMyProjects() {
+		return myProjects;
+	}
+
+	public void setMyProjects(List<Award> myProjects) {
+		this.myProjects = myProjects;
+	}
 }

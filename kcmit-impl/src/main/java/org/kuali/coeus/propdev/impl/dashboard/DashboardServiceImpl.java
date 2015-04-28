@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.state.ProposalState;
@@ -62,6 +59,8 @@ public class DashboardServiceImpl implements DashboardService {
         }
     }
     
+    private static final String ROOT_AWARD_KEY = "-00001";
+    
 	public List<ProposalPerson> getProposalsForInvestigator(String investigatorPersonId) {
     	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
         List<Predicate> predicates = new ArrayList<Predicate>();
@@ -92,10 +91,26 @@ public class DashboardServiceImpl implements DashboardService {
         List<Award> myAwardsFiltered = new ArrayList<Award>();
         String activeAwardStatusCodes = getActiveAwardStatusCodes();
         if(activeAwardStatusCodes != null) {
+        	myAwardsFiltered = filterAwardForStatusCodes(activeAwardStatusCodes, myAwards);
         }else {
         	myAwardsFiltered.addAll(myAwards);
         }
         return myAwardsFiltered;
+	}
+	
+	public List<Award> getInvestigatorAwardsForProjectDocument(List<Award> myAwards) {
+		List<Award> myAwardsFiltered = new ArrayList<Award>();
+		for(Award award : myAwards) {
+			String awardStatusCode = Integer.toString(award.getStatusCode());
+			String awardNumber = award.getAwardNumber();
+	        if(awardNumber.endsWith(ROOT_AWARD_KEY) && (awardStatusCode.equals(AwardStatus.ACTIVE.getStatusCode()) || 
+	        		awardStatusCode.equals(AwardStatus.PENDING.getStatusCode()) ||
+	        		awardStatusCode.equals(AwardStatus.HOLD.getStatusCode()) ||
+	        		awardStatusCode.equals(AwardStatus.INACTIVE.getStatusCode()))) {
+				myAwardsFiltered.add(award);
+			}
+		}
+		return myAwardsFiltered;
 	}
 	
 	protected List<Award> filterAwardForStatusCodes(String activeAwardStatusCodes, List<Award> myAwards) {
