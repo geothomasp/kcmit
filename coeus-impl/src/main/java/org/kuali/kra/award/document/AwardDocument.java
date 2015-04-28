@@ -62,9 +62,11 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.ken.util.NotificationConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.kim.api.permission.PermissionService;
@@ -74,6 +76,7 @@ import org.kuali.rice.krad.document.SessionDocument;
 import org.kuali.rice.krad.rules.rule.event.DocumentEvent;
 import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.krms.api.engine.Facts;
@@ -112,8 +115,8 @@ public class AwardDocument extends BudgetParentDocument<Award> implements  Copya
     
     private static final String HAS_SYNC_SPLITNODE = "hasSync";
     private static final String IS_SYNC_CHILD_SPLITNODE = "isSyncChild";
+    private static final String AWARD_STATUS_REJECTED = "AWARD_STATUS_REJECTED";
     
-
     private transient boolean documentSaveAfterVersioning;
     private transient AwardService awardService;
     
@@ -644,7 +647,14 @@ public class AwardDocument extends BudgetParentDocument<Award> implements  Copya
         String returnVal = "<a href=\"" + forward + "\"target=\"_blank\">" + documentNumber + "</a>";
         return returnVal;
     }
-
+    public void documentHasBeenRejected( String reason ) {
+        try {
+            KcServiceLocator.getService(DocumentService.class).saveDocument(this);
+        }
+        catch (WorkflowException e) {
+            throw new RuntimeException( "Could not save award document on action  taken.");
+        }
+    }
     @Override
     public List<? extends DocumentCustomData> getDocumentCustomData() {
         return getAward().getAwardCustomDataList();

@@ -42,6 +42,7 @@ import org.kuali.kra.award.contacts.*;
 import org.kuali.kra.award.customdata.CustomDataHelper;
 import org.kuali.kra.award.detailsdates.DetailsAndDatesFormHelper;
 import org.kuali.kra.award.document.AwardDocument;
+import org.kuali.kra.award.document.authorization.AwardTask;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.home.approvedsubawards.ApprovedSubawardFormHelper;
@@ -70,6 +71,7 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.coeus.common.framework.medusa.MedusaBean;
 import org.kuali.kra.award.service.AwardHierarchyUIService;
 import org.kuali.coeus.common.budget.framework.core.BudgetVersionFormBase;
+import org.kuali.coeus.common.framework.auth.task.TaskAuthorizationService;
 import org.kuali.coeus.common.framework.custom.CustomDataDocumentForm;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -83,6 +85,7 @@ import org.kuali.rice.kns.datadictionary.HeaderNavigation;
 import org.kuali.rice.kns.util.ActionFormUtilMap;
 import org.kuali.rice.kns.web.ui.ExtraButton;
 import org.kuali.rice.kns.web.ui.HeaderField;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import java.text.ParseException;
@@ -1373,9 +1376,15 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         
         String externalImageURL = Constants.KRA_EXTERNALIZABLE_IMAGES_URI_KEY;
         ConfigurationService configurationService = CoreApiServiceLocator.getKualiConfigurationService();
+        TaskAuthorizationService task = KcServiceLocator.getService(TaskAuthorizationService.class);
+
         
         String sendNotificationImage = configurationService.getPropertyValueAsString(externalImageURL) + "buttonsmall_send_notification.gif";
         addExtraButton("methodToCall.sendNotification", sendNotificationImage, "Send Notification");
+        
+        if( task.isAuthorized(GlobalVariables.getUserSession().getPrincipalId(), new AwardTask("rejectAward", this.getAwardDocument().getAward()))) {
+            addExtraButton("methodToCall.reject", configurationService.getPropertyValueAsString(externalImageURL) + "buttonsmall_reject.gif", "Reject");
+        }
         
         return extraButtons;
     }
