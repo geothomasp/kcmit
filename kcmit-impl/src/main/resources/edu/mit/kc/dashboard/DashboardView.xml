@@ -205,32 +205,34 @@
 
     <bean id="Dashboard-ProjectDocuments" parent="Dashboard-MyAwards">
         <property name="headerText" value="Project Documents"/>
-
         <property name="items">
             <list>
-                <bean parent="Uif-LinkField" p:label="Actions" p:linkText="View Project Doc"
+                <bean parent="Uif-LinkField" p:label="Actions" p:linkText="View"
                       p:href="@{T(org.kuali.coeus.propdev.impl.dashboard.DashboardViewHelperService).buildProjectDocLink(#line.awardDocument.documentNumber,#line.awardId)}">
-
                 </bean>
                 <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
                 <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
-                <bean parent="Uif-DataField" p:label="Investigator" p:propertyName="principalInvestigatorName"></bean>
+                <bean parent="Uif-DataField" p:label="Status" p:propertyName="awardStatus.description"></bean>
+                <bean parent="Uif-DataField" p:label="Account Number" p:propertyName="accountNumber"></bean>
+                <bean parent="Uif-DataField" p:label="Start Date" p:propertyName="requestedStartDateInitial"></bean>
+                <bean parent="Uif-DataField" p:label="End Date" p:propertyName="requestedEndDateInitial"></bean>
             </list>
         </property>
     </bean>
 
     <bean id="Dashboard-KeyPerson" parent="Dashboard-MyAwards">
         <property name="headerText" value="Key Person Maintenance"/>
-
         <property name="items">
             <list>
-                <bean parent="Uif-LinkField" p:label="Award" p:linkText="View Key Person"
+                <bean parent="Uif-LinkField" p:label="Actions" p:linkText="View"
                       p:href="@{T(org.kuali.coeus.propdev.impl.dashboard.DashboardViewHelperService).buildKeyPersonLink(#line.awardDocument.documentNumber,#line.awardId)}">
-
                 </bean>
                 <bean parent="Uif-DataField" p:label="Award Title" p:propertyName="title"></bean>
                 <bean parent="Uif-DataField" p:label="Sponsor Name" p:propertyName="sponsorName"></bean>
-                <bean parent="Uif-DataField" p:label="Investigator" p:propertyName="principalInvestigatorName"></bean>
+                <bean parent="Uif-DataField" p:label="Status" p:propertyName="awardStatus.description"></bean>
+                <bean parent="Uif-DataField" p:label="Account Number" p:propertyName="accountNumber"></bean>
+                <bean parent="Uif-DataField" p:label="Start Date" p:propertyName="requestedStartDateInitial"></bean>
+                <bean parent="Uif-DataField" p:label="End Date" p:propertyName="requestedEndDateInitial"></bean>
             </list>
         </property>
     </bean>

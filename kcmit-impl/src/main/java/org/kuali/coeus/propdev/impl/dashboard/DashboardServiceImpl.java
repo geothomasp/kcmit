@@ -92,16 +92,21 @@ public class DashboardServiceImpl implements DashboardService {
         List<Award> myAwardsFiltered = new ArrayList<Award>();
         String activeAwardStatusCodes = getActiveAwardStatusCodes();
         if(activeAwardStatusCodes != null) {
-    		for(Award award : myAwards) {
-    			String awardStatusCode = Integer.toString(award.getStatusCode());
-    			if(activeAwardStatusCodes.contains(awardStatusCode)) {
-    				myAwardsFiltered.add(award);
-    			}
-    		}
         }else {
         	myAwardsFiltered.addAll(myAwards);
         }
         return myAwardsFiltered;
+	}
+	
+	protected List<Award> filterAwardForStatusCodes(String activeAwardStatusCodes, List<Award> myAwards) {
+        List<Award> myAwardsFiltered = new ArrayList<Award>();
+		for(Award award : myAwards) {
+			String awardStatusCode = Integer.toString(award.getStatusCode());
+			if(activeAwardStatusCodes.contains(awardStatusCode)) {
+				myAwardsFiltered.add(award);
+			}
+		}
+		return myAwardsFiltered;
 	}
 	
 	protected List<Award> getAllAwardsForInvestigator(String investigatorPersonId) {
