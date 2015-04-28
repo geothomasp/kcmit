@@ -268,7 +268,49 @@ begin
   
 end;
 /
+commit
+/
 -- Adding role ENDS
+-- updating the name space code from final mapping to krim_role_t
+declare
+li_count number;
+  cursor c_data is
+    select distinct t1.role_nm, t1.role_nmspc_cd, t2.nmspc_cd from  kc_coeus_role_perm_mapping t1
+    inner join krim_role_t t2 on t1.role_nm = t2.role_nm
+    where t1.role_nmspc_cd <> t2.nmspc_cd;
+  r_data c_data%rowtype; 
+ 
+begin
+  open c_data;
+  loop
+  fetch c_data into r_data;
+  exit when c_data%notfound;
+  
+    select count(role_nm) into li_count
+    from krim_role_t
+    where role_nm = r_data.role_nm
+    and   nmspc_cd = r_data.role_nmspc_cd;
+    
+    if li_count = 0 then
+    
+        begin
+          update krim_role_t set nmspc_cd = r_data.role_nmspc_cd
+          where role_nm = r_data.role_nm
+          and   nmspc_cd = r_data.nmspc_cd; 
+		  
+          commit;
+        exception
+        when others then
+           continue;
+        end;
+        
+    end if;    
+    
+  end loop;
+  close c_data;
+
+end;
+/
 declare
 li_max number(10);
 ls_query VARCHAR2(400);
