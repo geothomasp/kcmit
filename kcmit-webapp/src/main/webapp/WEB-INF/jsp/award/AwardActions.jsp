@@ -34,6 +34,7 @@
   	<c:set var="readOnly" value="${not KualiForm.editingMode['fullEntry']}" scope="request" />
   	<c:set var="extraButtons" value="${KualiForm.extraActionsButtons}" scope="request" />
   	<c:set var="isValid" value="${KualiForm.validPrompt}" scope="request" />
+  	<c:set var="isHoldStatus" value="${KualiForm.statusHold}" scope="request" />
   	<script>
 	  $j = jQuery.noConflict();
 	</script>
@@ -43,7 +44,8 @@
 	<script language="JavaScript" type="text/javascript" >
 		var kualiForm = document.forms['KualiForm']; 
           var nameof = "${isValid}"; 
-         if(nameof!="" && nameof!="false") 
+          var statusHold="${isHoldStatus}";          
+         if(nameof!="" && nameof!="false" && statusHold!="true") 
        var con = confirm("The Award status should be changed to hold until correcting Hold Prompt warnings listed below. Do you want to make status to Hold or not?");
          document.forms['KualiForm'].statusHold=con;
        /*  document.forms['KualiForm']. = con; */

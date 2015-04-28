@@ -333,7 +333,12 @@ public class AwardAction extends BudgetParentActionBase {
         }    else{
         	form.getClass();
         	AwardForm awardForm = (AwardForm)form;
-            boolean awardNewStatus=awardForm.isStatusHold();  
+        	 Award award=awardForm.getAwardDocument().getAward();
+        	    award.refreshReferenceObject("statusCode");
+        	        Integer awardStatus= awardForm.getAwardDocument().getAward().getStatusCode();
+        	if(awardStatus!=null && awardStatus==6){
+            	awardForm.setStatusHold(true);}
+         //   boolean awardNewStatus=awardForm.isStatusHold();  
             ActionForward actionForward = super.execute(mapping, form, request, response);
             if (awardForm.isAuditActivated()){
             awardForm.setUnitRulesMessages(getUnitRulesMessages(awardForm.getAwardDocument()));
@@ -457,14 +462,17 @@ public class AwardAction extends BudgetParentActionBase {
         	awardForm.setValidPrompt(true);
         }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus==6){
         	/*request.getSession().setAttribute("isWarning", false);*/
+        /*	awardForm.setStatusHold(true);*/
         	awardForm.setValidPrompt(false);
         }else if(awardStatus==6){
+        	/*awardForm.setStatusHold(true);*/
         	awardForm.setValidPrompt(false);
         }
         boolean awardNewStatus=awardForm.isStatusHold();
-       /* if(awardNewStatus){
-        	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
-        }*/
+       // KualiForm.awardDocument.award.awardStatus.description;
+      if(awardNewStatus){
+        	awardForm.getAwardDocument().getAward().getAwardStatus().setDescription("Hold");
+        }
         if (status == ValidationState.WARNING) {
             if(question == null){
                 return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Validation Warning Exists. Are you sure want to submit to workflow routing.", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
@@ -2165,7 +2173,7 @@ public class AwardAction extends BudgetParentActionBase {
             } else {
                 //reject the document using the service.
                 AwardDocument document = ((AwardForm)form).getAwardDocument();
-                document.documentHasBeenRejected(reason);
+               document.documentHasBeenRejected(reason);
                 KcServiceLocator.getService(KcDocumentRejectionService.class).reject(document.getDocumentHeader().getWorkflowDocument(), reason,
                         GlobalVariables.getUserSession().getPrincipalId(), null);
                 //tell the document it is being rejected and returned to the initial node.

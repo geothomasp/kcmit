@@ -509,6 +509,7 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
 public boolean hasCoiDisclosure(String awardNumber, Integer moduleCode, String personIds){
 	List<Object> paramValues = new ArrayList<Object>();
 	String result = "";	
+	Integer newResult=0;
 	try{
 	paramValues.add(0, awardNumber);
 		paramValues.add(1,AWARD_MODULE_CODE);
@@ -529,8 +530,8 @@ public boolean hasCoiDisclosure(String awardNumber, Integer moduleCode, String p
 	} catch (Exception e) {
 		LOGGER.log(Level.ALL, e.getMessage(), e);
 	}
-}
-	Integer newResult=Integer.parseInt(result);
+}if(result!=null){
+	 newResult=Integer.parseInt(result);}
 	if (newResult ==-1 ) {
 		return false;
 	}	else
