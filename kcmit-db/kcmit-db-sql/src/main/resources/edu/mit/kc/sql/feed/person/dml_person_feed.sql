@@ -21,7 +21,7 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 <br/><b>User_name: </b>    {USER_NAME} 
 <br/><b>Full_name: </b>  {FULL_NAME}',
 'N',
-'N',
+'Y',
 USER,
 sysdate,
 1,

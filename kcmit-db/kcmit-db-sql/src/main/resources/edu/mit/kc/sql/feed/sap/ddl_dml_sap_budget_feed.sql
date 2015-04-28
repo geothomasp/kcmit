@@ -93,7 +93,7 @@ INSERT INTO sap_kc_obj_cd_mapping(kc_obj_cd, kc_obj_cd_desc, sap_obj_cd)
 VALUES( 'P00250' ,'Secretarial-Clerical (if charged directly)', '400250'  )
 /
 INSERT INTO sap_kc_obj_cd_mapping(kc_obj_cd, kc_obj_cd_desc, sap_obj_cd)
-VALUES( 'P00001', 'Other Personnel Costs', '400001'  )
+VALUES( 'P00001', 'Other Personnel Costs', '422163'  )
 /
 commit
 /
