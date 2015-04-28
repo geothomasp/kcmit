@@ -184,6 +184,8 @@ public abstract class ProposalDevelopmentControllerBase {
     @Qualifier("parameterService")
     private ParameterService parameterService;
     
+    @Autowired
+    @Qualifier("proposalTypeService")
     private ProposalTypeService proposalTypeService;
 
     protected DocumentFormBase createInitialForm(HttpServletRequest request) {
@@ -835,9 +837,6 @@ public abstract class ProposalDevelopmentControllerBase {
     }
     
     public ProposalTypeService getProposalTypeService() {
-        if (proposalTypeService == null) {
-            proposalTypeService = KcServiceLocator.getService(ProposalTypeService.class);
-        }
-        return proposalTypeService;
-    }
+		return proposalTypeService;
+	}
 }
