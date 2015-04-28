@@ -18,6 +18,31 @@
  */
 package org.kuali.coeus.propdev.impl.core;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.annotations.Customizer;
@@ -27,8 +52,14 @@ import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.mappings.ForeignReferenceMapping;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
+import org.kuali.coeus.common.budget.framework.core.Budget;
+import org.kuali.coeus.common.budget.framework.core.BudgetParent;
+import org.kuali.coeus.common.budget.framework.core.BudgetParentDocument;
+import org.kuali.coeus.common.framework.krms.KcKrmsContextBo;
+import org.kuali.coeus.common.framework.krms.KrmsRulesContext;
 import org.kuali.coeus.common.framework.noo.NoticeOfOpportunity;
 import org.kuali.coeus.common.framework.org.Organization;
+import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
 import org.kuali.coeus.common.framework.rolodex.Rolodex;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
 import org.kuali.coeus.common.framework.sponsor.Sponsorable;
@@ -45,8 +76,12 @@ import org.kuali.coeus.propdev.impl.attachment.LegacyNarrativeService;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.budget.ProposalBudgetStatusService;
 import org.kuali.coeus.propdev.impl.budget.ProposalDevelopmentBudgetExt;
+import org.kuali.coeus.propdev.impl.budget.editable.BudgetChangedData;
 import org.kuali.coeus.propdev.impl.editable.ProposalChangedData;
+import org.kuali.coeus.propdev.impl.hierarchy.HierarchyStatusConstants;
 import org.kuali.coeus.propdev.impl.hierarchy.ProposalHiddenInHierarchyCustomizerValue;
+import org.kuali.coeus.propdev.impl.hierarchy.ProposalHierarchyException;
+import org.kuali.coeus.propdev.impl.hierarchy.ProposalHierarchyService;
 import org.kuali.coeus.propdev.impl.keyword.PropScienceKeyword;
 import org.kuali.coeus.propdev.impl.location.CongressionalDistrict;
 import org.kuali.coeus.propdev.impl.location.ProposalSite;
@@ -57,6 +92,12 @@ import org.kuali.coeus.propdev.impl.person.ProposalPersonDegree;
 import org.kuali.coeus.propdev.impl.person.ProposalPersonUnit;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiographyService;
+import org.kuali.coeus.propdev.impl.s2s.S2sAppSubmission;
+import org.kuali.coeus.propdev.impl.s2s.S2sOppForms;
+import org.kuali.coeus.propdev.impl.s2s.S2sOpportunity;
+import org.kuali.coeus.propdev.impl.s2s.S2sUserAttachedForm;
+import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReview;
+import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReviewExemption;
 import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.propdev.impl.ynq.ProposalYnq;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
@@ -64,25 +105,9 @@ import org.kuali.coeus.sys.framework.persistence.CompositeDescriptorCustomizer;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.home.AwardType;
 import org.kuali.kra.award.home.ContactRole;
-import org.kuali.kra.bo.*;
-import org.kuali.coeus.common.budget.framework.core.Budget;
-import org.kuali.coeus.common.budget.framework.core.BudgetParent;
-import org.kuali.coeus.common.budget.framework.core.BudgetParentDocument;
-import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
+import org.kuali.kra.bo.NsfCode;
 import org.kuali.kra.coi.Disclosurable;
 import org.kuali.kra.infrastructure.Constants;
-import org.kuali.coeus.common.framework.krms.KcKrmsContextBo;
-import org.kuali.coeus.common.framework.krms.KrmsRulesContext;
-import org.kuali.coeus.propdev.impl.budget.editable.BudgetChangedData;
-import org.kuali.coeus.propdev.impl.hierarchy.HierarchyStatusConstants;
-import org.kuali.coeus.propdev.impl.hierarchy.ProposalHierarchyException;
-import org.kuali.coeus.propdev.impl.hierarchy.ProposalHierarchyService;
-import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReview;
-import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReviewExemption;
-import org.kuali.coeus.propdev.impl.s2s.S2sAppSubmission;
-import org.kuali.coeus.propdev.impl.s2s.S2sOppForms;
-import org.kuali.coeus.propdev.impl.s2s.S2sOpportunity;
-import org.kuali.coeus.propdev.impl.s2s.S2sUserAttachedForm;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocumentFactory;
 import org.kuali.rice.krad.data.DataObjectService;
@@ -91,11 +116,6 @@ import org.kuali.rice.krad.data.jpa.PortableSequenceGenerator;
 import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
-
-import javax.persistence.*;
-
-import java.sql.Date;
-import java.util.*;
 
 @Entity
 @Table(name = "EPS_PROPOSAL")
@@ -110,7 +130,8 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
 
     private static final String ATTACHMENTS_NONE = "None";
 
-
+    private static final String COI_STATUS_ANSWERED_N_TO_ALL =  "Disclosure Not Required";
+    
     @PortableSequenceGenerator(name = "SEQ_PROPOSAL_NUMBER_KRA")
     @GeneratedValue(generator = "SEQ_PROPOSAL_NUMBER_KRA")
     @Id
@@ -384,9 +405,13 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     public List<ProposalPerson> getProposalPersonsCoi() {
     	List<ProposalPerson> filteredCollection =  new ArrayList();
     	for(ProposalPerson person:this.proposalPersons){
-    		if(getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person)){// and kp hastobecertified
-    			filteredCollection.add(person);
+    		if(person.isStatusNull())
+    		{
+    			if(getProposalPersonCoiIntegrationService().isCoiQuestionsAnsweredN(person)){ 
+    				person.setCoiDisclosureStatus("Disclosure Not Required");
+    			}
     		}
+    		filteredCollection.add(person);
     	}
 		return filteredCollection;
 	}

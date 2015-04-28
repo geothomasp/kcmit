@@ -18,49 +18,65 @@
  */
 package org.kuali.coeus.propdev.impl.person;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.kuali.coeus.common.framework.person.attr.PersonTraining;
-import org.kuali.coeus.common.framework.person.editable.PersonEditable;
-import org.kuali.coeus.common.framework.person.KcPerson;
-import org.kuali.coeus.common.framework.person.KcPersonService;
-import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
-import org.kuali.coeus.common.framework.person.PropAwardPersonRoleService;
-import org.kuali.coeus.common.framework.person.attr.CitizenshipType;
-import org.kuali.coeus.common.framework.sponsor.Sponsorable;
-import org.kuali.coeus.common.framework.unit.Unit;
-import org.kuali.coeus.propdev.api.person.ProposalPersonContract;
-import org.kuali.coeus.propdev.impl.hierarchy.HierarchyMaintainable;
-import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
-import org.kuali.coeus.sys.framework.persistence.ScaleTwoDecimalConverter;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
-import org.kuali.kra.award.home.ContactRole;
-import org.kuali.kra.bo.AbstractProjectPerson;
-import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
-import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
-import org.kuali.coeus.propdev.impl.person.creditsplit.NamedCreditSplitable;
-import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
-import org.kuali.coeus.propdev.impl.person.creditsplit.ProposalPersonCreditSplit;
-import org.kuali.coeus.propdev.impl.person.question.ProposalPersonQuestionnaireHelper;
-import org.kuali.coeus.propdev.proposalperson.CoiDbFunctionService;
-import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.springframework.util.CollectionUtils;
-import java.sql.SQLException;
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.PrimaryKeyJoinColumns;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.kuali.coeus.common.framework.person.KcPerson;
+import org.kuali.coeus.common.framework.person.KcPersonService;
+import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
+import org.kuali.coeus.common.framework.person.PropAwardPersonRoleService;
+import org.kuali.coeus.common.framework.person.attr.CitizenshipType;
+import org.kuali.coeus.common.framework.person.attr.PersonTraining;
+import org.kuali.coeus.common.framework.person.editable.PersonEditable;
+import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
+import org.kuali.coeus.common.framework.sponsor.Sponsorable;
+import org.kuali.coeus.common.framework.unit.Unit;
+import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
+import org.kuali.coeus.propdev.api.person.ProposalPersonContract;
+import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.hierarchy.HierarchyMaintainable;
+import org.kuali.coeus.propdev.impl.person.creditsplit.NamedCreditSplitable;
+import org.kuali.coeus.propdev.impl.person.creditsplit.ProposalPersonCreditSplit;
+import org.kuali.coeus.propdev.impl.person.question.ProposalPersonQuestionnaireHelper;
+import org.kuali.coeus.propdev.proposalperson.CoiDbFunctionService;
+import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
+import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
+import org.kuali.coeus.sys.framework.persistence.ScaleTwoDecimalConverter;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.kra.award.home.ContactRole;
+import org.kuali.kra.bo.AbstractProjectPerson;
+import org.kuali.rice.core.api.CoreApiServiceLocator;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Class representation of the Proposal Person <code>{@link org.kuali.rice.krad.bo.BusinessObject}</code>
@@ -76,7 +92,11 @@ import java.util.List;
 public class ProposalPerson extends KcPersistableBusinessObjectBase implements NamedCreditSplitable, PersonRolodex, PersonEditable, AbstractProjectPerson, ProposalPersonContract, HierarchyMaintainable, MutableInactivatable {
 
     private static final long serialVersionUID = -4110005875629288373L;
-
+    
+    //private static final String COI_STATUS_FOR_RODOLEX = "COI from External";
+    
+    //Logger LOGGER;
+    
     @Id
     @ManyToOne(cascade = { CascadeType.REFRESH })
     @JoinColumn(name = "PROPOSAL_NUMBER")
@@ -442,15 +462,35 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 		this.coiDbFunctionService = coiDbFunctionService;
 	}
 
+	@Transient
+    private boolean isStatusNull = false;
+	
+	
+
+	public boolean isStatusNull() {
+		return isStatusNull;
+	}
+
+	public void setStatusNull(boolean isStatusNull) {
+		this.isStatusNull = isStatusNull;
+	}
+
 	public String getCoiDisclosureStatus() {
     	String hasDisclosure="";           		
     	try {
     		hasDisclosure = this.getCoiDbFunctionService().getKeyPersonnelCoiDisclosureStatus(this.getDevelopmentProposal().getProposalNumber(), this.getPersonId(),isQuestionnairesCompleted());
-		
-    	} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return hasDisclosure.isEmpty()?"NA":hasDisclosure;
+    		if(hasDisclosure == null || hasDisclosure.equalsIgnoreCase("Not Disclosed")){
+    			setStatusNull(true);
+    		 if(this.getRolodexId() != null){
+				hasDisclosure = "COI from External";//"COI_STATUS_FOR_RODOLEX";
+    		}	
+    		}
+    		
+    	} catch (Exception ex) {
+    		//LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
+    		//LOGGER.log(Level.ALL, ex.getMessage(), ex);
+    		}
+    	return hasDisclosure;
 	}
 
 	public void setCoiDisclosureStatus(String coiDisclosureStatus) {

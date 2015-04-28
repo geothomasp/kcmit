@@ -293,7 +293,14 @@ public class S2SConnectorServiceBase implements S2SConnectorService {
         filters.getInclude().add(".*_DH_anon_.*");
 
         tlsConfig.setDisableCNCheck(true);
-        //tlsConfig.setSecureSocketProtocol("TLSv1.2");
+        try{
+        	String certAlgorithm = getS2SConfigurationService().getValueAsString("s2s.cert.algorithm");
+	        if(certAlgorithm!=null){
+	        	tlsConfig.setSecureSocketProtocol(certAlgorithm);
+	        }
+        }catch(Exception ex){
+        	LOG.warn("Not setting algorithm explicitely for grnats.gov", ex);
+        }
         tlsConfig.setCipherSuitesFilter(filters);
     }
 

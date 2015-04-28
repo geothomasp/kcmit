@@ -7,4 +7,6 @@ public interface ProposalPersonCoiIntegrationService {
 	 */
 	public boolean isCoiQuestionsAnswered(ProposalPerson proposalPerson);
 
+	boolean isCoiQuestionsAnsweredN(ProposalPerson proposalPerson);
+
 }

@@ -907,6 +907,9 @@
                 <bean class="org.kuali.kra.award.document.authorizer.CreateAwardAccountAuthorizer" parent="parentAwardAuthorizer">
                     <property name="taskName" value="createAwardAccount" />
                 </bean>
+                <bean class="org.kuali.kra.award.document.authorizer.RejectAwardAuthorizer" parent="parentAwardAuthorizer">
+                    <property name="taskName" value="rejectAward" />
+                </bean>
             </list>
          </property>
      </bean>

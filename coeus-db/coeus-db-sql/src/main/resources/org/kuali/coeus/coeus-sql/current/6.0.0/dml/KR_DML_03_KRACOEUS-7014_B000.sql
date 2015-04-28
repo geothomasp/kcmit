@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 --
 -- Kuali Coeus, a comprehensive research administration system for higher education.
 -- 
