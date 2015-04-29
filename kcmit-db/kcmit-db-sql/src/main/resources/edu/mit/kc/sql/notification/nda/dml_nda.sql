@@ -55,7 +55,7 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 '<p><a href="http://coeus-dev1.mit.edu/NoviSurvey/ShowResponse.aspx?doid={SURVEY_RESPONSE_ID}&s=edb1385874ee465cb7d81665d9718682"'||
 '<b>Click here</a> to view the answers to this NDA Questionnaire</b></p>'||CHR( 13 ) || CHR( 10 )||CHR( 13 ) || CHR( 10 ),
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,

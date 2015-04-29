@@ -39,7 +39,7 @@ If you have questions about the E-Verification of employees contact I-9central@m
 {AWARD_LIST}
 </table>',
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,

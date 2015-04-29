@@ -37,7 +37,7 @@ VALUES(SEQ_NOTIFICATION_TYPE_ID.NEXTVAL,
 	'<p>Dear CITI Team,  </p>'||CHR( 13 ) || CHR( 10 )||
 	'Citi training data has been populated with following details:<br>',
 	'N',
-	'N',
+	'Y',
 	user,
 	sysdate,
 	1,

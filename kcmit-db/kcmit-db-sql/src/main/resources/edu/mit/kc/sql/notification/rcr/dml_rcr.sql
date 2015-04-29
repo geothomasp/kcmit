@@ -53,7 +53,7 @@ contact your PI and/or local departmental administrator.</p>
 <p>Thank you, <br /> 
 Office of Sponsored Programs and Office of the Vice President for Research & Associate Provost</p>',
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,
@@ -90,7 +90,7 @@ OSP website - http://osp.mit.edu/compliance/responsible-conduct-of-research-rcr/
 <p>Thank you, <br/> 
 Office of Sponsored Programs and Office of the Vice President for Research & Associate Provost</p>'	,
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,
@@ -129,7 +129,7 @@ If you believe an individual has completed the training but is not listed on thi
 <p>Thank you, <br /> 
 Office of Sponsored Programs and Office of the Vice President for Research & Associate Provost</p>',
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,
@@ -171,7 +171,7 @@ please contact rcr-help@mit.edu. </p> '||CHR(10)||'
 <p>Thank you, <br /> 
 Office of Sponsored Programs and Office of the Vice President for Research & Associate Provost</p>',
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,
@@ -206,7 +206,7 @@ This training must be completed by the date listed below or the salary costs wil
 <p>Thank you, <br /> '||CHR(10)||'
 Office of Sponsored Programs and Office of the Vice President for Research & Associate Provost</p>',
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,
@@ -239,7 +239,7 @@ Thank you for your cooperation.</p>
 <p>Thank you, <br /> 
 Office of Sponsored Programs and Office of the Vice President for Research & Associate Provost</p>',
 'N',
-'N',
+'Y',
 user,
 sysdate,
 1,
