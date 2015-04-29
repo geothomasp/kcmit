@@ -4,6 +4,7 @@ delete from KC_ROLE_UPDATE_ACTION
 commit
 /
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active Committee Member On Iacuc Protocol','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Institute Proposal Document','KC-ADM','U','Maintain Institute Proposal Attachments','KC-ADM');
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active IACUC Committee Member','KC-IACUC','D',null,null);
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active IACUC Committee Member on Protocol','KC-IACUC','D',null,null);
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active IACUC Committee Member on Scheduled Date','KC-IACUC','D',null,null);

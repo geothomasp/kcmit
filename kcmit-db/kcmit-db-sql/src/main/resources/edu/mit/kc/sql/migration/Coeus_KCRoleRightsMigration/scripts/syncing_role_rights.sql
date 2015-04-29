@@ -364,6 +364,32 @@ delete FROM KRIM_ROLE_T WHERE ROLE_ID IN (
 /
 commit
 /
+--- updating KIM typ id and namespace code
+declare
+li_count number;
+begin
+
+	select count(role_id) into li_count from krim_role_t where role_nm = 'Maintain Key Person' and nmspc_cd = 'KC-AWARD';
+	if li_count = 0 then
+		update krim_role_t set nmspc_cd = 'KC-AWARD' where role_nm = 'Maintain Key Person';
+		
+	end if;
+	
+	select count(role_id) into li_count from krim_role_t where role_nm = 'Modify All Dev Proposals' and nmspc_cd = 'KC-PD';
+	if li_count = 0 then
+		update krim_role_t set nmspc_cd = 'KC-PD' where role_nm = 'Modify All Dev Proposals';
+		
+	end if;
+	
+	update krim_role_t set kim_typ_id = '68' where role_nm = 'Proposal Proxy Certify';
+	
+	update krim_role_t set kim_typ_id = '69' where role_nm = 'View Subcontract';
+
+	
+end;
+/
+commit
+/
 declare
 li_max number(10);
 ls_query VARCHAR2(400);
