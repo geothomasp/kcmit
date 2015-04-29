@@ -391,7 +391,7 @@ declare
 	r_role_right c_role_right%rowtype;
 	
 	cursor c_perm is
-		select  t2.perm_id
+		select distinct t2.perm_id
 		from kc_coeus_role_perm_mapping t1 
 		inner join krim_perm_t t2 on t1.PERM_NM = t2.nm
 		where t1.role_nm = r_role_right.role_nm
