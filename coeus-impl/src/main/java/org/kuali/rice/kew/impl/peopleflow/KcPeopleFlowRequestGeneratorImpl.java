@@ -3,12 +3,14 @@ package org.kuali.rice.kew.impl.peopleflow;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.sponsor.hierarchy.SponsorHierarchy;
+import org.kuali.coeus.common.framework.unit.admin.UnitAdministrator;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.exception.RiceRuntimeException;
+import org.kuali.rice.core.api.membership.MemberType;
 import org.kuali.rice.core.api.util.xml.XmlHelper;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actionrequest.KimPrincipalRecipient;
@@ -46,17 +48,32 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
 	protected void generateRequestForMember(Context context, PeopleFlowMember member) {
         String peopleflowName =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "OSP_PEOPLE_FLOW_NAME");
 		String enabledWlRouting =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "ENABLE_WL_ROUTING");  
-
-    	if(peopleflowName !=null && context.getPeopleFlow().getName().equalsIgnoreCase(peopleflowName) && enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("Y")){
+		 
+    	if(peopleflowName !=null && context.getPeopleFlow().getName().equalsIgnoreCase("OSP")){
             String docContent = context.getRouteContext().getDocument().getDocContent();
             String proposalNumber = getElementValue(docContent, "//proposalNumber");
     		String personId =  KcServiceLocator.getService(WorkLoadService.class).getNextRoutingOSP(proposalNumber);
+    		KcPerson orginalApprover = null;
     		 List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
 					 (PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
-    		 if (!context.getRouteContext().isSimulation() && personId!=null) {
+     		if (!context.getRouteContext().isSimulation() && personId!=null) {
     			 String sponsorGroup = null;
-    			 KcPerson orginalApprover = getKcPersonService().getKcPersonByPersonId(member.getMemberId());
-    			
+    			 List<UnitAdministrator> unitAdministrators = new ArrayList<UnitAdministrator>();
+    			 
+    			 if (MemberType.ROLE == member.getMemberType()) {
+    			 DevelopmentProposal proposal = getDataObjectService().find(DevelopmentProposal.class,proposalNumber);
+    	     		Map<String, String> queryMap = new HashMap<String, String>();
+    	    		queryMap.put("unitNumber", proposal.getUnitNumber());
+    	     		String unitAdmininstratorTypeCode =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "OSP_ADMINISTRATOR_TYPE_CODE");  
+    	     		queryMap.put("unitAdministratorTypeCode", unitAdmininstratorTypeCode);
+    	     		unitAdministrators = (List<UnitAdministrator>) getBusinessObjectService().findMatching(UnitAdministrator.class, queryMap);
+    	     		if(unitAdministrators!=null && !unitAdministrators.isEmpty()){
+    	     			UnitAdministrator unitAdministrator= unitAdministrators.get(0);
+    	     			orginalApprover = getKcPersonService().getKcPersonByPersonId(unitAdministrator.getPersonId());
+    	     		}
+    			 }else{
+    				 orginalApprover = getKcPersonService().getKcPersonByPersonId(member.getMemberId());
+    			 }
     			 if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
     				 List<WLCurrentLoad> workLoadLatestList = new ArrayList<WLCurrentLoad>();
     				 for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
@@ -74,14 +91,10 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     				 
     				 int routingNumber = Integer.parseInt(currentWorkLoad.getRoutingNumber());
     				  routingNumber = ++routingNumber;
-    				 // currentWorkLoad.setRoutingNumber(String.valueOf(routingNumber));
-    				  //currentWorkLoad.setOriginalApprover(member.getMemberId());
-    				//  currentWorkLoad.setOriginalUserId(orginalApprover.getUserName());
-    				//  currentWorkLoad.setReroutedFlag("Y");
     				  WLCurrentLoad wLCurrentLoad = new WLCurrentLoad();
     	    			 wLCurrentLoad.setRoutingNumber(String.valueOf(routingNumber));
     	    			 wLCurrentLoad.setProposalNumber(currentWorkLoad.getProposalNumber());
-    	    			 wLCurrentLoad.setOriginalApprover(member.getMemberId());
+    	    			 wLCurrentLoad.setOriginalApprover(orginalApprover.getPersonId());
     	    			 wLCurrentLoad.setOriginalUserId(orginalApprover.getUserName());
     	    			 wLCurrentLoad.setPerson_id(currentWorkLoad.getPerson_id());
     	    			 wLCurrentLoad.setUserId(currentWorkLoad.getUserId());
@@ -113,7 +126,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 WLCurrentLoad wLCurrentLoad = new WLCurrentLoad();
     			 wLCurrentLoad.setRoutingNumber("1");
     			 wLCurrentLoad.setProposalNumber(proposalNumber);
-    			 wLCurrentLoad.setOriginalApprover(member.getMemberId());
+    			 wLCurrentLoad.setOriginalApprover(orginalApprover.getPersonId());
     			 wLCurrentLoad.setOriginalUserId(orginalApprover.getUserName());
     			 wLCurrentLoad.setPerson_id(personId);
     			 wLCurrentLoad.setUserId(ospPerson.getUserName());
@@ -130,7 +143,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 getDataObjectService().save(wLCurrentLoad);
     			 }
     		 }
-    		 if(wLCurrentLoadList!=null && wLCurrentLoadList.isEmpty()){
+    		 if(wLCurrentLoadList!=null && wLCurrentLoadList.isEmpty() && enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("Y")){
     			 context.getActionRequestFactory().addRootActionRequest(
     					 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,personId), "",
     					 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
