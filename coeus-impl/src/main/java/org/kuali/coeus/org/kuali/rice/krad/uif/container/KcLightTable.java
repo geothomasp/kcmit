@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.rice.krad.datadictionary.parse.BeanTag;
 import org.kuali.rice.krad.datadictionary.parse.BeanTagAttribute;
@@ -523,10 +524,12 @@ public class KcLightTable extends GroupBase implements DataBinding {
 
         if (currentValue == null) {
             currentValue = "";
+        }else {
+            currentValue = StringEscapeUtils.escapeJson(currentValue);
         }
 
         //for readOnly DataFields replace the value marked with the value on the current object
-        row = row.replaceAll(VALUE_TOKEN + originalId + VALUE_TOKEN, currentValue);
+        row = row.replaceAll(VALUE_TOKEN + originalId + VALUE_TOKEN, Matcher.quoteReplacement(currentValue));
         currentColumnValue = currentValue;
 
         Inquiry dataFieldInquiry = ((DataField) item).getInquiry();
