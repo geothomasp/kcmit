@@ -42,6 +42,7 @@
 @mit_kc_patch_201504111320.sql
 @mit_kc_patch_201504161458.sql
 @mit_kc_patch_201504252124.sql
+@mit_kc_patch_201504282037.sql
 commit
 /
 EXIT
