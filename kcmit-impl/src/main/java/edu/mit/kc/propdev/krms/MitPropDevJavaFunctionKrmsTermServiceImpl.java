@@ -597,7 +597,7 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 				List<Answer> answers = mostCurrentHeader.getAnswers();
 				for (Answer answer : answers) {
 
-					if (answer.getQuestion().getQuestionSeqId().equals(questionId)) {
+					if (answer.getQuestion().getQuestionSeqId().toString().equals(questionId)) {
 						if (questionId.equals("1001")
 								|| questionId.equals("1013")
 								|| questionId.equals("1016")) {
