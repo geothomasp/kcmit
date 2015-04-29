@@ -54,8 +54,16 @@ begin
   select  count(table_name) into li_count  from all_tables   where table_name = 'TMP_ROLE_PERM_MAPPING';
   if li_count > 0 then
     execute immediate('drop table TMP_ROLE_PERM_MAPPING');
-  end if; 
-    
+  end if;
+
+  
+  select  count(table_name) into li_count  from all_tables   where table_name = 'KC_ROLE_UPDATE_ACTION';
+  if li_count > 0 then
+    execute immediate('drop table KC_ROLE_UPDATE_ACTION');
+  end if;  
+  
+  
+  
   
   select  count(table_name) into li_count  from all_tables   where table_name = 'KC_ROLE_BOOTSTRAP';
   if li_count > 0 then
@@ -217,5 +225,13 @@ CREATE TABLE TMP_ROLE_PERM_MAPPING(
   ROLE_KIM_TYP_NM	VARCHAR2(100),
   PERM_NM	VARCHAR2(100),
   PERM_NMSPC_CD	VARCHAR2(40)
+)
+/
+CREATE TABLE KC_ROLE_UPDATE_ACTION(
+ROLE_NM VARCHAR2(80), 
+NMSPC_CD VARCHAR2(40), 
+NEW_ROLE_NM VARCHAR2(80), 
+NEW_NMSPC_CD VARCHAR2(40),
+ACTION_TYP VARCHAR2(1)
 )
 /

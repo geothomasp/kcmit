@@ -1,3 +1,104 @@
+-- Adding fina; mapping to delete and update role
+delete from KC_ROLE_UPDATE_ACTION
+/
+commit
+/
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active Committee Member On Iacuc Protocol','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active IACUC Committee Member','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active IACUC Committee Member on Protocol','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Active IACUC Committee Member on Scheduled Date','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Affiliate','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Audit Division Authorizations','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Award Budget Aggregator','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Business Rules Maintainer','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('CA','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('COI','KC-NEGOTIATION','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('COI','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('COI Administrator','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Coi Disclosure Reviewer','KC-COIDISCLOSURE','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('CRC','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Delete Proposal Document Level','KC-PD','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Faculty','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Faculty Supervisor','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Administrator','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Online Reviewer','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Protocol Aggregator','KC-PROTOCOL','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Protocol Approver','KC-PROTOCOL','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Protocol Creator','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Protocol Viewer','KC-PROTOCOL','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Reviewer','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Organization Correspondent','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUC Unit Correspondent','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('IACUCWorkflowApprover','KC-WKFLW','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Investigators','KC-NEGOTIATION','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('KP','KC-NEGOTIATION','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Arra Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Award Budget','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Award Budget for RAFT','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Award Documents','KC-ADM','U','Maintain Award Attachments','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Conflict of Interest','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Custom Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Notifications','KC-SYS','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Proposal Questionnaire Document Level','KC-PD','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Questionnaire','KC-SYS','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain RTF Forms','KC-SYS','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Reporting Requirements','KC-ADM','U','Maintain Award Reporting Tracking','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Maintain Subcontracting Goals','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify all IACUC Protocols','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Arra Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Award Budget','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Institute Proposal','KC-ADM','U','Maintain Institute Proposal','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Negotiations','KC-ADM','U','Maintain Negotiations','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('MAINTAIN USER ROLES','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Manager','KC-SYS','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('MIT Maintain Reporting Roles','KC-SYS','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Organizations','KC-SYS','U','Maintain Organizations','KC-SYS');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Proposal Log','KC-ADM','U','Maintain Proposal Log','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Subcontract','KC-ADM','U','Maintain Subcontract','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Template','KC-SYS','U','Maintain Template','KC-SYS');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Modify Training','KC-SYS','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Negotiation Administrator','KC-NEGOTIATION','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Negotiation SuperUser','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Negotiator','KC-NEGOTIATION','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Non-Faculty','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Person Maintainer','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('PI','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Receive Disclosure Notice','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Rolodex Maintainer','KC-ADM','U','Maintain Rolodex','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Award Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Budget Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Committee Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Dev Proposal Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Global Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Person Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Protocol Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Rolodex Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Sponsor Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run Unit Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Run User Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Sponsor Maintainer','KC-ADM','U','Maintain Sponsor','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Sponsor Rules Maintainer','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('SP','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('Student Investigator','KC-IACUC','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View all IACUC Protocols','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Arra Reports','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Award Documents','KC-ADM','U','View Award Attachments','KC-AWARD');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Conflict of Interest','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Departments Awards','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Departments Proposals','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Institute Proposal Document','KC-ADM','U','View Institute Proposal Attachments','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Institutionally Maintained Salaries','KC-PD','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Institutionally Maintained Salaries Document Level','KC-PD','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Key Person Maintenance','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Keyperson Maintenance','KC-AWARD','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Pending Disclosures','KC-ADM','D',null,null);
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Shared Award Documents','KC-ADM','U','View Shared Award Attachments','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Shared Institute Proposal Documents','KC-ADM','U','View Shared Institute Proposal Attachments','KC-ADM');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,ACTION_TYP,NEW_ROLE_NM,NEW_NMSPC_CD) values ('View Subcontract Documents','KC-ADM','U','View Subcontract Attachments','KC-ADM');
+commit
+/
+commit
+/
 --- Adding final mapping to a temp table START
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Application Administrator','KC-SYS','UnitHierarchy','Create CountryMaintenanceDocument','KC-SYS');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Application Administrator','KC-SYS','UnitHierarchy','Create DocumentTypeDocument','KC-SYS');
