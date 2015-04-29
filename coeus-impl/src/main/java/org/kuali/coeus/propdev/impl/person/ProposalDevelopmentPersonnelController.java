@@ -274,9 +274,7 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
         		for (AnswerHeader answerHeader : proposalPerson.getQuestionnaireHelper().getAnswerHeaders()) {
         			certificationComplete &= answerHeader.isCompleted();
         		}
-        		if (!certificationComplete) {
         			sendPersonNotification(form, String.valueOf(index));
-        		}
         	}  
         	index++;
         }

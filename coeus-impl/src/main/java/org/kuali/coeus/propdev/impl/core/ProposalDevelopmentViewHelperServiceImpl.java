@@ -78,6 +78,7 @@ import org.kuali.coeus.propdev.impl.location.ProposalSite;
 import org.kuali.coeus.propdev.impl.person.ProposalPersonDegree;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReview;
+import org.kuali.coeus.propdev.impl.state.ProposalState;
 import org.kuali.coeus.propdev.impl.attachment.LegacyNarrativeService;
 import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -983,6 +984,15 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     	String currentUser=getGlobalVariableService().getUserSession().getPrincipalName();
     	Person person = getPersonService().getPersonByPrincipalName(currentUser);
     	return getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, person, proposalPerson);
+    }
+    public boolean canViewNotitificationButton(ProposalDevelopmentDocument document,ProposalPerson proposalPerson){
+    	Person person = getPersonService().getPersonByPrincipalName(proposalPerson.getPerson().getUserName());
+    	if((document.getDevelopmentProposal().getProposalState().getCode().equals(ProposalState.IN_PROGRESS)||
+    			document.getDevelopmentProposal().getProposalState().getCode().equals(ProposalState.REVISIONS_REQUESTED))
+    			&& getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, person, proposalPerson)){
+    		return true;
+    	}
+    	return false;
     }
     public boolean filterProposalPersonsForCOIStatus(ProposalDevelopmentDocument document){
     	List<ProposalPerson> proposalPerson = document.getDevelopmentProposal().getProposalPersonsCoi();
