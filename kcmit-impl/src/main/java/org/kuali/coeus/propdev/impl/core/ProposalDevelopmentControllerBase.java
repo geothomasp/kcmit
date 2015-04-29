@@ -291,9 +291,9 @@ public abstract class ProposalDevelopmentControllerBase {
             	 if(dialogResponse!=null){
             		 boolean confirmResetDefault = dialogResponse.getResponseAsBoolean();
             		 if(confirmResetDefault){
-            			 String coiApplicationUrl = getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.MIT_COEUS_COI_APPLICATION_URL);
+            			 String coiApplicationUrl =  getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "LINK_TO_COI");
             			 if(coiApplicationUrl!=null){
-            				 return getModelAndViewService().performRedirect(form, coiApplicationUrl);
+            				 return getModelAndViewService().performRedirect(form, coiApplicationUrl+"&proposalNumber="+proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber());
             			 }
             		 }else{
             			 return getModelAndViewService().getModelAndView(form, pageId);
