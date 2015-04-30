@@ -390,6 +390,34 @@ end;
 /
 commit
 /
+
+delete FROM KRIM_ROLE_MBR_T WHERE ROLE_ID IN (
+  SELECT t1.role_id from krim_role_t t1 where t1.role_nm = 'Aggregator Only Document Level'
+)
+/
+delete FROM KRIM_ROLE_PERM_T WHERE ROLE_ID IN (
+ SELECT t1.role_id from krim_role_t t1 where t1.role_nm = 'Aggregator Only Document Level'
+)
+/
+delete FROM KRIM_ROLE_T WHERE role_nm = 'Aggregator Only Document Level'
+/
+commit
+/
+delete FROM KRIM_ROLE_MBR_T WHERE ROLE_ID IN (
+  SELECT t1.role_id from krim_role_t t1 where t1.role_nm = 'Access_Proposal_Person_Institutional_Salaries' and t1.kim_typ_id = '68'
+)
+/
+delete FROM KRIM_ROLE_PERM_T WHERE ROLE_ID IN (
+ SELECT t1.role_id from krim_role_t t1 where  t1.role_nm = 'Access_Proposal_Person_Institutional_Salaries' and t1.kim_typ_id = '68'
+)
+/
+delete FROM KRIM_ROLE_T WHERE  role_nm = 'Access_Proposal_Person_Institutional_Salaries' and kim_typ_id = '68'
+/
+commit
+/
+
+
+
 declare
 li_max number(10);
 ls_query VARCHAR2(400);
@@ -826,15 +854,22 @@ exit when c_data%notfound;
   inner join krim_perm_t r4 on r4.perm_id = r3.perm_id
   where  r1.role_nm = ls_role_nm
   and  r4.nm = 'Initiate Document';
+    
+  	begin
+		  if li_count = 0 then
+			INSERT INTO KRIM_ROLE_PERM_T(ROLE_PERM_ID,OBJ_ID,VER_NBR,ROLE_ID,PERM_ID,ACTV_IND)
+			VALUES(KRIM_ROLE_PERM_ID_S.nextval,sys_guid(),1,
+			(select role_id from krim_role_t where  role_nm = ls_role_nm),
+			(select perm_id from krim_perm_t where nm = 'Initiate Document'),
+			'Y');    
+		   
+		  end if;
+		  
+	exception
+	when others then
+	continue;	
+	end;  
   
-  if li_count = 0 then
-    INSERT INTO KRIM_ROLE_PERM_T(ROLE_PERM_ID,OBJ_ID,VER_NBR,ROLE_ID,PERM_ID,ACTV_IND)
-    VALUES(KRIM_ROLE_PERM_ID_S.nextval,sys_guid(),1,
-    (select role_id from krim_role_t where  role_nm = ls_role_nm),
-    (select perm_id from krim_perm_t where nm = 'Initiate Document'),
-    'Y');    
-   
-  end if;
   
 end loop;
 close c_data;

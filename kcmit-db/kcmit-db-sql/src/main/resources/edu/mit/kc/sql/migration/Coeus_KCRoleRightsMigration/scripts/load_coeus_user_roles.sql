@@ -25,7 +25,7 @@ li_count_krim_role_mbr_at number;
 li_loop_check_flag number;
 ls_role_name 	VARCHAR2(50);
 li_count NUMBER;
-
+ls_role_nm varchar2(80);
 CURSOR c_role is
 select distinct r.role_name ,r.DESCRIPTION,r.role_type,ur.USER_ID,ur.UNIT_NUMBER,ur.DESCEND_FLAG,ur.UPDATE_TIMESTAMP,ur.UPDATE_USER 
 from osp$user_roles@coeus.kuali ur 
@@ -59,15 +59,24 @@ EXIT WHEN c_role%NOTFOUND;
 						   continue;					   
 					   END;			 
 					
-									   
+							
+													
 					   BEGIN 
-						   select rl.ROLE_ID,rl.KIM_TYP_ID into ls_role_id,ls_kim_typ_id 
-						   from KRIM_ROLE_T rl 	where  UPPER(rl.role_nm) = UPPER(r_role.role_name)
+							ls_role_nm := r_role.role_name;
+							select count(kc_roles) into  li_count from kc_coeus_role_mapping where coeus_roles = r_role.role_name;
+							
+							if li_count > 0 then
+								select kc_roles into  ls_role_nm from kc_coeus_role_mapping where coeus_roles = r_role.role_name and rownum = 1;
+								
+							end if;
+					   					   
+						   select rl.ROLE_ID , rl.KIM_TYP_ID into ls_role_id , ls_kim_typ_id 
+						   from KRIM_ROLE_T rl 	where  UPPER(rl.role_nm) = UPPER(ls_role_nm)
 						   and rownum = 1; 
 						  
 					   EXCEPTION
 					   WHEN OTHERS THEN
-						dbms_output.put_line('Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM '||r_role.role_name||'. The Error is: '||SQLERRM);
+						dbms_output.put_line('Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM '||ls_role_nm||'. The Error is: '||SQLERRM);
 						continue;
 					   END;
 					   
