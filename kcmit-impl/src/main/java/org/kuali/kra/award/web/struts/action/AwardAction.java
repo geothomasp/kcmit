@@ -332,12 +332,7 @@ public class AwardAction extends BudgetParentActionBase {
         return actionForward;
         }    else{
         	form.getClass();
-        	AwardForm awardForm = (AwardForm)form;
-        	 Award award=awardForm.getAwardDocument().getAward();
-        	    award.refreshReferenceObject("statusCode");
-        	        Integer awardStatus= awardForm.getAwardDocument().getAward().getStatusCode();
-        	if(awardStatus!=null && awardStatus==6){
-            	awardForm.setStatusHold(true);}
+        	AwardForm awardForm = (AwardForm)form;        	 
          //   boolean awardNewStatus=awardForm.isStatusHold();  
             ActionForward actionForward = super.execute(mapping, form, request, response);
             if (awardForm.isAuditActivated()){
@@ -468,11 +463,7 @@ public class AwardAction extends BudgetParentActionBase {
         	/*awardForm.setStatusHold(true);*/
         	awardForm.setValidPrompt(false);
         }
-        boolean awardNewStatus=awardForm.isStatusHold();
-       // KualiForm.awardDocument.award.awardStatus.description;
-      if(awardNewStatus){
-        	awardForm.getAwardDocument().getAward().getAwardStatus().setDescription("Hold");
-        }
+       
         if (status == ValidationState.WARNING) {
             if(question == null){
                 return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Validation Warning Exists. Are you sure want to submit to workflow routing.", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
@@ -483,19 +474,30 @@ public class AwardAction extends BudgetParentActionBase {
             }    
         }
         
-        if(status == ValidationState.OK || status == ValidationState.HOLDPROMPT){
+        if(status == ValidationState.OK){
            return submitAward(mapping, form, request, response);
-        } else{
+        } if(status == ValidationState.ERROR && validHoldPrompt==ValidationState.HOLDPROMPT){
+        	if(question == null){
+                return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "The Award status should be set to hold until Hold Prompt warnings are fixed. Do you want to change status to Hold and proceed to submit?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+            } else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
+           return holdAwardStatusWithError(mapping, form, request, response);
+        }else{
+        	return forward;
+        }}else if(status == ValidationState.HOLDPROMPT){
+        	if(question == null){
+                return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "The Award status should be set to hold until Hold Prompt warnings are fixed. Do you want to change status to Hold and proceed to submit?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+            } else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
+           return holdAwardStatus(mapping, form, request, response);
+        }else{
+        	return forward;
+        }}
+        else{
             GlobalVariables.getMessageMap().clearErrorMessages(); 
             GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
             return forward;
          }
   
-        /*if(awardForm.isStatusHold()){
-        	Award award=awardForm.getAwardDocument().getAward();
-        	
-        }*/
-    }
+         }
     
     @Override
     public ActionForward blanketApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -718,7 +720,22 @@ public class AwardAction extends BudgetParentActionBase {
     protected AwardHierarchyService getAwardHierarchyService(){
         return KcServiceLocator.getService(AwardHierarchyService.class);
     }
-
+    protected ActionForward holdAwardStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
+    	AwardForm awardForm=(AwardForm)form;
+    	awardForm.getAwardDocument().getAward().getAwardStatus().setDescription("Hold");
+    	awardForm.getAwardDocument().getAward().setStatusCode(AWARD_STATUS_HOLD);
+    	 return submitAward(mapping, form, request, response);
+    }
+    protected ActionForward holdAwardStatusWithError(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
+    	AwardForm awardForm=(AwardForm)form;
+    	awardForm.getAwardDocument().getAward().getAwardStatus().setDescription("Hold");
+    	awardForm.getAwardDocument().getAward().setStatusCode(AWARD_STATUS_HOLD);
+    	  GlobalVariables.getMessageMap().clearErrorMessages(); 
+          GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
+          return forward;
+    }
     /**
      * Can the Award be saved?  This method is normally overridden by
      * a subclass in order to invoke business rules to verify that the
@@ -2173,7 +2190,7 @@ public class AwardAction extends BudgetParentActionBase {
             } else {
                 //reject the document using the service.
                 AwardDocument document = ((AwardForm)form).getAwardDocument();
-               document.documentHasBeenRejected(reason);
+              // document.documentHasBeenRejected(reason);
                 KcServiceLocator.getService(KcDocumentRejectionService.class).reject(document.getDocumentHeader().getWorkflowDocument(), reason,
                         GlobalVariables.getUserSession().getPrincipalId(), null);
                 //tell the document it is being rejected and returned to the initial node.

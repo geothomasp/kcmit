@@ -135,6 +135,7 @@ if(awardPromptCoi){
 	if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
 			"COI Disclosures")) {		
 			  StringBuilder awardPersonList = new StringBuilder();
+			   award.refreshReferenceObject("investigators");
 				for(AwardPerson awardPerson:award.getInvestigators()){						    
 					awardPersonList.append(awardPerson.getPersonId());
 					awardPersonList.append(",");			

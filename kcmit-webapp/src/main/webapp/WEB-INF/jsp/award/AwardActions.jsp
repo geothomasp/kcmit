@@ -42,12 +42,7 @@
 	<!-- <script language="JavaScript" type="text/javascript" src="dwr/engine.js"></script> -->
 
 	<script language="JavaScript" type="text/javascript" >
-		var kualiForm = document.forms['KualiForm']; 
-          var nameof = "${isValid}"; 
-          var statusHold="${isHoldStatus}";          
-         if(nameof!="" && nameof!="false" && statusHold!="true") 
-       var con = confirm("The Award status should be changed to hold until correcting Hold Prompt warnings listed below. Do you want to make status to Hold or not?");
-         document.forms['KualiForm'].statusHold=con;
+		var kualiForm = document.forms['KualiForm'];          
        /*  document.forms['KualiForm']. = con; */
         </script>
      <link rel="stylesheet" href="css/jquery/new_kuali.css" type="text/css" />
