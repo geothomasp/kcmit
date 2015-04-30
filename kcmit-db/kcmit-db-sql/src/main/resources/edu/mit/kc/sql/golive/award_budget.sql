@@ -737,3 +737,273 @@ select budget_limit_id from  award_budget_limit@kc_stag_db_link	where budget_id 
 /
 commit
 /
+--- inserting to KREW
+declare 
+li_krew_rnt_brch number(12,0);
+li_krew_rnt_node number(12,0);
+li_krew_rne_node_instn number(12,0);
+ls_doc_typ_id varchar2(40);
+
+cursor c_budeget_krew is
+select stage_bud_doc_id,prod_bud_doc_id from go_live_awd_bgt_mapping;
+r_budeget_krew c_budeget_krew%rowtype;
+
+begin
+     if c_budeget_krew%isopen then
+	    close c_budeget_krew;
+	 end if;
+	 open c_budeget_krew;
+	 loop
+	 fetch c_budeget_krew into r_budeget_krew;
+	 exit when c_budeget_krew%notfound;
+	 
+		begin
+	             select KREW_RTE_NODE_S.nextval into li_krew_rnt_brch from dual ; 
+                 select KREW_RTE_NODE_S.nextval into li_krew_rnt_node from dual ;
+                 select KREW_RTE_NODE_S.nextval into li_krew_rne_node_instn from dual ; 
+				 select max(DOC_TYP_ID) into ls_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM = 'AwardBudgetDocument';
+	 
+	             insert into KREW_DOC_HDR_T(DOC_HDR_ID,
+                                            DOC_TYP_ID,
+											DOC_HDR_STAT_CD,
+											RTE_LVL,
+											STAT_MDFN_DT,
+											CRTE_DT,
+											APRV_DT,
+											FNL_DT,
+											RTE_STAT_MDFN_DT,
+											TTL,
+											APP_DOC_ID,
+											DOC_VER_NBR,
+											INITR_PRNCPL_ID,
+											VER_NBR,
+											RTE_PRNCPL_ID,
+											DTYPE,
+											OBJ_ID,
+											APP_DOC_STAT,
+											APP_DOC_STAT_MDFN_DT)
+									 select r_budeget_krew.prod_bud_doc_id,
+									        ls_doc_typ_id,
+											DOC_HDR_STAT_CD,
+											RTE_LVL,
+											STAT_MDFN_DT,
+											CRTE_DT,
+											APRV_DT,
+											FNL_DT,
+											RTE_STAT_MDFN_DT,
+											TTL,
+											APP_DOC_ID,
+											DOC_VER_NBR,
+											INITR_PRNCPL_ID,
+											VER_NBR,
+											RTE_PRNCPL_ID,
+											DTYPE,
+											sys_guid(),
+											APP_DOC_STAT,
+											APP_DOC_STAT_MDFN_DT
+									   from KREW_DOC_HDR_T@KC_STAG_DB_LINK
+									   where DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;
+									   
+			 insert into KREW_DOC_HDR_CNTNT_T(DOC_HDR_ID,
+                                              DOC_CNTNT_TXT)
+                                       select r_budeget_krew.prod_bud_doc_id,
+                                              DOC_CNTNT_TXT
+                                         from KREW_DOC_HDR_CNTNT_T@KC_STAG_DB_LINK
+									     where DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;
+
+             insert into KRNS_DOC_HDR_T(DOC_HDR_ID,
+                                        OBJ_ID,
+										VER_NBR,
+										FDOC_DESC,
+										ORG_DOC_HDR_ID,
+										TMPL_DOC_HDR_ID,
+										EXPLANATION	)
+                                 select	r_budeget_krew.prod_bud_doc_id,
+                                        sys_guid(),
+                                        VER_NBR,
+										FDOC_DESC,
+										ORG_DOC_HDR_ID,
+										TMPL_DOC_HDR_ID,
+										EXPLANATION	
+                                   from KRNS_DOC_HDR_T@KC_STAG_DB_LINK
+								   where DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;										
+			        begin
+			            insert into KREW_RTE_BRCH_T(RTE_BRCH_ID,
+						                            NM,
+                                                    PARNT_ID,
+							                        INIT_RTE_NODE_INSTN_ID,
+							                        SPLT_RTE_NODE_INSTN_ID,
+							                        JOIN_RTE_NODE_INSTN_ID,
+							                        VER_NBR)
+                                             select li_krew_rnt_brch,
+                                                    r.NM,
+                                                    r.PARNT_ID,
+							                        r.INIT_RTE_NODE_INSTN_ID,
+							                        r.SPLT_RTE_NODE_INSTN_ID,
+							                        r.JOIN_RTE_NODE_INSTN_ID,
+							                        r.VER_NBR
+											   from KREW_RTE_BRCH_T@KC_STAG_DB_LINK r 
+											   inner join KREW_RTE_NODE_INSTN_T@KC_STAG_DB_LINK t
+											   on r.RTE_BRCH_ID = t.BRCH_ID
+											   where t.DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;
+											   
+                        insert into KREW_RTE_NODE_T(RTE_NODE_ID,
+                                                    DOC_TYP_ID,
+							                        NM,
+							                        TYP,
+							                        RTE_MTHD_NM,
+							                        RTE_MTHD_CD,
+							                        FNL_APRVR_IND,
+							                        MNDTRY_RTE_IND,
+							                        ACTVN_TYP,
+							                        BRCH_PROTO_ID,
+							                        VER_NBR,
+							                        CONTENT_FRAGMENT,
+							                        GRP_ID,
+							                        NEXT_DOC_STAT)
+                                             select li_krew_rnt_node,
+					                                ls_doc_typ_id,
+							                        r.NM,
+							                        r.TYP,
+							                        r.RTE_MTHD_NM,
+							                        r.RTE_MTHD_CD,
+							                        r.FNL_APRVR_IND,
+							                        r.MNDTRY_RTE_IND,
+							                        r.ACTVN_TYP,
+							                        r.BRCH_PROTO_ID,
+							                        r.VER_NBR,
+							                        r.CONTENT_FRAGMENT,
+							                        r.GRP_ID,
+							                        r.NEXT_DOC_STAT
+                                               from KREW_RTE_NODE_T@KC_STAG_DB_LINK r 
+											   inner join KREW_RTE_NODE_INSTN_T@KC_STAG_DB_LINK t
+											   on r.RTE_NODE_ID = t.RTE_NODE_ID
+											   where t.DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;
+											   
+					exception
+                    when others then
+                    null;
+                    end;					
+											   
+                        insert into KREW_RTE_NODE_INSTN_T(RTE_NODE_INSTN_ID,
+                                                          DOC_HDR_ID,
+								                          RTE_NODE_ID,
+								                          BRCH_ID,
+								                          PROC_RTE_NODE_INSTN_ID,
+								                          ACTV_IND,
+								                          CMPLT_IND,
+								                          INIT_IND,
+								                          VER_NBR)
+                                                   select li_krew_rne_node_instn,
+						                                  r_budeget_krew.prod_bud_doc_id,
+								                          li_krew_rnt_node,
+								                          li_krew_rnt_brch,
+								                          PROC_RTE_NODE_INSTN_ID,
+								                          ACTV_IND,
+								                          CMPLT_IND,
+								                          INIT_IND,
+								                          VER_NBR
+													 from KREW_RTE_NODE_INSTN_T@KC_STAG_DB_LINK
+								                     where DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;	
+
+                        insert into KREW_INIT_RTE_NODE_INSTN_T(DOC_HDR_ID,
+                                                               RTE_NODE_INSTN_ID)
+                                                        values(r_budeget_krew.prod_bud_doc_id,
+								                               li_krew_rne_node_instn);
+
+                        insert into KREW_ACTN_RQST_T(ACTN_RQST_ID,
+                                                     PARNT_ID,
+							                         ACTN_RQST_CD,
+							                         DOC_HDR_ID,
+							                         RULE_ID,
+							                         STAT_CD,
+							                         RSP_ID,
+							                         PRNCPL_ID,
+							                         ROLE_NM,
+							                         QUAL_ROLE_NM,
+							                         QUAL_ROLE_NM_LBL_TXT,
+							                         RECIP_TYP_CD,
+							                         PRIO_NBR,
+							                         RTE_TYP_NM,
+							                         RTE_LVL_NBR,
+							                         RTE_NODE_INSTN_ID,
+							                         ACTN_TKN_ID,
+							                         DOC_VER_NBR,
+							                         CRTE_DT,
+							                         RSP_DESC_TXT,
+							                         FRC_ACTN,
+							                         ACTN_RQST_ANNOTN_TXT,
+							                         DLGN_TYP,
+							                         APPR_PLCY,
+							                         CUR_IND,
+							                         VER_NBR,
+							                         GRP_ID,
+							                         RQST_LBL)
+                                              select KREW_ACTN_RQST_S.NEXTVAL,
+					                                 PARNT_ID,
+							                         ACTN_RQST_CD,
+							                         r_budeget_krew.prod_bud_doc_id,
+							                         RULE_ID,
+							                         STAT_CD,
+							                         RSP_ID,
+							                         PRNCPL_ID,
+							                         ROLE_NM,
+							                         QUAL_ROLE_NM,
+							                         QUAL_ROLE_NM_LBL_TXT,
+							                         RECIP_TYP_CD,
+							                         PRIO_NBR,
+							                         RTE_TYP_NM,
+							                         RTE_LVL_NBR,
+							                         li_krew_rne_node_instn,
+							                         ACTN_TKN_ID,
+							                         DOC_VER_NBR,
+							                         CRTE_DT,
+							                         RSP_DESC_TXT,
+							                         FRC_ACTN,
+							                         ACTN_RQST_ANNOTN_TXT,
+							                         DLGN_TYP,
+							                         APPR_PLCY,
+							                         CUR_IND,
+							                         VER_NBR,
+							                         GRP_ID,
+							                         RQST_LBL
+												from KREW_ACTN_RQST_T@KC_STAG_DB_LINK
+								                where DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;
+						 
+
+                        insert into KREW_ACTN_TKN_T(ACTN_TKN_ID,
+                                                    DOC_HDR_ID,
+							                        PRNCPL_ID,
+							                        DLGTR_PRNCPL_ID,
+							                        ACTN_CD,
+							                        ACTN_DT,
+							                        DOC_VER_NBR,
+							                        ANNOTN,
+							                        CUR_IND,
+							                        VER_NBR,
+							                        DLGTR_GRP_ID)
+                                             select KREW_ACTN_TKN_S.NEXTVAL,
+					                                r_budeget_krew.prod_bud_doc_id,
+							                        PRNCPL_ID,
+							                        DLGTR_PRNCPL_ID,
+							                        ACTN_CD,
+							                        ACTN_DT,
+							                        DOC_VER_NBR,
+							                        ANNOTN,
+							                        CUR_IND,
+							                        VER_NBR,
+							                        DLGTR_GRP_ID
+											   from KREW_ACTN_TKN_T@KC_STAG_DB_LINK
+								               where DOC_HDR_ID = r_budeget_krew.stage_bud_doc_id;
+		exception
+		when others then
+		continue;
+		end;	
+		
+		
+	 end loop;
+	 close c_budeget_krew;
+end;
+/
+commit
+/

@@ -151,6 +151,48 @@ CLOSE c_module_role;
 
 END;              
 /
+commit
+/
+-- script to clean up all approver role from document_access table
+declare
+cursor c_data is
+  select doc_hdr_id
+  from document_access
+  where NMSPC_CD = 'KC-PD'
+  group by doc_hdr_id,prncpl_id having count(prncpl_id) > 1 ;
+r_data c_data%rowtype;
+
+begin
+
+  open c_data;
+  loop
+  fetch c_data into r_data;
+  exit when c_data%notfound;
+  
+    delete from document_access where doc_access_id in (
+           select t1.doc_access_id
+            from (  
+                select doc_access_id,doc_hdr_id,prncpl_id, role_nm from document_access
+                where doc_hdr_id = r_data.doc_hdr_id
+                and role_nm <> 'Aggregator Document Level'
+             ) t1 inner join 
+             (
+                  select doc_access_id,doc_hdr_id,prncpl_id, role_nm from document_access
+                  where doc_hdr_id = r_data.doc_hdr_id
+                  and role_nm = 'Aggregator Document Level'
+             ) t2 
+             on t1.doc_hdr_id = t2.doc_hdr_id and t1.prncpl_id = t2.prncpl_id    
+    );
+  
+  commit;
+  
+  end loop;
+  close c_data;
+
+end;
+/
+commit
+/
 alter table document_access enable constraint UQ_DOCUMENT_ACCESS1
 /
 alter table document_access enable constraint UQ_DOCUMENT_ACCESS2

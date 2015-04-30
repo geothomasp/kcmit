@@ -414,11 +414,7 @@ ALTER TABLE KRMS_TERM_SPEC_CTGRY_T ENABLE CONSTRAINT KRMS_TERM_SPEC_CTGRY_FK1
 /
 ALTER TABLE KRMS_CNTXT_VLD_TERM_SPEC_T ENABLE CONSTRAINT KRMS_CNTXT_VLD_TERM_SPEC_TI2
 /
-ALTER TABLE KRMS_TERM_T ENABLE CONSTRAINT KRMS_TERM_T__FK1
-/
 ALTER TABLE KRMS_TERM_RSLVR_T ENABLE CONSTRAINT KRMS_TERM_RSLVR_FK1
-/
-ALTER TABLE KRMS_TERM_T DISABLE CONSTRAINT KRMS_TERM_T__FK1
 /
 TRUNCATE TABLE KRMS_TERM_T
 /
@@ -427,6 +423,8 @@ SELECT a.TERM_ID,a.TERM_SPEC_ID,a.VER_NBR,a.DESC_TXT FROM KRMS_TERM_T@KC_STAG_DB
 INNER JOIN KRMS_TERM_SPEC_T@KC_STAG_DB_LINK b
 ON a.TERM_SPEC_ID=b.TERM_SPEC_ID
 WHERE b.ACTV = 'Y'
+/
+ALTER TABLE KRMS_TERM_T ENABLE CONSTRAINT KRMS_TERM_T__FK1
 /
 ALTER TABLE KRMS_TYP_ATTR_T DISABLE CONSTRAINT KRMS_TYP_ATTR_FK1
 /
@@ -563,7 +561,7 @@ ALTER TABLE KRMS_TYP_RELN_T ENABLE CONSTRAINT KRMS_TYP_RELN_FK1
 ALTER TABLE KRMS_TYP_RELN_T ENABLE CONSTRAINT KRMS_TYP_RELN_FK2
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -583,7 +581,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -603,7 +601,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -623,7 +621,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -643,7 +641,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -663,7 +661,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -683,7 +681,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -703,7 +701,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -723,7 +721,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -743,7 +741,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -763,7 +761,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -783,7 +781,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -803,7 +801,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -823,7 +821,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -843,7 +841,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -863,7 +861,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -883,7 +881,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -903,7 +901,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -923,7 +921,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -943,7 +941,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -963,7 +961,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -983,7 +981,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1003,7 +1001,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1023,7 +1021,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1043,7 +1041,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1063,7 +1061,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1083,7 +1081,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1103,7 +1101,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1123,7 +1121,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1143,7 +1141,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1163,7 +1161,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1183,7 +1181,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1203,7 +1201,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
@@ -1223,7 +1221,7 @@ begin
 end;
 /
 declare
-ls_max_val NUMBER(6,0);
+ls_max_val NUMBER(12,0);
 li_present_seq_val NUMBER;
 li_increment NUMBER;
 begin
