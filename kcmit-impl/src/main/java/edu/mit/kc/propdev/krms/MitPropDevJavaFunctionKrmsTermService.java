@@ -278,5 +278,5 @@ public boolean confirmTrackingIDBlank(DevelopmentProposal developmentProposal);
  *This function will check if proposal reached OSP
  */
 public String hasReachedOspInRouting(DevelopmentProposal developmentProposal);
-public String piAppointmentTypeRuleNew(DevelopmentProposal developmentProposal);
+public String piAppointmentTypeRule(DevelopmentProposal developmentProposal);
 }

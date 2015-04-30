@@ -1232,7 +1232,7 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
      * This method is to check if the PI or any multi-PI has PI status
      * FN_PI_APPOINTMENT_TYPE_RULE
      */
-    public String piAppointmentTypeRuleNew(DevelopmentProposal developmentProposal) {
+   public String piAppointmentTypeRule(DevelopmentProposal developmentProposal) {
         List<ProposalPerson> people = developmentProposal.getProposalPersons();
         List<PiAppointmentType> piAppointmentTypes = (List<PiAppointmentType>)getBusinessObjectService().findAll(PiAppointmentType.class);
         for (ProposalPerson person : people) {
@@ -1257,6 +1257,8 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 	        }
 	        return false;
 	    }
+
+	   
 
 	
 }
