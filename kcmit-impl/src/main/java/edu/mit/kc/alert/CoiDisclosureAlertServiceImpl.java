@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -50,45 +52,46 @@ public class CoiDisclosureAlertServiceImpl extends AlertServiceBaseImpl implemen
 	protected static final String KC_COI_DB_LINK = "KC_COI_DB_LINK";
 	protected static final String KC_GENERAL_NAMESPACE = "KC-GEN";
 	protected static final String DOCUMENT_COMPONENT_NAME = "Document";
-
-	Alert alert = new Alert();
 	
 	@Override
 	public void createAlerts(AlertType alertType, String userName) {
-		String loggedInUserId =getKcPerson(userName).getPersonId();
-		String alertMessage = getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.COI_DISCLOSURE_EXPIRATION_DATE_ALERT);
-		String alertNullMessage = getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.COI_DISCLOSURE_EXPIRATION_NULLDATE_ALERT);
+		KcPerson kcPerson = getKcPerson(userName);
+		String loggedInUserId = kcPerson.getPersonId();
+		String loggedInUserName = kcPerson.getUserName();
+		
 		List<Object> paramValues = new ArrayList<Object>();
-		String result = "";
+		String result = null;
 		paramValues.add(0, loggedInUserId);
 		try {
 			result = getDbFunctionExecuteService().executeFunction("Fn_Get_per_discl_exp_date" + this.getDBLink(),paramValues);
 		} catch (Exception ex) {
 			LOG.error("Error while excecuting function " + getDBLink()+ ":Fn_Get_per_discl_exp_date" + ex.getMessage());
 		}
-		if (result != "" && result != null) {
+		Alert alert = getDefaultAlert(loggedInUserName, alertType);
+		if (!StringUtils.isEmpty(result)) {
+			String alertMessage = getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.COI_DISCLOSURE_EXPIRATION_DATE_ALERT);
 			Date coiExpirationDate = new Date(result);
 			Date currentDate = getDateTimeService().getCurrentDate();
 			int diff = getDateTimeService().dateDiff(currentDate,coiExpirationDate, true);
-			if (diff >= 0 && diff <= 30) {
-				alertMessage = alertMessage.replace("{0}", result);
-				alert.setActive(Constants.YES_FLAG);
-				alert.setAlert(alertMessage);
-				alert.setUserName(getKcPerson(userName).getUserName());
-				alert.setUpdateUser(getKcPerson(userName).getUserName());
-				alert.setPriority(1);
-				alert.setAlertTypeId(alertType.getId());
-				getDataObjectService().save(alert);
+			alertMessage = alertMessage.replace("{0}", result);
+			alert.setAlert(alertMessage);
+			if (diff <= 30) {
+				alert.setPriority(AlertPriority.HIGH.getCode());
 			}
-		} else {
-			alert.setActive(Constants.YES_FLAG);
-			alert.setAlert(alertNullMessage);
-			alert.setUserName(getLoggedInUserName());
-			alert.setUpdateUser(getKcPerson(userName).getUserName());
-			alert.setPriority(1);
-			alert.setAlertTypeId(alertType.getId());
-			getDataObjectService().save(alert);
 		}
+		getDataObjectService().save(alert);
+	}
+	
+	protected Alert getDefaultAlert(String loggedInUserName, AlertType alertType) {
+		Alert alert = new Alert();
+		String alertMessage = getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.COI_DISCLOSURE_EXPIRATION_NULLDATE_ALERT);
+		alert.setActive(Constants.YES_FLAG);
+		alert.setAlert(alertMessage);
+		alert.setUserName(loggedInUserName);
+		alert.setUpdateUser(loggedInUserName);
+		alert.setPriority(AlertPriority.LOW.getCode());
+		alert.setAlertTypeId(alertType.getId());
+		return alert;
 	}
 
 	@Override

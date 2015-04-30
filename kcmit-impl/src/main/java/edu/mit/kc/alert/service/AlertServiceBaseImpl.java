@@ -31,7 +31,7 @@ public class AlertServiceBaseImpl {
     @Qualifier("kcPersonService")
     private KcPersonService kcPersonService;
     
-    private enum AlertPriority {
+    protected enum AlertPriority {
         HIGH (1),
         MEDIUM (2),
         LOW(3);
