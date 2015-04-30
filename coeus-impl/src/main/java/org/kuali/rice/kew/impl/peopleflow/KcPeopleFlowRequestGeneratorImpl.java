@@ -49,7 +49,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
         String peopleflowName =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "OSP_PEOPLE_FLOW_NAME");
 		String enabledWlRouting =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "ENABLE_WL_ROUTING");  
 		 
-    	if(peopleflowName !=null && context.getPeopleFlow().getName().equalsIgnoreCase("OSP")){
+    	if(peopleflowName !=null && context.getPeopleFlow().getName().equalsIgnoreCase(peopleflowName)){
             String docContent = context.getRouteContext().getDocument().getDocContent();
             String proposalNumber = getElementValue(docContent, "//proposalNumber");
     		String personId =  KcServiceLocator.getService(WorkLoadService.class).getNextRoutingOSP(proposalNumber);
