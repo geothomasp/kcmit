@@ -1,4 +1,6 @@
 -- Ordering the start date in chronological order and inserting to a temp table
+drop table TMP_NEGOTIATION_ACTIVITY
+/
 CREATE TABLE TMP_NEGOTIATION_ACTIVITY(
 TMP_ID 	NUMBER(22,0),
 NEGOTIATION_ACTIVITY_ID	NUMBER(22,0),
