@@ -601,11 +601,11 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 						if (questionId.equals("1001")
 								|| questionId.equals("1013")
 								|| questionId.equals("1016")) {
-							if (answer.getAnswer().equals("N")) {
+							if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
 								return FALSE;
 							}
 						}
-						if (answer.getAnswer().equals("Y")) {
+						if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
 							return TRUE;
 						}
 					}
