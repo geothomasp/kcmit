@@ -110,8 +110,12 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         String coiLink =  getParameterService().
         		getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "LINK_TO_COI");
         result.put("{LINK_TO_COI}", coiLink);
-        String certificatioPage =result.get("{APP_LINK_PREFIX}")+"/kc-pd-krad/proposalDevelopment?methodToCall=docHandler&docId="+developmentProposal.getProposalDocument().getDocumentNumber()+"&command=displayDocSearchView&pageId=PropDev-PersonnelPage";
+        if (proposalPerson != null) {
+        String certificatioPage =result.get("{APP_LINK_PREFIX}")+"/kc-pd-krad/proposalDevelopment?methodToCall=viewUtility&" +
+        		"viewId=PropDev-CertificationView&docId="+developmentProposal.getProposalDocument().getDocumentNumber()+"&userName="+proposalPerson.getUserName();
         result.put("{CERT_PAGE}", certificatioPage);
+        }
+        
         if (developmentProposal.getDeadlineDate() != null) {
             result.put("{DEADLINE_DATE}", dateFormatter.format(developmentProposal.getDeadlineDate()));
         } else {
