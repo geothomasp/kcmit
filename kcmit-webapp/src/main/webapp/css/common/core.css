@@ -503,3 +503,28 @@ section.medusa div.btn a:hover{
     margin-right: 0;
 }
 
+ .alert-priority1 {
+    color: green;
+    position: relative;
+    top: .1em;
+}
+
+.alert-priority2 {
+    color: red;
+    position: relative;
+    top: .1em;
+}
+
+.alert-priority3 {
+    color: yellow;
+    position: relative;
+    top: .1em;
+}
+
+.icon-warning-sign {
+  background-position: -144px -120px;
+}
+
+.icon-warning-sign:before {
+  content: "\e89a";
+}
