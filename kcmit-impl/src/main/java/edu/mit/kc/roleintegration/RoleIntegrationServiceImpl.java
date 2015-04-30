@@ -16,7 +16,9 @@ import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.kim.api.role.Role;
 import org.kuali.rice.kim.api.role.RoleService;
+import org.kuali.rice.kim.impl.role.RoleBo;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
@@ -80,9 +82,16 @@ public class RoleIntegrationServiceImpl implements RoleIntegrationService{
 					 Map<String, String> qualifiedRoleAttributes = new HashMap<String, String>();
 					 List<String> roleList = new ArrayList<String>();
 					 roleList.add(roleIdForDelete.getRoleId());
-					 qualifiedRoleAttributes.put("unitNumber", roleIdForDelete.getUnitNumber());
-					 qualifiedRoleAttributes.put("subunits","Y");
-					 getRoleManagementService().removePrincipalFromRole(kcPerson.getPersonId(), roleIdForDelete.getNameSpace(), roleIdForDelete.getRoleName(), qualifiedRoleAttributes);
+					 Role role = roleManagementService.getRoleByNamespaceCodeAndName(roleIdForDelete.getNameSpace(), roleIdForDelete.getRoleName());
+					 if(role!=null){
+						 if(role.getKimTypeId().equals("69")){
+							 qualifiedRoleAttributes.put("unitNumber", roleIdForDelete.getUnitNumber());
+							 qualifiedRoleAttributes.put("subunits","Y");
+						 }else if(role.getKimTypeId().equals("68")){
+							 qualifiedRoleAttributes.put("unitNumber", roleIdForDelete.getUnitNumber());
+						 }
+						 getRoleManagementService().removePrincipalFromRole(kcPerson.getPersonId(), roleIdForDelete.getNameSpace(), roleIdForDelete.getRoleName(), qualifiedRoleAttributes);
+					 }
 				 }
 			 }
 		
@@ -96,10 +105,18 @@ public class RoleIntegrationServiceImpl implements RoleIntegrationService{
 				 Map<String, String> qualifiedRoleAttributes = new HashMap<String, String>();
 				 List<String> roleList = new ArrayList<String>();
 				 roleList.add(roleIdforUpdate.getRoleId());
-				 qualifiedRoleAttributes.put("unitNumber", roleIdforUpdate.getUnitNumber());
-				 qualifiedRoleAttributes.put("subunits","Y");
-				 if(!getRoleManagementService().principalHasRole(kcPerson.getPersonId(), roleList, qualifiedRoleAttributes)){
-					 getRoleManagementService().assignPrincipalToRole(kcPerson.getPersonId(), roleIdforUpdate.getNameSpace(), roleIdforUpdate.getRoleName(), qualifiedRoleAttributes);
+				 //RoleBo
+				 Role role = roleManagementService.getRoleByNamespaceCodeAndName(roleIdforUpdate.getNameSpace(), roleIdforUpdate.getRoleName());
+				 if(role!=null){
+					 if(role.getKimTypeId().equals("69")){
+						 qualifiedRoleAttributes.put("unitNumber", roleIdforUpdate.getUnitNumber());
+						 qualifiedRoleAttributes.put("subunits","Y");
+					 }else if(role.getKimTypeId().equals("68")){
+						 qualifiedRoleAttributes.put("unitNumber", roleIdforUpdate.getUnitNumber());
+					 }
+					 if(!getRoleManagementService().principalHasRole(kcPerson.getPersonId(), roleList, qualifiedRoleAttributes)){
+						 getRoleManagementService().assignPrincipalToRole(kcPerson.getPersonId(), roleIdforUpdate.getNameSpace(), roleIdforUpdate.getRoleName(), qualifiedRoleAttributes);
+					 }
 				 }
 			 }
 		 }
