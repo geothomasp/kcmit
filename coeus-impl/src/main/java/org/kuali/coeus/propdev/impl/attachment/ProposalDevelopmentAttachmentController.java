@@ -141,7 +141,7 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
            Narrative tmpNarrative = new Narrative();
            form.getProposalDevelopmentAttachmentHelper().setSelectedLineIndex(selectedLine);
            PropertyUtils.copyProperties(tmpNarrative,form.getDevelopmentProposal().getNarrative(Integer.parseInt(selectedLine)));
-           
+           form.getProposalDevelopmentAttachmentHelper().setNarrative(tmpNarrative);
        }
 
         return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.PROP_DEV_ATTACHMENTS_PAGE_PROPOSAL_DETAILS, true, form);
