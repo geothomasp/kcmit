@@ -1,9 +1,9 @@
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Aggregator','Aggregator Document Level');
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Approver','approver Document Level');
+--Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Aggregator','Aggregator Document Level');
+--Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Approver','approver Document Level');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Application Administrator','Application Administrator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Award Budget Administrator','Award Budget Administrator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Award Budget Aggregator','Award Budget Aggregator');
-Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Budget Creator','Budget Creator Document Level');
+--Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Budget Creator','Budget Creator Document Level');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Create Temporary Proposal Log','Create Temporary Proposal Log');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('IACUC Administrator','IACUC Administrator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('IACUC Protocol Aggregator','IACUC Protocol Aggregator');
