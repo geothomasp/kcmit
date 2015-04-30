@@ -59,6 +59,7 @@ import org.kuali.coeus.common.framework.krms.KcKrmsContextBo;
 import org.kuali.coeus.common.framework.krms.KrmsRulesContext;
 import org.kuali.coeus.common.framework.noo.NoticeOfOpportunity;
 import org.kuali.coeus.common.framework.org.Organization;
+import org.kuali.coeus.common.framework.org.OrganizationYnq;
 import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
 import org.kuali.coeus.common.framework.rolodex.Rolodex;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
@@ -110,6 +111,7 @@ import org.kuali.kra.award.home.ContactRole;
 import org.kuali.kra.bo.NsfCode;
 import org.kuali.kra.coi.Disclosurable;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocumentFactory;
 import org.kuali.rice.kim.api.identity.Person;
@@ -379,8 +381,8 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     
 	@Transient
     private NsfCode nsfCodeBo;
-
-    @Transient
+	
+	@Transient
     private String newScienceKeywordCode;
 
     @Transient
@@ -1139,9 +1141,36 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
 		for (ProposalSite proposalSite : otherOrganizations) {
 			if(proposalSite.getOrganization().getCongressionalDistrict() != null)
 			proposalSite.initializeDefaultCongressionalDistrict();
+			List<OrganizationYnq> organizationYnqs=getOrganisationRiskPriority(proposalSite);
+			if(organizationYnqs != null || !organizationYnqs.isEmpty()) {
+	            for(OrganizationYnq organizationYnq:organizationYnqs) {
+	        		if(organizationYnq.getAnswer().equals(Constants.TRUE_FLAG)) {
+	        			proposalSite.setOrganizationRisk(Constants.LOW_RISK);
+	        			proposalSite.setOrganizationRiskLabel(Constants.LOW_RISK_LABEL);
+	        		} else if(organizationYnq.getAnswer().equals(Constants.FALSE_FLAG)) {
+	        			proposalSite.setOrganizationRisk(Constants.HIGH_RISK);
+	        			proposalSite.setOrganizationRiskLabel(Constants.HIGH_RISK_LABEL);
+	        		} 
+	        	}
+	    	}
 		}
 		return otherOrganizations;
     }
+    
+    public List<OrganizationYnq> getOrganisationRiskPriority(ProposalSite proposalSite) {
+    	List<OrganizationYnq> organizationYnqs = null;
+    	String organizationId=proposalSite.getOrganizationId();
+    	String questionId=getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, ParameterConstants.ALL_COMPONENT,"organizationRiskCategoryCode");
+        if(questionId != null) {
+        	Map<String, String> organizationYnqMap = new HashMap<String, String>();
+            organizationYnqMap.put("QUESTION_ID",questionId);
+            organizationYnqMap.put("ORGANIZATION_ID",organizationId);
+            organizationYnqs = (List<OrganizationYnq>) getBusinessObjectService().findMatching(OrganizationYnq.class,
+                    organizationYnqMap);
+        }
+        return organizationYnqs;
+    }
+    
 
     public void addOtherOrganization(ProposalSite otherOrganization) {
         otherOrganization.setLocationTypeCode(ProposalSite.PROPOSAL_SITE_OTHER_ORGANIZATION);
@@ -2014,7 +2043,7 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
         this.nsfCodeBo = nsfCodeBo;
     }
 
-    public String getAttachmentsStatus() {
+	public String getAttachmentsStatus() {
         String statusString = ATTACHMENTS_COMPLETE;
         if (!getNarratives().isEmpty()) {
             for (Narrative aNarrative : getNarratives()) {

@@ -314,6 +314,11 @@ public interface Constants {
     
     public static final String TRUE_FLAG = "Y";
     public static final String FALSE_FLAG = "N";
+    public static final String LOW_RISK = "1";
+    public static final String HIGH_RISK = "2";
+    public static final String LOW_RISK_LABEL = "Low Risk";
+    public static final String HIGH_RISK_LABEL = "High Risk";
+    public static final String ORGANIZATION_RISK_CATEGORY_CODE = "organizationRiskCategoryCode";
     public static final String SPECIAL_REVIEW_PAGE = "specialReview";
     public static final String BUDGET_PERIOD_PANEL_NAME = "Budget Period And Totals Information";
     public static final String BUDGET_RATE_PANEL_NAME = "Budget Rate";

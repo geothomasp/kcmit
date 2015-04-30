@@ -53,6 +53,10 @@ public class ProposalSite extends KcPersistableBusinessObjectBase implements Pro
     public static final int PROPOSAL_SITE_OTHER_ORGANIZATION = 3;
 
     public static final int PROPOSAL_SITE_PERFORMANCE_SITE = 4;
+    
+    public transient String organizationRisk="3";
+    
+    public transient String organizationRiskLabel="Unknown Risk";
 
     @Id
     @ManyToOne(cascade = { CascadeType.REFRESH })
@@ -148,7 +152,35 @@ public class ProposalSite extends KcPersistableBusinessObjectBase implements Pro
         return rolodex;
     }
 
-    public void setCongressionalDistricts(List<CongressionalDistrict> congressionalDistricts) {
+    /**
+	 * @return the organizationRisk
+	 */
+	public String getOrganizationRisk() {
+		return organizationRisk;
+	}
+
+	/**
+	 * @param organizationRisk the organizationRisk to set
+	 */
+	public void setOrganizationRisk(String organizationRisk) {
+		this.organizationRisk = organizationRisk;
+	}
+
+	/**
+	 * @return the organizationRiskLabel
+	 */
+	public String getOrganizationRiskLabel() {
+		return organizationRiskLabel;
+	}
+
+	/**
+	 * @param organizationRiskLabel the organizationRiskLabel to set
+	 */
+	public void setOrganizationRiskLabel(String organizationRiskLabel) {
+		this.organizationRiskLabel = organizationRiskLabel;
+	}
+
+	public void setCongressionalDistricts(List<CongressionalDistrict> congressionalDistricts) {
         this.congressionalDistricts = congressionalDistricts;
     }
 
