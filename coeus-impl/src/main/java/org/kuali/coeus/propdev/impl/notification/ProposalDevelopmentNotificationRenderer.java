@@ -133,7 +133,7 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
             result.put("{OVERRIDE_FIELD_NAME}", proposalChangedData.getEditableColumn().getColumnLabel());
             result.put("{OVERRIDE_FIELD_VALUE}", proposalChangedData.getDisplayValue());
         }
-        if (modifiedNarrative != null) {
+        if (modifiedNarrative != null && modifiedNarrative.getModuleNumber()!=null) {
             result.put("{NARRATIVE_MODULE_NUM}", modifiedNarrative.getModuleNumber().toString());
             result.put("{NARRATIVE_TYPE}", modifiedNarrative.getNarrativeType().getDescription());
             result.put("{NARRATIVE_MODULE_DESCRIPTION}", modifiedNarrative.getModuleTitle() == null ? "" : modifiedNarrative.getModuleTitle());
