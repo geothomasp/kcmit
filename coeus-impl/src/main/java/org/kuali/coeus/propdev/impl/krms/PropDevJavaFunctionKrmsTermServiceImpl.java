@@ -934,7 +934,7 @@ public class PropDevJavaFunctionKrmsTermServiceImpl extends KcKrmsJavaFunctionTe
      * This method is to check if the PI or any multi-PI has PI status
      * FN_PI_APPOINTMENT_TYPE_RULE
      */
-    public String piAppointmentTypeRule(DevelopmentProposal developmentProposal) {
+   /* public String piAppointmentTypeRule(DevelopmentProposal developmentProposal) {
         List<ProposalPerson> people = developmentProposal.getProposalPersons();
         List<AppointmentType> appointmentTypes = (List<AppointmentType>)getBusinessObjectService().findAll(AppointmentType.class);
         for (ProposalPerson person : people) {
@@ -959,7 +959,7 @@ public class PropDevJavaFunctionKrmsTermServiceImpl extends KcKrmsJavaFunctionTe
         }
         return false;
     }
-    
+    */
     /**
      * This method is to check campus
      * Check if the lead unit of the Proposal belong to campus

@@ -73,7 +73,7 @@ public interface PropDevJavaFunctionKrmsTermService {
     public String completeNarrativeRule(DevelopmentProposal developmentProposal);
     
     public String investigatorCitizenshipTypeRule(DevelopmentProposal developmentProposal, String citizenshipTypeToCheck);
-    public String piAppointmentTypeRule(DevelopmentProposal developmentProposal);
+    //public String piAppointmentTypeRule(DevelopmentProposal developmentProposal);
     public String proposalCampusRule(DevelopmentProposal developmentProposal, String a2SCampusCode);
     public String routedToOSPRule(DevelopmentProposal developmentProposal);
     public String isUserProposalPI(DevelopmentProposal developmentProposal);
