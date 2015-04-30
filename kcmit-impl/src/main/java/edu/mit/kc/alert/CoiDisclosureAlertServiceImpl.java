@@ -1,21 +1,23 @@
 package edu.mit.kc.alert;
 
 import static org.kuali.rice.core.api.criteria.PredicateFactory.equal;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import edu.mit.kc.alert.AlertType;
+
 import edu.mit.kc.alert.service.AlertServiceBaseImpl;
 import edu.mit.kc.alert.service.SystemAlertService;
 import edu.mit.kc.coi.KcCoiLinkServiceImpl;
@@ -40,15 +42,17 @@ public class CoiDisclosureAlertServiceImpl extends AlertServiceBaseImpl implemen
 	@Autowired
 	@Qualifier("parameterService")
 	private ParameterService parameterService;
+	
+	@Autowired
+	@Qualifier("dateTimeService")
+	private DateTimeService dateTimeService;
 
 	protected static final String KC_COI_DB_LINK = "KC_COI_DB_LINK";
 	protected static final String KC_GENERAL_NAMESPACE = "KC-GEN";
 	protected static final String DOCUMENT_COMPONENT_NAME = "Document";
 
 	Alert alert = new Alert();
-
-
-
+	
 	@Override
 	public void createAlerts(AlertType alertType, String userName) {
 		String loggedInUserId =getKcPerson(userName).getPersonId();
@@ -56,54 +60,44 @@ public class CoiDisclosureAlertServiceImpl extends AlertServiceBaseImpl implemen
 		String alertNullMessage = getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.COI_DISCLOSURE_EXPIRATION_NULLDATE_ALERT);
 		List<Object> paramValues = new ArrayList<Object>();
 		String result = "";
-
 		paramValues.add(0, loggedInUserId);
-
 		try {
-
 			result = getDbFunctionExecuteService().executeFunction("Fn_Get_per_discl_exp_date" + this.getDBLink(),paramValues);
-
 		} catch (Exception ex) {
 			LOG.error("Error while excecuting function " + getDBLink()+ ":Fn_Get_per_discl_exp_date" + ex.getMessage());
 		}
-       if(result != ""){
-    	   
-    	   if (!StringUtils.isEmpty(alertMessage)) {
-    		  alertMessage= alertMessage.replace("{0}", result);
-           }
-		
-    	alert.setActive(Constants.YES_FLAG);
-		alert.setAlert(alertMessage);
-		alert.setUserName(getKcPerson(userName).getUserName());
-		alert.setUpdateUser(getKcPerson(userName).getUserName());
-		alert.setPriority(1);
-		alert.setAlertTypeId(alertType.getId());
-		getDataObjectService().save(alert);
-       }
-       else{
-    	   
-    	alert.setActive(Constants.YES_FLAG);
-   		alert.setAlert(alertNullMessage);
-   		alert.setUserName(getLoggedInUserName());
-   		alert.setUpdateUser(getKcPerson(userName).getUserName());
-   		alert.setPriority(1);
-   		alert.setAlertTypeId(alertType.getId());
-   		getDataObjectService().save(alert);
-    	   
-       }
-		
+		if (result != "" && result != null) {
+			Date coiExpirationDate = new Date(result);
+			Date currentDate = getDateTimeService().getCurrentDate();
+			int diff = getDateTimeService().dateDiff(currentDate,coiExpirationDate, true);
+			if (diff >= 0 && diff <= 30) {
+				alertMessage = alertMessage.replace("{0}", result);
+				alert.setActive(Constants.YES_FLAG);
+				alert.setAlert(alertMessage);
+				alert.setUserName(getKcPerson(userName).getUserName());
+				alert.setUpdateUser(getKcPerson(userName).getUserName());
+				alert.setPriority(1);
+				alert.setAlertTypeId(alertType.getId());
+				getDataObjectService().save(alert);
+			}
+		} else {
+			alert.setActive(Constants.YES_FLAG);
+			alert.setAlert(alertNullMessage);
+			alert.setUserName(getLoggedInUserName());
+			alert.setUpdateUser(getKcPerson(userName).getUserName());
+			alert.setPriority(1);
+			alert.setAlertTypeId(alertType.getId());
+			getDataObjectService().save(alert);
+		}
 	}
 
 	@Override
 	public void updateAlerts(AlertType alertType, String userName) {
-		
-		
 	}
 
 	@Override
 	public void cleanUpAlerts(AlertType alertType, String userName) {
 		getDataObjectService().deleteMatching(Alert.class, QueryByCriteria.Builder.fromPredicates(equal("alertTypeId", alertType.getId())));
-		
 	}
 	
 	protected String getDBLink() {
@@ -148,4 +142,11 @@ public class CoiDisclosureAlertServiceImpl extends AlertServiceBaseImpl implemen
 		this.kualiConfigurationService = kualiConfigurationService;
 	}
 
+	public DateTimeService getDateTimeService() {
+		return dateTimeService;
+	}
+
+	public void setDateTimeService(DateTimeService dateTimeService) {
+		this.dateTimeService = dateTimeService;
+	}
 }
