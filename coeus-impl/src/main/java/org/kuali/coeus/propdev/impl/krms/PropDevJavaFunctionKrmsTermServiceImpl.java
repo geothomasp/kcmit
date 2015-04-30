@@ -44,6 +44,7 @@ import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItem;
 import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.budget.framework.personnel.AppointmentType;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.coeus.common.impl.krms.KcKrmsJavaFunctionTermServiceBase;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
@@ -57,13 +58,18 @@ import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReview;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
 import org.kuali.coeus.propdev.impl.s2s.S2sOppForms;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kew.api.action.ActionRequest;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.data.DataObjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
 
 
 @Component("propDevJavaFunctionKrmsTermService")
@@ -976,11 +982,13 @@ public class PropDevJavaFunctionKrmsTermServiceImpl extends KcKrmsJavaFunctionTe
      * FN_ROUTED_TO_OSP_RULE
      */
     public String routedToOSPRule(DevelopmentProposal developmentProposal) {
-        if(developmentProposal.getProposalDocument().getDocumentHeader().getWorkflowDocument().isApproved() ||
-                developmentProposal.getProposalDocument().getDocumentHeader().getWorkflowDocument().isDisapproved()) {
-            return TRUE;
-        }
-        return FALSE;
+    	List<WLCurrentLoad> wLCurrentLoadList = KcServiceLocator.getService(DataObjectService.class).findMatching(WLCurrentLoad.class,QueryByCriteria.Builder.fromPredicates(
+				 PredicateFactory.equal("proposalNumber", developmentProposal.getProposalNumber())		 
+				 )).getResults();
+		if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
+			return TRUE;
+		}
+		return FALSE;
     }
     
     /**
