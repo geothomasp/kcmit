@@ -395,6 +395,9 @@ Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('View WL ','KC-ADM','UnitHierarchy','Vie_WL','KC-PD');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Application Administrator','KC-SYS','UnitHierarchy','Add Sponsor Hierarchy','KC-SYS');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Application Administrator','KC-SYS','UnitHierarchy','Add Unit','KC-UNT');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Assign Role','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Grant Responsibility','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Grant Permission','KC-SYS');
 commit;
 --- Adding final mapping to a temp table START
 INSERT INTO KC_COEUS_ROLE_PERM_MAPPING(ROLE_NM,ROLE_NMSPC_CD,PERM_NM,PERM_NMSPC_CD)

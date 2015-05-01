@@ -63,5 +63,6 @@ Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Maintain Confl
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Rolodex Maintainer','Address Book Maintainer');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Modify Negotiations','Negotiation Creator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Maintain Workload Balancing','WL Super User');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('MAINTAIN USER ROLES','Manager');
 commit
 /

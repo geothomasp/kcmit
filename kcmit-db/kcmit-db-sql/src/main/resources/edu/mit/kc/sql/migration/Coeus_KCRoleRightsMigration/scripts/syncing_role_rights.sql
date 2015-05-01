@@ -415,9 +415,22 @@ delete FROM KRIM_ROLE_T WHERE  role_nm = 'Access_Proposal_Person_Institutional_S
 /
 commit
 /
+-- inserting manager role
+declare
+li_count number;
+begin
 
+select count(role_id) into li_count from KRIM_ROLE_T where ROLE_NM = 'Manager' and nmspc_cd = 'KC-SYS';
+if li_count = 0 then
+	INSERT INTO KRIM_ROLE_T(ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND, LAST_UPDT_DT)  
+  VALUES(KRIM_ROLE_ID_S.NEXTVAL,SYS_GUID(),1,'Manager','KC-SYS','This role represents a collection of all the KC module manager roles and has permission to initiate simple maintenance documents.',
+'1','Y',sysdate);	 	
+end if;
 
-
+end;
+/
+commit
+/
 declare
 li_max number(10);
 ls_query VARCHAR2(400);
