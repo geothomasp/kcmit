@@ -31,6 +31,7 @@ import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.sys.framework.controller.KcCommonControllerService;
 import org.kuali.coeus.sys.framework.controller.UifExportControllerService;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.document.authorization.AwardDocumentAuthorizer;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardService;
@@ -60,6 +61,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.mit.kc.alert.service.ApplicationAlertService;
 import edu.mit.kc.dashboard.bo.Alert;
 import edu.mit.kc.dashboard.bo.Expenditures;
 import edu.mit.kc.dashboard.core.DashboardForm;
@@ -137,6 +139,8 @@ public class DashboardController {
     @Qualifier("dashboardService")
     private DashboardService dashboardService;
     
+    private ApplicationAlertService applicationAlertService;
+    
     @ModelAttribute(value = "KualiForm")
     public UifFormBase initForm(HttpServletRequest request,
                                 HttpServletResponse response) throws Exception {
@@ -192,6 +196,10 @@ public class DashboardController {
       form.setAlerts(alerts);
     }
 
+    protected void configureAlerts(String user) {
+		getApplicationAlertService().processAllAlerts(user);
+    }
+    
     protected void populateGraphData(DashboardForm form) {
         HashMap<String, String> criteria = new HashMap<String, String>();
         criteria.put("userName", form.getDashboardPerson().getUserName());
@@ -253,6 +261,7 @@ public class DashboardController {
         }
 
         form.setDashboardPerson(person);
+        configureAlerts(person.getUserName());
         populateProposals(form);
         populateGraphData(form);
         populateAlerts(form);
@@ -418,6 +427,17 @@ public class DashboardController {
 
 	public void setDashboardService(DashboardService dashboardService) {
 		this.dashboardService = dashboardService;
+	}
+
+	public ApplicationAlertService getApplicationAlertService() {
+		if(applicationAlertService == null) {
+			this.applicationAlertService = KcServiceLocator.getService(ApplicationAlertService.class);
+		}
+		return applicationAlertService;
+	}
+
+	public void setApplicationAlertService(ApplicationAlertService applicationAlertService) {
+		this.applicationAlertService = applicationAlertService;
 	}
 
 }
