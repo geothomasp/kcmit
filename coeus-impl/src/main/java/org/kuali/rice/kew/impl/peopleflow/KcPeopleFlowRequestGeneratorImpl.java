@@ -56,11 +56,9 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     		KcPerson orginalApprover = null;
     		 List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
 					 (PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
-     		if (!context.getRouteContext().isSimulation() && personId!=null) {
-    			 String sponsorGroup = null;
-    			 List<UnitAdministrator> unitAdministrators = new ArrayList<UnitAdministrator>();
-    			 
-    			 if (MemberType.ROLE == member.getMemberType()) {
+			 List<UnitAdministrator> unitAdministrators = new ArrayList<UnitAdministrator>();
+
+    		 if (MemberType.ROLE == member.getMemberType()) {
     			 DevelopmentProposal proposal = getDataObjectService().find(DevelopmentProposal.class,proposalNumber);
     	     		Map<String, String> queryMap = new HashMap<String, String>();
     	    		queryMap.put("unitNumber", proposal.getUnitNumber());
@@ -74,6 +72,8 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 }else{
     				 orginalApprover = getKcPersonService().getKcPersonByPersonId(member.getMemberId());
     			 }
+     		if (!context.getRouteContext().isSimulation() && personId!=null) {
+    			 String sponsorGroup = null;
     			 if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
     				 List<WLCurrentLoad> workLoadLatestList = new ArrayList<WLCurrentLoad>();
     				 for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
@@ -143,10 +143,16 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 getDataObjectService().save(wLCurrentLoad);
     			 }
     		 }
-    		 if(wLCurrentLoadList!=null && wLCurrentLoadList.isEmpty() && enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("Y")){
+    		 if(wLCurrentLoadList!=null && wLCurrentLoadList.isEmpty()){
+    			 if(enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("Y")){
     			 context.getActionRequestFactory().addRootActionRequest(
     					 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,personId), "",
     					 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
+    			 }else if(enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("N")){
+    				 context.getActionRequestFactory().addRootActionRequest(
+        					 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,orginalApprover.getPersonId()), "",
+        					 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
+    			 }
     		 }
     	}else{
     		super.generateRequestForMember(context, member);
