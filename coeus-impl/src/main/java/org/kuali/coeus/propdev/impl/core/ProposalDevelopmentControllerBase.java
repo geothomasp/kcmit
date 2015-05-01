@@ -467,8 +467,16 @@ public abstract class ProposalDevelopmentControllerBase {
        
         if (StringUtils.equalsIgnoreCase(pageId, Constants.KEY_PERSONNEL_PAGE) ||
                 StringUtils.equalsIgnoreCase(pageId,"PropDev-CertificationView-Page")) {
+        	 List<ProposalPerson> proposalPersons = new ArrayList();
+        	 for (ProposalPerson person : pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
+        		 if (person.getDevelopmentProposal()!=null){
+        			 proposalPersons.add(person);
+        		 }
+        	 }
+        	 pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().setProposalPersons(proposalPersons);
             for (ProposalPerson person : pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
-                if (person.getQuestionnaireHelper() != null && person.getQuestionnaireHelper().getAnswerHeaders() != null
+            	
+                if (person.getDevelopmentProposal()!=null && person.getQuestionnaireHelper() != null && person.getQuestionnaireHelper().getAnswerHeaders() != null
                         && !person.getQuestionnaireHelper().getAnswerHeaders().isEmpty()) {
                     for (AnswerHeader answerHeader : person.getQuestionnaireHelper().getAnswerHeaders()) {
                         boolean wasComplete = answerHeader.isCompleted();

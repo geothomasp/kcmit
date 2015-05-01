@@ -792,9 +792,9 @@
 			<property name="items">
 				<list>
 					<bean parent="Uif-Message"
-						p:messageText="Project:			@{#line.developmentProposal.proposalNumber}"
+						p:messageText="Project:			@{document.developmentProposal.proposalNumber}"
 						p:order="10" p:style="font-weight: bold; font-size: larger;" />
-					<bean parent="Uif-Message" p:messageText="Title:			@{#line.developmentProposal.title}"
+					<bean parent="Uif-Message" p:messageText="Title:			@{document.developmentProposal.title}"
 						p:order="20" p:style="font-weight: bold; font-size: larger;" />
 				</list>
 			</property>
