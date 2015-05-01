@@ -28,7 +28,6 @@
         <a class="brand" href="${ConfigProperties.application.url}/portal.do">Kuali Coeus</a>
 
     <%-- Maintenance --%>
-    <c:if test="${prtlfunc:showByAffiliateType('GRD_STDNT_STAFF,MED_STAFF,OTH_ACADMC_GRP,STAFF,SUPPRT_STAFF') || ! prtlfunc:hasAffiliation()}">
     <c:if test='${selectedTab == "portalMaintenanceBody"}'>
         <li class="active"><a href="portal.do?selectedTab=portalMaintenanceBody" title="Maintenance">Maintenance</a></li>
     </c:if> 
@@ -36,11 +35,9 @@
         <li><a href="portal.do?selectedTab=portalMaintenanceBody" title="Maintenance">Maintenance</a></li>
     </c:if>
        
-    </c:if>
 
     
     <%-- System Admin --%>
-    <c:if test="${prtlfunc:showByAffiliateType('GRD_STDNT_STAFF,MED_STAFF,OTH_ACADMC_GRP,STAFF,SUPPRT_STAFF') || ! prtlfunc:hasAffiliation()}">
         <c:if test='${selectedTab == "portalSystemAdminBody"}'>
             <li class="active"><a href="portal.do?selectedTab=portalSystemAdminBody" title="System Admin">System Admin</a></li>
         </c:if>
@@ -48,7 +45,6 @@
             <li><a href="portal.do?selectedTab=portalSystemAdminBody" title="System Admin">System Admin</a></li>
         </c:if>
 
-    </c:if>
 
           <li><a href="${ConfigProperties.application.url}" title="KRAD Portal">KRAD Portal</a></li>
 
