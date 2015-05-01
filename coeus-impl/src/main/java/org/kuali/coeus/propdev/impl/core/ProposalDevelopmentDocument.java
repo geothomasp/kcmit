@@ -263,7 +263,7 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
                     throw new RuntimeException(String.format("ProposalHierarchyException thrown while updating app doc status for document %s", getDocumentNumber()));
                 }
             }
-            bp.setProposalStateTypeCode(getProposalStateService().getProposalStateTypeCode(this, true, false));
+            bp.setProposalStateTypeCode(getProposalStateService().getProposalStateTypeCode(this, false));
             
         }
     }
@@ -291,7 +291,7 @@ public class ProposalDevelopmentDocument extends BudgetParentDocument<Developmen
                 }
             }
             String pCode = getDevelopmentProposal().getProposalStateTypeCode();
-            getDevelopmentProposal().setProposalStateTypeCode(getProposalStateService().getProposalStateTypeCode(this, false, getKcDocumentRejectionService().isDocumentOnInitialNode(this.getDocumentHeader().getWorkflowDocument())));
+            getDevelopmentProposal().setProposalStateTypeCode(getProposalStateService().getProposalStateTypeCode(this, getKcDocumentRejectionService().isDocumentOnInitialNode(this.getDocumentHeader().getWorkflowDocument())));
             if (!StringUtils.equals(pCode, getDevelopmentProposal().getProposalStateTypeCode())) {
                 getDataObjectService().save(getDevelopmentProposal());
                 getDevelopmentProposal().refreshReferenceObject("proposalState");
