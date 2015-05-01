@@ -178,10 +178,10 @@ BEGIN
         end if;
         
         begin
-            INSERT INTO RCR_PAYROLL_DATES (PERSON_ID, ACCOUNT_NUMBER, PAYROLL_NUMBER, 
-                    BASE_DATE, TRAINING_DEADLINE, UPDATE_TIMESTAMP, UPDATE_USER) 
-            VALUES ( ls_PersonID, ls_AccountNumber, li_ParyollNumber,
-            trunc(ldt_PayrollDate), Trunc(ldt_PayrollDate) + 60, sysdate, user);
+            INSERT INTO RCR_PAYROLL_DATES (RCR_PAYROLL_DATES_ID,PERSON_ID, ACCOUNT_NUMBER, PAYROLL_NUMBER,
+            BASE_DATE, TRAINING_DEADLINE, UPDATE_TIMESTAMP, UPDATE_USER,VER_NBR,OBJ_ID)
+            VALUES ( SEQ_RCR_PAYROLL_DATES_ID.nextval,ls_PersonID, ls_AccountNumber, li_ParyollNumber,
+            trunc(ldt_PayrollDate), Trunc(ldt_PayrollDate) + 60, sysdate, user,1,sys_guid());
         exception
             when others then
                 li_ret := 0;
