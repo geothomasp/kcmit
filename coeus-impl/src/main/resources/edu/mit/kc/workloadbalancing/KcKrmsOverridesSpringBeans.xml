@@ -36,5 +36,6 @@
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     
-     <bean id="peopleFlowRequestGenerator" class="org.kuali.rice.kew.impl.peopleflow.KcPeopleFlowRequestGeneratorImpl"/>
+     <bean id="peopleFlowRequestGenerator" class="org.kuali.rice.kew.impl.peopleflow.KcPeopleFlowRequestGeneratorImpl" 
+     p:typeRepositoryService-ref="rice.kew.kewTypeRepositoryService" p:roleService-ref="rice.kew.import.kimRoleService" lazy-init="true"/>
 </beans>
