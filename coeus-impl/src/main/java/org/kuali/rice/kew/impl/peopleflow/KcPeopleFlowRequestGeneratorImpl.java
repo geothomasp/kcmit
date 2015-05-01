@@ -149,9 +149,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     					 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,personId), "",
     					 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
     			 }else if(enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("N")){
-    				 context.getActionRequestFactory().addRootActionRequest(
-        					 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,orginalApprover.getPersonId()), "",
-        					 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
+    				 super.generateRequestForMember(context, member);
     			 }
     		 }
     	}else{
