@@ -398,6 +398,24 @@ Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Assign Role','KC-SYS');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Grant Responsibility','KC-SYS');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Grant Permission','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Initiate RICE Document','KR-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Maintain System Parameter','KR-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Full Unmask Tax Identification Number Payee ACH Document','KR-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','View Other Action List','KR-WKFLW');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Unrestricted Document Search','KR-WKFLW');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve Document','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Save Document','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Delete Note / Attachment','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Initiate Simple Document','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Maintain System Parameter','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve ProposalDevelopmentDocument','KC-PD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve ProtocolDocument','KC-PROTOCOL');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve CommitteeDocument','KC-PROTOCOL');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve AwardDocument','KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve TimeAndMoneyDocument','KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Populate KC Groups','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Create PersonMassChangeDocument','KC-SYS');
+
 commit;
 --- Adding final mapping to a temp table START
 INSERT INTO KC_COEUS_ROLE_PERM_MAPPING(ROLE_NM,ROLE_NMSPC_CD,PERM_NM,PERM_NMSPC_CD)
