@@ -1,3 +1,5 @@
+set define off;
+
 create or replace package kc_package_citi as
 function FN_POPULATE_PERS_TRAINING
         return NUMBER;
@@ -5,7 +7,9 @@ function FN_MAP_TRAINING_TYPE(LS_TRAINING_GROUP VARCHAR2 ,  li_stage_number NUMB
         return NUMBER;
         
 function FN_GET_TRAINING_MODULE(li_training_code number) 
-        return NUMBER;        
+        return NUMBER;   
+function fn_gen_citi_feed_email
+	return NUMBER;
         
 end;
 /
@@ -459,10 +463,49 @@ BEGIN
     INSERT INTO CITI_ERROR_LOG (ERROR_MESSAGE, UPDATE_TIMESTAMP)
       VALUES ('RCR rows inserted is ' || li_rcr_rows || ' - Human subjects rows inserted is ' || li_humsubj_rows , SYSDATE );
       
-      
+     li_ret :=  fn_gen_citi_feed_email;
  return 1;
  
 END FN_POPULATE_PERS_TRAINING; 
 
+/**********************************************/
+function fn_gen_citi_feed_email
+	return NUMBER IS
+/**********************************************/
+li_log_count         number;
+mail_subject   NOTIFICATION_TYPE.SUBJECT%TYPE;
+mail_message   clob;
+ls_MailReceiver    varchar2(256) := 'citi-feed@mit.edu';
+
+cursor cur_log_messge is 
+	select person_id, error_message, to_char(update_timestamp,'DD-MON-YYYY') as udt from citi_error_log;
+rec_message  	cur_log_messge%ROWTYPE;
+
+BEGIN
+	select count(*) into li_log_count from citi_error_log;
+	if li_log_count > 0 then
+		--open 	cur_generic for 
+		 --select person_id, error_message, trunc(update_timestamp)  from citi_error_log;
+		 --fetch cur_generic into mail_message;
+		 mail_subject:= 'citi feed log';
+		 open cur_log_messge;
+		 loop 
+		 fetch cur_log_messge into rec_message;
+		 mail_message :=mail_message || '<p>'||rec_message.person_id ||'&nbsp; &nbsp; &nbsp;'|| rec_message.error_message ||'&nbsp; &nbsp; &nbsp;'||rec_message.udt ||'</p>';
+		 exit when cur_log_messge%NOTFOUND;
+		 end loop;
+		 close cur_log_messge;
+		 begin
+		 	KC_MAIL_GENERIC_PKG.SEND_MAIL(-999,ls_MailReceiver,null,ls_MailReceiver,mail_subject,mail_message);
+		 
+		 	exception
+		 	  when others then
+				return 0;
+		end;
+	end if;
+	return 1;
+END;
 end ;
 /
+
+set define on;
