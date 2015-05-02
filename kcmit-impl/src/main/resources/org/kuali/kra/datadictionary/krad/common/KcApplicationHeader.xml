@@ -96,7 +96,7 @@
                         </bean>
                         <bean parent="Uif-ActionLink">
                             <property name="actionUrl">
-                                <bean parent="Uif-Url" p:baseUrl="@{#ConfigProperties['application.url']}/kc-krad"
+                                <bean parent="Uif-Url" p:baseUrl="@{#ConfigProperties['mit.website.url']}/kc-krad"
                                       p:controllerMapping="/landingPage"/>
                             </property>
                             <property name="actionImage" ref="Kc-Header-ApplicationLogo2"/>

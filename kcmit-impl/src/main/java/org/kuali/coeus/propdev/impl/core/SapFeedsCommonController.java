@@ -44,7 +44,6 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 	private static final String SAP_MASTERFEED_NO_PENDINGFEED_VALUE = "-100";
 	private static final String SAP_FEED_INVALID_PATH_VALUE = "-1";
 	private static final String DUMMY_SPONSOR = "999999";
-	private String Path;
 
 
 	@Autowired
@@ -93,19 +92,20 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 			@ModelAttribute("KualiForm") SapFeedsForm form,
 			BindingResult result, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException {
-
-		if (pathKey.equals("P"))
-			Path = kualiConfigurationService
+		String path;
+		if (pathKey.equals("P")){
+			path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.PRODUCTION.PATH");
-		else
-			Path = kualiConfigurationService
+		}else{
+			path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.TEST.PATH");
+		}
 
 	    String user=getLoggedInUser();
 		String statusMasterFeed = null;
 		String sapFeedStatus=null;
 		String budgetFeedStatus=null;
-		statusMasterFeed = sapFeedService.generateMasterFeed(Path, user);
+		statusMasterFeed = sapFeedService.generateMasterFeed(path, user);
 		
 		String[] feedStatus=statusMasterFeed.split(",");
 		if(feedStatus !=null &&feedStatus.length >=0){
@@ -133,16 +133,17 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 			@ModelAttribute("KualiForm") SapFeedsForm form,
 			BindingResult result, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException {
-
-		if (pathKey.equals("P"))
-			Path = kualiConfigurationService
+		String path;
+		if (pathKey.equals("P")){
+			path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.PRODUCTION.PATH");
-		else
-			Path = kualiConfigurationService
+		}else{
+			path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.TEST.PATH");
+		}
 		String user=getLoggedInUser();
 		String statusSponsorFeed = null;
-		statusSponsorFeed = sapFeedService.generateSponsorFeed(Path,user);
+		statusSponsorFeed = sapFeedService.generateSponsorFeed(path,user);
 		if(statusSponsorFeed.equals("0"))
 			form.setSponsorFeedGenerated(true);
 		
@@ -164,17 +165,18 @@ public class SapFeedsCommonController extends SapFeedsControllerBase {
 			@ModelAttribute("KualiForm") SapFeedsForm form,
 			BindingResult result, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException {
-
-		if (pathKey.equals("P"))
-			Path = kualiConfigurationService
+		String path;
+		if (pathKey.equals("P")){
+			path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.PRODUCTION.PATH");
-		else
-			Path = kualiConfigurationService
+		}else{
+			path = kualiConfigurationService
 					.getPropertyValueAsString("SAP.TEST.PATH");
+		}
 		
 		String user=getLoggedInUser();
 		String statusRolodexFeed = null;
-		statusRolodexFeed = sapFeedService.generateRolodexFeed(Path,user);
+		statusRolodexFeed = sapFeedService.generateRolodexFeed(path,user);
 		
 		if(statusRolodexFeed.equals("0"))
 			form.setRolodexFeedGenerated(true);
