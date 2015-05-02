@@ -2076,14 +2076,12 @@ public class AwardAction extends BudgetParentActionBase {
         return forward;
     } 
     
-    public ActionForward keyperson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward keyPerson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         SharedDocForm sharedDocForm=(SharedDocForm)form;
-          
-           
           if (sharedDocForm.getDocument().getDocumentNumber() == null) {
                loadDocumentInFormDoc(request, sharedDocForm);
            }
-        return mapping.findForward("basic");//(Constants.MAPPING_AWARD_BASIC);
+        return mapping.findForward("keyPerson");
     }
     
    
@@ -2111,7 +2109,7 @@ public class AwardAction extends BudgetParentActionBase {
 	 sharedDocForm.getMedusaBean().setModuleName("award");
 	 sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
 	 sharedDocForm.getMedusaBean().generateParentNodes();
-       return mapping.findForward("basics");
+     return mapping.findForward("awardSharedDoc");
    }
     @Override
     public ActionForward superUserApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.medusa.MedusaBean;
+import org.kuali.coeus.common.framework.module.CoeusModule;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
 import org.kuali.coeus.common.notification.impl.NotificationHelper;
@@ -1338,10 +1339,10 @@ public void setNavigateFlag(String navigateFlag) {
 
     	HeaderNavigation keyPersontab = new HeaderNavigation();
     	HeaderNavigation sharedDocTab = new HeaderNavigation();
-    	keyPersontab.setHeaderTabNavigateTo("basic");
+    	keyPersontab.setHeaderTabNavigateTo("keyPerson");
     	keyPersontab.setHeaderTabDisplayName("Key Person Maintenance");
     	keyPersontab.setDisabled(false);
-    	sharedDocTab.setHeaderTabNavigateTo("basics");
+    	sharedDocTab.setHeaderTabNavigateTo("sharedDoc");
     	sharedDocTab.setHeaderTabDisplayName("Shared Doc Form");
     	sharedDocTab.setDisabled(false);
     	List<HeaderNavigation> resultList = new ArrayList<HeaderNavigation>();
@@ -1544,5 +1545,30 @@ public void setNavigateFlag(String navigateFlag) {
 		this.sharedDocType = sharedDocType;
 	}
 
+	public String getAwardSharedDocTypes() {
+		return getSharedDocumentType(CoeusModule.AWARD_MODULE_CODE);
+	}
 	
+	public String getDevelopmentProposalSharedDocTypes() {
+		return getSharedDocumentType(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE);
+	}
+	
+	public String getInstituteProposalSharedDocTypes() {
+		return getSharedDocumentType(CoeusModule.INSTITUTIONAL_PROPOSAL_MODULE_CODE);
+	}
+	
+	public String getSubAwardSharedDocTypes() {
+		return getSharedDocumentType(CoeusModule.SUBCONTRACTS_MODULE_CODE);
+	}
+	
+	protected String getSharedDocumentType(String moduleCode) {
+		StringBuffer sharedDocumentTypeForModule = new StringBuffer();
+		for(SharedDocumentType sharedDocumentType : getSharedDocType()) {
+			if(sharedDocumentType.getModuleCode().equalsIgnoreCase(moduleCode)) {
+				sharedDocumentTypeForModule.append(sharedDocumentType.getDocumentTypeCode());
+				sharedDocumentTypeForModule.append(",");
+			}
+		}
+		return sharedDocumentTypeForModule.toString();
+	}
 }

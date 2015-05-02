@@ -15,10 +15,15 @@
       <th colspan="2">Description</th>
       <th colspan="2">File Name</th>
     </tr>
-     <c:set var="viewSharedDoc" value="${KualiForm.awardProjectDocView}" />      
+     <c:set var="viewSharedDoc" value="${KualiForm.awardProjectDocView || KualiForm.awardProjectSharedDocView}" />      
+     <c:set var="sharedDocTypes" value="${KualiForm.awardSharedDocTypes}" />      
      <c:if test="${viewSharedDoc}"> 
 	    <c:forEach items="${node.bo.awardAttachments}" var="attachment" varStatus="itrStatus">
-	    	<c:if test="${attachment.documentStatusCode == 'A'}">
+     		<c:set var="viewThisAttachment" value="true" />      
+    		<c:if test="${KualiForm.awardProjectSharedDocView && not fn:contains(sharedDocTypes, attachment.typeCode)}">
+     			<c:set var="viewThisAttachment" value="false" />      
+    		</c:if>
+	    	<c:if test="${attachment.documentStatusCode == 'A' && viewThisAttachment}">
 	          <tr>
 		         <td style="text-align: center;" colspan="2">
 		            <c:out value="${attachment.type.description}"/>

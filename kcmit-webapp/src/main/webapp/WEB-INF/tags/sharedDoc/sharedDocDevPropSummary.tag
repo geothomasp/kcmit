@@ -12,31 +12,38 @@
        <th colspan="2">Uploaded Date</th>
       <th colspan="2">Uploaded User</th>
     </tr>
-    	 <c:set var="viewSharedDoc" value="${KualiForm.propProjectDocView}" />
+     	 <c:set var="sharedDocTypes" value="${KualiForm.developmentProposalSharedDocTypes}" />      
+    	 <c:set var="viewSharedDoc" value="${KualiForm.propProjectDocView || KualiForm.propProjectSharedDocView}" />
     	   <c:if test="${viewSharedDoc}">
     <c:forEach items="${node.bo.narratives}" var="pdAttachment" varStatus="itrStatus">
-      <tr>
-        <td style="text-align: center;" colspan="2">
-           <c:out value="${pdAttachment.narrativeType.description}"/>                        
-        </td> 
-        <td style="text-align: center;" colspan="2">          
-            <c:out value="${pdAttachment.name}"/>
-            </td> 
-             <td style="text-align: center;" colspan="2">          
-            <c:out value="${pdAttachment.moduleTitle}"/>
-            </td>
-            <td style="text-align: center;" colspan="2">          
-            <c:out value="${pdAttachment.dateUploaded}"/>
-            </td>
-               <td style="text-align: center;" colspan="2">          
-            <c:out value="${pdAttachment.uploadUserFullName}"/>
-            </td>
-         <td colspan="2">
-          <html:image property="methodToCall.viewAttachmentDp.line${itrStatus.index}.anchor${currentTabIndex}.id${pdAttachment.proposalNumber}"
-		src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
-		alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
-        </td>
-      </tr>
+     		<c:set var="viewThisAttachment" value="true" />      
+    		<c:if test="${KualiForm.propProjectSharedDocView && not fn:contains(sharedDocTypes, pdAttachment.typeCode)}">
+     			<c:set var="viewThisAttachment" value="false" />      
+    		</c:if>
+	    	<c:if test="${viewThisAttachment}">
+			      <tr>
+			        <td style="text-align: center;" colspan="2">
+			           <c:out value="${pdAttachment.narrativeType.description}"/>                        
+			        </td> 
+			        <td style="text-align: center;" colspan="2">          
+			            <c:out value="${pdAttachment.name}"/>
+			            </td> 
+			             <td style="text-align: center;" colspan="2">          
+			            <c:out value="${pdAttachment.moduleTitle}"/>
+			            </td>
+			            <td style="text-align: center;" colspan="2">          
+			            <c:out value="${pdAttachment.dateUploaded}"/>
+			            </td>
+			               <td style="text-align: center;" colspan="2">          
+			            <c:out value="${pdAttachment.uploadUserFullName}"/>
+			            </td>
+			         <td colspan="2">
+			          <html:image property="methodToCall.viewAttachmentDp.line${itrStatus.index}.anchor${currentTabIndex}.id${pdAttachment.proposalNumber}"
+					src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
+					alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
+			        </td>
+			      </tr>
+	    	</c:if>
     </c:forEach>
 </c:if>   
   </table>

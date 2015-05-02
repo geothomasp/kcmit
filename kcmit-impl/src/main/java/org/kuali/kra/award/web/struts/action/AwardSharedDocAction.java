@@ -78,6 +78,9 @@ public class AwardSharedDocAction extends AwardAction {
 	private static final String PROJECT_PERSON_PREFIX = ".personIndex";
     private static final String LINE_SUFFIX = ".line";
 
+    private static final String CONFIRM_SYNC_UNIT_DETAILS = "confirmSyncUnitDetails";
+    private static final String ADD_SYNC_UNIT_DETAILS = "addSyncUnitDetails";
+    private static final String CONFIRM_SYNC_UNIT_CONTACTS_KEY = "confirmSyncUnitContactsKey";
 	
     
 	 protected  MedusaService getMedusaService (){
@@ -105,14 +108,11 @@ public class AwardSharedDocAction extends AwardAction {
 		 List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
 		 sharedDocForm.setSharedDocType(sharedDocTypeNew);
 		 if(!sharedDocForm.isAwardProjectDocView()){
-			/* if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "MAINTAIN_AWARD_DOCUMENTS"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS"))||
-							 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "CREATE_AWARD"))){
-				 sharedDocForm.setAwardProjectDocView(true);*/
 			 if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments"))||
 				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments"))||
 				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award"))|| 
-				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award"))){ 
+				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award")) ||
+				sharedDocForm.isPi()){ 
 				 sharedDocForm.setAwardProjectDocView(true);			 
 				
 			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))||
@@ -122,7 +122,8 @@ public class AwardSharedDocAction extends AwardAction {
 		 if(!sharedDocForm.isSubAwardProjectDocView()){
 			 if ((getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD"))||
 					 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "CREATE SUBAWARD"))||
-							 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS"))){
+							 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS")) ||
+							 sharedDocForm.isPi()){
 				 sharedDocForm.setSubAwardProjectDocView(true);
 			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_SUBAWARD_DOC"))||
 					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
@@ -132,14 +133,16 @@ public class AwardSharedDocAction extends AwardAction {
 			 if ((getPermissionService().hasPermission(currentUser, "KC-IP", "Edit Institutional Proposal"))||
 					 (getPermissionService().hasPermission(currentUser, "KC-IP", "Create Institutional Proposal"))||
 							 (getPermissionService().hasPermission(currentUser, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")||
-									 (getPermissionService().hasPermission(currentUser, "KC-IP", "VIEW_INST_PROPOSAL_DOC")))){
+									 (getPermissionService().hasPermission(currentUser, "KC-IP", "VIEW_INST_PROPOSAL_DOC"))) ||
+									 sharedDocForm.isPi()){
 				 sharedDocForm.setIpProjectDocView(true);
 			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_INST_PROPOSAL_DOC"))||
 					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
 				 sharedDocForm.setIpProjectSharedDocView(true);
 			 }}	
 		 if(!sharedDocForm.isPropProjectDocView()){
-			 if (getPermissionService().hasPermission(currentUser, "KC-PD", "VIEW_DEV_PROPOSAL_DOC")){
+			 if (getPermissionService().hasPermission(currentUser, "KC-PD", "VIEW_DEV_PROPOSAL_DOC") ||
+					 sharedDocForm.isPi()){
 									 sharedDocForm.setPropProjectDocView(true);
 			 }else if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC")){
 				 sharedDocForm.setPropProjectSharedDocView(true);
@@ -423,91 +426,6 @@ public class AwardSharedDocAction extends AwardAction {
 	    	return new ArrayList<AwardPersonRemove>();
 	        }
 
-	  //for kp
-	 /* private AwardProjectPersonnelBean getProjectPersonnelBean(ActionForm form) {
-	        return ((AwardForm) form).getProjectPersonnelBean();
-	    }
-	    public ActionForward contact(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-	        AwardForm awardForm = (AwardForm) form;
-	        if (awardForm.getDocument().getDocumentNumber() == null) {
-	            //if we are entering this from the search results
-	            loadDocumentInForm(request, awardForm);
-	        }
-
-	        return mapping.findForward(Constants.MAPPING_AWARD_CONTACTS_PAGE);
-	    }
-	    public Collection<AwardPersonRemove> getProjectPersonRemovalHistory(ActionForm form)
-	            throws Exception {   
-	    	Collection<AwardPersonRemove> awardPersonRemoves =  new ArrayList<AwardPersonRemove>();
-	    	AwardForm awardForm = (AwardForm)form;
-	    	if (awardForm.getAwardDocument().getAward().getAwardId() != null 
-	    			&& awardForm.getAwardDocument().getAward().getAwardNumber() != null) {
-	    		awardPersonRemoves =  getProjectPersonnelBean(form).getAwardPersonRemoval(awardForm.getAwardDocument().getAward().getAwardId().toString(),
-	    				awardForm.getAwardDocument().getAward().getAwardNumber());
-	    	}
-	    	if (!awardPersonRemoves.isEmpty()) {
-	    		awardForm.setAwardPersonRemovalHistory(awardPersonRemoves);
-	    		return awardPersonRemoves;   
-	    	}    	
-	    	return new ArrayList<AwardPersonRemove>();
-	        }
-	    public ActionForward confirmProjectPerson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-	            throws Exception {          
-	            AwardPerson awardPerson = getProjectPersonnelBean(form).getProjectPersonnel().get(getLineToEdit(request));
-	            getProjectPersonnelBean(form).confirmProjectPeersonEntry(getLineToEdit(request));
-	            return this.confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, awardPerson, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));
-	       
-	        }*/
-	    
-	    public ActionForward basic(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-	 	   InstitutionalProposal instProp=null;	   
-	 	 SharedDocForm sharedDocForm=(SharedDocForm)form;
-	 	//   AwardForm awardForm = (AwardForm) form;
-	       
-	        
-	       if (sharedDocForm.getDocument().getDocumentNumber() == null) {
-	            //if we are entering this from the search results
-	            loadDocumentInFormDoc(request, sharedDocForm);
-	        }
-	    
-	 	 sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
-	 	 sharedDocForm.getMedusaBean().setModuleName("award");
-	 	 sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
-	 	 sharedDocForm.getMedusaBean().generateParentNodes();
-	        return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
-	    }
-	    public ActionForward headerTab(ActionMapping mapping, ActionForm form,HttpServletRequest request, HttpServletResponse response)
-				throws Exception {
-			
-			SharedDocForm sharedDocForm = (SharedDocForm) form;
-			
-			if (sharedDocForm.getNavigateFlag() != null ){
-				if(sharedDocForm.getNavigateFlag().equalsIgnoreCase("keyperson")) {
-				InstitutionalProposal instProp = null;
-
-				if (sharedDocForm.getDocument().getDocumentNumber() == null) {
-					loadDocumentInFormDoc(request, sharedDocForm);
-				}
-
-				sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
-				sharedDocForm.getMedusaBean().setModuleName("award");
-				sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
-				sharedDocForm.getMedusaBean().generateParentNodes();
-		
-				return mapping.findForward("basics");
-			   }
-			if (sharedDocForm.getNavigateFlag().equalsIgnoreCase("awardSharedDoc")) {
-				
-				if (sharedDocForm.getDocument().getDocumentNumber() == null) {
-					loadDocumentInFormDoc(request, sharedDocForm);
-					sharedDocForm.getAwardDocument().getAward().getAwardId();
-				}
-				return mapping.findForward("basic");
-			   }
-			}
-			return null;
-			
-		}
 	    //for unit details
 	    public ActionForward addUnitDetails(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
 	            throws Exception {
@@ -524,27 +442,24 @@ public class AwardSharedDocAction extends AwardAction {
 	            awardForm.getProjectPersonnelBean().removeUnitDetails(person);
 	            return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
 	        }
-	        private static final String CONFIRM_SYNC_UNIT_DETAILS = "confirmSyncUnitDetails";
-	        private static final String ADD_SYNC_UNIT_DETAILS = "addSyncUnitDetails";
-	        private static final String CONFIRM_SYNC_UNIT_CONTACTS_KEY = "confirmSyncUnitContactsKey";
 	        public ActionForward addNewProjectPersonUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
                     throws Exception {       
-Award award = ((AwardForm)form).getAwardDocument().getAward();
-AwardPersonUnit newPersonUnit = getProjectPersonnelBean(form).getNewAwardPersonUnit(getSelectedLine(request));
+	        	Award award = ((AwardForm)form).getAwardDocument().getAward();
+	        	AwardPersonUnit newPersonUnit = getProjectPersonnelBean(form).getNewAwardPersonUnit(getSelectedLine(request));
 
-if( newPersonUnit.isLeadUnit() && award.getLeadUnit() != null){
-return confirm(buildSyncUnitDetailsConfirmationQuestion(mapping, form, request, response), CONFIRM_SYNC_UNIT_DETAILS, ADD_SYNC_UNIT_DETAILS);
-}
-else
-{
-AwardPersonUnit unit = getProjectPersonnelBean(form).addNewProjectPersonUnit(getSelectedLine(request));
-if (unit != null) {
-return confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, unit, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));       
-} else {
-return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
-}
-}
-}
+	        	if( newPersonUnit.isLeadUnit() && award.getLeadUnit() != null){
+		        	return confirm(buildSyncUnitDetailsConfirmationQuestion(mapping, form, request, response), CONFIRM_SYNC_UNIT_DETAILS, ADD_SYNC_UNIT_DETAILS);
+	        	}
+	        	else
+	        	{
+		        	AwardPersonUnit unit = getProjectPersonnelBean(form).addNewProjectPersonUnit(getSelectedLine(request));
+		        	if (unit != null) {
+		        	return confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, unit, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));       
+		        	} else {
+		        	return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
+		        	}
+	        	}
+            }
 	        
 	        private StrutsConfirmation buildSyncUnitDetailsConfirmationQuestion(ActionMapping mapping, ActionForm form,
 	                HttpServletRequest request, HttpServletResponse response) throws Exception {        

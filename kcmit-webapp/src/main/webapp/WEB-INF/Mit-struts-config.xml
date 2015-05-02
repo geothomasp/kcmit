@@ -15,15 +15,17 @@
 	<action path="/sharedDoc*" name="SharedDocForm"
 		input="/WEB-INF/jsp/award/AwardSharedDoc.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"
 		scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
-		  <forward name="basics" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
-          <forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
+		  <forward name="basic" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
+          <forward name="keyPerson" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
+		  <forward name="awardSharedDoc" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
 	</action>
 	
 	<action path="/keyperson*" name="SharedDocForm"
 		input="/WEB-INF/jsp/award/KeyPerson.jsp" type="org.kuali.kra.award.web.struts.action.AwardSharedDocAction"
 		scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
-		  <forward name="basics" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
           <forward name="basic" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
+          <forward name="keyPerson" path="/WEB-INF/jsp/award/KeyPerson.jsp" />
+		  <forward name="awardSharedDoc" path="/WEB-INF/jsp/award/AwardSharedDoc.jsp" />
 	</action>
 	
       <action path="/DocCopyHandler" name="DocHandlerForm" scope="request" parameter="methodToCall"
