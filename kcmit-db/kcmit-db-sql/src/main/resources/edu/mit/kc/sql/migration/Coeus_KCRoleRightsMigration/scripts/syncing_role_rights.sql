@@ -385,6 +385,9 @@ begin
 	
 	update krim_role_t set kim_typ_id = '69' where role_nm = 'View Subcontract';
 
+	update krim_role_t set kim_typ_id = '1' where role_nm = 'View Award';
+	
+	update krim_role_t set kim_typ_id = '1' where role_nm = 'View Institute Proposal';
 	
 end;
 /
