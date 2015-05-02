@@ -22,6 +22,7 @@
     <param name="feedback.link.url">http://kc.mit.edu/</param>
     <param name="feedback.link.text">Get Help</param>
 
+    <param name="mit.website.url">http://osp.mit.edu/</param>
     <param name="mit.osp.website.url">http://osp.mit.edu/</param>
     <param name="mit.coeus.coi.application.url">https://coeus.mit.edu/coeus/coi.do?Menu_Id=004</param>
     <param name="citi.training.website.url">http://coeus.mit.edu/coeus/citi/CitiLogin.jsp</param>
