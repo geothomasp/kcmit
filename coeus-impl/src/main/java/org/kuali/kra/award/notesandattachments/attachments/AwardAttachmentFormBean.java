@@ -49,6 +49,9 @@ public class AwardAttachmentFormBean implements Serializable{
 
     private boolean maintainAwardAttachment=false;
     
+    private boolean canViewSharedDoc=false;
+    
+    private String awardSharedDocTypes;
     
     public AwardAttachmentFormBean(final AwardForm form) {
         this.form = form;
@@ -322,4 +325,40 @@ public class AwardAttachmentFormBean implements Serializable{
     private BusinessObjectService getBusinessObjectService() {
         return KcServiceLocator.getService(BusinessObjectService.class);
     }
+
+
+
+
+
+
+	public boolean isCanViewSharedDoc() {
+		return canViewSharedDoc;
+	}
+
+
+
+
+
+
+	public void setCanViewSharedDoc(boolean canViewSharedDoc) {
+		this.canViewSharedDoc = canViewSharedDoc;
+	}
+
+
+
+
+
+
+	public String getAwardSharedDocTypes() {
+		return awardSharedDocTypes;
+	}
+
+
+
+
+
+
+	public void setAwardSharedDocTypes(String awardSharedDocTypes) {
+		this.awardSharedDocTypes = awardSharedDocTypes;
+	}
 }

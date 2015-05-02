@@ -59,6 +59,9 @@ public class AwardAttachment extends AwardAssociate implements Comparable<AwardA
     private String documentStatusCode;
     
     private boolean modifyAttachment=false;
+    
+    private boolean viewAttachment = false;
+    
 
     /**
      * empty ctor to satisfy JavaBean convention.
@@ -364,4 +367,13 @@ public class AwardAttachment extends AwardAssociate implements Comparable<AwardA
             }
         }
     }
+
+	public boolean isViewAttachment() {
+		return viewAttachment;
+	}
+
+	public void setViewAttachment(boolean viewAttachment) {
+		this.viewAttachment = viewAttachment;
+	}
+
 }
