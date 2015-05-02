@@ -17,30 +17,25 @@
     </tr>
      <c:set var="viewSharedDoc" value="${KualiForm.awardProjectDocView || KualiForm.awardProjectSharedDocView}" />      
      <c:set var="sharedDocTypes" value="${KualiForm.awardSharedDocTypes}" />      
-     <c:if test="${viewSharedDoc}"> 
-	    <c:forEach items="${node.bo.awardAttachments}" var="attachment" varStatus="itrStatus">
-     		<c:set var="viewThisAttachment" value="true" />      
-    		<c:if test="${KualiForm.awardProjectSharedDocView && not fn:contains(sharedDocTypes, attachment.typeCode)}">
-     			<c:set var="viewThisAttachment" value="false" />      
-    		</c:if>
-	    	<c:if test="${attachment.documentStatusCode == 'A' && viewThisAttachment}">
-	          <tr>
-		         <td style="text-align: center;" colspan="2">
-		            <c:out value="${attachment.type.description}"/>
+     <c:forEach items="${node.bo.awardAttachments}" var="attachment" varStatus="itrStatus">
+    	<c:if test="${attachment.documentStatusCode == 'A' && attachment.viewAttachment}">
+          <tr>
+	         <td style="text-align: center;" colspan="2">
+	            <c:out value="${attachment.type.description}"/>
+	        </td>
+	        <td style="text-align: center;" colspan="2">
+	            <c:out value="${attachment.description}"/>
+	        </td>
+	         <td style="text-align: center;" colspan="2">
+	            <c:out value="${attachment.file.name}"/>
+	        </td>
+	        <td colspan="2"> 
+		        <html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}.id${attachment.awardId}"
+				src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
+				alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
 		        </td>
-		        <td style="text-align: center;" colspan="2">
-		            <c:out value="${attachment.description}"/>
-		        </td>
-		         <td style="text-align: center;" colspan="2">
-		            <c:out value="${attachment.file.name}"/>
-		        </td>
-		        <td colspan="2"> 
-			        <html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}.id${attachment.awardId}"
-					src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
-					alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
-			        </td>
-	          </tr>
-	        </c:if>
-	    </c:forEach>     
-    </c:if>
+          </tr>
+        </c:if>
+     </c:forEach>     
+
   </table>

@@ -31,12 +31,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.coeus.common.framework.attachment.AttachmentFile;
+import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
+import org.kuali.coeus.common.framework.medusa.MedusaBean;
 import org.kuali.coeus.common.framework.medusa.MedusaNode;
 import org.kuali.coeus.common.framework.medusa.MedusaService;
+import org.kuali.coeus.common.framework.module.CoeusModule;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.propdev.impl.attachment.Narrative;
 import org.kuali.coeus.propdev.impl.attachment.NarrativeAttachment;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
@@ -51,7 +56,10 @@ import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
+import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocument;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
+import org.kuali.kra.negotiations.bo.Negotiation;
+import org.kuali.kra.protocol.ProtocolBase;
 import org.kuali.kra.subaward.bo.SubAward;
 import org.kuali.kra.subaward.bo.SubAwardAttachments;
 import org.kuali.rice.kim.api.permission.PermissionService;
@@ -150,7 +158,81 @@ public class AwardSharedDocAction extends AwardAction {
 			 }	
 		      		
 	 return actionForward;
-	 }}
+	 }
+		 }
+	 
+	protected void populateAttachmentPermission(SharedDocForm sharedDocForm) {
+		String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+		List<SharedDocumentType> sharedDocumentTypes = getSharedDocumentService().getAllSharedDocumentTypes();
+		for(MedusaNode medusaNode : sharedDocForm.getMedusaBean().getParentNodes()) {
+	    	if (medusaNode.getData() instanceof DevelopmentProposal) {
+	    		DevelopmentProposal developmentProposal = (DevelopmentProposal) medusaNode.getData();
+	    		ProposalDevelopmentDocument proposalDevelopmentDocument = developmentProposal.getProposalDocument();
+	    	} else if (medusaNode.getData() instanceof InstitutionalProposal) {
+	    		InstitutionalProposal institutionalProposal = (InstitutionalProposal) medusaNode.getData();
+	    		InstitutionalProposalDocument institutionalProposalDocument = institutionalProposal.getInstitutionalProposalDocument();
+	    	} else if (medusaNode.getData() instanceof Award) {
+	    		processAwardAttachments((Award) medusaNode.getData(), currentUser, sharedDocumentTypes);
+	        } else if (medusaNode.getData() instanceof SubAward) {
+	        }
+		}
+	}
+	
+	protected void processAwardAttachments(Award award, String currentUser, List<SharedDocumentType> sharedDocumentTypes) {
+		boolean isUserPI = isUserPrincipalInvestigator(award);
+		if(isUserPI) {
+			setAwardAttachmentPermisson(award.getAwardAttachments(), true, false, null);
+		}else {
+			verifyAwardAttachmentPermission(award.getLeadUnitNumber(), currentUser, sharedDocumentTypes, award);
+		}
+	}
+	
+	protected boolean isUserPrincipalInvestigator(Award award) {
+	     for (AwardPerson person : award.getInvestigators()) {
+	            if (person.isPrincipalInvestigator()) {
+	                return true;
+	            }
+	      }
+	      return false;
+	} 	     
+	
+	protected void checkInstituteProposalPermission(String unitNumber, String currentUser) {
+		 if ((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "Edit Institutional Proposal")) ||
+		    (getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP",  "Create Institutional Proposal")) ||
+			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")) ||
+			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "VIEW_INST_PROPOSAL_DOC"))) {
+		 }else if((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "VIEW_SHARED_INST_PROPOSAL_DOC")) ||
+			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-SYS", "VIEW_ALL_SHARED_DOC"))) {
+		 }	
+	}
+	
+	protected void verifyAwardAttachmentPermission(String unitNumber, String currentUser, List<SharedDocumentType> sharedDocumentTypes, Award award) {
+		boolean viewAwardAttachment = false;
+		boolean viewSharedDoc = false;
+		String sharedDocTypes = null;
+		 if ((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "Maintain Award Attachments")) ||
+		    (getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "View Award Attachments")) ||
+			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "Create Award")) ||
+			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "Modify Award"))) {
+			 viewAwardAttachment = true;
+		 }else if((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "VIEW_SHARED_AWARD_DOC")) ||
+			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-SYS", "VIEW_ALL_SHARED_DOC"))) {
+			sharedDocTypes = getSharedDocumentService().getSharedDocumentTypeForModule(sharedDocumentTypes, CoeusModule.AWARD_MODULE_CODE);
+			viewSharedDoc = true;
+		 }
+		 setAwardAttachmentPermisson(award.getAwardAttachments(), viewAwardAttachment, viewSharedDoc, sharedDocTypes);
+	}
+	
+	protected void setAwardAttachmentPermisson(List<AwardAttachment> awardAttachments, boolean viewAwardAttachment, boolean viewSharedDoc, String sharedDocTypes) {
+		boolean viewAttachmentPermission = viewAwardAttachment;
+		for(AwardAttachment awardAttachment : awardAttachments) {
+			if(viewSharedDoc && sharedDocTypes != null && sharedDocTypes.contains(awardAttachment.getTypeCode())) {
+				viewAttachmentPermission = true;
+			}
+			awardAttachment.setViewAttachment(viewAttachmentPermission);
+		}
+	}
+	
     public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
      InstitutionalProposalAttachments attachment =null;
@@ -277,6 +359,10 @@ public class AwardSharedDocAction extends AwardAction {
 		
 		return sharedDocType;
 	}
+	
+	protected SharedDocumentService getSharedDocumentService() {
+	      return KcServiceLocator.getService(SharedDocumentService.class);
+	}
 
 	public void setSharedDocType(List<SharedDocumentType> sharedDocType) {
 		this.sharedDocType = sharedDocType;
@@ -285,6 +371,9 @@ public class AwardSharedDocAction extends AwardAction {
 	        return KimApiServiceLocator.getPermissionService();
 	    }  
 	  
+	  protected UnitAuthorizationService getUnitAuthorizationService() {
+	      return KcServiceLocator.getService(UnitAuthorizationService.class);
+	  }
 	  
 	  //For Key Person
 	  @Override
