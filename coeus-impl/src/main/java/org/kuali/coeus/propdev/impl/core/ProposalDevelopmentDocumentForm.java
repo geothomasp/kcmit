@@ -134,6 +134,7 @@ public class ProposalDevelopmentDocumentForm extends TransactionalDocumentFormBa
 
     private ProposalDevelopmentBudgetExt selectedBudget;
     private boolean sendNarrativeChangeNotification;
+    private transient String coiUrl;
 
 
 private ProposalPerson proposalPerson;
@@ -684,5 +685,11 @@ public void setProposalPerson(ProposalPerson proposalPerson) {
 	public void setCoiIntegrationMessage(String coiIntegrationMessage) {
 		this.coiIntegrationMessage = coiIntegrationMessage;
 	}
+	public String getCoiUrl() {
+		return coiUrl;
+	}
 
+	public void setCoiUrl(String coiUrl) {
+		this.coiUrl = coiUrl;
+	}
 }
