@@ -415,6 +415,30 @@ Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Blanket Approve TimeAndMoneyDocument','KC-AWARD');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Populate KC Groups','KC-SYS');
 Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Manager','KC-SYS','Default','Create PersonMassChangeDocument','KC-SYS');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Create Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Modify Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Save Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Submit Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Open Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Cancel Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','View Time And Money Document','KC-T');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Modify Award Report Tracking','KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Create Award','KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Modify Award','KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','View Proposal','KC-PD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','View Award','KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Submit Proposal Log','KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Initiate Document','KC-SYS');	
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Blanket Approve AwardDocument'	,'KC-AWARD');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Create Proposal Log'	,'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Open Proposal Log'	,'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Create Institutional Proposal',	'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Edit Institutional Proposal',	'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Save Institutional Proposal',	'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Submit Institutional Proposal',	'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Open Institutional Proposal'	,'KC-IP');
+Insert into TMP_ROLE_PERM_MAPPING (ROLE_NM,ROLE_NMSPC_CD,ROLE_KIM_TYP_NM,PERM_NM,PERM_NMSPC_CD) values ('Award Modifier','KC-AWARD','UnitHierarchy','Submit Award',	'KC-AWARD');
+
 
 commit;
 --- Adding final mapping to a temp table START
