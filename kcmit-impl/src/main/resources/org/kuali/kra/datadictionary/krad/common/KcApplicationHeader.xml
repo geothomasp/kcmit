@@ -94,13 +94,11 @@
                             </property>
                             <property name="actionImage" ref="Kc-Header-ApplicationLogo"/>
                         </bean>
-                        <bean parent="Uif-ActionLink">
-                            <property name="actionUrl">
-                                <bean parent="Uif-Url" p:baseUrl="@{#ConfigProperties['mit.website.url']}/kc-krad"
-                                      p:controllerMapping="/landingPage"/>
-                            </property>
-                            <property name="actionImage" ref="Kc-Header-ApplicationLogo2"/>
-                        </bean>
+                        
+         <bean parent="Uif-ActionImage"  p:actionScript="window.open('@{#ConfigProperties['mit.website.url']}', '_blank');">
+           <property name="actionImage" ref="Kc-Header-ApplicationLogo2"/>
+        </bean>
+                        
                     </list>
                 </property>
             </bean>
