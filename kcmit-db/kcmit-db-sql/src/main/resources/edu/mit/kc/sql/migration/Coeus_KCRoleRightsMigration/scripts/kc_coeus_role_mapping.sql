@@ -64,5 +64,8 @@ Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Rolodex Mainta
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Modify Negotiations','Negotiation Creator');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('Maintain Workload Balancing','WL Super User');
 Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('MAINTAIN USER ROLES','Manager');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View Shared Award Documents','View Shared Award Attachments');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View Shared Institute Proposal Documents' , 'View Shared Institute Proposal Attachments');
+Insert into KC_COEUS_ROLE_MAPPING (COEUS_ROLES,KC_ROLES) values ('View All Shared Documents','View All Shared Attachments');
 commit
 /

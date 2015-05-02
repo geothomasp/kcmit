@@ -96,6 +96,10 @@ Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACT
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View Shared Award Documents','KC-ADM','View Shared Award Attachments','KC-ADM','U');
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View Shared Institute Proposal Documents','KC-ADM','View Shared Institute Proposal Attachments','KC-ADM','U');
 Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View Subcontract Documents','KC-ADM','View Subcontract Attachments','KC-ADM','U');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View Subcontract Documents','KC-ADM',null,null,'D');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View Shared Award Documents','KC-ADM',null,null,'D');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View Shared Institute Proposal Documents','KC-ADM',null,null,'D');
+Insert into KC_ROLE_UPDATE_ACTION (ROLE_NM,NMSPC_CD,NEW_ROLE_NM,NEW_NMSPC_CD,ACTION_TYP) values ('View All Shared Documents','KC-ADM',null,null,'D');
 commit
 /
 commit
