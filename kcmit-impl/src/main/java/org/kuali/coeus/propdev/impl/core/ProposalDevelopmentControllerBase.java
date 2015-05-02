@@ -286,14 +286,23 @@ public abstract class ProposalDevelopmentControllerBase {
          DialogResponse dialogResponse = form.getDialogResponse(CONFIRM_MY_COI_DIALOG_ID);
          if (StringUtils.equalsIgnoreCase(form.getPageId(), Constants.KEY_PERSONNEL_PAGE) ||
         		 StringUtils.equalsIgnoreCase(form.getPageId(),"PropDev-CertificationView-Page")){
+        	 String coiApplicationUrl =  getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "LINK_TO_COI");
+        	 String proposalNumber = proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber();
+				StringBuilder proposalPrefix = new StringBuilder();
+				for(int count=0;count<=8; count++){
+					if(proposalNumber.length()-1 <= count){
+						proposalPrefix.append("0");
+					}
+					count ++;
+				}
+			form.setCoiUrl(coiApplicationUrl+"&proposalNumber="+proposalPrefix+proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber());
         	 String pageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
              if (StringUtils.isBlank(pageId)){
             	 if(dialogResponse!=null){
             		 boolean confirmResetDefault = dialogResponse.getResponseAsBoolean();
             		 if(confirmResetDefault){
-            			 String coiApplicationUrl =  getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "LINK_TO_COI");
             			 if(coiApplicationUrl!=null){
-            				 return getModelAndViewService().performRedirect(form, coiApplicationUrl+"&proposalNumber="+proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber());
+            				 return getModelAndViewService().getModelAndView(form, pageId);
             			 }
             		 }else{
             			 return getModelAndViewService().getModelAndView(form, pageId);
