@@ -94,15 +94,13 @@
                             </property>
                             <property name="actionImage" ref="Kc-Header-ApplicationLogo"/>
                         </bean>
-                        <bean parent="Uif-Link" p:linkText="OSP Web Site" p:target="_blank"
-                      			p:href="@{#ConfigProperties['mit.website.url']}"/>
-                        <!-- <bean parent="Uif-ActionLink">
+                        <bean parent="Uif-ActionLink">
                             <property name="actionUrl">
-                                <bean parent="Uif-Url" p:baseUrl="@{#ConfigProperties['mit.url']}" 
+                                <bean parent="Uif-Url" p:baseUrl="@{#ConfigProperties['mit.website.url']}/kc-krad"
                                       p:controllerMapping="/landingPage"/>
                             </property>
                             <property name="actionImage" ref="Kc-Header-ApplicationLogo2"/>
-                        </bean> -->
+                        </bean>
                     </list>
                 </property>
             </bean>
