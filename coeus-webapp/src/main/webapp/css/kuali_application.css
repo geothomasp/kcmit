@@ -100,3 +100,97 @@ input.align-right {
 .changedResetBtn:hover {
 	cursor: pointer;
 }
+
+ .alert-priority1 {
+	 background-image: url('../static/images/priority1.png')!important;
+	 background-position: 0 0 !important;
+	 margin: 5px;
+	 color: green;
+	 position: relative;
+	 top: .1em;
+	 cursor: pointer;
+}
+
+.alert-priority2 {
+    background-image: url('../static/images/priority2.png')!important;
+    background-position: 0 0 !important;
+    margin: 5px;
+    color: red;
+    position: relative;
+    top: .1em;
+    cursor: pointer;
+}
+
+.alert-priority3 {
+	background-image: url('../static/images/priority3.png')!important;
+    background-position: 0 0 !important;
+    margin: 5px;
+    color: yellow;
+    position: relative;
+    top: .1em;
+    cursor: pointer;
+}
+
+.icon-warning-sign {
+  background-position: -144px -120px;
+}
+
+.icon-warning-sign:before {
+  content: "\e89a";
+  visibility: hidden;
+}
+
+
+.icon-warning-sign.alert-priority1:after {
+	content: "Low Priority";visibility: hidden;cursor: pointer;
+	position: relative;
+    top: 15px;
+	padding: 3px 10px;
+	background: #FFF;
+	box-shadow: 0px 1px 2px -1px #000;
+	color: #000;
+	line-height: normal;
+	display: inline-block;
+	z-index: 1;
+	min-width: 100px;
+	text-align: center;
+}
+.icon-warning-sign.alert-priority1:hover:after {
+	visibility: visible;
+}
+
+.icon-warning-sign.alert-priority2:after {
+	content: "High Priority";visibility: hidden;cursor: pointer;
+	position: relative;
+    top: 15px;
+	padding: 3px 10px;
+	background: #FFF;
+	box-shadow: 0px 1px 2px -1px #000;
+	color: #000;
+	line-height: normal;
+	display: inline-block;
+	z-index: 1;
+	min-width: 100px;
+	text-align: center;
+}
+.icon-warning-sign.alert-priority2:hover:after {
+	visibility: visible;
+}
+
+.icon-warning-sign.alert-priority3:after {
+	content: "Unknown Priority";visibility: hidden;cursor: pointer;
+	position: relative;
+    top: 15px;
+	padding: 3px 10px;
+	background: #FFF;
+	box-shadow: 0px 1px 2px -1px #000;
+	color: #000;
+	line-height: normal;
+	display: inline-block;
+	z-index: 1;
+	min-width: 100px;
+	text-align: center;
+}
+.icon-warning-sign.alert-priority3:hover:after {
+	visibility: visible;
+}

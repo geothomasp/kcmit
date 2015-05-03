@@ -154,6 +154,7 @@ implements Permissionable, SequenceOwner<SubAward>, Negotiable {
     private List<SubAwardTemplateInfo> subAwardTemplateInfo;
     private List<SubAwardPrintAgreement> subAwardPrintAgreement;
     private List<SubAwardForms> subAwardForms;
+    private transient String organizationRisk="3";;
     
     
     
@@ -1594,4 +1595,12 @@ implements Permissionable, SequenceOwner<SubAward>, Negotiable {
     public void setPerformanceEnddate(Date performanceEnddate) {
         this.performanceEnddate = performanceEnddate;
     }
+
+	public String getOrganizationRisk() {
+		return organizationRisk;
+	}
+
+	public void setOrganizationRisk(String organizationRisk) {
+		this.organizationRisk = organizationRisk;
+	}
 }

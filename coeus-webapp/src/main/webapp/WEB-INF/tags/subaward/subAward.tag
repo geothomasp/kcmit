@@ -228,9 +228,9 @@
                 <td>
                       <kul:htmlControlAttribute property="document.subAwardList[0].requisitionId" readOnly="${readOnly}" attributeEntry="${subAwardAttributes.requisitionId}" />
                 </td>
-                 <th>&nbsp;</th>
+                 <th><div align="right">Risk</div></th>
                 <td>
-                      &nbsp;
+                      <div class="icon-warning-sign alert-priority${KualiForm.document.subAwardList[0].organizationRisk}"></div> 
                 </td>
             </tr>
             </tr>
