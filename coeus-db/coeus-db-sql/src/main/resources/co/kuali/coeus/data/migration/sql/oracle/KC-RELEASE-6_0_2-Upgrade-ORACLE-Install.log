@@ -1,57 +1,18 @@
-
-Table altered.
-
-
-Table altered.
-
-
-Function created.
-
-ALTER TABLE BUDGET_SUB_AWARDS ADD FILE_DATA_ID VARCHAR2(36)
-                                  *
-ERROR at line 1:
-ORA-01430: column being added already exists in table 
-
-
-ALTER TABLE BUDGET_SUB_AWARDS ADD XML_DATA_ID VARCHAR2(36)
-                                  *
-ERROR at line 1:
-ORA-01430: column being added already exists in table 
-
-
-UPDATE BUDGET_SUB_AWARDS SET FILE_DATA_ID = SYS_GUID() WHERE SUB_AWARD_XFD_FILE IS NOT NULL
-                                                             *
-ERROR at line 1:
-ORA-00904: "SUB_AWARD_XFD_FILE": invalid identifier 
-
-
-UPDATE BUDGET_SUB_AWARDS SET XML_DATA_ID = SYS_GUID() WHERE SUB_AWARD_XML_FILE IS NOT NULL
-                                                            *
-ERROR at line 1:
-ORA-00904: "SUB_AWARD_XML_FILE": invalid identifier 
-
-
-INSERT INTO FILE_DATA (SELECT FILE_DATA_ID, SUB_AWARD_XFD_FILE FROM BUDGET_SUB_AWARDS WHERE FILE_DATA_ID IS NOT NULL)
-                                            *
-ERROR at line 1:
-ORA-00904: "SUB_AWARD_XFD_FILE": invalid identifier 
-
-
-
-Table altered.
-
-    ADD CONSTRAINT FK3_BUDGET_SUB_AWARDS
+    ADD CONSTRAINT narrative_attachment_fk1
                    *
 ERROR at line 2:
-ORA-02298: cannot validate (KCSO.FK3_BUDGET_SUB_AWARDS) - parent keys not found 
+ORA-02298: cannot validate (KCSO.NARRATIVE_ATTACHMENT_FK1) - parent keys not 
+found 
 
 
-DECLARE
-*
-ERROR at line 1:
-ORA-00904: "SUB_AWARD_XML_FILE": invalid identifier 
-ORA-06512: at line 7 
+    FOREIGN KEY (file_data_id)
+    *
+ERROR at line 3:
+ORA-02275: such a referential constraint already exists in the table 
 
+
+
+Warning: Function created with compilation errors.
 
 ALTER TABLE BUDGET_SUB_AWARDS DROP COLUMN SUB_AWARD_XFD_FILE
                                           *
@@ -230,7 +191,69 @@ ERROR at line 1:
 ORA-00001: unique constraint (KCSO.ARG_VALUE_LOOKUPP1) violated 
 
 
+alter table NARRATIVE_ATTACHMENT add UPLOAD_TIMESTAMP date
+                                     *
+ERROR at line 1:
+ORA-01430: column being added already exists in table 
+
+
+alter table NARRATIVE_ATTACHMENT add UPLOAD_USER varchar2(100)
+                                     *
+ERROR at line 1:
+ORA-01430: column being added already exists in table 
+
+
+
+82255 rows updated.
+
+alter table NARRATIVE_ATTACHMENT modify UPLOAD_TIMESTAMP date not null
+                                        *
+ERROR at line 1:
+ORA-01442: column to be modified to NOT NULL is already NOT NULL 
+
+
+alter table NARRATIVE_ATTACHMENT modify UPLOAD_USER varchar2(100) not null
+                                        *
+ERROR at line 1:
+ORA-01442: column to be modified to NOT NULL is already NOT NULL 
+
+
+alter table EPS_PROP_PERSON_BIO_ATTACHMENT add UPLOAD_TIMESTAMP date
+                                               *
+ERROR at line 1:
+ORA-01430: column being added already exists in table 
+
+
+alter table EPS_PROP_PERSON_BIO_ATTACHMENT add UPLOAD_USER varchar2(100)
+                                               *
+ERROR at line 1:
+ORA-01430: column being added already exists in table 
+
+
+
+0 rows updated.
+
+alter table EPS_PROP_PERSON_BIO_ATTACHMENT modify UPLOAD_TIMESTAMP date not null
+                                                  *
+ERROR at line 1:
+ORA-01442: column to be modified to NOT NULL is already NOT NULL 
+
+
+alter table EPS_PROP_PERSON_BIO_ATTACHMENT modify UPLOAD_USER varchar2(100) not null
+                                                  *
+ERROR at line 1:
+ORA-01442: column to be modified to NOT NULL is already NOT NULL 
+
+
+
+PL/SQL procedure successfully completed.
+
 
 Commit complete.
 
-SQL> exit
+
+Commit complete.
+
+
+Commit complete.
+

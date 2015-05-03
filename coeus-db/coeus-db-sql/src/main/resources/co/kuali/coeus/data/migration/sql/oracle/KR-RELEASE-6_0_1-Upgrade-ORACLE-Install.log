@@ -80,22 +80,16 @@
 1 row updated.
 
 
-1 row updated.
+0 rows updated.
 
 
 1 row updated.
 
 
-1 row updated.
-
-
-1 row deleted.
+0 rows updated.
 
 
 0 rows deleted.
-
-
-1 row deleted.
 
 
 0 rows deleted.
@@ -103,8 +97,11 @@
 
 0 rows updated.
 
+INSERT INTO krcr_parm_t (APPL_ID, NMSPC_CD, CMPNT_CD, PARM_NM, VER_NBR, PARM_TYP_CD, VAL, PARM_DESC_TXT, EVAL_OPRTR_CD, OBJ_ID) VALUES ('KC', 'KC-GEN', 'Document', 'FIN_SYSTEM_INTEGRATION_ON_SPONSOR', 1, 'CONFG', 'OFF', 'Parameter to set the financial system integration feature ON or OFF for Sponsor.', 'A', SYS_GUID())
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
 
-1 row created.
 
 
 1 row updated.
@@ -205,23 +202,41 @@
 
 1 row updated.
 
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
+INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
 
 
-1 row created.
+INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
 
 
-1 row created.
+INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
 
 
-1 row created.
+INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
+
+
+INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
+
+
+INSERT INTO KRCR_PARM_T (nmspc_cd, cmpnt_cd, parm_nm, OBJ_ID, VER_NBR, parm_typ_cd, val, parm_desc_txt, eval_oprtr_cd, appl_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRNS_PARM_TP1) violated 
+
 
 
 Commit complete.
