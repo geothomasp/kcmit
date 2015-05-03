@@ -491,7 +491,6 @@
     <property name="criteriaFields">
       <list>
         <bean p:propertyName="awardNumber" parent="Uif-LookupCriteriaInputField"/>
-        <bean p:propertyName="award.accountNumber" parent="Uif-LookupCriteriaInputField"/>               
         <bean p:propertyName="piName" parent="Uif-LookupCriteriaInputField"/>
         <bean p:propertyName="dueDate" parent="Uif-LookupCriteriaInputField"/>
         <bean p:propertyName="reportClassCode" parent="Uif-LookupCriteriaInputField"/>
@@ -513,7 +512,6 @@
     <property name="resultFields">
       <list>
         <bean p:propertyName="awardNumber" parent="Uif-DataField"/>
-         <bean p:propertyName="award.accountNumber" parent="Uif-DataField"/>
         <bean p:propertyName="piName" parent="Uif-DataField"/>
         <bean p:propertyName="dueDate" parent="Uif-DataField"/>
         <bean p:propertyName="reportClass.description" parent="Uif-DataField"/>
