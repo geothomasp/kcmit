@@ -73,7 +73,8 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
     
     private InstitutionalProposalAttachmentsData file;
 		
-	
+    private boolean viewAttachment = false;
+
 
     public InstitutionalProposalAttachments() {
         super();
@@ -328,6 +329,14 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
             }
         }
     }
+
+	public boolean isViewAttachment() {
+		return viewAttachment;
+	}
+
+	public void setViewAttachment(boolean viewAttachment) {
+		this.viewAttachment = viewAttachment;
+	}
 	
 	
 	

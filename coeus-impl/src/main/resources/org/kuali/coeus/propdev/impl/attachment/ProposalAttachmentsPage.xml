@@ -120,19 +120,21 @@
         </property>
         <property name="collection.items">
             <list>
-                <bean parent="PropDev-AttachmentPage-LinkField" p:order="10"/>
+                <bean parent="PropDev-AttachmentPage-LinkField" p:render="@{#line.viewAttachment}" p:order="10"/>
                 <bean parent="Uif-InputField" p:propertyName="narrativeTypeCode" p:readOnlyDisplayReplacementPropertyName="narrativeType.description"
                       p:onChangeScript="Kc.PropDev.Attachments.checkforExistingAttachmentsOnParent(this)"
                       p:onClickScript="Kc.PropDev.Attachments.capturePreviousNarrativeType(this)"
-                      p:fieldLabel.labelText="Type" p:enableAutoQuickfinder="false" p:width="5%" p:order="20" />
-				<bean parent="PropDev-AttachmentPage-ModuleStatus" p:order="30" />
+                      p:fieldLabel.labelText="Type" p:enableAutoQuickfinder="false" p:width="5%" p:order="20" 
+                      p:render="@{#line.viewAttachment}"/>
+				<bean parent="PropDev-AttachmentPage-ModuleStatus" p:order="30" p:render="@{#line.viewAttachment}"/>
                 <bean parent="Uif-InputField" p:propertyName="moduleTitle"
-                      p:order="40" />
-                <bean parent="Uif-MessageField" p:messageText="@{#ViewHelper.displayFullName(#line.uploadUserDisplay)}" p:fieldLabel.labelText="Uploaded By" p:width="20%" p:order="50" />
+                      p:order="40" p:render="@{#line.viewAttachment}"/>
+                <bean parent="Uif-MessageField" p:messageText="@{#ViewHelper.displayFullName(#line.uploadUserDisplay)}" p:fieldLabel.labelText="Uploaded By" p:width="20%" p:order="50" 
+                p:render="@{#line.viewAttachment}"/>
                 <bean parent="Uif-InputField" p:propertyName="timestampDisplay"
                       p:fieldLabel.labelText="Posted Timestamp"
-                      p:readOnly="true" p:width="20%" p:order="60"/>
-                <bean parent="Uif-FieldGroupBase" p:order="70" p:render="@{#parent.readOnly and #editModes['replaceNarratives'] and pageId eq 'PropDev-AttachmentsPage'}" p:fieldLabel.labelText="Actions">
+                      p:readOnly="true" p:width="20%" p:order="60" p:render="@{#line.viewAttachment}"/>
+                <bean parent="Uif-FieldGroupBase" p:order="70" p:render="@{#line.viewAttachment and #parent.readOnly and #editModes['replaceNarratives'] and pageId eq 'PropDev-AttachmentsPage'}" p:fieldLabel.labelText="Actions">
                     <property name="group">
                         <bean parent="Uif-HorizontalBoxGroup">
                             <property name="items">

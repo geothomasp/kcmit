@@ -49,6 +49,7 @@ public class SubAwardAttachments extends SubAwardAssociate implements Comparable
      private String fileNameSplit;
      private String documentStatusCode;
      private boolean modifyAttachment=false;
+     private boolean viewAttachment = false;
      /**
      * Gets the fileNameSplit attribute. 
      * @return Returns the fileNameSplit.
@@ -412,6 +413,14 @@ public class SubAwardAttachments extends SubAwardAssociate implements Comparable
         return this.getAttachmentId().compareTo(o.getAttachmentId());
        
     }
+
+	public boolean isViewAttachment() {
+		return viewAttachment;
+	}
+
+	public void setViewAttachment(boolean viewAttachment) {
+		this.viewAttachment = viewAttachment;
+	}
     
      
 }

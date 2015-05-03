@@ -133,6 +133,9 @@ public class Narrative extends KcPersistableBusinessObjectBase implements Hierar
     @Transient
     private transient KcAttachmentService kcAttachmentService;
 
+    @Transient
+    private boolean viewAttachment = false;
+
     @Override
     public void init(MultipartFile multipartFile) throws Exception {
         this.name = multipartFile.getOriginalFilename();
@@ -674,5 +677,13 @@ public class Narrative extends KcPersistableBusinessObjectBase implements Hierar
     private KcAttachmentDataDao getKcAttachmentDao() {
         return KcServiceLocator.getService(KcAttachmentDataDao.class);
     }
+
+	public boolean isViewAttachment() {
+		return viewAttachment;
+	}
+
+	public void setViewAttachment(boolean viewAttachment) {
+		this.viewAttachment = viewAttachment;
+	}
 }
 
