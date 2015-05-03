@@ -74,6 +74,7 @@ public class InstitutionalProposalAttachmentsAction extends InstitutionalProposa
         InstitutionalProposalAddAttachmentRuleEvent event = new InstitutionalProposalAddAttachmentRuleEvent(errorPath, instProposal, instProposalAttachment);
         if(new InstitutionalProposalAddAttachmentRuleImpl().processAddInstitutionalProposalAttachmentBusinessRules(event)){
         ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean().addNewInstitutionalProposalAttachment();
+        instProposalAttachment.setViewAttachment(true);
         }
         return mapping.findForward(Constants.MAPPING_BASIC);
     }

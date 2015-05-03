@@ -100,7 +100,8 @@ public class SubAwardTemplateInformationAction extends SubAwardAction {
          if(getKualiRuleService().applyRules(new AddSubAwardAttachmentEvent(EMPTY_STRING, "", subAward, subAwardAttachment ))){
              subAwardAttachment.populateAttachment();
              ((SubAwardForm) form).getSubAwardAttachmentFormBean().addNewAwardAttachment();
-        }
+             subAwardAttachment.setViewAttachment(true);
+       }
         return mapping.findForward(Constants.MAPPING_BASIC);
     }
     

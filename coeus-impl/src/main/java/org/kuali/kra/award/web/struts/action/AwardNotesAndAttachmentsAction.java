@@ -144,6 +144,7 @@ public class AwardNotesAndAttachmentsAction extends AwardAction {
         AwardDocument award = awardForm.getAwardDocument();
         if(getKualiRuleService().applyRules(new AddAwardAttachmentEvent(EMPTY_STRING, "", award, awardAttachment ))){
             ((AwardForm) form).getAwardAttachmentFormBean().addNewAwardAttachment();
+            awardAttachment.setViewAttachment(true);
         }
         return mapping.findForward(Constants.MAPPING_BASIC);
     }
