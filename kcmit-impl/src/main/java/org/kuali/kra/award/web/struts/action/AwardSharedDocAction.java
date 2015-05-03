@@ -104,134 +104,23 @@ public class AwardSharedDocAction extends AwardAction {
     	 }else{
 		 SharedDocForm sharedDocForm=(SharedDocForm)form;
 	
-		 AwardDocument document=sharedDocForm.getAwardDocument();
 		 ActionForward actionForward = super.execute(mapping, form, request, response); 
 		 String currentUser = GlobalVariables.getUserSession().getPrincipalId();
 		 
 		 sharedDocForm.setPi(isLoggedInUserPI(currentUser,sharedDocForm));
 
-			
 		 sharedDocForm.setKpMaintenanceRole(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", KcMitConstants.AWARD_KEYPERSON_MAINTENANCE_ROLE));  //Move to Constants
 		 sharedDocForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
 		 List<SharedDocumentType>sharedDocTypeNew=getSharedDocType();
 		 sharedDocForm.setSharedDocType(sharedDocTypeNew);
-		 if(!sharedDocForm.isAwardProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments"))||
-				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments"))||
-				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award"))|| 
-				(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award")) ||
-				sharedDocForm.isPi()){ 
-				 sharedDocForm.setAwardProjectDocView(true);			 
-				
-			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
-				 sharedDocForm.setAwardProjectSharedDocView(true);
-			 }
-		 if(!sharedDocForm.isSubAwardProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "CREATE SUBAWARD"))||
-							 (getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS")) ||
-							 sharedDocForm.isPi()){
-				 sharedDocForm.setSubAwardProjectDocView(true);
-			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_SUBAWARD_DOC"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
-				 sharedDocForm.setSubAwardProjectSharedDocView(true);
-			 }}	}	
-		 if(!sharedDocForm.isIpProjectDocView()){
-			 if ((getPermissionService().hasPermission(currentUser, "KC-IP", "Edit Institutional Proposal"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-IP", "Create Institutional Proposal"))||
-							 (getPermissionService().hasPermission(currentUser, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")||
-									 (getPermissionService().hasPermission(currentUser, "KC-IP", "VIEW_INST_PROPOSAL_DOC"))) ||
-									 sharedDocForm.isPi()){
-				 sharedDocForm.setIpProjectDocView(true);
-			 }else if((getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_INST_PROPOSAL_DOC"))||
-					 (getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC"))){
-				 sharedDocForm.setIpProjectSharedDocView(true);
-			 }}	
-		 if(!sharedDocForm.isPropProjectDocView()){
-			 if (getPermissionService().hasPermission(currentUser, "KC-PD", "VIEW_DEV_PROPOSAL_DOC") ||
-					 sharedDocForm.isPi()){
-									 sharedDocForm.setPropProjectDocView(true);
-			 }else if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_ALL_SHARED_DOC")){
-				 sharedDocForm.setPropProjectSharedDocView(true);
-			 }
-			 }	
+		 
+		 getSharedDocumentService().populateAttachmentPermission(sharedDocForm.getMedusaBean());
+		 
 		      		
 	 return actionForward;
 	 }
 		 }
 	 
-	protected void populateAttachmentPermission(SharedDocForm sharedDocForm) {
-		String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-		List<SharedDocumentType> sharedDocumentTypes = getSharedDocumentService().getAllSharedDocumentTypes();
-		for(MedusaNode medusaNode : sharedDocForm.getMedusaBean().getParentNodes()) {
-	    	if (medusaNode.getData() instanceof DevelopmentProposal) {
-	    		DevelopmentProposal developmentProposal = (DevelopmentProposal) medusaNode.getData();
-	    		ProposalDevelopmentDocument proposalDevelopmentDocument = developmentProposal.getProposalDocument();
-	    	} else if (medusaNode.getData() instanceof InstitutionalProposal) {
-	    		InstitutionalProposal institutionalProposal = (InstitutionalProposal) medusaNode.getData();
-	    		InstitutionalProposalDocument institutionalProposalDocument = institutionalProposal.getInstitutionalProposalDocument();
-	    	} else if (medusaNode.getData() instanceof Award) {
-	    		processAwardAttachments((Award) medusaNode.getData(), currentUser, sharedDocumentTypes);
-	        } else if (medusaNode.getData() instanceof SubAward) {
-	        }
-		}
-	}
-	
-	protected void processAwardAttachments(Award award, String currentUser, List<SharedDocumentType> sharedDocumentTypes) {
-		boolean isUserPI = isUserPrincipalInvestigator(award);
-		if(isUserPI) {
-			setAwardAttachmentPermisson(award.getAwardAttachments(), true, false, null);
-		}else {
-			verifyAwardAttachmentPermission(award.getLeadUnitNumber(), currentUser, sharedDocumentTypes, award);
-		}
-	}
-	
-	protected boolean isUserPrincipalInvestigator(Award award) {
-	     for (AwardPerson person : award.getInvestigators()) {
-	            if (person.isPrincipalInvestigator()) {
-	                return true;
-	            }
-	      }
-	      return false;
-	} 	     
-	
-	protected void checkInstituteProposalPermission(String unitNumber, String currentUser) {
-		 if ((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "Edit Institutional Proposal")) ||
-		    (getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP",  "Create Institutional Proposal")) ||
-			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "MAINTAIN_INST_PROPOSAL_DOC")) ||
-			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "VIEW_INST_PROPOSAL_DOC"))) {
-		 }else if((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-IP", "VIEW_SHARED_INST_PROPOSAL_DOC")) ||
-			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-SYS", "VIEW_ALL_SHARED_DOC"))) {
-		 }	
-	}
-	
-	protected void verifyAwardAttachmentPermission(String unitNumber, String currentUser, List<SharedDocumentType> sharedDocumentTypes, Award award) {
-		boolean viewAwardAttachment = false;
-		boolean viewSharedDoc = false;
-		String sharedDocTypes = null;
-		 if ((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "Maintain Award Attachments")) ||
-		    (getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "View Award Attachments")) ||
-			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "Create Award")) ||
-			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "Modify Award"))) {
-			 viewAwardAttachment = true;
-		 }else if((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-AWARD", "VIEW_SHARED_AWARD_DOC")) ||
-			(getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-SYS", "VIEW_ALL_SHARED_DOC"))) {
-			sharedDocTypes = getSharedDocumentService().getSharedDocumentTypeForModule(sharedDocumentTypes, CoeusModule.AWARD_MODULE_CODE);
-			viewSharedDoc = true;
-		 }
-		 setAwardAttachmentPermisson(award.getAwardAttachments(), viewAwardAttachment, viewSharedDoc, sharedDocTypes);
-	}
-	
-	protected void setAwardAttachmentPermisson(List<AwardAttachment> awardAttachments, boolean viewAwardAttachment, boolean viewSharedDoc, String sharedDocTypes) {
-		boolean viewAttachmentPermission = viewAwardAttachment;
-		for(AwardAttachment awardAttachment : awardAttachments) {
-			if(viewSharedDoc && sharedDocTypes != null && sharedDocTypes.contains(awardAttachment.getTypeCode())) {
-				viewAttachmentPermission = true;
-			}
-			awardAttachment.setViewAttachment(viewAttachmentPermission);
-		}
-	}
 	
     public ActionForward viewAttachmentIp(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {  
@@ -367,13 +256,6 @@ public class AwardSharedDocAction extends AwardAction {
 	public void setSharedDocType(List<SharedDocumentType> sharedDocType) {
 		this.sharedDocType = sharedDocType;
 	}
-	  private PermissionService getPermissionService() {
-	        return KimApiServiceLocator.getPermissionService();
-	    }  
-	  
-	  protected UnitAuthorizationService getUnitAuthorizationService() {
-	      return KcServiceLocator.getService(UnitAuthorizationService.class);
-	  }
 	  
 	  //For Key Person
 	  @Override

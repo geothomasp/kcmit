@@ -52,6 +52,7 @@ import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
 import org.kuali.coeus.propdev.impl.sapfeed.SapFeedDetails;
 import org.kuali.coeus.propdev.impl.sapfeed.SapFeedService;
@@ -288,17 +289,22 @@ public class AwardAction extends BudgetParentActionBase {
     
     protected void handleAttachmentsDocument(ActionForm form) {
     	String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
-        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
-        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
-        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
-          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
-          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
-        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
-    		if(awardAttachmentform != null) {
-    			awardAttachmentform.setCanViewAttachment(true);
-    		}
-        }
+        AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+    	
+		getSharedDocumentService().processAwardAttachments(awardDocument.getAward());
+    	
+//        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
+//        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
+//        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
+//        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
+//          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
+//          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
+//        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
+//    		if(awardAttachmentform != null) {
+//    			awardAttachmentform.setCanViewAttachment(true);
+//    		}
+//        }
         
         if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
         		getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
@@ -2203,5 +2209,8 @@ public class AwardAction extends BudgetParentActionBase {
         return KimApiServiceLocator.getPermissionService();
 	}
     
+	protected SharedDocumentService getSharedDocumentService() {
+	      return KcServiceLocator.getService(SharedDocumentService.class);
+	}
   
 }

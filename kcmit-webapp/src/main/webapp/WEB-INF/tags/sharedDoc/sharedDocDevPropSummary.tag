@@ -12,15 +12,9 @@
        <th colspan="2">Uploaded Date</th>
       <th colspan="2">Uploaded User</th>
     </tr>
-     	 <c:set var="sharedDocTypes" value="${KualiForm.developmentProposalSharedDocTypes}" />      
-    	 <c:set var="viewSharedDoc" value="${KualiForm.propProjectDocView || KualiForm.propProjectSharedDocView}" />
-    	   <c:if test="${viewSharedDoc}">
+
     <c:forEach items="${node.bo.narratives}" var="pdAttachment" varStatus="itrStatus">
-     		<c:set var="viewThisAttachment" value="true" />      
-    		<c:if test="${KualiForm.propProjectSharedDocView && not fn:contains(sharedDocTypes, pdAttachment.typeCode)}">
-     			<c:set var="viewThisAttachment" value="false" />      
-    		</c:if>
-	    	<c:if test="${viewThisAttachment}">
+	    	<c:if test="${pdAttachment.viewAttachment}">
 			      <tr>
 			        <td style="text-align: center;" colspan="2">
 			           <c:out value="${pdAttachment.narrativeType.description}"/>                        
@@ -45,5 +39,5 @@
 			      </tr>
 	    	</c:if>
     </c:forEach>
-</c:if>   
+
   </table>
