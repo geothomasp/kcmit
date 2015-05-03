@@ -4,7 +4,16 @@ import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
 import org.kuali.coeus.common.framework.sponsor.hierarchy.SponsorHierarchy;
 import org.kuali.coeus.common.framework.unit.admin.UnitAdministrator;
+import org.kuali.coeus.common.notification.impl.NotificationContext;
+import org.kuali.coeus.common.notification.impl.bo.KcNotification;
+import org.kuali.coeus.common.notification.impl.bo.NotificationType;
+import org.kuali.coeus.common.notification.impl.bo.NotificationTypeRecipient;
+import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
+import org.kuali.coeus.propdev.impl.auth.perm.ProposalDevelopmentPermissionsService;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
+import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
+import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -20,14 +29,18 @@ import org.kuali.rice.kew.api.peopleflow.PeopleFlowMember;
 import org.kuali.rice.kew.rule.xmlrouting.XPathHelper;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.infrastructure.RoleConstants;
 import org.w3c.dom.Document;
 
 import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
+import edu.mit.kc.workloadbalancing.bo.WlPropAggregatorComplexity;
 import edu.mit.kc.workloadbalancing.peopleflow.WorkLoadService;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +55,9 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
 	private DataObjectService dataObjectService;
 	private DateTimeService dateTimeService;
 	private BusinessObjectService businessObjectService;
+	private KcNotificationService kcNotificationService;
 
 	
-
 	protected void generateRequestForMember(Context context, PeopleFlowMember member) {
         String peopleflowName =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "OSP_PEOPLE_FLOW_NAME");
 		String enabledWlRouting =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "ENABLE_WL_ROUTING");  
@@ -57,9 +70,9 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     		 List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
 					 (PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
 			 List<UnitAdministrator> unitAdministrators = new ArrayList<UnitAdministrator>();
-
+			 DevelopmentProposal proposal = getDataObjectService().find(DevelopmentProposal.class,proposalNumber);
     		 if (MemberType.ROLE == member.getMemberType()) {
-    			 DevelopmentProposal proposal = getDataObjectService().find(DevelopmentProposal.class,proposalNumber);
+    			
     	     		Map<String, String> queryMap = new HashMap<String, String>();
     	    		queryMap.put("unitNumber", proposal.getUnitNumber());
     	     		String unitAdmininstratorTypeCode =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "OSP_ADMINISTRATOR_TYPE_CODE");  
@@ -74,6 +87,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 }
      		if (!context.getRouteContext().isSimulation() && personId!=null) {
     			 String sponsorGroup = null;
+    			 Long complexity = null;
     			 if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
     				 List<WLCurrentLoad> workLoadLatestList = new ArrayList<WLCurrentLoad>();
     				 for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
@@ -88,7 +102,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     					 }
     				 }
     				 WLCurrentLoad currentWorkLoad = workLoadLatestList.get(0);
-    				 
+    				 KcPerson ospPerson = getKcPersonService().getKcPersonByPersonId(currentWorkLoad.getPerson_id());
     				 int routingNumber = Integer.parseInt(currentWorkLoad.getRoutingNumber());
     				  routingNumber = ++routingNumber;
     				  WLCurrentLoad wLCurrentLoad = new WLCurrentLoad();
@@ -109,6 +123,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     	    			 wLCurrentLoad.setAssignedBy(currentWorkLoad.getAssignedBy());
     	    			 wLCurrentLoad.setLastApprover(currentWorkLoad.getLastApprover());
     				  getDataObjectService().save(wLCurrentLoad);
+    				  sendNotification(proposal,currentWorkLoad.getPerson_id(),ospPerson);
     			 }else{
     			 
     			 KcPerson ospPerson = getKcPersonService().getKcPersonByPersonId(personId);
@@ -123,6 +138,13 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     		    		 sponsorGroup = sponsorHierarchy.getLevel1();
     		    	 }
     		     }
+    		     
+    		     List<WlPropAggregatorComplexity> WlPropAggregatorComplexityList = getDataObjectService().findMatching(WlPropAggregatorComplexity.class, QueryByCriteria.Builder.fromPredicates
+    					 (PredicateFactory.equal("aggregatorPersonId", personId))).getResults();
+    		     if(WlPropAggregatorComplexityList!=null && !WlPropAggregatorComplexityList.isEmpty()){
+    		    	 WlPropAggregatorComplexity wlPropAggregatorComplexity = WlPropAggregatorComplexityList.get(0);
+    		    	 complexity = wlPropAggregatorComplexity.getComplexity();
+    		     }
     			 WLCurrentLoad wLCurrentLoad = new WLCurrentLoad();
     			 wLCurrentLoad.setRoutingNumber("1");
     			 wLCurrentLoad.setProposalNumber(proposalNumber);
@@ -132,7 +154,7 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 wLCurrentLoad.setUserId(ospPerson.getUserName());
     			 wLCurrentLoad.setSponsorCode(developmentProposal.getSponsorCode());
     			 wLCurrentLoad.setSponsorGroup(sponsorGroup);
-    			 wLCurrentLoad.setComplexity(1L);
+    			 wLCurrentLoad.setComplexity(complexity);
     			 wLCurrentLoad.setLeadUnit(developmentProposal.getUnitNumber());
     			 wLCurrentLoad.setActiveFlag("Y");
     			 wLCurrentLoad.setArrivalDate(getDateTimeService().getCurrentTimestamp());
@@ -141,15 +163,25 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     			 wLCurrentLoad.setAssignedBy(null);
     			 wLCurrentLoad.setLastApprover(null);
     			 getDataObjectService().save(wLCurrentLoad);
+    			 sendNotification(proposal,personId,ospPerson);
     			 }
+    			 
     		 }
+     		
     		 if(wLCurrentLoadList!=null && wLCurrentLoadList.isEmpty()){
-    			 if(enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("Y")){
+    			 if(enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("Y") && personId!=null){
     			 context.getActionRequestFactory().addRootActionRequest(
     					 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,personId), "",
     					 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
     			 }else if(enabledWlRouting != null && enabledWlRouting.equalsIgnoreCase("N")){
     				 super.generateRequestForMember(context, member);
+    			 }
+    		 }else if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
+    			 WLCurrentLoad wLCurrentLoad = wLCurrentLoadList.get(0);
+    			 if(wLCurrentLoad.getPerson_id()!=null){
+    				 context.getActionRequestFactory().addRootActionRequest(
+    						 context.getActionRequested().getCode(), member.getPriority(), toRecipient(member,wLCurrentLoad.getPerson_id()), "",
+    						 member.getResponsibilityId(), member.getForceAction(), getActionRequestPolicyCode(member), null);
     			 }
     		 }
     	}else{
@@ -186,6 +218,56 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
         }
     }
     
+    protected void sendNotification(DevelopmentProposal proposal,String personId,KcPerson ospPerson){
+    	proposal.setContactAdministrator(ospPerson);
+    	ProposalDevelopmentNotificationContext notiFicationContext =  new ProposalDevelopmentNotificationContext(proposal, "108", "OSP Notification");
+        ((ProposalDevelopmentNotificationRenderer) notiFicationContext.getRenderer()).setDevelopmentProposal(proposal);
+        KcNotification notification =  createNotificationObject(notiFicationContext);
+        List<String> persons = new ArrayList();
+        proposal.setWorkingUserRoles(KcServiceLocator.getService(ProposalDevelopmentPermissionsService.class).getPermissions(proposal.getProposalDocument()));
+       
+        List<ProposalUserRoles> proposalUserRoles =  proposal.getWorkingUserRoles();
+        if(proposalUserRoles!=null){
+        	for(ProposalUserRoles proposalUserRole : proposalUserRoles){
+        		if(proposalUserRole.getRoleNames().contains(RoleConstants.AGGREGATOR_DOCUMENT_LEVEL)){
+        			proposalUserRole.getUsername();
+        			KcPerson proposalPerson =  getKcPersonService().getKcPersonByUserName(proposalUserRole.getUsername());
+        			persons.add(proposalPerson.getPersonId());
+        		}
+        	}
+        }
+        persons.add(personId);
+        if(proposal.getPrincipalInvestigator()!=null){
+        	persons.add(proposal.getPrincipalInvestigator().getPersonId());
+        }
+        for(String person:persons){
+        	NotificationTypeRecipient recipient = new NotificationTypeRecipient();
+        	recipient.setPersonId(person);        
+        	getKcNotificationService().sendNotification(notiFicationContext,notification,Collections.singletonList(recipient));
+        }
+    }
+    
+    private KcNotification createNotificationObject(NotificationContext context) {
+        KcNotification notification = new KcNotification();
+        
+        NotificationType notificationType = getNotificationType(context);
+        if (notificationType != null) {
+            notification.setNotificationTypeId(notificationType.getNotificationTypeId());
+            notification.setDocumentNumber(context.getDocumentNumber());
+            String instanceSubject = context.replaceContextVariables(notificationType.getSubject());
+            notification.setSubject(instanceSubject);
+            String instanceMessage = context.replaceContextVariables(notificationType.getMessage());
+            notification.setMessage(instanceMessage);
+            notification.setNotificationType(notificationType);
+            notification.setCreateUser("Kuali Coeus System");
+            notification.setCreateTimestamp(KcServiceLocator.getService(DateTimeService.class).getCurrentTimestamp());
+        }
+        
+        return notification;
+    }
+    private NotificationType getNotificationType(NotificationContext context) {
+        return getKcNotificationService().getNotificationType(context.getModuleCode(), context.getActionTypeCode());
+    }
     public KcPersonService getKcPersonService() {
     	if(kcPersonService == null){
     		kcPersonService = KcServiceLocator.getService(KcPersonService.class);
@@ -228,5 +310,16 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
 
 	public void setDateTimeService(DateTimeService dateTimeService) {
 		this.dateTimeService = dateTimeService;
+	}
+	
+	public KcNotificationService getKcNotificationService() {
+		if(kcNotificationService == null){
+			kcNotificationService =  KcServiceLocator.getService(KcNotificationService.class);
+		}
+		return kcNotificationService;
+	}
+
+	public void setKcNotificationService(KcNotificationService kcNotificationService) {
+		this.kcNotificationService = kcNotificationService;
 	}
 }

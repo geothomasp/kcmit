@@ -143,6 +143,16 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
             result.put("{PROPOSAL_CERTIFY_USER}",proposalPerson.getCertifiedPersonName()); 
             result.put("{PROPOSAL_CERTIFY_TIME_STAMP}", proposalPerson.getCertifiedTimeStamp());        
         }
+        if(developmentProposal.getContactAdministrator()!=null){
+        	result.put("{CA_FIRST_NAME}",developmentProposal.getContactAdministrator().getFirstName()); 
+        	result.put("{CA_LAST_NAME}",developmentProposal.getContactAdministrator().getLastName()); 
+        	result.put("{CA_FIRST_NAME}",developmentProposal.getContactAdministrator().getFirstName()); 
+        	result.put("{CA_EMAIL}",developmentProposal.getContactAdministrator().getEmailAddress()); 
+        	result.put("{CA_PHONE}",developmentProposal.getContactAdministrator().getPhoneNumber()); 
+            String wlFunfact =  getParameterService().
+            		getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "WL_FUN_FACTS");
+        	result.put("{WL_FUN_FACTS}",wlFunfact);
+        }
         return result;
     }
 

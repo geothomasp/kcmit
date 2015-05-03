@@ -60,6 +60,7 @@ import org.kuali.coeus.common.framework.krms.KrmsRulesContext;
 import org.kuali.coeus.common.framework.noo.NoticeOfOpportunity;
 import org.kuali.coeus.common.framework.org.Organization;
 import org.kuali.coeus.common.framework.org.OrganizationYnq;
+import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
 import org.kuali.coeus.common.framework.rolodex.Rolodex;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
@@ -409,7 +410,10 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     @Transient
     private List<ProposalUserRoles> workingUserRoles;
     
-    public List<ProposalPerson> getProposalPersonsCoi() {
+    @Transient
+    private KcPerson contactAdministrator;
+    
+	public List<ProposalPerson> getProposalPersonsCoi() {
     	List<ProposalPerson> filteredCollection =  new ArrayList();
     	for(ProposalPerson person:this.proposalPersons){
     		if(person.isStatusNull() || person.getCoiDisclosureStatus().equalsIgnoreCase("Not Disclosed"))
@@ -2438,5 +2442,13 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
 
 	public void setWorkingUserRoles(List<ProposalUserRoles> workingUserRoles) {
 		this.workingUserRoles = workingUserRoles;
+	}
+	
+	public KcPerson getContactAdministrator() {
+		return contactAdministrator;
+	}
+
+	public void setContactAdministrator(KcPerson contactAdministrator) {
+		this.contactAdministrator = contactAdministrator;
 	}
 }
