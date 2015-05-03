@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.coeus.common.framework.org.OrganizationYnq;
 import org.kuali.coeus.common.framework.print.AttachmentDataSource;
 import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
@@ -161,8 +162,36 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
                 SubAwardService.class).getAmountInfo(subAwardDocument.getSubAward());
         subAwardForm.getSubAwardDocument().setSubAward(subAward);
         handleAttachmentsDocument(form);
+        if(subAwardForm.getSubAwardDocument().getSubAwardList() != null) {
+        	getOrganizationRiskPriority(subAwardForm.getSubAwardDocument().getSubAwardList());
+        }
         
         return forward;
+    }
+    
+    
+    public void getOrganizationRiskPriority(List<SubAward> subAwardList) {
+    	List<OrganizationYnq> organizationYnqs = null;
+    	for(SubAward subAward:subAwardList) {
+	    	String organizationId=subAward.getOrganizationId();
+	    	String questionId=getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, ParameterConstants.ALL_COMPONENT,Constants.ORGANIZATION_RISK_CATEGORY_CODE);
+	        if(questionId != null && organizationId != null) {
+	        	Map<String, String> organizationYnqMap = new HashMap<String, String>();
+	            organizationYnqMap.put("QUESTION_ID",questionId);
+	            organizationYnqMap.put("ORGANIZATION_ID",organizationId);
+	            organizationYnqs = (List<OrganizationYnq>) getBusinessObjectService().findMatching(OrganizationYnq.class,
+	                    organizationYnqMap);
+	        }
+	        if(organizationYnqs != null) {
+	            for(OrganizationYnq organizationYnq:organizationYnqs) {
+	        		if(organizationYnq.getAnswer().equals(Constants.TRUE_FLAG)) {
+	        			subAward.setOrganizationRisk(Constants.LOW_RISK);
+	        		} else if(organizationYnq.getAnswer().equals(Constants.FALSE_FLAG)) {
+	        			subAward.setOrganizationRisk(Constants.HIGH_RISK);
+	        	    } 
+	        	}
+	    	}
+    	}
     }
     
     protected void handleAttachmentsDocument(ActionForm form) {
