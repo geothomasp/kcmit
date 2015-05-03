@@ -42,7 +42,7 @@ opacity:1;
 			<c:set var="totalAttachments" value="0" />
 			<c:forEach var="attachment" items="${attachments}" varStatus="itrStatus">
     			<c:if test="${attachment.viewAttachment}">
-    				<c:set var="totalAttachments" value="${rowIndex + 1}"/>
+    				<c:set var="totalAttachments" value="${totalAttachments + 1}"/>
     			</c:if>
 			</c:forEach>
 

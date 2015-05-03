@@ -37,7 +37,7 @@ opacity:1;
 			<c:set var="totalAttachments" value="0" />
 			<c:forEach var="attachment" items="${attachments}" varStatus="itrStatus">
     			<c:if test="${attachment.viewAttachment}">
-    				<c:set var="totalAttachments" value="${rowIndex + 1}"/>
+    				<c:set var="totalAttachments" value="${totalAttachments + 1}"/>
     			</c:if>
 			</c:forEach>
 <kul:tab tabTitle="Attachments" tabItemCount="${totalAttachments}" defaultOpen="false" tabErrorKey="subAwardAttachmentFormBean.newAttachment*,document.subAwardList[0].subAwardAttachments*" transparentBackground="false" useRiceAuditMode="true">
