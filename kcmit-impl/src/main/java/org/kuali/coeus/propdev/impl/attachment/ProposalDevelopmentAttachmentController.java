@@ -222,7 +222,8 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
         Narrative narrative = form.getProposalDevelopmentAttachmentHelper().getNarrative();
         initializeNarrative(narrative, form);
         if ( getKualiRuleService().applyRules(new AddNarrativeEvent(ProposalDevelopmentConstants.KradConstants.PROPOSAL_DEVELOPMENT_ATTACHMENT_HELPER_NARRATIVE,form.getProposalDevelopmentDocument(),form.getProposalDevelopmentAttachmentHelper().getNarrative()))) {
-            form.getDevelopmentProposal().getNarratives().add(0,narrative);
+            narrative.setViewAttachment(true);
+        	form.getDevelopmentProposal().getNarratives().add(0,narrative);
             form.getProposalDevelopmentAttachmentHelper().reset();
         } else {
             form.setUpdateComponentId(ProposalDevelopmentConstants.KradConstants.PROP_DEV_ATTACHMENTS_PAGE_PROPOSAL_DETAILS);
@@ -342,6 +343,7 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
                 getKcNotificationService().sendNotification(context);
             }
         }
+        narrative.setViewAttachment(true);
         return super.save(form);
     }
 
@@ -556,9 +558,5 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
     public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
-
-	public SharedDocumentService getSharedDocumentService() {
-	      return KcServiceLocator.getService(SharedDocumentService.class);
-	}
 
 }
