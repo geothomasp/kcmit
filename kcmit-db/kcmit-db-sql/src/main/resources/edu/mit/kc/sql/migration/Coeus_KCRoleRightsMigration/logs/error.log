@@ -1,17 +1,17 @@
 
-Started role right migration.30-APR-15 08.58.52.094560 AM                       
+Started role right migration.02-MAY-15 07.51.28.384228 PM                       
 
-ddl_role_rights.sql started 30-APR-15 08.58.54.946081 AM                        
+ddl_role_rights.sql started 02-MAY-15 07.51.30.301033 PM                        
 
-kc_coeus_role_mapping started 30-APR-15 08.58.59.426722 AM                      
+kc_coeus_role_mapping started 02-MAY-15 07.51.30.703904 PM                      
 
-kc_coeus_right_mapping started 30-APR-15 08.59.15.481056 AM                     
+kc_coeus_right_mapping started 02-MAY-15 07.51.32.110911 PM                     
 
-role_bootstrap.sql started 30-APR-15 08.59.28.991781 AM                         
+role_bootstrap.sql started 02-MAY-15 07.51.33.294566 PM                         
 
-perm_bootstrap.sql started 30-APR-15 08.59.56.044406 AM                         
+perm_bootstrap.sql started 02-MAY-15 07.51.35.588884 PM                         
 
-role_perm_bootstrap.sql started 30-APR-15 09.01.10.809650 AM                    
+role_perm_bootstrap.sql started 02-MAY-15 07.51.41.850140 PM                    
 ALTER TABLE KRIM_PERM_ATTR_DATA_T ENABLE CONSTRAINT KRIM_PERM_ATTR_DATA_TR3 
                                                     *
 ERROR at line 1:
@@ -25,10 +25,16 @@ ERROR at line 1:
 ORA-02298: cannot validate (KCSO.FK_KC_ROLE_CNTRAL_MAP) - parent keys not found 
 
 
+ALTER TABLE ROLE_CNTRL_MAP_T ENABLE CONSTRAINT FK_ROLE_CNTRL_MAP_T 
+                                               *
+ERROR at line 1:
+ORA-02298: cannot validate (KCSO.FK_ROLE_CNTRL_MAP_T) - parent keys not found 
 
-truncate_and_apply_bootstrap.sql started 30-APR-15 09.01.16.035452 AM           
 
-kc_coeus_role_perm_mapping.sql started 30-APR-15 09.01.44.489960 AM             
+
+truncate_and_apply_bootstrap.sql started 02-MAY-15 07.51.46.328729 PM           
+
+kc_coeus_role_perm_mapping.sql started 02-MAY-15 07.51.49.011060 PM             
 Sync role rights begin!!                                                        
 ALTER TABLE KRIM_PERM_ATTR_DATA_T ENABLE CONSTRAINT KRIM_PERM_ATTR_DATA_TR3 
 *
@@ -42,6 +48,12 @@ ERROR at line 1:
 ORA-02270: no matching unique or primary key for this column-list 
 
 
+ALTER TABLE ROLE_CNTRL_MAP_T ENABLE CONSTRAINT FK_ROLE_CNTRL_MAP_T 
+                                               *
+ERROR at line 1:
+ORA-02298: cannot validate (KCSO.FK_ROLE_CNTRL_MAP_T) - parent keys not found 
+
+
 ALTER TABLE KC_ROLE_CNTRAL_MAP ENABLE CONSTRAINT FK_KC_ROLE_CNTRAL_MAP 
                                                  *
 ERROR at line 1:
@@ -49,7 +61,7 @@ ORA-02298: cannot validate (KCSO.FK_KC_ROLE_CNTRAL_MAP) - parent keys not found
 
 
 
-      3386                                                                      
+     12925                                                                      
 Role is not in krim_role_t , role_nm is Maintain RTF Forms and nmspc_cd is      
 KC-SYS                                                                          
 Role is not in krim_role_t , role_nm is Maintain Notifications and nmspc_cd is  
@@ -71,7 +83,7 @@ ORA-01403: no data found
 Error while updating kim_typ_id COI Reporter. Exception is ORA-01403: no data   
 found                                                                           
 
-syncing_role_rights.sql started 30-APR-15 09.01.54.513460 AM                    
+syncing_role_rights.sql started 02-MAY-15 07.51.51.589907 PM                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM COI Administrator. The Error is:     
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -226,8 +238,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Viewer Document Level. The Error is: 
 ORA-06502: PL/SQL: numeric or value error: character to number conversion error 
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -328,8 +338,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Maintain Arra Reports. The Error is: 
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM MIT Maintain Reporting Roles. The    
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Protocol Deleter. The Error is:      
@@ -408,8 +416,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Institutional Proposal Viewer. The   
 Error is: ORA-01403: no data found                                              
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Training. The Error is:       
@@ -498,8 +504,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -550,6 +554,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Training. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing valchin. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Subaward. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -598,8 +603,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Address Book Maintainer. The Error   
 is: ORA-01403: no data found                                                    
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -728,8 +731,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Training. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
@@ -756,8 +757,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
@@ -766,6 +765,8 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Maintain Subcontracting Goals. The
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM IACUC ProtocolApprover. The Error is:
 ORA-01403: no data found                                                        
+Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Subcontract Documents. The Error
+is: ORA-01403: no data found                                                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Subaward. The Error is:       
@@ -870,8 +871,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
-ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -1016,6 +1016,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
@@ -1146,6 +1147,12 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Protocol Deleter. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM COI Administrator. The Error is:     
 ORA-01403: no data found                                                        
+Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Subcontract Documents. The Error
+is: ORA-01403: no data found                                                    
+Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Subcontract Documents. The Error
+is: ORA-01403: no data found                                                    
+Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Subcontract Documents. The Error
+is: ORA-01403: no data found                                                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Maintain Subcontracting Goals. The   
@@ -1194,8 +1201,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -1216,6 +1221,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -1259,14 +1265,10 @@ ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM COI Maintainer. The Error is:        
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
@@ -1370,13 +1372,12 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:     
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM COI Administrator. The Error is:     
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
@@ -1426,15 +1427,11 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Run Dev Budget Reports. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:     
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:     
 ORA-01403: no data found                                                        
@@ -1447,8 +1444,6 @@ ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Departments Proposals. The Error
 is: ORA-01403: no data found                                                    
@@ -1492,8 +1487,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
@@ -1642,6 +1635,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing valchin. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -1910,13 +1904,9 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Maintain Subcontracting Goals. The
 Error is: ORA-01403: no data found                                              
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Key Person Maintenance. The     
 Error is: ORA-01403: no data found                                              
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Subaward. The Error is:       
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM COI Maintainer. The Error is:        
 ORA-01403: no data found                                                        
@@ -2000,6 +1990,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2078,8 +2069,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2088,6 +2077,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing valchin. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2111,8 +2101,6 @@ ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
@@ -2175,8 +2163,6 @@ is: ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
 ORA-01403: no data found                                                        
@@ -2244,8 +2230,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:     
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:     
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
@@ -2256,13 +2240,9 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Budget Maintainer. The Error   
 is: ORA-01403: no data found                                                    
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM COI Administrator. The Error is:     
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Budget Viewer. The Error is:   
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
@@ -2313,8 +2293,6 @@ is: ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
-ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
@@ -2422,8 +2400,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2476,6 +2452,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing valchin. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
@@ -2538,6 +2515,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2628,6 +2606,7 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Maintain Notifications. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Arra Reports. The Error is:     
 ORA-01403: no data found                                                        
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Arra Reports. The Error is:   
@@ -2700,10 +2679,10 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Maintain Arra Reports. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Budget Approver. The Error is: 
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
+Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM View Subcontract Documents. The Error
+is: ORA-01403: no data found                                                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2766,8 +2745,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Modify Training. The Error is:       
@@ -2826,8 +2803,8 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
-ORA-01403: no data found                                                        
+PrincipleId missing valchin. The Error is: ORA-01403: no data found             
+PrincipleId missing mgibson. The Error is: ORA-01403: no data found             
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Address Book Maintainer. The Error   
 is: ORA-01403: no data found                                                    
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -2858,8 +2835,6 @@ Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Sponsor Rules Maintainer. The Error  
 is: ORA-01403: no data found                                                    
-Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Award Modifier. The Error is:        
-ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
 ORA-01403: no data found                                                        
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Template Viewer. The Error is:       
@@ -3025,10 +3000,16 @@ ORA-01403: no data found
 Missing ROLE_ID in KRIM_ROLE_T for ROLE_NM Negotiation Creator. The Error is:   
 ORA-01403: no data found                                                        
 Loading user roles Completed!!                                                  
+update krim_role_t set role_nm = 'Award Modifier', nmspc_cd = 'KC-AWARD' where role_nm = 'Modify Award'
+*
+ERROR at line 1:
+ORA-00001: unique constraint (KCSO.KRIM_ROLE_TC1) violated 
 
-load_coeus_user_roles.sql started 30-APR-15 09.06.23.545186 AM                  
 
-add_role_perm_manually.sql started 30-APR-15 09.06.23.854186 AM                 
+
+load_coeus_user_roles.sql started 02-MAY-15 07.55.53.233774 PM                  
+
+add_role_perm_manually.sql started 02-MAY-15 07.55.53.308031 PM                 
 CREATE INDEX OSP$PROTOCOL_USER_ROLES_I ON OSP$PROTOCOL_USER_ROLES(PROTOCOL_NUMBER,SEQUENCE_NUMBER,ROLE_ID,USER_ID)
              *
 ERROR at line 1:
@@ -3036,7 +3017,7 @@ ORA-00955: name is already used by an existing object
 
 
 
-document_access_irb.sql started 30-APR-15 09.06.27.496661 AM                    
+document_access_irb.sql started 02-MAY-15 07.55.56.635935 PM                    
 CREATE INDEX OSP$EPS_PROP_USER_ROLES_I ON OSP$EPS_PROP_USER_ROLES(PROPOSAL_NUMBER,ROLE_ID,USER_ID)
              *
 ERROR at line 1:
@@ -3044,69 +3025,207 @@ ORA-00955: name is already used by an existing object
 
 
 PRNCPL_ID is missing for userID pauli and Proposal Number 4465                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11025               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14879               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14048               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15320               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16461               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18333               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16798               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 20233               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 20055               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21812               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23453               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24149               
+PRNCPL_ID is missing for userID pauli and Proposal Number 4579                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4621                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4632                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4579                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4338                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 10438               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11427               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15192               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15192               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 20219               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22949               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23915               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24498               
 PRNCPL_ID is missing for userID pauli and Proposal Number 3922                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4618                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4338                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4631                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4618                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11471               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14048               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14649               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22022               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21625               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4355                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4374                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4653                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4633                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4492                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4653                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 10477               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 10770               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11480               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12616               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 13533               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16427               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 19144               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18402               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18331               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 19452               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 19452               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23713               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23454               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22950               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4634                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4854                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 10258               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11747               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12616               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12974               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18975               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 17868               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 19564               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4308                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4368                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4493                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4676                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4625                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4496                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4616                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 2773                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4493                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4676                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12201               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14000               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15285               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18331               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24384               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4127                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 2773                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4634                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4665                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 2894                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 13254               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14434               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16923               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21983               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23534               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22950               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23915               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24149               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4243                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 2894                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4652                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4635                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4515                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4652                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12892               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12892               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15848               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23653               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22949               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22475               
 PRNCPL_ID is missing for userID pauli and Proposal Number 2614                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4664                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4781                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4618                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 5331                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4751                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4618                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4781                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4664                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11026               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14434               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15320               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15576               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16923               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 20219               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21812               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21243               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21717               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23534               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4494                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4893                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4666                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4751                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14879               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22475               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4424                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4620                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4617                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4620                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16427               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 17431               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18243               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18632               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18333               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 17868               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 20055               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21865               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21625               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22491               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23380               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23380               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24412               
 PRNCPL_ID is missing for userID pauli and Proposal Number 2742                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4490                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4921                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4490                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11241               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12373               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14649               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 20233               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24498               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4422                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4345                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4497                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4345                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4495                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4667                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15285               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15576               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15323               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18975               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21025               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24384               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4491                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11026               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11471               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11242               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11480               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11241               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 13254               
 PRNCPL_ID is missing for userID csodini and Proposal Number 13922               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 14000               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15323               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 17431               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18925               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21243               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23653               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23713               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24412               
 PRNCPL_ID is missing for userID pauli and Proposal Number 4345                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4971                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4630                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4971                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 10949               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 12373               
 PRNCPL_ID is missing for userID csodini and Proposal Number 12881               
 PRNCPL_ID is missing for userID csodini and Proposal Number 13570               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15848               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15252               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16798               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18243               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18632               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21983               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21025               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 21717               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 24764               
 PRNCPL_ID is missing for userID pauli and Proposal Number 2614                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 4454                  
-PRNCPL_ID is missing for userID pauli and Proposal Number 4115                  
 PRNCPL_ID is missing for userID pauli and Proposal Number 5072                  
+PRNCPL_ID is missing for userID pauli and Proposal Number 4115                  
+PRNCPL_ID is missing for userID mgibson and Proposal Number 11747               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 13515               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 15252               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16075               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18925               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 16461               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 19144               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 18402               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22022               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 19564               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 23453               
+PRNCPL_ID is missing for userID mgibson and Proposal Number 22491               
 
-ddl_role_rights.sql started 30-APR-15 09.09.32.039035 AM                        
+ddl_role_rights.sql started 02-MAY-15 07.58.38.008852 PM                        
 CREATE INDEX OSP$AC_PROTOCOL_USER_ROLES_I ON OSP$AC_PROTOCOL_USER_ROLES(PROTOCOL_NUMBER,SEQUENCE_NUMBER,ROLE_ID,USER_ID)
              *
 ERROR at line 1:
@@ -3114,6 +3233,6 @@ ORA-00955: name is already used by an existing object
 
 
 
-ddl_role_rights.sql started 30-APR-15 09.09.33.051308 AM                        
+ddl_role_rights.sql started 02-MAY-15 07.58.38.242545 PM                        
 
-completed role right migration.30-APR-15 09.09.33.219006 AM                     
+completed role right migration.02-MAY-15 07.58.38.256407 PM                     
