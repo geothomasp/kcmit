@@ -9,7 +9,7 @@
 	<param name="rolecentraldb.host">https://ws-test.mit.edu/rolesws/services/roles</param>
     <param name="rolecentraldb.port">roles</param>
     <param name="CAC.FILE">/opt/kc/feeds/cac/CAC.tab</param>
-	<param name="showPassword">false</param>
+	<param name="showPassword">true</param>
     <param name="rice.kim.additionalSpringFiles">classpath:edu/mit/kc/MitKcKimOverridesSpringBeans.xml</param>
     <param name="filter.login.class">edu.mit.kc.auth.MitKcUserLoginFilter</param>
 
