@@ -20,7 +20,7 @@ DECLARE
 li_ret number;
 BEGIN
 
-li_ret:=fn_generate_rolodex_feed('TEST','admin');
+li_ret:=fn_generate_rolodex_feed('TEST1','admin');
 dbms_output.put_line(li_ret);
 end;
 /

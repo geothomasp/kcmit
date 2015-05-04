@@ -29,8 +29,8 @@ ls_role_nm varchar2(80);
 CURSOR c_role is
 select distinct r.role_name ,r.DESCRIPTION,r.role_type,ur.USER_ID,ur.UNIT_NUMBER,ur.DESCEND_FLAG,ur.UPDATE_TIMESTAMP,ur.UPDATE_USER 
 from osp$user_roles@coeus.kuali ur 
-inner join osp$role r on r.role_id= ur.role_id;
---where ur.user_id = 'mff';
+inner join osp$role r on r.role_id= ur.role_id
+where ur.user_id = 'hudak';
 
 r_role c_role%ROWTYPE;
 
@@ -63,7 +63,7 @@ EXIT WHEN c_role%NOTFOUND;
 													
 					   BEGIN 
 							ls_role_nm := r_role.role_name;
-							select count(kc_roles) into  li_count from kc_coeus_role_mapping where coeus_roles = r_role.role_name;
+							select count(kc_roles) into  li_count from kc_coeus_role_mapping where coeus_roles = r_role.DESCRIPTION;
 							
 							if li_count > 0 then
 								select kc_roles into  ls_role_nm from kc_coeus_role_mapping where coeus_roles = r_role.role_name and rownum = 1;
