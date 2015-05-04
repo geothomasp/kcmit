@@ -39,7 +39,7 @@ public class ProposalPersonModuleQuestionnaireBean extends ProposalDevelopmentMo
      */
     public ProposalPersonModuleQuestionnaireBean(DevelopmentProposal developmentProposal, ProposalPerson person) {
         super(CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE, person.getUniqueId(), 
-        		getSubModuleItemCode(person.getProposalPersonRoleId()), "0", 
+        		getSubModuleItemCode(person.getProposalPersonRoleId()), person.getPersonId()!=null?person.getPersonId():"0", 
                 developmentProposal.getProposalDocument().getDocumentHeader().getWorkflowDocument().isApproved());
         setDevelopmentProposal(developmentProposal);
     }

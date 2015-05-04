@@ -962,7 +962,7 @@ public class ProposalDevelopmentViewHelperServiceImpl extends KcViewHelperServic
     	return getProposalDevelopmentPermissionsService().hasCertificationPermissions(document, person, proposalPerson);
     }
     public boolean canViewNotitificationButton(ProposalDevelopmentDocument document,ProposalPerson proposalPerson){
-    	if(proposalPerson!=null && proposalPerson.getDevelopmentProposal()!=null){
+    	if(proposalPerson!=null && proposalPerson.getDevelopmentProposal()!=null && proposalPerson.getPerson()!=null){
     		Person person = getPersonService().getPersonByPrincipalName(proposalPerson.getPerson().getUserName());
     		if((document.getDevelopmentProposal().getProposalState().getCode().equals(ProposalState.IN_PROGRESS)||
     				document.getDevelopmentProposal().getProposalState().getCode().equals(ProposalState.REVISIONS_REQUESTED))
