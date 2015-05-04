@@ -1,62 +1,47 @@
-alter table EPS_PROP_PERSON add ACADEMIC_YEAR_EFFORT number(5,2)
-                                *
-ERROR at line 1:
-ORA-01430: column being added already exists in table 
 
-
-alter table EPS_PROP_PERSON add CALENDAR_YEAR_EFFORT number(5,2)
-                                *
-ERROR at line 1:
-ORA-01430: column being added already exists in table 
-
-
-alter table EPS_PROP_PERSON add SUMMER_EFFORT number(5,2)
-                                *
-ERROR at line 1:
-ORA-01430: column being added already exists in table 
-
-
-
-1 row created.
-
-
-1 row created.
-
-
-1 row created.
-
-
-0 rows updated.
-
-
-0 rows updated.
-
-
-0 rows updated.
-
-
-0 rows updated.
-
-
-0 rows updated.
-
-
-0 rows updated.
-
-alter table AWARD_CGB add BILL_FREQ_CD varchar2(4)
-                          *
-ERROR at line 1:
-ORA-01430: column being added already exists in table 
-
+Table altered.
 
 
 Table altered.
 
-INSERT INTO S2S_ERROR (S2S_ERROR_ID, MESSAGE_KEY, MESSAGE, FIX_LINK, UPDATE_TIMESTAMP, UPDATE_USER, VER_NBR, OBJ_ID)
-*
-ERROR at line 1:
-ORA-00001: unique constraint (KCSO.UQ_S2S_ERROR) violated 
 
+Table altered.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row updated.
+
+
+1 row updated.
+
+
+1 row updated.
+
+
+0 rows updated.
+
+
+0 rows updated.
+
+
+0 rows updated.
+
+
+Table altered.
+
+
+Table altered.
+
+
+1 row created.
 
 
 Table altered.
@@ -74,7 +59,7 @@ ORA-01430: column being added already exists in table
 
 
 
-82255 rows updated.
+82423 rows updated.
 
 INSERT INTO FILE_DATA (SELECT FILE_DATA_ID, NARRATIVE_DATA FROM NARRATIVE_ATTACHMENT)
                                             *
@@ -101,7 +86,7 @@ ORA-01430: column being added already exists in table
 
 
 
-0 rows updated.
+13128 rows updated.
 
 INSERT INTO FILE_DATA (SELECT FILE_DATA_ID, BIO_DATA FROM EPS_PROP_PERSON_BIO_ATTACHMENT)
                                             *
@@ -122,7 +107,7 @@ ORA-00904: "BIO_DATA": invalid identifier
 
 
 
-0 rows deleted.
+6 rows deleted.
 
 ALTER TABLE FILE_DATA ADD PRIMARY KEY(ID)
                           *
@@ -130,11 +115,8 @@ ERROR at line 1:
 ORA-02260: table can have only one primary key 
 
 
-ALTER TABLE FILE_DATA MODIFY DATA NOT NULL
-                             *
-ERROR at line 1:
-ORA-01442: column to be modified to NOT NULL is already NOT NULL 
 
+Table altered.
 
 
 Commit complete.
