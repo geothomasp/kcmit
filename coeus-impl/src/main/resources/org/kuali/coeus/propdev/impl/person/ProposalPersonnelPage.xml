@@ -284,7 +284,7 @@
 		                                (@{#lp.role.description}
                                             @{#lp.keyPerson eq true ? ': ' + #lp.projectRole : '' })
                                             	@{#lp.certifiedBy == null and #ViewHelper.canViewCertificationTab(document,#line) ? '(Certification Incomplete)' : ' '}
-		                                        @{#lp.certifiedBy != null and #ViewHelper.canViewCertificationTab(document,#line) ? '(Certification Completed and Answered By '+ #lp.certifiedPersonName+' - ' + #lp.certifiedTimeStamp+')' : ''}"
+		                                        @{#lp.certifiedBy != null and #ViewHelper.canViewCertificationTab(document,#line) ? '(Certification Completed and Answered By '+ #lp.certifiedPersonName+ {#lp.certifiedTimeStamp != null? ' - ' + #lp.certifiedTimeStamp+')':')'} : ''}"
 
           p:renderAddLine="false"
           p:renderInactiveToggleButton="false">

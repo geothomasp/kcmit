@@ -1912,7 +1912,7 @@ public class ProposalPerson extends KcPersistableBusinessObjectBase implements N
 	
 	public String getCertifiedPersonName() {
 		if(this.certifiedBy!=null){
-			 this.certifiedPersonName = getKcPersonService().getKcPersonByPersonId(certifiedBy).getUserName();
+			 this.certifiedPersonName = certifiedBy;
 			}
 		return certifiedPersonName;
 	}
