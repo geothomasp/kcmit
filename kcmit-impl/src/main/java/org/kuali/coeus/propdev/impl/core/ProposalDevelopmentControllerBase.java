@@ -565,7 +565,7 @@ public abstract class ProposalDevelopmentControllerBase {
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
                         allCertificationAreNowComplete &= isComplete;
                         if(isComplete && !wasComplete){
-                        	person.setCertifiedBy(getGlobalVariableService().getUserSession().getPrincipalId());
+                        	person.setCertifiedBy(getGlobalVariableService().getUserSession().getPrincipalName());
                             person.setCertifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
 
                         }else if(wasComplete && !isComplete){
