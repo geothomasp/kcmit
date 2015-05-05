@@ -117,7 +117,7 @@ update krms_agenda_t set INIT_AGENDA_ITM_ID='10125',actv='Y' WHERE NM='170000 Le
 /
 select * from krms_rule_t where nm like '%401860%'
 /
-update krms_agenda_t set INIT_AGENDA_ITM_ID='10177',actv='Y' WHERE NM='401860 VP Research Proposal Routing'
+update krms_agenda_t set INIT_AGENDA_ITM_ID='10161',actv='Y' WHERE NM='401860 VP Research Proposal Routing'
 /
 select * from krms_rule_t where nm like '%430000%'
 /
@@ -125,6 +125,8 @@ update krms_agenda_t set INIT_AGENDA_ITM_ID='10003',actv='Y' WHERE NM='430000 CB
 /
 update krms_agenda_t set actv='Y'
 /
+
+
 
 
 

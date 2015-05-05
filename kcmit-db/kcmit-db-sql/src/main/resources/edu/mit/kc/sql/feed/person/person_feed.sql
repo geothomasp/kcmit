@@ -1672,11 +1672,21 @@ LOOP
 FETCH c_update INTO r_update;
 EXIT WHEN c_update%NOTFOUND;
 
+dbms_output.put_line('begin');
+
 IF r_update.office_phone IS NOT NULL THEN
 
-       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+dbms_output.put_line('if block');
+
+
+       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID and PHONE_TYP_CD = 'WRK';
+dbms_output.put_line('count -> ' || li_count);
+
+
+dbms_output.put_line('entity -> ' || r_update.ENTITY_ID);
 
           IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
+dbms_output.put_line('inside count and entity');
        
                INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
                VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'WRK',r_update.office_phone);
@@ -1697,6 +1707,9 @@ END LOOP;
 CLOSE c_update;
 END;
 /
+commit
+/
+
 select 'Updation of changed office_phone ends.' from dual
 /
 select 'Updation of changed secondry_office_location begins.' from dual

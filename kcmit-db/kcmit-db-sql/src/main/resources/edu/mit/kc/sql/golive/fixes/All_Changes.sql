@@ -138,5 +138,39 @@ select * from krms_agenda_t
 
  update question set question_id = '144' where question like 'Select a Funding Mechanism'
 
+ update eps_prop_person a 
+ set (LAST_NOTIFICATION, CERTIFIED_BY) =(select LAST_NOTIFICATION_DATE, CERTIFIED_BY from osp$eps_prop_person@coeus.kuali b
+ where a.proposal_number=to_number(b.proposal_number) and a.person_id=b.person_id and a.rolodex_id is null)
+ where exists
+   (select LAST_NOTIFICATION_DATE, CERTIFIED_BY from osp$eps_prop_person@coeus.kuali b
+ where a.proposal_number=to_number(b.proposal_number) and a.person_id=b.person_id and a.rolodex_id is null);
  
+ 
+ DECLARE
+li_count number;
+cursor c_update is
+select proposal_number, person_id, proposal_number || '|' || to_char(prop_person_number) mod_key
+       from eps_prop_person where person_id is not null;
 
+r_update c_update%ROWTYPE;
+BEGIN
+IF c_update%ISOPEN THEN
+CLOSE c_update;
+END IF;
+OPEN c_update;
+LOOP
+FETCH c_update INTO r_update;
+EXIT WHEN c_update%NOTFOUND;
+
+update QUESTIONNAIRE_ANSWER_HEADER a set MODULE_ITEM_KEY = r_update.mod_key
+where module_item_code = '3' and module_item_key = r_update.proposal_number and module_sub_item_key = r_update.person_id;
+
+END LOOP;
+CLOSE c_update;
+END;
+/
+
+update krew_usr_optn_t set val=null where prsn_optn_id in ('NOTIFY_ACKNOWLEDGE','NOTIFY_COMPLETE','NOTIFY_FYI')
+/
+
+ 
