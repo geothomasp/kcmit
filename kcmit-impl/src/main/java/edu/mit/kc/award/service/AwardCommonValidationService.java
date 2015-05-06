@@ -15,6 +15,9 @@
  */
 package edu.mit.kc.award.service;
 
+import java.util.List;
+
+import org.kuali.kra.award.contacts.AwardPerson;
 import org.kuali.kra.award.home.Award;
 
 
@@ -60,5 +63,10 @@ boolean validateAwardOnCOI(Award award);
    * @param Award
    * @return boolean
    */
+  
+  public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerson disclosurePerson);
+  
+  
+  public String getAwardDisclousureStatusForPerson(Award award,String personId);
 /*  boolean validateAwardOnCOI(Award award);*/
 }
