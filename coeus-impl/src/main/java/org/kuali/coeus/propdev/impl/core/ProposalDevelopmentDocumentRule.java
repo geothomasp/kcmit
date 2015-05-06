@@ -155,9 +155,9 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         boolean retval = true;
         ProposalDevelopmentDocument proposalDevelopmentDocument = (ProposalDevelopmentDocument) document;
 
-//        retval &= super.processCustomRouteDocumentBusinessRules(document);
-//        retval &= new KeyPersonnelAuditRule().processRunAuditBusinessRules(document);
-//        retval &= new KeyPersonnelCertificationRule().processRouteDocument(document);
+        retval &= super.processCustomRouteDocumentBusinessRules(document);
+        retval &= new KeyPersonnelAuditRule().processRunAuditBusinessRules(document);
+        retval &= new KeyPersonnelCertificationRule().processRouteDocument(document);
 
         return retval;
     }
@@ -170,22 +170,22 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
 
         boolean valid = true;
 
-//        ProposalDevelopmentDocument proposalDevelopmentDocument = (ProposalDevelopmentDocument) document;
-//
-//        if (!proposalDevelopmentDocument.isProposalDeleted()){
-//            GlobalVariables.getMessageMap().addToErrorPath("document.developmentProposal");
-//            valid &= processProposalRequiredFieldsBusinessRule(proposalDevelopmentDocument);
-//
-//            valid &= processProposalYNQBusinessRule(proposalDevelopmentDocument, false);
-//            valid &= processProposalGrantsGovBusinessRule(proposalDevelopmentDocument);
-//            valid &= processSponsorProgramBusinessRule(proposalDevelopmentDocument);
-//            valid &= processKeywordBusinessRule(proposalDevelopmentDocument);
-//            valid &= proccessValidateSponsor(proposalDevelopmentDocument);
-//            valid &= processCustomDataRule(proposalDevelopmentDocument);
-//            valid &= processAttachmentRules(proposalDevelopmentDocument);
-//            valid &= processSaveSpecialReviewRule(proposalDevelopmentDocument);
-//            GlobalVariables.getMessageMap().removeFromErrorPath("document.developmentProposal");
-//        }
+        ProposalDevelopmentDocument proposalDevelopmentDocument = (ProposalDevelopmentDocument) document;
+
+        if (!proposalDevelopmentDocument.isProposalDeleted()){
+            GlobalVariables.getMessageMap().addToErrorPath("document.developmentProposal");
+            valid &= processProposalRequiredFieldsBusinessRule(proposalDevelopmentDocument);
+
+            valid &= processProposalYNQBusinessRule(proposalDevelopmentDocument, false);
+            valid &= processProposalGrantsGovBusinessRule(proposalDevelopmentDocument);
+            valid &= processSponsorProgramBusinessRule(proposalDevelopmentDocument);
+            valid &= processKeywordBusinessRule(proposalDevelopmentDocument);
+            valid &= proccessValidateSponsor(proposalDevelopmentDocument);
+            valid &= processCustomDataRule(proposalDevelopmentDocument);
+            valid &= processAttachmentRules(proposalDevelopmentDocument);
+            valid &= processSaveSpecialReviewRule(proposalDevelopmentDocument);
+            GlobalVariables.getMessageMap().removeFromErrorPath("document.developmentProposal");
+        }
 
         return valid;
     }
@@ -194,7 +194,7 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
     protected boolean processCustomApproveDocumentBusinessRules(ApproveDocumentEvent approveEvent) {
         boolean retval = super.processCustomApproveDocumentBusinessRules(approveEvent);
 
-//        retval &= new KeyPersonnelCertificationRule().processApproveDocument(approveEvent);
+        retval &= new KeyPersonnelCertificationRule().processApproveDocument(approveEvent);
         
         return retval;
     }
