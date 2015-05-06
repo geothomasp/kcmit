@@ -579,40 +579,40 @@ public class MitPropDevJavaFunctionKrmsTermServiceImpl extends
 			List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
 					QuestionnaireAnswerService.class).getQuestionnaireAnswer(
 					moduleQuestionnaireBean);
-
-			AnswerHeader mostCurrentHeader = answerHeaders.get(0);
-			for (AnswerHeader header : answerHeaders) {
-				if (KcServiceLocator.getService(QuestionnaireService.class)
-						.isCurrentQuestionnaire(header.getQuestionnaire())
-						&& header.getQuestionnaire().hasUsageFor(
-								CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE,
-								getSubModuleItemCode(person
-										.getProposalPersonRoleId()))) {
-					mostCurrentHeader = header;
+			if(answerHeaders!=null && !answerHeaders.isEmpty()){
+				AnswerHeader mostCurrentHeader = answerHeaders.get(0);
+				for (AnswerHeader header : answerHeaders) {
+					if (KcServiceLocator.getService(QuestionnaireService.class)
+							.isCurrentQuestionnaire(header.getQuestionnaire())
+							&& header.getQuestionnaire().hasUsageFor(
+									CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE,
+									getSubModuleItemCode(person
+											.getProposalPersonRoleId()))) {
+						mostCurrentHeader = header;
+					}
 				}
-			}
-			if (mostCurrentHeader.getQuestionnaire().getQuestionnaireSeqId()
-					.equals(questionnaireId)) {
-
-				List<Answer> answers = mostCurrentHeader.getAnswers();
-				for (Answer answer : answers) {
-
-					if (answer.getQuestion().getQuestionSeqId().toString().equals(questionId)) {
-						if (questionId.equals("1001")
-								|| questionId.equals("1013")
-								|| questionId.equals("1016")) {
-							if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
-								return FALSE;
+				if (mostCurrentHeader.getQuestionnaire().getQuestionnaireSeqId()
+						.equals(questionnaireId)) {
+	
+					List<Answer> answers = mostCurrentHeader.getAnswers();
+					for (Answer answer : answers) {
+	
+						if (answer.getQuestion().getQuestionSeqId().toString().equals(questionId)) {
+							if (questionId.equals("1001")
+									|| questionId.equals("1013")
+									|| questionId.equals("1016")) {
+								if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
+									return FALSE;
+								}
 							}
-						}
-						if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
-							return TRUE;
+							if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
+								return TRUE;
+							}
 						}
 					}
 				}
 			}
 		}
-
 		return FALSE;
 	}
 

@@ -164,11 +164,12 @@ begin
   
   select count(DOC_TYP_NM) into li_count from TEMP_LOOKUP_RTE_NODE_LNK;
   if li_count = 0 then  
-	Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','PeopleFlows');
-	
-  --    Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','OSPInitial');
- --     Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','OSPInitial','ProposalPersons');
-  --    Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','ProposalPersons','PeopleFlows');
+	Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','OSPInitial');
+    Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','OSPInitial','PeopleFlows');
+    Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','PeopleFlows','OSPOfficeRouting');
+ 	
+ --    Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','OSPInitial');
+ --    Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','ProposalPersons','PeopleFlows');
   
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','Initiated','isHierarchyChild');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','isHierarchyChild','OSPInitial');
@@ -176,7 +177,6 @@ begin
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','ProposalPersons','PeopleFlows');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','PeopleFlows','UnitRouting');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','UnitRouting','DepartmentalRouting');
---      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','DepartmentalRouting','OSPOfficeRouting');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','isHierarchyChild','WaitForHierarchyDisposition');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','isHierarchyChild','Join');
 --      Insert into TEMP_LOOKUP_RTE_NODE_LNK (DOC_TYP_NM,FROM_NM,TO_NM) values ('ProposalDevelopmentDocument','OSPOfficeRouting','Join');
@@ -324,7 +324,7 @@ declare
 	
 begin  
 
-	select max(DOC_TYP_ID) into li_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM = ls_doc_typ_nm;
+	select max(to_number(DOC_TYP_ID)) into li_doc_typ_id from KREW_DOC_TYP_T where DOC_TYP_NM = ls_doc_typ_nm;
 
 open c_data;
 loop
