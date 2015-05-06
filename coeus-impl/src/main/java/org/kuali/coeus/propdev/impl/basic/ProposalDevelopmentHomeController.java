@@ -109,7 +109,7 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
         if (!ObjectUtils.isNull(form.getDocId())) {
             document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
             if(document==null) throw new RunTimeException("Proposal document might have been revalidated. " +
-            						"Please contact support team :kc-help@mit.edu: to send a new certification link")
+            						"Please contact support team :kc-help@mit.edu: to send a new certification link");
             isDeleted = document.isProposalDeleted();
         }
 
