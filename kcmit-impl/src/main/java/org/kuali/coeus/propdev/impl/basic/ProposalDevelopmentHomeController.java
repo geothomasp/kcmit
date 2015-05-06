@@ -18,6 +18,8 @@
  */
 package org.kuali.coeus.propdev.impl.basic;
 
+import static org.kuali.rice.core.api.criteria.PredicateFactory.equal;
+
 import java.util.*;
 
 import javax.persistence.EntityManager;
@@ -33,14 +35,23 @@ import org.kuali.coeus.propdev.impl.core.*;
 import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.propdev.impl.state.ProposalState;
+import org.kuali.kra.bo.DocumentNextvalue;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.kra.institutionalproposal.ProposalStatus;
+import org.kuali.kra.irb.ProtocolDocument;
+import org.kuali.rice.core.api.criteria.OrderByField;
+import org.kuali.rice.core.api.criteria.OrderDirection;
+import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.exception.DocumentAuthorizationException;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.DocumentDictionaryService;
+import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.uif.UifConstants;
 import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.util.KRADConstants;
@@ -77,6 +88,15 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
     @Qualifier("proposalQuestionnaireValidationService")
     private ProposalQuestionnaireValidationService proposalQuestionnaireValidationService;
 
+    @Autowired
+    @Qualifier("businessObjectService")
+    private BusinessObjectService businessObjectService;
+
+    @Autowired
+    @Qualifier("proposalMigrationService")
+    private ProposalMigrationService proposalMigrationService;
+    
+    
    @MethodAccessible
    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=createProposal")
    public ModelAndView createProposal(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result,
@@ -154,7 +174,12 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
 
    @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=save")
    public ModelAndView save(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
-       return super.save(form);
+	   
+	   reloadAllPendingProposals();
+	   
+       return getModelAndViewService().getModelAndView(form);
+	   
+	   //return super.save(form);
    }
 
 
@@ -372,4 +397,59 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
 			ProposalQuestionnaireValidationService proposalQuestionnaireValidationService) {
 		this.proposalQuestionnaireValidationService = proposalQuestionnaireValidationService;
 	}
+	
+	protected void reloadAllPendingProposals() {
+	       QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+	        List<Predicate> predicates = new ArrayList<Predicate>();
+	        predicates.add(equal("proposalStateTypeCode", ProposalState.IN_PROGRESS));
+	        Predicate[] preds = predicates.toArray(new Predicate[predicates.size()]);
+	        builder.setPredicates(preds);
+	        builder.setOrderByFields(OrderByField.Builder.create("proposalNumber", OrderDirection.DESCENDING).build());
+        List<DevelopmentProposal> proposals = getDataObjectService().findMatching(DevelopmentProposal.class, builder.build()).getResults();
+
+    	System.out.println("START Migrating ====> ");
+    	int i=1;
+        for(DevelopmentProposal devProp : proposals) {
+           	System.out.println("COUNT ====> " + i);
+                   	System.out.println("Migrating ====> " + devProp.getProposalNumber());
+        	try {
+        	reloadMigratedProposals(devProp.getProposalDocument());
+        	i++;
+        	}catch(Exception ex) {
+        		ex.printStackTrace();
+        	}
+        }
+	}
+	protected void reloadMigratedProposals(ProposalDevelopmentDocument document) {
+		getProposalMigrationService().executeProposalMigration(document);
+	}
+	
+	protected void associateDocumentNextvalues(String oldDocNum, ProposalDevelopmentDocument newDoc) { 
+	   	Map<String, String> query = new HashMap<String, String>(); 
+	   	query.put("documentKey", oldDocNum); 
+	   	List<DocumentNextvalue> nextVals = (List<DocumentNextvalue>) getBusinessObjectService().findMatching(DocumentNextvalue.class, query); 
+	   	for (DocumentNextvalue nextVal : nextVals) { 
+	   	 nextVal.setDocumentKey(newDoc.getDocumentNumber()); 
+	   	} 
+	   	getBusinessObjectService().save(nextVals); 
+	   	newDoc.setDocumentNextvalues(nextVals); 
+	   }
+
+	public BusinessObjectService getBusinessObjectService() {
+		return businessObjectService;
+	}
+
+	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+		this.businessObjectService = businessObjectService;
+	}
+
+	public ProposalMigrationService getProposalMigrationService() {
+		return proposalMigrationService;
+	}
+
+	public void setProposalMigrationService(
+			ProposalMigrationService proposalMigrationService) {
+		this.proposalMigrationService = proposalMigrationService;
+	} 
+	
 }
