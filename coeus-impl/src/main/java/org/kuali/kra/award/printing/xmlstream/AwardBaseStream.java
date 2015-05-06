@@ -1573,16 +1573,20 @@ public abstract class AwardBaseStream implements XmlStream {
 					.newInstance();
 			mailCopies.setContactTypeCode(Integer
 					.parseInt(awardReportTermRecipient.getContactTypeCode()));
-			mailCopies.setContactTypeDesc(awardReportTermRecipient
-					.getContactType().getDescription());
+			if(awardReportTermRecipient.getContactType()!=null){
+				mailCopies.setContactTypeDesc(awardReportTermRecipient
+						.getContactType().getDescription());
+			}
 			mailCopies.setNumberOfCopies(String
 					.valueOf(awardReportTermRecipient.getNumberOfCopies()));
 			mailCopies.setRolodexId(String.valueOf(awardReportTermRecipient
 					.getRolodexId()));
-			mailCopies.setRolodexName(awardReportTermRecipient.getRolodex()
-					.getFullName());
-			mailCopies.setRolodexOrganization(awardReportTermRecipient
-					.getRolodex().getOrganization());
+			if(awardReportTermRecipient.getRolodex()!=null){
+				mailCopies.setRolodexName(awardReportTermRecipient.getRolodex()
+						.getFullName());
+				mailCopies.setRolodexOrganization(awardReportTermRecipient
+						.getRolodex().getOrganization());
+			}
 			mailCopiesList.add(mailCopies);
 		}
 		return mailCopiesList;
