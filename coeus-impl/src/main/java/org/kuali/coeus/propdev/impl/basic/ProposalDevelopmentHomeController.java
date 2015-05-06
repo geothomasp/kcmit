@@ -108,6 +108,8 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
          String principalName=getGlobalVariableService().getUserSession().getPrincipalName();
         if (!ObjectUtils.isNull(form.getDocId())) {
             document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
+            if(document==null) throw new RunTimeException("Proposal document might have been revalidated. " +
+            						"Please contact support team :kc-help@mit.edu: to send a new certification link")
             isDeleted = document.isProposalDeleted();
         }
 
@@ -135,8 +137,8 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
                     if (StringUtils.equals(person.getUserName(),userName)) {               
                         form.setProposalPersonQuestionnaireHelper(person.getQuestionnaireHelper());
                        if(userName.equalsIgnoreCase(principalName)){
-                        form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
-                        break;
+                    	   form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
+                    	   break;
                         }else{                        	
                         	 form.getProposalPersonQuestionnaireHelper().setValidCertUser(false);
                         	 break;
