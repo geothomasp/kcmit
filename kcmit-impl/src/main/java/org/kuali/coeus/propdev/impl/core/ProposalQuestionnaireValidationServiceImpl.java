@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.ListUtils;
+import org.kuali.coeus.common.framework.person.attr.PersonAppointment;
 import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
@@ -16,6 +17,8 @@ import org.kuali.rice.krad.data.DataObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import edu.mit.kc.bo.PiAppointmentType;
 
 
 @Component("proposalQuestionnaireValidationService")
@@ -49,11 +52,35 @@ public class ProposalQuestionnaireValidationServiceImpl implements ProposalQuest
 
 	protected void checkPIStatus(ProposalPerson proposalPerson) {
 		if((proposalPerson.isPrincipalInvestigator() || proposalPerson.isCoInvestigator()) && 
-				!proposalPerson.getFacultyFlag()) {
+				!isAppointmentTypePI(proposalPerson)) {
         	getGlobalVariableService().getMessageMap().putWarning(PROPOSAL_SUBMIT_PAGE_ID, ERROR_PI_STATUS, new String[]{proposalPerson.getProposalPersonRoleId(), proposalPerson.getLastName()});
 		}
 	}
-			
+		
+	protected boolean isAppointmentTypePI(ProposalPerson proposalPerson) {
+		boolean isAppointmentTypePI = proposalPerson.getFacultyFlag();
+		if(!isAppointmentTypePI) {
+	        List<PiAppointmentType> piAppointmentTypes = getDataObjectService().findAll(PiAppointmentType.class).getResults();
+	        List<PersonAppointment> appointments = proposalPerson.getPerson().getExtendedAttributes().getPersonAppointments();
+	        for(PersonAppointment personAppointment : appointments) {
+	            if(isPiAppointmentTypeEqualsJobTitle(piAppointmentTypes, personAppointment.getJobTitle())) {
+	            	isAppointmentTypePI = true;
+	            	break;
+	            }
+	        }
+		}
+        return isAppointmentTypePI;
+	 }
+		
+	 protected boolean isPiAppointmentTypeEqualsJobTitle(List<PiAppointmentType> piAppointmentTypes, String jobTitle) {
+	    for(PiAppointmentType piAppointmentType : piAppointmentTypes) {
+            if(piAppointmentType.getDescription().equalsIgnoreCase(jobTitle)) {
+                return true;
+            }
+	    }
+	    return false;
+	 }
+	
 	protected void buildValidationMessages(List<AnswerHeader> answerHeaders, Map<Long, List<ProposalQuestionnaireValidation>> questionnaireValidationMessages,
 			ProposalPerson proposalPerson) {
 		for(AnswerHeader answerHeader : answerHeaders) {
