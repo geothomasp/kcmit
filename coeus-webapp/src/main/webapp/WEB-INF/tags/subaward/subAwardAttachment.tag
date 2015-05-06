@@ -202,7 +202,7 @@ opacity:1;
 							   <c:if test="${KualiForm.document.subAwardList[0].subAwardAttachments[itrStatus.index].documentStatusCode != 'V'}">
 								<c:choose>
 								<c:when test="${readOnly}">
-								<c:if test="${subAwardAttachmentFormBean.canViewAttachment}">
+								<c:if test="${attachment.viewAttachment}">
 								<html:image property="methodToCall.viewAttachment.line${itrStatus.index}.anchor${currentTabIndex}"
 										src='${ConfigProperties.kra.externalizable.images.url}tinybutton-view.gif' styleClass="tinybutton"
 										alt="View Attachment" onclick="excludeSubmitRestriction = true;"/>
