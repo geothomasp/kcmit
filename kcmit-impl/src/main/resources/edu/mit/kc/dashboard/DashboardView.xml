@@ -75,7 +75,7 @@
     </bean>
 
     <bean id="Dashboard-Page" parent="Uif-Page" p:headerText="Dashboard">
-        <property name="header.rightGroup">
+        <!-- <property name="header.rightGroup">
           <bean parent="Uif-HeaderRightGroup">
             <property name="items">
               <list>
@@ -90,7 +90,7 @@
               </list>
             </property>
           </bean>
-        </property>
+        </property> -->
         <property name="items">
             <list>
                 <ref bean="Dashboard-Top"/>
