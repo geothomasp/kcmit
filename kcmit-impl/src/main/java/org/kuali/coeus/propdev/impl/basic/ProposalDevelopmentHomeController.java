@@ -113,7 +113,7 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
         if (!ObjectUtils.isNull(form.getDocId())) {
             document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
             if(document==null) throw new RuntimeException("Proposal document might have been revalidated. " +
-					"Please contact support team :kc-help@mit.edu: to send a new certification link");
+					"Please contact support team :kc-help@mit.edu");
             isDeleted = document.isProposalDeleted();
         }
 
@@ -129,11 +129,13 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
             form.setDocTypeName(workflowDocument.getDocumentTypeName());
             form.setProposalCopyCriteria(new ProposalCopyCriteria(document));
             ((ProposalDevelopmentViewHelperServiceImpl)form.getView().getViewHelperService()).populateQuestionnaires(form);
-
-            if (!this.getDocumentDictionaryService().getDocumentAuthorizer(document).canOpen(document,
-                    getGlobalVariableService().getUserSession().getPerson())) {
-                throw new DocumentAuthorizationException(getGlobalVariableService().getUserSession().getPerson().getPrincipalName(),
-                                "open", document.getDocumentNumber());
+            String veiwId = form.getViewId();
+            if(!viewId.equals("PropDev-CertificationView")){
+	            if (!this.getDocumentDictionaryService().getDocumentAuthorizer(document).canOpen(document,
+	                    getGlobalVariableService().getUserSession().getPerson())) {
+	                throw new DocumentAuthorizationException(getGlobalVariableService().getUserSession().getPerson().getPrincipalName(),
+	                                "open", document.getDocumentNumber());
+	            }
             }
 
             if (StringUtils.isNotEmpty(userName)) {
@@ -141,7 +143,7 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
                     if (StringUtils.equals(person.getUserName(),userName)) {               
                         form.setProposalPersonQuestionnaireHelper(person.getQuestionnaireHelper());
                        if(userName.equalsIgnoreCase(principalName)){
-                        form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
+                    	   form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
                         break;
                         }else{                        	
                         	 form.getProposalPersonQuestionnaireHelper().setValidCertUser(false);

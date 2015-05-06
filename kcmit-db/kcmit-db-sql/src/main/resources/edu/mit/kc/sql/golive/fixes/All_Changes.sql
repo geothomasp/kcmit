@@ -91,10 +91,13 @@ select distinct role_nm from document_access
                              
 
 update document_access set role_nm = 'Approver Document Level' where role_nm='Approver'
-
+/
 alter table document_access drop constraint UQ_DOCUMENT_ACCESS1
 commit;
 update document_access set role_nm = 'Aggregator Document Level' where role_nm='Aggregator'
+
+update krim_role_t set role_nm='Approver Document Level' where role_nm='approver Document Level'
+
 
 update eps_proposal_budget_ext set status_code='1' where status_code='C'
 update eps_proposal_budget_ext set status_code='2' where status_code='I'
