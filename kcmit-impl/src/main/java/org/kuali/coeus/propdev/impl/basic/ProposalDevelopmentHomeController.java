@@ -129,8 +129,8 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
             form.setDocTypeName(workflowDocument.getDocumentTypeName());
             form.setProposalCopyCriteria(new ProposalCopyCriteria(document));
             ((ProposalDevelopmentViewHelperServiceImpl)form.getView().getViewHelperService()).populateQuestionnaires(form);
-            String veiwId = form.getViewId();
-            if(!viewId.equals("PropDev-CertificationView")){
+            String viewId = form.getViewId();
+            if(viewId!=null && !viewId.equals("PropDev-CertificationView")){
 	            if (!this.getDocumentDictionaryService().getDocumentAuthorizer(document).canOpen(document,
 	                    getGlobalVariableService().getUserSession().getPerson())) {
 	                throw new DocumentAuthorizationException(getGlobalVariableService().getUserSession().getPerson().getPrincipalName(),
