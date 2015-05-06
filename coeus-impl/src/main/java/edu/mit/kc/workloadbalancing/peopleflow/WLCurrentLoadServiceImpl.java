@@ -82,7 +82,9 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 		double res = 0.0;
 		if(!wLCurrentLoadList.isEmpty()){
 			for(WLCurrentLoad wLCurrentLoad :wLCurrentLoadList){
-				res = res + wLCurrentLoad.getComplexity();
+				if(wLCurrentLoad.getComplexity()!=null){
+					res = res + wLCurrentLoad.getComplexity();
+				}
 			}
 		}
 		return res;
