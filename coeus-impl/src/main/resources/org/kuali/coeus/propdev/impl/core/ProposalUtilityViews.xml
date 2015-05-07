@@ -202,7 +202,7 @@
                     <bean parent="Uif-FooterBase" p:dataAttributes="sticky_footer:true">
                         <property name="items">
                             <list>
-                                <bean parent="Uif-SecondaryActionButton" p:actionLabel="Cancel" p:methodToCall="returnToHub" p:order="10"/>
+                                <bean parent="Uif-SecondaryActionButton" p:actionLabel="Close" p:methodToCall="returnToHub" p:order="10"/>
                                 <bean parent="Uif-PrimaryActionButton" p:actionLabel="Certify Answers" p:methodToCall="certifyAnswers"
                                       p:order="20" p:render= "@{proposalPersonQuestionnaireHelper.validCertUser}"/>
                             </list>
