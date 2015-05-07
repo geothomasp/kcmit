@@ -61,7 +61,10 @@ public abstract class QuestionnaireHelperBase implements Serializable {
     public void resetHeaderLabels() {
         List<String> labels = new ArrayList<String>();
         for (AnswerHeader answerHeader : answerHeaders) {
-        	String label = getQuestionnaireLabel(answerHeader.getQuestionnaire().getQuestionnaireUsages(), answerHeader.getModuleSubItemCode()); 
+        	String label = answerHeader.getLabel();
+        	if(label == null) {
+        		label = getQuestionnaireLabel(answerHeader.getQuestionnaire().getQuestionnaireUsages(), answerHeader.getModuleSubItemCode()); 
+        	}
             labels.add(label);
             answerHeader.setLabel(label);
         }
