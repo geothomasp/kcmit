@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
 import org.kuali.coeus.common.framework.compliance.core.SaveDocumentSpecialReviewEvent;
 import org.kuali.coeus.propdev.impl.copy.ProposalCopyCriteria;
@@ -62,6 +64,7 @@ import edu.mit.kc.infrastructure.KcMitConstants;
 
 @Controller
 public class ProposalDevelopmentHomeController extends ProposalDevelopmentControllerBase {
+    private static Log LOG = LogFactory.getLog(ProposalDevelopmentHomeController.class);
 
     @Autowired
     @Qualifier("dataDictionaryService")
@@ -113,7 +116,12 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
         // String UserIdInv=form.getProposalPersonQuestionnaireHelper().getProposalPerson().getPerson().getUserName(); 
          String principalName=getGlobalVariableService().getUserSession().getPrincipalName();
         if (!ObjectUtils.isNull(form.getDocId())) {
-            document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
+        	// this fix is for the revalidation.
+        	try { 
+        		document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
+        	}catch (Exception ex) {
+        		LOG.error("Invalid document - this document was reprocessed. Document number " + form.getDocId());
+        	}
             if(document==null) throw new RuntimeException("Proposal document might have been revalidated. " +
 					"Please contact support team :kc-help@mit.edu");
             isDeleted = document.isProposalDeleted();
