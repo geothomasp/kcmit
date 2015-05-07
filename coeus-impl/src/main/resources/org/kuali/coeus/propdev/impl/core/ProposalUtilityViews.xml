@@ -245,5 +245,29 @@
             </bean>
         </property>
     </bean>
-
+   <bean id="PropDev-Personal-CertificationCompeleteDialog" parent="Uif-DialogGroup-YesNo" >
+        <property name="items">
+            <list>
+             <bean parent="Uif-MessageField" p:messageText="Certification completed" p:order="10"/>
+             </list>
+        </property>
+	 <property name="footer.items">
+            <list>
+                <bean parent="Uif-PrimaryActionButton" p:actionLabel="OK"  p:methodToCall="returnToHub" p:order="10"
+                      p:dialogDismissOption="REQUEST"  p:successCallback="dismissDialog('PropDev-Personal-CertificationCompeleteDialog');" p:dialogResponse="true"/>
+            </list>
+        </property>
+	</bean>
+	 <bean id="PropDev-Personal-CertificationInCompeletedDialog" parent="Uif-DialogGroup-YesNo" >
+		<property name="items">
+            <list>
+             <bean parent="Uif-MessageField" p:messageText="Certification not completed" p:order="10"/>
+             </list>
+        </property>
+	 	<property name="footer.items">
+            <list>
+                <bean parent="Uif-DialogDismissButton" p:actionLabel="OK" p:order="10" />
+            </list>
+        </property>
+	</bean>
 </beans>

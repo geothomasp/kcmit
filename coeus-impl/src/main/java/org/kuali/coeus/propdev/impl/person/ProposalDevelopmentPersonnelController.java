@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -309,7 +310,22 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
                 proposalPerson.setQuestionnaireHelper(form.getProposalPersonQuestionnaireHelper());
             }
         }
-        return super.save(form);
+        super.save(form);
+        ModelAndView view = getModelAndViewService().getModelAndView(form);
+        for (ProposalPerson proposalPerson : form.getDevelopmentProposal().getProposalPersons()) {
+            if (StringUtils.equals(proposalPerson.getPersonId(),selectedPersonId)) {
+                proposalPerson.setQuestionnaireHelper(form.getProposalPersonQuestionnaireHelper());
+                if(proposalPerson.getQuestionnaireHelper()!=null && proposalPerson.getQuestionnaireHelper().getAnswerHeaders()!=null
+                		&& !proposalPerson.getQuestionnaireHelper().getAnswerHeaders().isEmpty()){
+                	if(proposalPerson.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted()){
+                		 view =  getModelAndViewService().showDialog("PropDev-Personal-CertificationCompeleteDialog", true, form);
+                	}else{
+                		 view =  getModelAndViewService().showDialog("PropDev-Personal-CertificationInCompeletedDialog", true, form);
+                	}
+                }
+            }
+        }
+        return  view;
     }
     
     private enum MoveOperationEnum {
