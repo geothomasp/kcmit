@@ -248,7 +248,7 @@
    <bean id="PropDev-Personal-CertificationCompeleteDialog" parent="Uif-DialogGroup-YesNo" >
         <property name="items">
             <list>
-             <bean parent="Uif-MessageField" p:messageText="Certification completed" p:order="10"/>
+             <bean parent="Uif-MessageField" p:messageText="Certification Completed and Submitted" p:order="10"/>
              </list>
         </property>
 	 <property name="footer.items">
@@ -261,7 +261,7 @@
 	 <bean id="PropDev-Personal-CertificationInCompeletedDialog" parent="Uif-DialogGroup-YesNo" >
 		<property name="items">
             <list>
-             <bean parent="Uif-MessageField" p:messageText="Certification not completed" p:order="10"/>
+             <bean parent="Uif-MessageField" p:messageText="Certification  Incomplete. Please answer all questions" p:order="10"/>
              </list>
         </property>
 	 	<property name="footer.items">
