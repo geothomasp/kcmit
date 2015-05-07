@@ -58,6 +58,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 @Controller
 public class ProposalDevelopmentHomeController extends ProposalDevelopmentControllerBase {
 
@@ -142,6 +144,12 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
                 for (ProposalPerson person : form.getDevelopmentProposal().getProposalPersons()) {
                     if (StringUtils.equals(person.getUserName(),userName)) {               
                         form.setProposalPersonQuestionnaireHelper(person.getQuestionnaireHelper());
+                        if(person.getQuestionnaireHelper()!=null && person.getQuestionnaireHelper().getAnswerHeaders()!=null
+                        		&& !person.getQuestionnaireHelper().getAnswerHeaders().isEmpty()){
+                        	if(person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted()){
+                        		getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-CertificationView", KcMitConstants.CERTIFICATION_COMPLETED,"");
+                        	}
+                        }
                        if(userName.equalsIgnoreCase(principalName)){
                     	   form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
                         break;

@@ -81,5 +81,7 @@ public interface KcMitConstants {
     public static final String FINAL_TECHNICAL_REPORT_ALERT = "final.technicalReportsDue.alert";
     public static final String FINAL_PATENT_REPORT_ALERT = "final.patentReportsDue.alert";
     
-    
+  
+    public static final String CERTIFICATION_COMPLETED = "error.proposalperson.certfication.completed";
+
 }
