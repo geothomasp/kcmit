@@ -88,9 +88,9 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         result.put("{SPONSOR_NAME}", developmentProposal.getSponsorName());
         result.put("{START_DATE}",developmentProposal.getRequestedStartDateInitial().toString());
         result.put("{END_DATE}",developmentProposal.getRequestedEndDateInitial().toString());
-        result.put("{PROGRAM_ANNOUNCEMENT_NUMBER}", developmentProposal.getProgramAnnouncementNumber());
-        result.put("{PROGRAM_ANNOUNCEMENT_TITLE}", developmentProposal.getProgramAnnouncementTitle());
-        result.put("{CFDA_NUMBER}", developmentProposal.getCfdaNumber());
+        result.put("{PROGRAM_ANNOUNCEMENT_NUMBER}", developmentProposal.getProgramAnnouncementNumber()== null ? "" : developmentProposal.getProgramAnnouncementNumber());
+        result.put("{PROGRAM_ANNOUNCEMENT_TITLE}", developmentProposal.getProgramAnnouncementTitle()== null ? "" :developmentProposal.getProgramAnnouncementTitle());
+        result.put("{CFDA_NUMBER}", developmentProposal.getCfdaNumber()== null ? "" :developmentProposal.getCfdaNumber());
         List<ProposalUserRoles> proposalUserRoles =  developmentProposal.getWorkingUserRoles();
         StringBuilder aggregators = new StringBuilder();
         int proposalUserCount = 0;
@@ -124,7 +124,7 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         result.put("{PI_NAME}", developmentProposal.getPrincipalInvestigatorName());
         result.put("{LEAD_UNIT}", developmentProposal.getUnitNumber());
         result.put("{LEAD_UNIT_NAME}", developmentProposal.getUnit().getUnitName());
-        result.put("{PRIME_SPONSOR_CODE}", developmentProposal.getPrimeSponsorCode());
+        result.put("{PRIME_SPONSOR_CODE}", developmentProposal.getPrimeSponsorCode()!= null ? developmentProposal.getPrimeSponsorCode() : "");
         result.put("{PRIME_SPONSOR_NAME}", developmentProposal.getPrimeSponsor() != null ? developmentProposal.getPrimeSponsor().getSponsorName() : "");
         InstitutionalProposal instProp = getProposalDevelopmentService().getInstitutionalProposal(developmentProposal.getProposalNumber());
         result.put("{INSTITUTIONAL_PROPOSAL_NUMBER}", instProp != null ? instProp.getProposalNumber() : "");
@@ -140,18 +140,18 @@ public class ProposalDevelopmentNotificationRenderer extends NotificationRendere
         }
         if (proposalPerson != null) {
             result.put("{USER_NAME}",proposalPerson.getUserName());
-            result.put("{PROPOSAL_CERTIFY_USER}",proposalPerson.getCertifiedPersonName()); 
-            result.put("{PROPOSAL_CERTIFY_TIME_STAMP}", proposalPerson.getCertifiedTimeStamp());        
+            result.put("{PROPOSAL_CERTIFY_USER}",proposalPerson.getCertifiedPersonName()!= null ? proposalPerson.getCertifiedPersonName() :""); 
+            result.put("{PROPOSAL_CERTIFY_TIME_STAMP}", proposalPerson.getCertifiedTimeStamp()!= null ? proposalPerson.getCertifiedTimeStamp() :"");        
         }
         if(developmentProposal.getContactAdministrator()!=null){
-        	result.put("{CA_FIRST_NAME}",developmentProposal.getContactAdministrator().getFirstName()); 
-        	result.put("{CA_LAST_NAME}",developmentProposal.getContactAdministrator().getLastName()); 
-        	result.put("{CA_FIRST_NAME}",developmentProposal.getContactAdministrator().getFirstName()); 
-        	result.put("{CA_EMAIL}",developmentProposal.getContactAdministrator().getEmailAddress()); 
-        	result.put("{CA_PHONE}",developmentProposal.getContactAdministrator().getPhoneNumber()); 
+        	result.put("{CA_FIRST_NAME}",developmentProposal.getContactAdministrator().getFirstName() != null ? developmentProposal.getContactAdministrator().getFirstName() :""); 
+        	result.put("{CA_LAST_NAME}",developmentProposal.getContactAdministrator().getLastName() != null ? developmentProposal.getContactAdministrator().getLastName() :""); 
+        	result.put("{CA_FIRST_NAME}",developmentProposal.getContactAdministrator().getFirstName() != null ? developmentProposal.getContactAdministrator().getFirstName() :""); 
+        	result.put("{CA_EMAIL}",developmentProposal.getContactAdministrator().getEmailAddress() != null ? developmentProposal.getContactAdministrator().getEmailAddress() :""); 
+        	result.put("{CA_PHONE}",developmentProposal.getContactAdministrator().getPhoneNumber() != null ? developmentProposal.getContactAdministrator().getPhoneNumber() :""); 
             String wlFunfact =  getParameterService().
             		getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "WL_FUN_FACTS");
-        	result.put("{WL_FUN_FACTS}",wlFunfact);
+        	result.put("{WL_FUN_FACTS}",wlFunfact != null ? wlFunfact  :"");
         }
         return result;
     }
