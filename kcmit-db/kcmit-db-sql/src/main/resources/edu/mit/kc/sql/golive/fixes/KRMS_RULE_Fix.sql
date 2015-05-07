@@ -9,7 +9,6 @@ update krms_agenda_t set actv='Y'  WHERE NM='060700 SoE MITES Proposal Routing'
 update krms_agenda_t set actv='N' where nm='Development Proposal Branching Questionnaire'
 
 
-
 update krms_agenda_t set INIT_AGENDA_ITM_ID='10112',actv='Y' 
 WHERE NM ='152000 Chemistry';
 
@@ -128,9 +127,34 @@ update krms_agenda_t set actv='Y'
 
 
 
+select * from krms_agenda_t where nm = '060700 SoE MITES Proposal Routing'
+
+select * from krms_agenda_t@kc_stag_db_link where nm = '060700 SoE MITES Proposal Routing'
+
+update krms_agenda_t set INIT_AGENDA_ITM_ID = '10060' where nm = '060700 SoE MITES Proposal Routing'
 
 
+select INIT_AGENDA_ITM_ID from krms_agenda_t where nm = '150000 School of Science Agenda';
+select INIT_AGENDA_ITM_ID from krms_agenda_t@kc_stag_db_link where nm = '150000 School of Science Agenda';
+
+select a.nm from krms_agenda_t a,krms_agenda_t@kc_stag_db_link b where a.NM=b.NM and a.INIT_AGENDA_ITM_ID<>b.INIT_AGENDA_ITM_ID
+
+update krms_agenda_t a set INIT_AGENDA_ITM_ID = 
+  (select INIT_AGENDA_ITM_ID from krms_agenda_t@kc_stag_db_link b where a.NM=b.NM and a.INIT_AGENDA_ITM_ID<>b.INIT_AGENDA_ITM_ID)
+where exists (select INIT_AGENDA_ITM_ID from krms_agenda_t@kc_stag_db_link b where a.NM=b.NM and a.INIT_AGENDA_ITM_ID<>b.INIT_AGENDA_ITM_ID)
 
 
+select INIT_AGENDA_ITM_ID from krms_agenda_t where nm = '150000 School of Science Agenda';
+select INIT_AGENDA_ITM_ID from krms_agenda_t@kc_stag_db_link where nm = '150000 School of Science Agenda';
 
+select * from krms_agenda_t where nm = '150000 School of Science Agenda';
+
+select * from krms_agenda_itm_t@kc_stag_db_link where agenda_id not in (select agenda_id from krms_agenda_itm_t)
+
+insert into krms_agenda_itm_t 
+  (select * from krms_agenda_itm_t@kc_stag_db_link where agenda_id not in (select agenda_id from krms_agenda_itm_t))
+
+select * from krms_rule_t where nm like '150000%' order by rule_id
+/
+select * from krms_rule_t@kc_stag_db_link where nm like '150000%'  order by rule_id
 

@@ -37,7 +37,7 @@ public class MitHeaderHelper {
         
 		GroupService groupService = KcServiceLocator.getService(GroupService.class);
 		Group group = groupService.getGroupByNamespaceCodeAndName("KC-WKFLW", "OSPADMIN");
-		if(group!=null){
+		if(currentUser!=null && group!=null){
 			return groupService.isMemberOfGroup(currentUser.getPrincipalId(), group.getId());
 		}else{
 			return false;
