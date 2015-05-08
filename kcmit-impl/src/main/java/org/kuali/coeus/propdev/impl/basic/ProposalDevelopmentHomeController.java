@@ -115,6 +115,7 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
         boolean isDeleted = false;
         // String UserIdInv=form.getProposalPersonQuestionnaireHelper().getProposalPerson().getPerson().getUserName(); 
          String principalName=getGlobalVariableService().getUserSession().getPrincipalName();
+         String viewId = form.getViewId();
         if (!ObjectUtils.isNull(form.getDocId())) {
         	// this fix is for the revalidation.
         	try { 
@@ -122,10 +123,14 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
         	}catch (Exception ex) {
         		LOG.error("Invalid document - this document was reprocessed. Document number " + form.getDocId());
         	}
-            if(document==null) throw new RuntimeException("Proposal document might have been revalidated. " +
-					"Please contact support team :kc-help@mit.edu");
-            isDeleted = document.isProposalDeleted();
+            if(document==null && viewId!=null && viewId.equals("PropDev-CertificationView")) {
+                Properties props = new Properties();
+                props.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, KRADConstants.START_METHOD);
+                props.put(UifConstants.UrlParams.VIEW_ID, "PropDev-ReprocessedView");
+                return getModelAndViewService().performRedirect(form, "proposalDevelopment", props);
+            }
         }
+        isDeleted = document.isProposalDeleted();
 
         if (isDeleted) {
             Properties props = new Properties();
@@ -139,7 +144,6 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
             form.setDocTypeName(workflowDocument.getDocumentTypeName());
             form.setProposalCopyCriteria(new ProposalCopyCriteria(document));
             ((ProposalDevelopmentViewHelperServiceImpl)form.getView().getViewHelperService()).populateQuestionnaires(form);
-            String viewId = form.getViewId();
             if(viewId!=null && !viewId.equals("PropDev-CertificationView")){
 	            if (!this.getDocumentDictionaryService().getDocumentAuthorizer(document).canOpen(document,
 	                    getGlobalVariableService().getUserSession().getPerson())) {
