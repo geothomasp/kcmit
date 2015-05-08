@@ -34,6 +34,7 @@ import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.ModuleQuestionnaireBean;
 import org.kuali.coeus.common.questionnaire.framework.answer.QuestionnaireAnswerService;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.coeus.propdev.impl.core.ProposalDevelopmentDocument;
 import org.kuali.coeus.propdev.impl.person.question.ProposalPersonModuleQuestionnaireBean;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import edu.mit.kc.award.service.AwardCommonValidationService;
@@ -77,6 +78,8 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
 	protected static final String DOCUMENT_COMPONENT_NAME = "Document";
 	private String  coiReqKP ="COI Disclosures with KP req";
    private String  coiReqNoKP ="COI Disclosures no KP";
+   private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
+   private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
 	Logger LOGGER;
 	
 	public AwardCommonValidationServiceImpl() {
@@ -120,194 +123,135 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
 		return "";
 	}
     public boolean validateAwardOnCOI(Award award) {
-    	 boolean awardPromptCoi = getParameterService().getParameterValueAsBoolean(
-                 "KC-AWARD", "Document", "AWARD_ON_HOLD_BASED_ON_COI");
-    	 String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
-         String errorKey = "document.awardList[0].statusCode";
-    	List<Object> paramValues = new ArrayList<Object>();
-		String result = "";	
-		String awardNewPerList="";
-		String awardNumber=award.getAwardNumber();
-		String sponsorCode=award.getSponsorCode();
-	   String primeSponsorCode=award.getPrimeSponsorCode(); 
-	    // String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY);
-if(awardPromptCoi){	
-	if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
-			"COI Disclosures")) {		
-			  StringBuilder awardPersonList = new StringBuilder();
-			   award.refreshReferenceObject("investigators");
-				for(AwardPerson awardPerson:award.getInvestigators()){						    
-					awardPersonList.append(awardPerson.getPersonId());
-					awardPersonList.append(",");			
-				}			
-			 awardNewPerList=awardPersonList.toString();
-		
-		if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-			 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-	         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-			return false;
-		}
-	}
-	if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, "COI Disclosures",1,coiReqKP)) {
-		  StringBuilder awardPersonList = new StringBuilder();
-			for(AwardPerson awardPerson:award.getKeyPersons()){						    
-				awardPersonList.append(awardPerson.getPersonId());
-				                           
-				awardPersonList.append(",");			
-			}			
-		 awardNewPerList=awardPersonList.toString();		
-	if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-		for(AwardPerson awardPerson:award.getKeyPersons()){	
-			if(awardPerson.getConfirmed().equals("false")){	
-				 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-		         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-				return false;
-			}else{
-				return true;
-			}
-		}
-	}else{
-		 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-		return false;
-	}}
-	if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
-			"COI Disclosures")) {		
-	List<AwardCustomData> awardCustomDataList = award
-			.getAwardCustomDataList();
-for (AwardCustomData awardCustomData : awardCustomDataList) {
-	CustomAttribute customAttribute = awardCustomData
-			.getCustomAttribute();
-	if (customAttribute.getLabel().equals("COI requirement")
-			&& customAttribute.getValue().equals("PCK")) {
-		  StringBuilder awardPersonList = new StringBuilder();
-			for(AwardPerson awardPerson:award.getKeyPersons()){						    
-				awardPersonList.append(awardPerson.getPersonId());
-				                           
-				awardPersonList.append(",");			
-			}			
-		 awardNewPerList=awardPersonList.toString();		
-	if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-		for(AwardPerson awardPerson:award.getKeyPersons()){	
-			if(awardPerson.getConfirmed().equals("false")){	
-				 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-		         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-				return false;
-			}else{
-				return true;
-			}
-		}
-	}else{
-		 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-       GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-		return false;
-	}
-		
-	} else if (customAttribute.getLabel().equals(
-			"COI requirement")
-			&& customAttribute.getValue().equals("PC")) {
-		  StringBuilder awardPersonList = new StringBuilder();
-				for(AwardPerson awardPerson:award.getInvestigators()){						    
-					awardPersonList.append(awardPerson.getPersonId());
-					awardPersonList.append(",");			
-				}			
-			 awardNewPerList=awardPersonList.toString();
-		
-		if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-			 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-	         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-			return false;
-		}
-		return false;
-	}
-}}else{
-	String moduleSubItemCode="";
-	String moduleItemCode = ""; 
-	 moduleItemCode = CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE;
-	moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
-	//List<AwardFundingProposal> instProp=award.getFundingProposals();
-	for(AwardFundingProposal fundingProp: award.getFundingProposals()){
-	//Long instProp=fundingProp.getProposalId();
-	
-	}
-	for (AwardPerson person : award.getProjectPersons()) {
-	ModuleQuestionnaireBean moduleQuestionnaireBean=	getQuestionnaireAnswerService().getModuleSpecificBean(moduleItemCode,person.getPersonId(),moduleSubItemCode,"0", false);	
-		List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
-				QuestionnaireAnswerService.class).getQuestionnaireAnswer(
-				moduleQuestionnaireBean);
-		if(answerHeaders!=null && !answerHeaders.isEmpty()){
-		for (AnswerHeader header : answerHeaders) {
-			List<Answer> answers = header.getAnswers();
-			if(answers!=null && !answers.isEmpty()){
-			for (Answer answer : answers) {
+    	boolean awardPromptCoi = getParameterService().getParameterValueAsBoolean(
+    			"KC-AWARD", "Document", "AWARD_ON_HOLD_BASED_ON_COI");
+    	String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+    	String errorKey = "document.awardList[0].statusCode";
+    	String awardNewPerList="";
+    	String awardNumber=award.getAwardNumber();
+    	String sponsorCode=award.getSponsorCode();
+    	String primeSponsorCode=award.getPrimeSponsorCode(); 
+    	boolean isHoldprompt = true;
+    	if(awardPromptCoi){	
+    		if(!checkCustomDataPCKFlag(award)){
+    			isHoldprompt = false;
+    		}
+    		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
+    				"COI Disclosures") || (primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode,"COI Disclosures"))) {		
+    			StringBuilder awardPersonList = new StringBuilder();
+    			award.refreshReferenceObject("investigators");
+    			for(AwardPerson awardPerson:award.getInvestigators()){		
+    				if(awardPerson.getPersonId()!=null){
+    					awardPersonList.append(awardPerson.getPersonId());
+    					awardPersonList.append(",");	
+    				}
+    			}			
+    			awardNewPerList=awardPersonList.toString();
+    			if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+    				isHoldprompt = false;
+    			}
+    		}
+    	       String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+    	       String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
 
-				if ((answer.getQuestion()!=null && answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
-					
-						if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
-							 auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-					         GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-							return false;
-						}
-					
-					if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
-						return true;
-					}
-				}
-			}}
-		}}
-	}
-}}
-/*if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqKP)) {
-	return false;
-}else if(getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, coiReqNoKP)){
-	List<AwardCustomData> awardCustomDataList= award.getAwardCustomDataList();
-	for(AwardCustomData awardCustomData:awardCustomDataList ){
-		CustomAttribute customAttribute=awardCustomData.getCustomAttribute();
-		if(customAttribute.getLabel().equals("COI requirement") && customAttribute.getValue().equals("PCK")){
-			return false;
-		}else if(customAttribute.getLabel().equals("COI requirement") && customAttribute.getValue().equals("PC")){
-			return false;
-		}
-		
-		
-	}
-		
-}else{
-	String moduleSubItemCode="";
-	String moduleItemCode = ""; 
-	 moduleItemCode = CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE;
-	moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-            Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
-	for (AwardPerson person : award.getProjectPersons()) {
-	ModuleQuestionnaireBean moduleQuestionnaireBean=	getQuestionnaireAnswerService().getModuleSpecificBean(moduleItemCode,person.getPersonId(),moduleSubItemCode,"0", false);	
-		List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
-				QuestionnaireAnswerService.class).getQuestionnaireAnswer(
-				moduleQuestionnaireBean);
-		if(answerHeaders!=null && !answerHeaders.isEmpty()){
-		for (AnswerHeader header : answerHeaders) {
-			List<Answer> answers = header.getAnswers();
-			if(answers!=null && !answers.isEmpty()){
-			for (Answer answer : answers) {
-
-				if ((answer.getQuestion()!=null && answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
-					
-						if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
-							return false;
-						}
-					
-					if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
-						return true;
-					}
-				}
-			}}
-		}}
-	}
-}}
-		*/
-
-  return true;
+    		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName) || 
+    				(primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName))) {
+    			StringBuilder awardPersonList = new StringBuilder();
+    			for(AwardPerson awardPerson:award.getKeyPersons()){		
+    				if(awardPerson.getPersonId()!=null){
+    					awardPersonList.append(awardPerson.getPersonId());
+    					awardPersonList.append(",");			
+    				}
+    			}			
+    			awardNewPerList=awardPersonList.toString();		
+    			if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    				for(AwardPerson awardPerson:award.getKeyPersons()){	
+    					if(awardPerson.getConfirmed().equals("false")){	
+    						auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
+    						GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
+    						isHoldprompt = false;
+    					}
+    				}
+    			}else{
+    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
+    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
+    				isHoldprompt = false;
+    			}}
+    	}
+    	return isHoldprompt;
     }
+    
+    protected boolean checkCustomDataPCKFlag(Award award){
+    	List<AwardCustomData> awardCustomDataList = award.getAwardCustomDataList();
+    	String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+    	String errorKey = "document.awardList[0].statusCode";
+    	String awardNewPerList="";
+    	String awardNumber=award.getAwardNumber();
+    	boolean isHoldprompt = true;
+    	for (AwardCustomData awardCustomData : awardCustomDataList) {
+    		CustomAttribute customAttribute = awardCustomData
+    				.getCustomAttribute();
+    		if (customAttribute.getName().equals("COI_REQUIREMENT")
+    				&& awardCustomData.getValue()!= null && awardCustomData.getValue().equals("PCK")) {
+    			StringBuilder awardPersonList = new StringBuilder();
+    			for(AwardPerson awardPerson:award.getKeyPersons()){		
+    				if(awardPerson.getPersonId()!=null){
+    					awardPersonList.append(awardPerson.getPersonId());
+    					awardPersonList.append(",");		
+    				}
+    			}			
+    			awardNewPerList=awardPersonList.toString();		
+    			if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    				for(AwardPerson awardPerson:award.getKeyPersons()){	
+    					if(awardPerson.getConfirmed().equals("false")){	
+    						auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
+    						GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
+    						isHoldprompt = false;
+    					}
+    				}
+    			}else{
+    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
+    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
+    				isHoldprompt = false;
+    			}
+
+    			StringBuilder awardInvestigatorList = new StringBuilder();
+    			for(AwardPerson awardPerson:award.getInvestigators()){		
+    				if(awardPerson.getPersonId()!=null){
+    					awardInvestigatorList.append(awardPerson.getPersonId());
+    					awardInvestigatorList.append(",");			
+    				}
+    			}			
+    			awardNewPerList=awardInvestigatorList.toString();
+
+    			if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+    				isHoldprompt = false;
+    			}
+
+    		} else if (customAttribute.getName().equals("COI_REQUIREMENT")	&& (awardCustomData.getValue()!= null && awardCustomData.getValue().equals("PC"))) {
+    			StringBuilder awardPersonList = new StringBuilder();
+    			for(AwardPerson awardPerson:award.getInvestigators()){		
+    				if(awardPerson.getPersonId()!=null){
+    					awardPersonList.append(awardPerson.getPersonId());
+    					awardPersonList.append(",");			
+    				}
+    			}			
+    			awardNewPerList=awardPersonList.toString();
+
+    			if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+    				isHoldprompt = false;
+    			}
+    		}
+    	}
+		return isHoldprompt;
+    }
+    
     public boolean validateSponsorCodeIsNIH (Award award) {
         boolean valid = true;
         String sponsorCode=award.getSponsorCode();
@@ -507,192 +451,144 @@ for (AwardCustomData awardCustomData : awardCustomDataList) {
         }     
 
     }
-public boolean hasCoiDisclosure(String awardNumber, Integer moduleCode, String personIds){
-	List<Object> paramValues = new ArrayList<Object>();
-	String result = "";	
-	Integer newResult=0;
-	try{
-	paramValues.add(0, awardNumber);
-		paramValues.add(1,AWARD_MODULE_CODE);
-		paramValues.add(2,personIds);
-		result = getDbFunctionExecuteService()
-				.executeFunction(
-						"fn_is_proj_disc_stat_complete"
-								+ this.getDBLink(), paramValues);
-} catch (Exception ex) {
-	LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
-	LOGGER.log(Level.ALL, ex.getMessage(), ex);
-} finally {
-	try {
-		if (!result.isEmpty()) {
-			LOGGER.log(Level.INFO,
-					"Function Successfully Invoked");
-		}
-	} catch (Exception e) {
-		LOGGER.log(Level.ALL, e.getMessage(), e);
-	}
-}if(result!=null){
-	 newResult=Integer.parseInt(result);}
-	if (newResult ==-1 ) {
-		return false;
-	}	else
-	{
-		return true;
-	}
+    public boolean hasCoiDisclosure(String awardNumber, Integer moduleCode, String personIds){
+    	List<Object> paramValues = new ArrayList<Object>();
+    	String result = "";	
+    	Integer newResult=0;
+    	try{
+    		paramValues.add(0, awardNumber);
+    		paramValues.add(1,AWARD_MODULE_CODE);
+    		paramValues.add(2,personIds);
+    		result = getDbFunctionExecuteService()
+    				.executeFunction(
+    						"fn_is_proj_disc_stat_complete"
+    								+ this.getDBLink(), paramValues);
+    	} catch (Exception ex) {
+    		LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
+    		LOGGER.log(Level.ALL, ex.getMessage(), ex);
+    	} finally {
+    		try {
+    			if (!result.isEmpty()) {
+    				LOGGER.log(Level.INFO,
+    						"Function Successfully Invoked");
+    			}
+    		} catch (Exception e) {
+    			LOGGER.log(Level.ALL, e.getMessage(), e);
+    		}
+    	}
+    	if(result.equals("")){
+    		return false;
+    	}
+    	if(result!=null){
+    		newResult=Integer.parseInt(result);}
+    	if (newResult ==-1 ) {
+    		return false;
+    	}else
+    	{
+    		return true;
+    	}
 }
 
 
 public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerson disclosurePerson) {
 	boolean awardPromptCoi = getParameterService().getParameterValueAsBoolean(
 			"KC-AWARD", "Document", "AWARD_ON_HOLD_BASED_ON_COI");
-	String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
 	List<AwardPerson> disclosurePersons = new ArrayList();
-	String errorKey = "document.awardList[0].statusCode";
-	List<Object> paramValues = new ArrayList<Object>();
-	String result = "";	
 	String awardNewPerList="";
 	String awardNumber=award.getAwardNumber();
 	String sponsorCode=award.getSponsorCode();
 	String primeSponsorCode=award.getPrimeSponsorCode(); 
-	if(awardPromptCoi){	
+	
+	disclosurePersons = checkPCKCustomData(award,disclosurePerson);
+	if(disclosurePersons!=null && !disclosurePersons.isEmpty()){
+		return disclosurePersons;
+	}
+	
+	if(awardPromptCoi && disclosurePerson.getPersonId()!=null){	
 		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
-				"COI Disclosures")) {		
+				"COI Disclosures") || (primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode,"COI Disclosures"))) {		
 			StringBuilder awardPersonList = new StringBuilder();
 			award.refreshReferenceObject("investigators");
 			if(award.getInvestigators().contains(disclosurePerson)){
 				awardPersonList.append(disclosurePerson.getPersonId());
 				awardNewPerList=awardPersonList.toString();
 				if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-					auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-					GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-					//return false;
 					disclosurePersons.add(disclosurePerson);
 					return disclosurePersons;
 				}
 			}
 		}
-		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, "COI Disclosures",1,coiReqKP)) {
+		String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+	    String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
+		
+		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName) || 
+				(primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName))) {
 			StringBuilder awardPersonList = new StringBuilder();
 			if(award.getKeyPersons().contains(disclosurePerson)){
 				awardPersonList.append(disclosurePerson.getPersonId());
 				awardNewPerList=awardPersonList.toString();		
 				if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
 						if(disclosurePerson.getConfirmed().equals("false")){	
-							auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-							GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
 							disclosurePersons.add(disclosurePerson);
 							return disclosurePersons;
-							//	return false;
-						}else{
-							return disclosurePersons;
-						//return true;
-					}
+						}
 				}else{
 					disclosurePersons.add(disclosurePerson);
 					return disclosurePersons;
-					
-					/*return false;*/
 				}}
-		
 		}
-		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
-				"COI Disclosures")) {		
-			List<AwardCustomData> awardCustomDataList = award
-					.getAwardCustomDataList();
-			for (AwardCustomData awardCustomData : awardCustomDataList) {
-				CustomAttribute customAttribute = awardCustomData
-						.getCustomAttribute();
-				if (customAttribute.getLabel().equals("COI requirement")
-						&& customAttribute.getValue().equals("PCK")) {
-					StringBuilder awardPersonList = new StringBuilder();
-					
-					if(award.getKeyPersons().contains(disclosurePerson)){
-						awardPersonList.append(disclosurePerson.getPersonId());
-						awardNewPerList=awardPersonList.toString();		
-						if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-							for(AwardPerson awardPerson:award.getKeyPersons()){	
-								if(disclosurePerson.getConfirmed().equals("false")){	
-									disclosurePersons.add(disclosurePerson);
-									return disclosurePersons;
-									/*auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-									GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-									return false;*/
-									
-								}else{
-									return disclosurePersons;
-									//return true;
-								}
-								
+		}
+	return disclosurePersons;
+}
+protected List<AwardPerson> checkPCKCustomData(Award award,AwardPerson disclosurePerson){
+	List<AwardPerson> disclosurePersons = new ArrayList();
+	String awardNewPerList="";
+	String awardNumber=award.getAwardNumber();
+		List<AwardCustomData> awardCustomDataList = award.getAwardCustomDataList();
+		for (AwardCustomData awardCustomData : awardCustomDataList) {
+			CustomAttribute customAttribute = awardCustomData
+					.getCustomAttribute();
+			if (customAttribute.getName().equals("COI_REQUIREMENT") && awardCustomData.getValue()!= null && awardCustomData.getValue().equals("PCK")) {
+				StringBuilder awardPersonList = new StringBuilder();
+				if(disclosurePerson.getPersonId()!=null && award.getKeyPersons().contains(disclosurePerson)){
+					awardPersonList.append(disclosurePerson.getPersonId());
+					awardNewPerList=awardPersonList.toString();		
+					if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+							if(disclosurePerson.getConfirmed().equals("false")){	
+								disclosurePersons.add(disclosurePerson);
+								return disclosurePersons;
 							}
-						}else{
-							disclosurePersons.add(disclosurePerson);
-							return disclosurePersons;
-							/*auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-							GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-							return false;*/
-						}
-					}
-				} else if (customAttribute.getLabel().equals(
-						"COI requirement")
-						&& customAttribute.getValue().equals("PC")) {
-					StringBuilder awardPersonList = new StringBuilder();
-					if(award.getInvestigators().contains(disclosurePerson)){
-						awardPersonList.append(disclosurePerson.getPersonId());
-						awardNewPerList=awardPersonList.toString();
-
-						if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-							disclosurePersons.add(disclosurePerson);
-							return disclosurePersons;
-						}/*
-						return false;
-						persons.add(person);*/
+					}else{
+						disclosurePersons.add(disclosurePerson);
 						return disclosurePersons;
 					}
 				}
-			}}else{
-				String moduleSubItemCode="";
-				String moduleItemCode = ""; 
-				moduleItemCode = CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE;
-				moduleSubItemCode = getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
-						Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "MODULE_SUB_ITEM_CODE_PI_CERTIFICATION"); 
-				//List<AwardFundingProposal> instProp=award.getFundingProposals();
-				for(AwardFundingProposal fundingProp: award.getFundingProposals()){
-					//Long instProp=fundingProp.getProposalId();
+				
+				StringBuilder awardInvestigatorList = new StringBuilder();
+				if(disclosurePerson.getPersonId()!=null && award.getInvestigators().contains(disclosurePerson)){
+					awardInvestigatorList.append(disclosurePerson.getPersonId());
+					awardNewPerList = awardInvestigatorList.toString();
 
+					if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+						disclosurePersons.add(disclosurePerson);
+						return disclosurePersons;
+					}
 				}
-				if(award.getProjectPersons().contains(disclosurePerson)){
-				//for (AwardPerson person : award.getProjectPersons()) {
-					ModuleQuestionnaireBean moduleQuestionnaireBean=	getQuestionnaireAnswerService().getModuleSpecificBean(moduleItemCode,disclosurePerson.getPersonId(),moduleSubItemCode,"0", false);	
-					List<AnswerHeader> answerHeaders = KcServiceLocator.getService(
-							QuestionnaireAnswerService.class).getQuestionnaireAnswer(
-									moduleQuestionnaireBean);
-					if(answerHeaders!=null && !answerHeaders.isEmpty()){
-						for (AnswerHeader header : answerHeaders) {
-							List<Answer> answers = header.getAnswers();
-							if(answers!=null && !answers.isEmpty()){
-								for (Answer answer : answers) {
-
-									if ((answer.getQuestion()!=null && answer.getQuestion().getQuestionSeqId().equals(1005))||(answer.getQuestion().getQuestionSeqId().equals(1006)||(answer.getQuestion().getQuestionSeqId().equals(1007)))) {
-
-										if (answer.getAnswer()!=null && answer.getAnswer().equals("N")) {
-											/*auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-											GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-											return false;*/
-											disclosurePersons.add(disclosurePerson);
-											return disclosurePersons;
-										}
-										return disclosurePersons;
-										/*if (answer.getAnswer()!=null && answer.getAnswer().equals("Y")) {
-											return true;
-										}*/
-									}
-								}}
-						}}
+				
+			} else if (customAttribute.getName().equals("COI_REQUIREMENT")	&& (awardCustomData.getValue()!= null && awardCustomData.getValue().equals("PC"))) {
+				StringBuilder awardPersonList = new StringBuilder();
+				if(disclosurePerson.getPersonId()!=null && award.getInvestigators().contains(disclosurePerson)){
+					awardPersonList.append(disclosurePerson.getPersonId());
+					awardNewPerList=awardPersonList.toString();
+					if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+						disclosurePersons.add(disclosurePerson);
+						return disclosurePersons;
+					}
 				}
-			}}
-	return disclosurePersons;
+			}
+		}
+		return disclosurePersons;
 }
-
 public String getAwardDisclousureStatusForPerson(Award award,String personId) {
 	List<Object> paramValues = new ArrayList<Object>();
 	String result = "";	

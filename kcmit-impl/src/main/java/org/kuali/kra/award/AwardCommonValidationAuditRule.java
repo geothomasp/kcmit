@@ -110,6 +110,9 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
     	 String link5 = Constants.MAPPING_AWARD_CONTACTS_PAGE + "." + Constants.CONTACTS_PANEL_ANCHOR;
 	      String errorKey5 = "document.awardList[0].projectPersons";
   	auditWarnings5.add(new AuditError(errorKey5, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link5));
+  	if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP)!=null){
+  		auditWarnings5.add(new AuditError(errorKey5, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link5));
+  	}
   	 if (auditWarnings5.size() > 0) {
 	            GlobalVariables.getAuditErrorMap().put("contactsAuditWarnings",new AuditCluster(Constants.MAPPING_AWARD_CONTACTS_PAGE, auditWarnings5, HOLD_PROMPT)); 
 	            retval=false;

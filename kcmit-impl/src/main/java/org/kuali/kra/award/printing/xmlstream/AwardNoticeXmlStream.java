@@ -483,12 +483,13 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	
 	private AwardValidationType[] getAwardValidation(){
 		List<AwardValidationType> awardValidationTypes = new ArrayList<AwardValidationType>();
-		KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardTerm(award);
-		KcServiceLocator.getService(AwardCommonValidationService.class).validateReports(award);
 		KcServiceLocator.getService(AwardCommonValidationService.class).validateSpecialReviews(award);
-		KcServiceLocator.getService(AwardCommonValidationService.class).validateSponsorCodeIsNIH(award);
-		
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateReports(award);
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardTerm(award);
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardOnCOI(award);
 
+
+		
 		 
 		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW)!=null){
 			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
