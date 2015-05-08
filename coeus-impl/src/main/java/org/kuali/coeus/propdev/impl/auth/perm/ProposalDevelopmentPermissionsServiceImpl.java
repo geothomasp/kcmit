@@ -190,7 +190,8 @@ public class ProposalDevelopmentPermissionsServiceImpl implements ProposalDevelo
      	  if(isKeyPersonCustomData(proposalPerson.getDevelopmentProposal())){        		
      		  return true;
      	  }
-     	  if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName)) {
+     	  if (getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName) ||
+     			 (proposalPerson.getDevelopmentProposal().getPrimeSponsorCode()!=null && getSponsorHierarchyService().isSponsorInHierarchy(proposalPerson.getDevelopmentProposal().getPrimeSponsorCode(), sponsorHeirarchy,1,sponsorHeirarchyLevelName))) {
      		  return true;
      	  }}
    
@@ -225,7 +226,8 @@ public class ProposalDevelopmentPermissionsServiceImpl implements ProposalDevelo
 			List<CustomAttributeDocValue> customDataList = developmentProposal
 					.getProposalDocument().getCustomDataList();
 			for (CustomAttributeDocValue attributeDocValue : customDataList) {
-				if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("COI_REQUIREMENT")&& attributeDocValue.getValue().equals("PCK")) {
+				if (attributeDocValue.getCustomAttribute().getName().equalsIgnoreCase("COI_REQUIREMENT")&&
+						(attributeDocValue.getValue()!=null && attributeDocValue.getValue().equals("PCK"))) {
 					return true;
 				}
 			}
