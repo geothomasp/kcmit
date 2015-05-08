@@ -80,6 +80,12 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 	@Autowired
     @Qualifier("sponsorHierarchyService")
     private SponsorHierarchyService sponsorHierarchyService;
+	
+	
+    @Autowired
+    @Qualifier("proposalPersonCoiIntegrationService")
+    private ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
+
 
 	@Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-PersonnelPage"})
     public ModelAndView navigateToPersonnel(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -310,22 +316,34 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
                 proposalPerson.setQuestionnaireHelper(form.getProposalPersonQuestionnaireHelper());
             }
         }
-        super.save(form);
-        ModelAndView view = getModelAndViewService().getModelAndView(form);
-        for (ProposalPerson proposalPerson : form.getDevelopmentProposal().getProposalPersons()) {
-            if (StringUtils.equals(proposalPerson.getPersonId(),selectedPersonId)) {
-                proposalPerson.setQuestionnaireHelper(form.getProposalPersonQuestionnaireHelper());
-                if(proposalPerson.getQuestionnaireHelper()!=null && proposalPerson.getQuestionnaireHelper().getAnswerHeaders()!=null
-                		&& !proposalPerson.getQuestionnaireHelper().getAnswerHeaders().isEmpty()){
-                	if(proposalPerson.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted()){
-                		 view =  getModelAndViewService().showDialog("PropDev-Personal-CertificationCompeleteDialog", true, form);
-                	}else{
-                		 view =  getModelAndViewService().showDialog("PropDev-Personal-CertificationInCompeletedDialog", true, form);
-                	}
-                }
-            }
-        }
-        return  view;
+        	super.save(form);
+        	ModelAndView view = getModelAndViewService().getModelAndView(form);
+        	for (ProposalPerson proposalPerson : form.getDevelopmentProposal().getProposalPersons()) {
+        		if (StringUtils.equals(proposalPerson.getPersonId(),selectedPersonId)) {
+        			proposalPerson.setQuestionnaireHelper(form.getProposalPersonQuestionnaireHelper());
+        			if(!isCOIQuestionAnswered(proposalPerson)){
+        				if(proposalPerson.getQuestionnaireHelper()!=null && proposalPerson.getQuestionnaireHelper().getAnswerHeaders()!=null
+        						&& !proposalPerson.getQuestionnaireHelper().getAnswerHeaders().isEmpty()){
+        					if(proposalPerson.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted()){
+        						view =  getModelAndViewService().showDialog("PropDev-Personal-CertificationCompeleteDialog", true, form);
+        					}else{
+        						view =  getModelAndViewService().showDialog("PropDev-Personal-CertificationInCompeletedDialog", true, form);
+        					}
+        				}
+        			}
+        		}
+        	}
+        	return  view;
+    }
+    
+   private boolean isCOIQuestionAnswered(ProposalPerson proposalPerson){
+    	boolean coiQuestionsAnswered =false;
+    	String loggedInUser = getGlobalVariableService().getUserSession().getPrincipalId();
+    	if(proposalPerson.getPersonId()!=null && proposalPerson.getPersonId().equals(loggedInUser)){
+    		coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(proposalPerson);
+    	}
+
+    	return coiQuestionsAnswered;
     }
     
     private enum MoveOperationEnum {
@@ -438,5 +456,14 @@ public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentC
 
 	public void setSponsorHierarchyService(SponsorHierarchyService sponsorHierarchyService) {
 		this.sponsorHierarchyService = sponsorHierarchyService;
+	}
+	
+	public ProposalPersonCoiIntegrationService getProposalPersonCoiIntegrationService() {
+		return proposalPersonCoiIntegrationService;
+	}
+
+	public void setProposalPersonCoiIntegrationService(
+			ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService) {
+		this.proposalPersonCoiIntegrationService = proposalPersonCoiIntegrationService;
 	}
 }
