@@ -109,6 +109,7 @@ input.align-right {
 	 position: relative;
 	 top: .1em;
 	 cursor: pointer;
+	 background-repeat: no-repeat;
 }
 
 .alert-priority2 {
@@ -119,6 +120,7 @@ input.align-right {
     position: relative;
     top: .1em;
     cursor: pointer;
+    background-repeat: no-repeat;
 }
 
 .alert-priority3 {
@@ -129,6 +131,7 @@ input.align-right {
     position: relative;
     top: .1em;
     cursor: pointer;
+    background-repeat: no-repeat;
 }
 
 .icon-warning-sign {
@@ -142,7 +145,7 @@ input.align-right {
 
 
 .icon-warning-sign.alert-priority1:after {
-	content: "Low Priority";visibility: hidden;cursor: pointer;
+	content: "Low Risk";visibility: hidden;cursor: pointer;
 	position: relative;
     top: 15px;
 	padding: 3px 10px;
@@ -160,7 +163,7 @@ input.align-right {
 }
 
 .icon-warning-sign.alert-priority2:after {
-	content: "High Priority";visibility: hidden;cursor: pointer;
+	content: "High Risk";visibility: hidden;cursor: pointer;
 	position: relative;
     top: 15px;
 	padding: 3px 10px;
@@ -178,7 +181,7 @@ input.align-right {
 }
 
 .icon-warning-sign.alert-priority3:after {
-	content: "Unknown Priority";visibility: hidden;cursor: pointer;
+	content: "Risk Undetermined";visibility: hidden;cursor: pointer;
 	position: relative;
     top: 15px;
 	padding: 3px 10px;
