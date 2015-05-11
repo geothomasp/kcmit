@@ -580,14 +580,14 @@ BEGIN
 		
 		      IF r_pers.SECONDRY_OFFICE_PHONE IS NOT NULL THEN
 				           select KRIM_ENTITY_PHONE_ID_S.NEXTVAL into li_seq_entity_phn_id from dual;
-				           ls_phn_code:='WRK';
+				           ls_phn_code:='HM';
 				   
-                   SELECT COUNT(PHONE_TYP_CD) INTO li_count_phn FROM KRIM_PHONE_TYP_T WHERE PHONE_TYP_CD='WRK';
+                   SELECT COUNT(PHONE_TYP_CD) INTO li_count_phn FROM KRIM_PHONE_TYP_T WHERE PHONE_TYP_CD='HM';
 					         IF li_count_phn=0 THEN
 					            SELECT COUNT(*) INTO li_count_phn  FROM KRIM_PHONE_TYP_T;
 					            SELECT CHR(97+li_count_phn) INTO ls_display_sort  FROM DUAL;
 					            INSERT INTO KRIM_PHONE_TYP_T (ACTV_IND,DISPLAY_SORT_CD,LAST_UPDT_DT,OBJ_ID,PHONE_TYP_CD,PHONE_TYP_NM,VER_NBR)
-                      VALUES ('Y',ls_display_sort,r_pers.UPDATE_TIMESTAMP,SYS_GUID(),'WRK','Work',1);
+                      VALUES ('Y',ls_display_sort,r_pers.UPDATE_TIMESTAMP,SYS_GUID(),'HM','Home',1);
 					          END IF;
 				
 				
@@ -698,6 +698,122 @@ when others then
     			DBMS_OUTPUT.PUT_LINE (v_code || ' ' || v_errm);
                  dbms_output.put_line('Error occoured for KRIM_ENTITY_PRIV_PREF_T for the person '||r_pers.person_id);        
              END;
+			 
+			    INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+                values(r_pers.person_id,'DELEGATOR_FILTER','Secondary Delegators on Action List Page',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DocSearch.LastSearch.Holding1','{"documentStatuses":[],"documentStatusCategories":[],"additionalDocumentTypeNames":[],"dateCreatedFrom":1430862406767,"documentAttributeValues":{},"isAdvancedSearch":"NO","searchOptions":{},"applicationDocumentStatuses":[]}',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'EMAIL_NOTIFICATION','immediate',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'NOTIFY_APPROVE','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_C','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOC_TYPE_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'INITIATOR_COL_SHOW_NEW',null,1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'CURRENT_NODE_COL_SHOW_NEW','no',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'LAST_APPROVED_DATE_COL_SHOW_NEW','no',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'TITLE_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'ACTION_REQUESTED_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'ACTION_LIST_SIZE_NEW','10',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'NOTIFY_ACKNOWLEDGE',null,1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'NOTIFY_COMPLETE',null,1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DELEGATOR_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_D','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_I','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_R','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DATE_CREATED_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_P','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'NOTIFY_FYI',null,1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'EMAIL_NOTIFY_PRIMARY','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_E','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'CLEAR_FYI_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'WORKGROUP_REQUEST_COL_SHOW_NEW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'OPEN_ITEMS_NEW_WINDOW','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_F','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_X','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'APP_DOC_STATUS_COL_SHOW_NEW',null,1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'REFRESH_RATE','15',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_A','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DOCUMENT_STATUS_COLOR_S','white',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'USE_OUT_BOX','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'EMAIL_NOTIFY_SECONDARY','yes',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DocSearch.LastSearch.Order','DocSearch.LastSearch.Holding1,DocSearch.LastSearch.Holding0',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'DocSearch.LastSearch.Holding0','{"documentStatuses":[],"documentStatusCategories":[],"additionalDocumentTypeNames":[],"dateCreatedFrom":1430679105372,"documentAttributeValues":{},"isAdvancedSearch":"NO","searchOptions":{},"applicationDocumentStatuses":[]}',1);
+
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				values(r_pers.person_id,'PRIMARY_DELEGATE_FILTER','Primary Delegates on Action List Page',1);
+
+                commit;
 
              BEGIN
                IF c1_data%ISOPEN THEN
@@ -787,8 +903,8 @@ EXIT WHEN c_update%NOTFOUND;
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	   
-       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,LAST_NM,OBJ_ID,VER_NBR)
-       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.last_name,sys_guid(),1);
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,LAST_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.last_name,sys_guid(),1,'Y','Y',sysdate);
 	   
        
     ELSE
@@ -839,8 +955,8 @@ EXIT WHEN c_update%NOTFOUND;
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	   
-       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,FIRST_NM,OBJ_ID,VER_NBR)
-       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.first_name,sys_guid(),1);
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,FIRST_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.first_name,sys_guid(),1,'Y','Y',sysdate);
 	   
        
     ELSE
@@ -891,8 +1007,8 @@ EXIT WHEN c_update%NOTFOUND;
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	  
-       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,MIDDLE_NM,OBJ_ID,VER_NBR)
-       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.middle_name,sys_guid(),1);
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,MIDDLE_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.middle_name,sys_guid(),1,'Y','Y',sysdate);
 	   
        
     ELSE
@@ -1039,8 +1155,8 @@ IF r_update.email_address IS NOT NULL  THEN
        IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	  
-             INSERT INTO KRIM_ENTITY_EMAIL_T(ENTITY_EMAIL_ID,ENTITY_ID,EMAIL_ADDR,OBJ_ID,VER_NBR)
-             VALUES(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.email_address,sys_guid(),1);
+             INSERT INTO KRIM_ENTITY_EMAIL_T(ENTITY_EMAIL_ID,ENTITY_ID,EMAIL_ADDR,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+             VALUES(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.email_address,sys_guid(),1,'Y','Y',sysdate);
 	   
        
        ELSE
@@ -1092,8 +1208,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	       IF r_update.date_of_birth IS NOT NULL  THEN
-               INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,BIRTH_DT,OBJ_ID,VER_NBR)
-               VALUES(r_update.ENTITY_ID,r_update.date_of_birth,sys_guid(),1);
+               INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,BIRTH_DT,OBJ_ID,VER_NBR,LAST_UPDT_DT)
+               VALUES(r_update.ENTITY_ID,r_update.date_of_birth,sys_guid(),1,sysdate);
 	       END IF;
        
       ELSE
@@ -1181,8 +1297,8 @@ IF r_update.gender IS NOT NULL THEN
        IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	  
-              INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,GNDR_CD,OBJ_ID,VER_NBR)
-              VALUES(r_update.ENTITY_ID,r_update.gender,sys_guid(),1);
+              INSERT INTO KRIM_ENTITY_BIO_T(ENTITY_ID,GNDR_CD,OBJ_ID,VER_NBR,LAST_UPDT_DT)
+              VALUES(r_update.ENTITY_ID,r_update.gender,sys_guid(),1,sysdate);
 	   
        
        ELSE
@@ -1651,6 +1767,7 @@ select 'Updation of changed office_phone begins.' from dual
 /
 DECLARE
 li_count number;
+ls_phone_number varchar2(20);
 cursor c_update is
 select t1.person_id,
 t1.office_phone,
@@ -1676,27 +1793,25 @@ dbms_output.put_line('begin');
 
 IF r_update.office_phone IS NOT NULL THEN
 
-dbms_output.put_line('if block');
-
-
        SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID and PHONE_TYP_CD = 'WRK';
-dbms_output.put_line('count -> ' || li_count);
+	   select replace(translate(r_update.office_phone,'.+*/\()x ','---------'),'-') into ls_phone_number from dual;
 
+       select substr(ls_phone_number,1,3)||'-'||substr(ls_phone_number,4,3)||'-'||substr(ls_phone_number,7,4) into ls_phone_number from dual;
 
-dbms_output.put_line('entity -> ' || r_update.ENTITY_ID);
 
           IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
-dbms_output.put_line('inside count and entity');
-       
-               INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
-               VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'WRK',r_update.office_phone);
+
+            
+               INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
+               VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'WRK',ls_phone_number,'Y','Y',sysdate);
 	   
        
           ELSE
     
                 UPDATE KRIM_ENTITY_PHONE_T
-                SET PHONE_NBR=r_update.office_phone
-                WHERE ENTITY_ID=r_update.ENTITY_ID;
+                SET PHONE_NBR=ls_phone_number
+                WHERE ENTITY_ID=r_update.ENTITY_ID
+				AND PHONE_TYP_CD = 'WRK';
        
           END IF;
 
@@ -1753,6 +1868,7 @@ select 'Updation of changed secondry_office_phone begins.' from dual
 /
 DECLARE
 li_count number;
+ls_phone_number varchar2(20);
 cursor c_update is
 select t1.person_id,
 t1.secondry_office_phone,
@@ -1776,19 +1892,24 @@ EXIT WHEN c_update%NOTFOUND;
 
 IF r_update.secondry_office_phone IS NOT NULL THEN
 
-    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+    SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_PHONE_T WHERE ENTITY_ID=r_update.ENTITY_ID AND PHONE_TYP_CD = 'HM' ;
+	select replace(translate(r_update.secondry_office_phone,'.+*/\()x ','---------'),'-') into ls_phone_number from dual;
+
+    select substr(ls_phone_number,1,3)||'-'||substr(ls_phone_number,4,3)||'-'||substr(ls_phone_number,7,4) into ls_phone_number from dual;
+
 
       IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
-       
-           INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR) 
-           VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'WRK',r_update.secondry_office_phone);
+          
+           INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
+           VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'HM',ls_phone_number,'N','Y',sysdate);
 	   
        
     ELSE
     
            UPDATE KRIM_ENTITY_PHONE_T
-           SET PHONE_NBR=r_update.secondry_office_phone
-           WHERE ENTITY_ID=r_update.ENTITY_ID;
+           SET PHONE_NBR= ls_phone_number
+           WHERE ENTITY_ID=r_update.ENTITY_ID
+		   AND PHONE_TYP_CD = 'HM';
        
     END IF;
 
@@ -1981,8 +2102,8 @@ SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-	   VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,DECODE(r_update.is_faculty,'Y','FCLTY','N','STAFF'),'UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+	   VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,DECODE(r_update.is_faculty,'Y','FCLTY','N','STAFF'),'UN','Y','Y',sysdate);
 
 	   
        
@@ -2038,8 +2159,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF r_update.is_graduate_student_staff='Y' THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'GRD_STDNT_STAFF','UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'GRD_STDNT_STAFF','UN','Y','Y',sysdate);
        
       END IF;
 
@@ -2093,8 +2214,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF r_update.is_research_staff='Y' THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'RSRCH_STAFF','UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'RSRCH_STAFF','UN','Y','Y',sysdate);
        
       END IF;
 
@@ -2148,8 +2269,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF r_update.is_service_staff='Y' THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-	   VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'SRVC_STAFF','UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+	   VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'SRVC_STAFF','UN','Y','Y',sysdate);
        
       END IF;
 
@@ -2203,8 +2324,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF r_update.is_support_staff='Y' THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'SUPPRT_STAFF','UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'SUPPRT_STAFF','UN','Y','Y',sysdate);
        
       END IF;
 
@@ -2258,8 +2379,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF r_update.IS_OTHER_ACCADEMIC_GROUP='Y' THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'OTH_ACADMC_GRP','UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'OTH_ACADMC_GRP','UN','Y','Y',sysdate);
        
       END IF;
 
@@ -2313,8 +2434,8 @@ EXIT WHEN c_update%NOTFOUND;
       IF r_update.is_medical_staff='Y' THEN
     
        
-       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND)
-			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'MED_STAFF','UN','Y','Y');
+       INSERT INTO KRIM_ENTITY_AFLTN_T(ENTITY_AFLTN_ID,OBJ_ID,VER_NBR,ENTITY_ID,AFLTN_TYP_CD,CAMPUS_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+			 VALUES(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'MED_STAFF','UN','Y','Y',sysdate);
        
       END IF;
 
@@ -2367,8 +2488,8 @@ IF r_update.home_unit IS NOT NULL THEN
     
        SELECT ENTITY_AFLTN_ID INTO li_seq_entity_afltn_id FROM KRIM_ENTITY_EMP_INFO_T WHERE ENTITY_ID=r_update.ENTITY_ID;
        
-       INSERT INTO KRIM_ENTITY_EMP_INFO_T(ENTITY_EMP_ID,OBJ_ID,VER_NBR,ENTITY_ID,PRMRY_DEPT_CD,ENTITY_AFLTN_ID) 
-       VALUES(KRIM_ENTITY_EMP_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,r_update.home_unit,li_seq_entity_afltn_id);
+       INSERT INTO KRIM_ENTITY_EMP_INFO_T(ENTITY_EMP_ID,OBJ_ID,VER_NBR,ENTITY_ID,PRMRY_DEPT_CD,ENTITY_AFLTN_ID,ACTV_IND,PRMRY_IND,LAST_UPDT_DT) 
+       VALUES(KRIM_ENTITY_EMP_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,r_update.home_unit,li_seq_entity_afltn_id,'Y','Y',sysdate);
 
 	   
        
@@ -2568,8 +2689,8 @@ EXIT WHEN c_update%NOTFOUND;
 
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
     
-           INSERT INTO KRIM_ENTITY_ADDR_T(ENTITY_ADDR_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,ADDR_TYP_CD,ADDR_LINE_2) 
-           VALUES(KRIM_ENTITY_ADDR_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'PERSON','WRK',SUBSTRB(r_update.ADDRESS_LINE_2,1,45));
+           INSERT INTO KRIM_ENTITY_ADDR_T(ENTITY_ADDR_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,ADDR_TYP_CD,ADDR_LINE_2,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
+           VALUES(KRIM_ENTITY_ADDR_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'PERSON','WRK',SUBSTRB(r_update.ADDRESS_LINE_2,1,45),'Y','Y',sysdate);
        
 
 
