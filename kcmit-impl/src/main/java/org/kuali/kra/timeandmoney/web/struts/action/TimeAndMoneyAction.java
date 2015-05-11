@@ -365,7 +365,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
             //aai.getCurrentFundEffectiveDate == null and this throws a stack trace only when doign a before
             // if current transaction currentFEDate is < previosu trans currentFEDate
 //            if (isNoCostExtension &&  previousEffectiveDate != null && currentEffectiveDate.before(previousEffectiveDate) ) {
-            if(previousEffectiveDate != null && currentEffectiveDate.before(previousEffectiveDate)){
+            if(previousEffectiveDate != null && (currentEffectiveDate.before(previousEffectiveDate) || 
+            		currentEffectiveDate.after(previousEffectiveDate))){
                         AwardAmountInfo tempAai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
                         needToSave = true;
                         aai = tempAai;
@@ -419,7 +420,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
 //            if (isNoCostExtension && (previousObligationExpirationDate == null || 
 //                    currentObligationExpirationDate.after(previousObligationExpirationDate))) {
             if (previousObligationExpirationDate == null || 
-                        currentObligationExpirationDate.after(previousObligationExpirationDate)) {
+                        (currentObligationExpirationDate.after(previousObligationExpirationDate) ||
+                        		currentObligationExpirationDate.before(previousObligationExpirationDate))) {
 
                         aai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
                         aai.setObligationExpirationDate(currentObligationExpirationDate);
@@ -469,7 +471,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 && !timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().equals(awardAmountInfo.getFinalExpirationDate())){
 //          if (isNoCostExtension && 
 //                  timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().after(awardAmountInfo.getFinalExpirationDate())) {
-          if (timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().after(awardAmountInfo.getFinalExpirationDate())) {
+          if (timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().after(awardAmountInfo.getFinalExpirationDate()) ||
+        		  timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().before(awardAmountInfo.getFinalExpirationDate())) {
                     awardAmountInfo = getNewAwardAmountInfoForDateChangeTransaction(awardAmountInfo, award, timeAndMoneyDocument.getDocumentNumber());
                       awardAmountInfo.setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
               awardHierarchyNode.getValue().setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
