@@ -80,9 +80,9 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     private String updateConfirmTimestamp;
     private String confirmed =  "false";
     
+    private transient boolean trainingRequired = false;
     
-    
-    public String getConfirmed() {    
+	public String getConfirmed() {    
     	List awardPersonList = new ArrayList<AwardPersonConfirm>();
     	AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
     	Map<String,String> awardPerson = new HashMap<String,String>();
@@ -515,6 +515,14 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
 	@Override
 	public boolean isInvestigator() {
 		return isPrincipalInvestigator() || isMultiplePi() || isCoInvestigator() || (isKeyPerson() && isOptInUnitStatus());
+	}
+	
+	public boolean isTrainingRequired() {
+		return trainingRequired;
+	}
+
+	public void setTrainingRequired(boolean trainingRequired) {
+		this.trainingRequired = trainingRequired;
 	}
 
 }

@@ -64,6 +64,7 @@ public interface KcMitConstants {
     public static final String ERROR_AWARD_HOLD_PROMPT_TERM_AND_SP_REV="error.award.hold.prompt.term.and.sp.rev";
     public static final String ERROR_AWARD_HOLD_NO_DISC_INV= "error.award.status.hold.no.disclosure.inv"; 
     public static final String ERROR_AWARD_HOLD_NO_DISC_KP= "error.award.status.hold.no.disclosure.kp";
+    public static final String ERROR_AWARD_HOLD_KP_NOT_CONFIRMED= "error.award.status.hold.kp.not.confirmed";
     public static final String ERROR_AWARD_HOLD_PROMPT_COMMON="error.award.status.hold.common.violation";
     public static final String ERROR_COST_SHARE_SOURCE="error.awardCostShare.source.required";
     public static final String ERROR_COST_SHARE_DESTINATION="error.awardCostShare.destination.required";

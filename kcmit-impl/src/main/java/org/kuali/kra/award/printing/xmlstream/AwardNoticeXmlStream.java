@@ -447,21 +447,22 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	 */
 	private DisclosureItemType[] getDisclosureItems(AwardDisclosureType awardDisclosureType) {
 		List<DisclosureItemType> disclosureItems = new ArrayList<DisclosureItemType>();
-		
+
 		for (AwardPerson awardPerson : award.getProjectPersons()) {
 			List<AwardPerson> awardPersons = KcServiceLocator.getService(AwardCommonValidationService.class).getCOIHoldPromptDisclousureItems(award, awardPerson);
 			if(awardPersons!=null && !awardPersons.isEmpty()){
-					for(AwardPerson person : awardPersons){
-						DisclosureItemType disclosureItemType = DisclosureItemType.Factory
-								.newInstance();
-						 Map<String, String> queryMap = new HashMap<String, String>();
-						 queryMap.put("trainingCode", "54");
-						 queryMap.put("personId",person.getPersonId());
-				        List <PersonTraining> personTrainingList = (List<PersonTraining>) getBusinessObjectService().findMatching(PersonTraining.class, queryMap);
-						disclosureItemType.setPersonName(person.getPerson().getFullName());
-						disclosureItemType.setDisclosureNumber(person.getRole().getRoleDescription());
-						String disclosureStatusDesc = KcServiceLocator.getService(AwardCommonValidationService.class).getAwardDisclousureStatusForPerson(award, person.getPerson().getPersonId());
-						disclosureItemType.setDisclosureTypeDesc(disclosureStatusDesc);
+				for(AwardPerson person : awardPersons){
+					DisclosureItemType disclosureItemType = DisclosureItemType.Factory
+							.newInstance();
+					Map<String, String> queryMap = new HashMap<String, String>();
+					queryMap.put("trainingCode", "54");
+					queryMap.put("personId",person.getPersonId());
+					List <PersonTraining> personTrainingList = (List<PersonTraining>) getBusinessObjectService().findMatching(PersonTraining.class, queryMap);
+					disclosureItemType.setPersonName(person.getPerson().getFullName());
+					disclosureItemType.setDisclosureNumber(person.getRole().getRoleDescription());
+					String disclosureStatusDesc = KcServiceLocator.getService(AwardCommonValidationService.class).getAwardDisclousureStatusForPerson(award, person.getPerson().getPersonId());
+					disclosureItemType.setDisclosureTypeDesc(disclosureStatusDesc);
+					if(person.isTrainingRequired()){
 						if(personTrainingList!=null && !personTrainingList.isEmpty()){
 							PersonTraining personTraining = personTrainingList.get(0);
 							if(personTraining.getFollowupDate()!=null && personTraining.getFollowupDate().after(KcServiceLocator.getService(DateTimeService.class).getCurrentDate())){
@@ -473,9 +474,12 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 						}else{
 							disclosureItemType.setDisclosureStatusDesc("Training Required");
 						}
-						disclosureItems.add(disclosureItemType);
-						awardDisclosureType.setDisclosureValidation("1");
+					}else{
+						disclosureItemType.setDisclosureStatusDesc("Training Not Required");
 					}
+					disclosureItems.add(disclosureItemType);
+					awardDisclosureType.setDisclosureValidation("1");
+				}
 			}
 		}
 		return disclosureItems.toArray(new DisclosureItemType[0]);
