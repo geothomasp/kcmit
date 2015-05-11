@@ -175,5 +175,8 @@ END;
 
 update krew_usr_optn_t set val=null where prsn_optn_id in ('NOTIFY_ACKNOWLEDGE','NOTIFY_COMPLETE','NOTIFY_FYI')
 /
-
+update eps_proposal a set final_budget_id = 
+    (select budget_id from eps_proposal_budget_ext where proposal_number=a.proposal_number and 
+                    final_version_flag='Y' and status_code='1') 
+/
  
