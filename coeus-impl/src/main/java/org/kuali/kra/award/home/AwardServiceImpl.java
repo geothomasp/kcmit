@@ -28,6 +28,7 @@ import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.dao.AwardDao;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
+import org.kuali.kra.bo.DocumentNextvalue;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
@@ -101,10 +102,30 @@ public class AwardServiceImpl implements AwardService {
         newVersion.getAwardAmountInfos().get(0).setSequenceNumber(newVersion.getSequenceNumber());
         
         synchNewCustomAttributes(newVersion, awardDocument.getAward());
-        
+        fixNextValues(awardDocument, newAwardDocument); 
         return newAwardDocument;
     }   
     
+    
+    /**
+     * The document next values must be the same in the new version as in
+     * the old document.  Note that the next document values must be assigned
+     * the document number of the new version.
+     * @param oldDoc
+     * @param newDoc
+     */
+    protected void fixNextValues(AwardDocument oldDoc, AwardDocument newDoc) {
+        List<DocumentNextvalue> newNextValues = new ArrayList<DocumentNextvalue>();
+        List<DocumentNextvalue> oldNextValues = oldDoc.getDocumentNextvalues();
+        for (DocumentNextvalue oldNextValue : oldNextValues) {
+            DocumentNextvalue newNextValue = new DocumentNextvalue();
+            newNextValue.setPropertyName(oldNextValue.getPropertyName());
+            newNextValue.setNextValue(oldNextValue.getNextValue());
+            newNextValue.setDocumentKey(newDoc.getDocumentNumber());
+            newNextValues.add(newNextValue);
+        }
+        newDoc.setDocumentNextvalues(newNextValues);
+    }
     @Override
     public void synchNewCustomAttributes(Award newAward, Award oldAward) {
         Set<Integer> availableCustomAttributes = new HashSet<Integer>();
