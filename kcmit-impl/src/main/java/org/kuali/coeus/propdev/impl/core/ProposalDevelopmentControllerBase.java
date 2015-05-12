@@ -312,10 +312,7 @@ public abstract class ProposalDevelopmentControllerBase {
              }
          }
 
-         if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID)) {
-             ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateAttachmentReferences(form.getDevelopmentProposal());
-     		 getSharedDocumentService().processDevelopmentProposalAttachments(form.getDevelopmentProposal());
-         }
+        
 
          if (getGlobalVariableService().getMessageMap().getErrorCount() == 0 && form.getEditableCollectionLines() != null) {
             form.getEditableCollectionLines().clear();
@@ -340,6 +337,12 @@ public abstract class ProposalDevelopmentControllerBase {
          saveAnswerHeaders(form, form.getPageId());
 
          getTransactionalDocumentControllerService().save(form);
+         
+         if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID)) {
+             ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateAttachmentReferences(form.getDevelopmentProposal());
+     		 getSharedDocumentService().processDevelopmentProposalAttachments(form.getDevelopmentProposal());
+         }
+         
          if (form.isAuditActivated()){
              getAuditHelper().auditConditionally(form);
          }
