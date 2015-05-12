@@ -316,6 +316,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         //we need to record this as a transaction in history.
         //build the transaction and add to this list for persistence later.
         List<TransactionDetail> dateChangeTransactionDetailItems = new ArrayList<>();
+        boolean needToSaveTransaction = false;
         
         updateDocumentFromSession(timeAndMoneyDocument);//not sure if I need to do this.
         updateAwardAmountTransactions(timeAndMoneyDocument);
@@ -334,8 +335,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
 
             String dateChangedComment = null;
             AwardHierarchyNode currentAwardHierarchyNode = timeAndMoneyForm.getAwardHierarchyNodeItems().get(index);
-            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
-            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
+            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) && 
+            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) && 
             		isFinalExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai)) {
             	dateChangedComment = DATE_CHANGED_COMMENT;
             }
@@ -367,12 +368,16 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
             	award.setAllowUpdateTimestampToBeReset(false);
                 getBusinessObjectService().save(award);
             }
+            needToSaveTransaction &= needToSaveAward;
         }
-        //we want to apply save rules to doc before we save any captured changes.
-        getBusinessObjectService().save(timeAndMoneyDocument.getAwardAmountTransactions());
-        //save all transaction details from No Cost extension date changes.
-        getBusinessObjectService().save(dateChangeTransactionDetailItems);
-        timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);//don't think I need to do this.
+        
+        if(needToSaveTransaction) {
+            //we want to apply save rules to doc before we save any captured changes.
+            getBusinessObjectService().save(timeAndMoneyDocument.getAwardAmountTransactions());
+            //save all transaction details from No Cost extension date changes.
+            getBusinessObjectService().save(dateChangeTransactionDetailItems);
+            timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);//don't think I need to do this.
+        }
     }
 
     protected boolean isFundEffectiveDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
