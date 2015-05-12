@@ -484,19 +484,25 @@ public class AwardAction extends BudgetParentActionBase {
            return submitAward(mapping, form, request, response);
         } if(status == ValidationState.ERROR && validHoldPrompt==ValidationState.HOLDPROMPT){
         	if(question == null){
-                return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "The Award status should be set to hold until Hold Prompt warnings are fixed. Do you want to change status to Hold and proceed to submit?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
-            } else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
-           return holdAwardStatusWithError(mapping, form, request, response);
-        }else{
-        	return forward;
-        }}else if(status == ValidationState.HOLDPROMPT){
+        		return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Hold prompt warnings are existing .Do you want to change status to Hold?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+        	} else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
+        		return holdAwardStatusWithError(mapping, form, request, response);
+        	}else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)){
+        		return submitAward(mapping, form, request, response);
+        	}else {
+        		return forward;
+        	}
+        }else if(status == ValidationState.HOLDPROMPT){
         	if(question == null){
-                return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "The Award status should be set to hold until Hold Prompt warnings are fixed. Do you want to change status to Hold and proceed to submit?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
-            } else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
-           return holdAwardStatus(mapping, form, request, response);
-        }else{
-        	return forward;
-        }}
+        		return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Hold prompt warnings are existing .Do you want to change status to Hold?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+        	} else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
+        		return holdAwardStatus(mapping, form, request, response);
+        	}else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)){
+        		return submitAward(mapping, form, request, response);
+        	}else {
+        		return forward;
+        	}
+        }
         else{
             GlobalVariables.getMessageMap().clearErrorMessages(); 
             GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
