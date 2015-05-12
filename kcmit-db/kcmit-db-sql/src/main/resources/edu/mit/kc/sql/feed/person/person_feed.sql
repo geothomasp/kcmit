@@ -903,8 +903,8 @@ EXIT WHEN c_update%NOTFOUND;
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	   
-       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,LAST_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
-       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.last_name,sys_guid(),1,'Y','Y',sysdate);
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,NM_TYP_CD,LAST_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,'PRFR',r_update.last_name,sys_guid(),1,'Y','Y',sysdate);
 	   
        
     ELSE
@@ -955,8 +955,8 @@ EXIT WHEN c_update%NOTFOUND;
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	   
-       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,FIRST_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
-       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.first_name,sys_guid(),1,'Y','Y',sysdate);
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,NM_TYP_CD,FIRST_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,'PRFR',r_update.first_name,sys_guid(),1,'Y','Y',sysdate);
 	   
        
     ELSE
@@ -1007,8 +1007,8 @@ EXIT WHEN c_update%NOTFOUND;
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	  
-       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,MIDDLE_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
-       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.middle_name,sys_guid(),1,'Y','Y',sysdate);
+       INSERT INTO KRIM_ENTITY_NM_T(ENTITY_NM_ID,ENTITY_ID,NM_TYP_CD,MIDDLE_NM,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+       VALUES(KRIM_ENTITY_NM_ID_S.NEXTVAL,r_update.ENTITY_ID,'PRFR',r_update.middle_name,sys_guid(),1,'Y','Y',sysdate);
 	   
        
     ELSE
@@ -1150,20 +1150,21 @@ EXIT WHEN c_update%NOTFOUND;
 
 IF r_update.email_address IS NOT NULL  THEN
 
-       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_EMAIL_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+       SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_EMAIL_T WHERE ENTITY_ID=r_update.ENTITY_ID AND EMAIL_TYP_CD = 'WRK';
 
        IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
        
 	  
-             INSERT INTO KRIM_ENTITY_EMAIL_T(ENTITY_EMAIL_ID,ENTITY_ID,EMAIL_ADDR,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
-             VALUES(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL,r_update.ENTITY_ID,r_update.email_address,sys_guid(),1,'Y','Y',sysdate);
+             INSERT INTO KRIM_ENTITY_EMAIL_T(ENTITY_EMAIL_ID,ENTITY_ID,ENT_TYP_CD,EMAIL_TYP_CD,EMAIL_ADDR,OBJ_ID,VER_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT)
+             VALUES(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL,r_update.ENTITY_ID,'PERSON','WRK',r_update.email_address,sys_guid(),1,'Y','Y',sysdate);
 	   
        
        ELSE
     
               UPDATE KRIM_ENTITY_EMAIL_T
               SET EMAIL_ADDR=r_update.email_address
-              WHERE ENTITY_ID=r_update.ENTITY_ID;
+              WHERE ENTITY_ID=r_update.ENTITY_ID
+			  AND EMAIL_TYP_CD = 'WRK';
        
        END IF;
 
@@ -1181,8 +1182,8 @@ DECLARE
 li_count number;
 cursor c_update is
 select t1.person_id,
- t1.date_of_birth, 
- (select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
+ t1.date_of_birth,
+(select p.entity_id from krim_prncpl_t p where p.prncpl_id= t1.person_id) as entity_id
  from warehouse_person t1 left outer join 
  ( select p.prncpl_id as person_id,
         e.BIRTH_DT as date_of_birth,
@@ -1901,7 +1902,7 @@ IF r_update.secondry_office_phone IS NOT NULL THEN
       IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
           
            INSERT INTO KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,PHONE_TYP_CD,PHONE_NBR,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
-           VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON' ,'HM',ls_phone_number,'N','Y',sysdate);
+           VALUES(KRIM_ENTITY_PHONE_ID_S.NEXTVAL,SYS_GUID(),1,r_update.entity_id,'PERSON','HM',ls_phone_number,'N','Y',sysdate);
 	   
        
     ELSE
@@ -2469,7 +2470,7 @@ from warehouse_person t1 left outer join
         e.PRMRY_DEPT_CD as home_unit,
         e.entity_id
         from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_EMP_INFO_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
- where t1.home_unit <>nvl(t2.home_unit,0);
+		where t1.home_unit <>nvl(t2.home_unit,0);
 r_update c_update%ROWTYPE;
 
 BEGIN
@@ -2486,10 +2487,10 @@ IF r_update.home_unit IS NOT NULL THEN
 
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
     
-       SELECT ENTITY_AFLTN_ID INTO li_seq_entity_afltn_id FROM KRIM_ENTITY_EMP_INFO_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+       SELECT MAX(ENTITY_AFLTN_ID) INTO li_seq_entity_afltn_id FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID=r_update.ENTITY_ID;
        
-       INSERT INTO KRIM_ENTITY_EMP_INFO_T(ENTITY_EMP_ID,OBJ_ID,VER_NBR,ENTITY_ID,PRMRY_DEPT_CD,ENTITY_AFLTN_ID,ACTV_IND,PRMRY_IND,LAST_UPDT_DT) 
-       VALUES(KRIM_ENTITY_EMP_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,r_update.home_unit,li_seq_entity_afltn_id,'Y','Y',sysdate);
+       INSERT INTO KRIM_ENTITY_EMP_INFO_T(ENTITY_EMP_ID,OBJ_ID,VER_NBR,ENTITY_ID,EMP_STAT_CD,EMP_TYP_CD,PRMRY_DEPT_CD,ENTITY_AFLTN_ID,ACTV_IND,PRMRY_IND,EMP_ID,LAST_UPDT_DT) 
+       VALUES(KRIM_ENTITY_EMP_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'A','O',r_update.home_unit,li_seq_entity_afltn_id,'Y','Y',r_update.person_id,sysdate);
 
 	   
        
@@ -2662,6 +2663,7 @@ select 'Updation of changed address_line2 begins.' from dual
 /
 DECLARE
 li_count number;
+li_country_cd varchar2(2);
 li_seq_entity_afltn_id NUMBER(12,0);
 cursor c_update is
 select t1.person_id,
@@ -2672,7 +2674,7 @@ from warehouse_person t1 left outer join
         e.ADDR_LINE_2 as ADDRESS_LINE_2,
         e.entity_id
         from KRIM_PRNCPL_T p INNER JOIN KRIM_ENTITY_ADDR_T e ON p.entity_id=e.entity_id) t2 on t1.person_id = t2.person_id
- where t1.OFFICE_LOCATION <>nvl(t2.ADDRESS_LINE_2,0);
+		where t1.OFFICE_LOCATION <> nvl(t2.ADDRESS_LINE_2,0);
 r_update c_update%ROWTYPE;
 
 BEGIN
@@ -2685,12 +2687,20 @@ FETCH c_update INTO r_update;
 EXIT WHEN c_update%NOTFOUND;
 
 
-     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_ADDR_T WHERE ENTITY_ID=r_update.ENTITY_ID;
+       begin
+           select POSTAL_CNTRY_CD into li_country_cd from KRLC_CNTRY_T where upper(ALT_POSTAL_CNTRY_CD) = 'USA';
+        exception
+        when others then
+         li_country_cd := null;
+        end;
+
+
+     SELECT COUNT(ENTITY_ID) INTO li_count  FROM KRIM_ENTITY_ADDR_T WHERE ENTITY_ID=r_update.ENTITY_ID AND ADDR_TYP_CD = 'WRK';
 
     IF li_count=0 AND r_update.ENTITY_ID IS NOT NULL THEN
     
-           INSERT INTO KRIM_ENTITY_ADDR_T(ENTITY_ADDR_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,ADDR_TYP_CD,ADDR_LINE_2,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
-           VALUES(KRIM_ENTITY_ADDR_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'PERSON','WRK',SUBSTRB(r_update.ADDRESS_LINE_2,1,45),'Y','Y',sysdate);
+           INSERT INTO KRIM_ENTITY_ADDR_T(ENTITY_ADDR_ID,OBJ_ID,VER_NBR,ENTITY_ID,ENT_TYP_CD,ADDR_TYP_CD,ADDR_LINE_1,ADDR_LINE_2,ADDR_LINE_3,CITY,STATE_PVC_CD,POSTAL_CD,POSTAL_CNTRY_CD,DFLT_IND,ACTV_IND,LAST_UPDT_DT) 
+           VALUES(KRIM_ENTITY_ADDR_ID_S.NEXTVAL,SYS_GUID(),1,r_update.ENTITY_ID,'PERSON','WRK','77 Massachusetts Ave.',SUBSTRB(r_update.ADDRESS_LINE_2,1,45),null,'Cambridge','MA','021394307',li_country_cd,'Y','Y',sysdate);
        
 
 
@@ -2698,7 +2708,8 @@ EXIT WHEN c_update%NOTFOUND;
    
        UPDATE KRIM_ENTITY_ADDR_T
        SET ADDR_LINE_2=SUBSTRB(r_update.ADDRESS_LINE_2,1,45)
-       WHERE ENTITY_ID=r_update.ENTITY_ID;
+       WHERE ENTITY_ID=r_update.ENTITY_ID
+	   AND ADDR_TYP_CD = 'WRK';
        
     END IF;
 
