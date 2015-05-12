@@ -175,6 +175,8 @@ END;
 
 update krew_usr_optn_t set val=null where prsn_optn_id in ('NOTIFY_ACKNOWLEDGE','NOTIFY_COMPLETE','NOTIFY_FYI')
 /
+select * from krew_usr_optn_t where prsn_optn_id='NOTIFY_FYI' and val is not null
+/
 update eps_proposal a set final_budget_id = 
     (select budget_id from eps_proposal_budget_ext where proposal_number=a.proposal_number and 
                     final_version_flag='Y' and status_code='1') 
@@ -184,4 +186,6 @@ insert into document_nextvalue (document_number,property_name,next_value,update_
     from award_special_review a,award b where a.award_id=b.award_id group by a.award_id,b.document_number)
  
 
- 
+create index IDX_EPS_PROP_PERSON_BIO_ATCH on EPS_PROP_PERSON_BIO_ATTACHMENT (FILE_DATA_ID);        
+
+create index IDX_NARRATIVE_ATTACHMENT on NARRATIVE_ATTACHMENT (FILE_DATA_ID);        
