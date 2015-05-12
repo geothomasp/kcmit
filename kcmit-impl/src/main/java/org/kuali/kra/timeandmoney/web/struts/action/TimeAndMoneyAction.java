@@ -318,6 +318,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         List<TransactionDetail> dateChangeTransactionDetailItems = new ArrayList<>();
         boolean needToSaveTransaction = false;
         
+        List<Award> awardsToSave = new ArrayList<Award>();
+        
         updateDocumentFromSession(timeAndMoneyDocument);//not sure if I need to do this.
         updateAwardAmountTransactions(timeAndMoneyDocument);
         for(Entry<String, AwardHierarchyNode> awardHierarchyNode : timeAndMoneyDocument.getAwardHierarchyNodes().entrySet()){
@@ -364,14 +366,17 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                     needToSaveAward = true;
                 }
             }
+            
             if (needToSaveAward) {
             	award.setAllowUpdateTimestampToBeReset(false);
-                getBusinessObjectService().save(award);
+                //getBusinessObjectService().save(award);
+            	awardsToSave.add(award);
             }
             needToSaveTransaction &= needToSaveAward;
         }
         
         if(needToSaveTransaction) {
+            getBusinessObjectService().save(awardsToSave);
             //we want to apply save rules to doc before we save any captured changes.
             getBusinessObjectService().save(timeAndMoneyDocument.getAwardAmountTransactions());
             //save all transaction details from No Cost extension date changes.
