@@ -349,9 +349,6 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 Date finalExpirationDate = currentAwardHierarchyNode.getFinalExpirationDate();
             	createDateChangeTransaction(timeAndMoneyDocument, award, aai, awardHierarchyNode, dateChangeTransactionDetailItems, 
             			currentFundEffectiveDate, currentObligationExpirationDate, finalExpirationDate, dateChangedComment);
-            	if(!getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
-            		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
-            	}
             	needToSaveAward = true;
             }
             
@@ -377,12 +374,21 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         
         if(needToSaveTransaction) {
             getBusinessObjectService().save(awardsToSave);
+            updateSapFeedDetails(awardsToSave);
             //we want to apply save rules to doc before we save any captured changes.
             getBusinessObjectService().save(timeAndMoneyDocument.getAwardAmountTransactions());
             //save all transaction details from No Cost extension date changes.
             getBusinessObjectService().save(dateChangeTransactionDetailItems);
             timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);//don't think I need to do this.
         }
+    }
+    
+    protected void updateSapFeedDetails(List<Award> awardsToSave) {
+    	for(Award award : awardsToSave) {
+        	if(!getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+        		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+        	}
+    	}
     }
 
     protected boolean isFundEffectiveDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
