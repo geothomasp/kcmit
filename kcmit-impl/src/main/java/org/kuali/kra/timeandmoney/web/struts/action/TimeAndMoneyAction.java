@@ -74,6 +74,7 @@ import java.util.Map.Entry;
 
 public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
 
+    private static final String DATE_CHANGED_COMMENT = "Date Changed";
     private static final String OBLIGATED_START_COMMENT = "Obligated Start";
     private static final String OBLIGATED_END_COMMENT = "Obligated End";
     private static final String PROJECT_END_COMMENT = "Project End";
@@ -320,11 +321,31 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
             int index = findAwardHierarchyNodeIndex(awardHierarchyNode);
             AwardAmountInfo aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());
             boolean needToSaveAward = false;
-            needToSaveAward |= inspectAndCaptureCurrentFundEffectiveDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
-            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
-            needToSaveAward |= inspectAndCaptureObligationExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
-            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
-            needToSaveAward |= inspectAndCaptureFinalExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+            
+            
+//            needToSaveAward |= inspectAndCaptureCurrentFundEffectiveDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+//            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
+//            needToSaveAward |= inspectAndCaptureObligationExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+//            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
+//            needToSaveAward |= inspectAndCaptureFinalExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+
+            String dateChangedComment = null;
+            AwardHierarchyNode currentAwardHierarchyNode = timeAndMoneyForm.getAwardHierarchyNodeItems().get(index);
+            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
+            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
+            		isFinalExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai)) {
+            	dateChangedComment = DATE_CHANGED_COMMENT;
+            }
+            
+            if(dateChangedComment != null) {
+                Date currentFundEffectiveDate = currentAwardHierarchyNode.getCurrentFundEffectiveDate();
+                Date currentObligationExpirationDate = currentAwardHierarchyNode.getObligationExpirationDate();
+                Date finalExpirationDate = currentAwardHierarchyNode.getFinalExpirationDate();
+            	createDateChangeTransaction(timeAndMoneyDocument, award, aai, awardHierarchyNode, dateChangeTransactionDetailItems, 
+            			currentFundEffectiveDate, currentObligationExpirationDate, finalExpirationDate, dateChangedComment);
+            	needToSaveAward = true;
+            }
+            
             //capture any changes of DirectFandADistributions, and add them to the Award working version for persistence.
             if(award.getAwardNumber().equals(timeAndMoneyDocument.getAward().getAwardNumber())) {
                 //must use documentService to save the award document. businessObjectService.save() builds deletion award list on T&M doc and we
@@ -347,7 +368,66 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         getBusinessObjectService().save(dateChangeTransactionDetailItems);
         timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);//don't think I need to do this.
     }
-        
+
+    protected boolean isFundEffectiveDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
+        Date currentEffectiveDate = awardHierarchyNode.getCurrentFundEffectiveDate();
+        Date previousEffectiveDate = awardAmountInfo.getCurrentFundEffectiveDate();
+        if(currentEffectiveDate == null) {
+        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(null);
+            return false;
+        }else {
+        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
+        	return isTimeAndMoneyDateChanged(currentEffectiveDate, previousEffectiveDate);
+        }
+    }
+    
+    protected boolean isObligationExpirationDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
+        Date previousObligationExpirationDate = awardAmountInfo.getObligationExpirationDate();
+        Date currentObligationExpirationDate = awardHierarchyNode.getObligationExpirationDate();
+        if(currentObligationExpirationDate == null) {
+        	docAwardHierarchyNode.getValue().setObligationExpirationDate(null);
+            return false;
+        }else {
+        	docAwardHierarchyNode.getValue().setObligationExpirationDate(currentObligationExpirationDate);
+        	return isTimeAndMoneyDateChanged(currentObligationExpirationDate, previousObligationExpirationDate);
+        }
+    }
+    
+    protected boolean isFinalExpirationDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
+        Date previousFinalExpirationDate = awardAmountInfo.getFinalExpirationDate();
+        Date currentFinalExpirationDate = awardHierarchyNode.getFinalExpirationDate();
+        if(currentFinalExpirationDate == null) {
+        	docAwardHierarchyNode.getValue().setFinalExpirationDate(null);
+            return false;
+        }else {
+        	docAwardHierarchyNode.getValue().setFinalExpirationDate(currentFinalExpirationDate);
+        	return isTimeAndMoneyDateChanged(currentFinalExpirationDate, previousFinalExpirationDate);
+        }
+    }
+    
+    protected boolean isTimeAndMoneyDateChanged(Date currentDate, Date previousDate) {
+        if(currentDate != null && previousDate != null && (currentDate.before(previousDate) || 
+        		currentDate.after(previousDate))){
+        	return true;
+        }
+        return false;
+    }
+    
+    protected void createDateChangeTransaction(TimeAndMoneyDocument timeAndMoneyDocument, Award award, AwardAmountInfo awardAmountInfo, Entry<String, 
+    		AwardHierarchyNode> awardHierarchyNode, List<TransactionDetail> dateChangeTransactionDetailItems, Date currentFundEffectiveDate, 
+    		Date currentObligationExpirationDate, Date finalExpirationDate, String dateChangeComment) {
+        AwardAmountInfo tempAai = getNewAwardAmountInfoForDateChangeTransaction(awardAmountInfo, award, timeAndMoneyDocument.getDocumentNumber());
+        awardAmountInfo = tempAai;
+        awardAmountInfo.setCurrentFundEffectiveDate(currentFundEffectiveDate);
+        awardAmountInfo.setObligationExpirationDate(currentObligationExpirationDate);
+        awardAmountInfo.setFinalExpirationDate(finalExpirationDate);
+        award.getAwardAmountInfos().add(awardAmountInfo);
+        TransactionDetail transactionDetail = createTransDetailForDateChanges(awardAmountInfo.getAwardNumber(), awardAmountInfo.getAwardNumber(), 
+        		awardAmountInfo.getSequenceNumber(), timeAndMoneyDocument.getAwardNumber(), timeAndMoneyDocument.getDocumentNumber(), OBLIGATED_START_COMMENT);
+        awardAmountInfo.setTransactionId(transactionDetail.getTransactionId());
+        dateChangeTransactionDetailItems.add(transactionDetail);
+    }
+    
     /**
      * Date changes in hierarchy view are captured here.  If the transaction is a No Cost Extension, we report the transaction
      * details for display in history tab.
