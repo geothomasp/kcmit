@@ -1,17 +1,35 @@
 package org.kuali.coeus.propdev.impl.sapfeed;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.sql.DataSource;
+
+import org.kuali.coeus.propdev.impl.person.ProposalPerson;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.kra.award.home.Award;
+import org.kuali.kra.award.version.service.AwardVersionService;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.timeandmoney.AwardHierarchyNode;
+import org.kuali.rice.core.api.criteria.OrderByField;
+import org.kuali.rice.core.api.criteria.OrderDirection;
+import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import edu.mit.kc.dashboard.bo.Alert;
 
 @Component("sapFeedService")
 public class SapFeedServiceImpl implements SapFeedService
@@ -25,6 +43,8 @@ public class SapFeedServiceImpl implements SapFeedService
 	private static final String SAPFEED_FEEDSTATUS_FED = "F";
 	private static final String SAPFEED_FEEDSTATUS_REJECTED = "R";
 	private static final String SAPFEED_FEEDSTATUS_ERROR = "E";
+	private static final String SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS = "W";
+	
 	
 	@Autowired
 	@Qualifier("dbFunctionService")
@@ -37,6 +57,12 @@ public class SapFeedServiceImpl implements SapFeedService
 	@Autowired
 	@Qualifier("businessObjectService")
     private BusinessObjectService businessObjectService;
+	
+    private AwardVersionService awardVersionService;
+
+    @Autowired
+    @Qualifier("dataSource")
+    private DataSource dataSource;
 	
 	@Override
 	public String generateMasterFeed(String path, String user)
@@ -105,6 +131,16 @@ public class SapFeedServiceImpl implements SapFeedService
     	sapFeedDetails = getBusinessObjectService().save(sapFeedDetails);
     }
 	 
+	public boolean isAwardSapFeedExists(String awardNumber, Integer sequenceNumber) {
+        Map<String, Object> keys = new HashMap<String, Object>();
+        keys.put("awardNumber", awardNumber);
+        keys.put("sequenceNumber", sequenceNumber);
+        keys.put("feedStatus", SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS);
+
+        final List<SapFeedDetails> feedDetails = getDataObjectService().findMatching(SapFeedDetails.class,
+                QueryByCriteria.Builder.andAttributes(keys).build()).getResults();
+        return feedDetails != null && !feedDetails.isEmpty();
+	}
 
 	public DbFunctionService getDbFunctionService() {
 		if (dbFunctionService == null) {
@@ -186,46 +222,98 @@ public class SapFeedServiceImpl implements SapFeedService
 		}
 	}
 
+	public void setAllWorkInProgressSapFeedDetailsToPending(Map<String, AwardHierarchyNode> awardHierarchyNodes) {
+        for(Entry<String, AwardHierarchyNode> awardHierarchyNode : awardHierarchyNodes.entrySet()){
+            Award award = getAwardVersionService().getWorkingAwardVersion(awardHierarchyNode.getValue().getAwardNumber());
+        	try {
+        		Connection conn = getDataSource().getConnection();
+        	    PreparedStatement stmt = conn.prepareStatement("UPDATE SAP_FEED_DETAILS SET FEED_STATUS = '" + SAPFEED_FEEDSTATUS_PENDING + 
+        	    		"' WHERE AWARD_NUMBER = ? AND SEQUENCE_NUMBER = ? AND FEED_STATUS = '" + SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS + "'");
+        	    stmt.setString(1, award.getAwardNumber());
+        	    stmt.setInt(2, award.getSequenceNumber());
+        		stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+	}
+
+	public void setSapDetailsToWorkInProgress(String awardNumber,Integer sequenceNumber) {
+		String feedStatus = SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS;
+		String feedType = getSapFeedType(awardNumber, sequenceNumber);
+
+		if(feedType != null) {
+			insertSapFeedDetails(awardNumber, sequenceNumber, feedType, feedStatus);
+		}
+	}
+	
 	@Override
 	public void updateSapFeedDetails(String awardNumber,Integer sequenceNumber) {
-		String feedType = null;
-		String feedStatus = null;
-		String newAwardNumber = awardNumber;
-		Integer newSequenceNumber = sequenceNumber;
-		BusinessObjectService businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
-		HashMap<String, String> fieldValues = new HashMap<String, String>();
-		fieldValues.put("awardNumber", newAwardNumber);
-		
-		// Get sapfeed details
-		List<SapFeedDetails> sapFeedDetails = (List<SapFeedDetails>) businessObjectService.findMatchingOrderBy(SapFeedDetails.class, fieldValues, "sequenceNumber", false);
+		String feedStatus = SAPFEED_FEEDSTATUS_PENDING;
+		String feedType = getSapFeedType(awardNumber, sequenceNumber);
 
+		if(feedType != null) {
+			insertSapFeedDetails(awardNumber, sequenceNumber, feedType, feedStatus);
+		}
+	}
+
+	protected SapFeedDetails getLatestSapFeedDetail(String awardNumber) {
+    	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(PredicateFactory.equal("awardNumber", awardNumber));
+    	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+        builder.setOrderByFields(OrderByField.Builder.create("sequenceNumber", OrderDirection.DESCENDING).build());
+
+        List<SapFeedDetails> sapFeedDetails = getDataObjectService().findMatching(SapFeedDetails.class, builder.build()).getResults();
 		if (sapFeedDetails != null && sapFeedDetails.size() > 0) {
-		SapFeedDetails latestFeedDetails=sapFeedDetails.get(0);
-		
-		if ((latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_FED) ||latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_PENDING)) && (latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_NEW) || latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_CHANGED)) ){
+			return sapFeedDetails.get(0);
+		}
+		return null;
+	}
+	
+	protected String getSapFeedType(String awardNumber, Integer sequenceNumber) {
+		String feedType = null;
+		SapFeedDetails latestFeedDetails = getLatestSapFeedDetail(awardNumber);
+		if (latestFeedDetails != null) {
+			if ((latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_FED) || 
+					latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_PENDING)) && 
+					(latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_NEW) || 
+							latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_CHANGED)) ) {
 			  	feedType = SAPFEED_FEEDTYPE_CHANGED;
-			  	feedStatus = SAPFEED_FEEDSTATUS_PENDING;
-				insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
-			}
-		else if(latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_ERROR) || latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_REJECTED)){
+			} else if(latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_ERROR) || 
+					latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_REJECTED)) {
 				feedType = SAPFEED_FEEDTYPE_NEW;
-				feedStatus = SAPFEED_FEEDSTATUS_PENDING;
-				insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
-			}
-		else{
+			} else {
 				feedType = SAPFEED_FEEDTYPE_CHANGED;
-			  	feedStatus = latestFeedDetails.getFeedStatus();
+			  	String feedStatus = latestFeedDetails.getFeedStatus();
 			  	latestFeedDetails.setFeedType(feedType);
 			  	latestFeedDetails.setFeedStatus(feedStatus);
-			  	latestFeedDetails.setSequenceNumber(newSequenceNumber);
+			  	latestFeedDetails.setSequenceNumber(sequenceNumber);
 			  	getBusinessObjectService().save(latestFeedDetails);
 			}
-		}
-		 else {
+		} else {
 			 	feedType = SAPFEED_FEEDTYPE_NEW;
-			 	feedStatus = SAPFEED_FEEDSTATUS_PENDING;
-			 	insertSapFeedDetails(newAwardNumber,newSequenceNumber, feedType, feedStatus);
 		}
-		
+		return feedType;
 	}
+
+	public AwardVersionService getAwardVersionService() {
+        if(awardVersionService == null) {
+            awardVersionService = KcServiceLocator.getService(AwardVersionService.class);
+        }
+		return awardVersionService;
+	}
+
+	public void setAwardVersionService(AwardVersionService awardVersionService) {
+		this.awardVersionService = awardVersionService;
+	}
+
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
 }

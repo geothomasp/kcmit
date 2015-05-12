@@ -122,6 +122,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);
                 if (refreshNeeded) {
                     refreshView(mapping, timeAndMoneyForm, request, response);
+                	if(!getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+                		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+                	}
                 }
             }
         }   
@@ -343,6 +346,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 Date finalExpirationDate = currentAwardHierarchyNode.getFinalExpirationDate();
             	createDateChangeTransaction(timeAndMoneyDocument, award, aai, awardHierarchyNode, dateChangeTransactionDetailItems, 
             			currentFundEffectiveDate, currentObligationExpirationDate, finalExpirationDate, dateChangedComment);
+            	if(!getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+            		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+            	}
             	needToSaveAward = true;
             }
             
@@ -687,7 +693,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         save(mapping, form, request, response);
         TimeAndMoneyForm timeAndMoneyForm = (TimeAndMoneyForm) form;
         actionForward = super.route(mapping, form, request, response);  
-        getSapFeedService().updateSapFeedDetails(timeAndMoneyForm.getTimeAndMoneyDocument().getAward().getAwardNumber(), timeAndMoneyForm.getTimeAndMoneyDocument().getAward().getSequenceNumber());
+        TimeAndMoneyDocument timeAndMoneyDocument = timeAndMoneyForm.getTimeAndMoneyDocument();
+        getSapFeedService().setAllWorkInProgressSapFeedDetailsToPending(timeAndMoneyDocument.getAwardHierarchyNodes());
         // save report tracking items
         saveReportTrackingItems(timeAndMoneyForm);
         

@@ -1,6 +1,9 @@
 package org.kuali.coeus.propdev.impl.sapfeed;
 
 import java.sql.SQLException;
+import java.util.Map;
+
+import org.kuali.kra.timeandmoney.AwardHierarchyNode;
 
 
 
@@ -24,5 +27,11 @@ public interface SapFeedService {
 	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,Boolean processSubsequentBatches, String path);
 	
 	public void updateSapFeedDetails(String awardNumber,Integer sequenceNumber);
+	
+	public boolean isAwardSapFeedExists(String awardNumber, Integer sequenceNumber);
+	
+	public void setSapDetailsToWorkInProgress(String awardNumber,Integer sequenceNumber);
+	
+	public void setAllWorkInProgressSapFeedDetailsToPending(Map<String, AwardHierarchyNode> awardHierarchyNodes);
 
 }
