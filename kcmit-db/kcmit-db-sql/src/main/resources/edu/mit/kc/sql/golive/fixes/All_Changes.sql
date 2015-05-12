@@ -179,4 +179,9 @@ update eps_proposal a set final_budget_id =
     (select budget_id from eps_proposal_budget_ext where proposal_number=a.proposal_number and 
                     final_version_flag='Y' and status_code='1') 
 /
+insert into document_nextvalue (document_number,property_name,next_value,update_user,update_timestamp,obj_id,ver_nbr,document_next_value_type)
+(select b.document_number,'SPECIAL_REVIEW_NUMBER',max(nvl(special_review_number,0))+1,user,sysdate,sys_guid(),1,'DOC'
+    from award_special_review a,award b where a.award_id=b.award_id group by a.award_id,b.document_number)
+ 
+
  
