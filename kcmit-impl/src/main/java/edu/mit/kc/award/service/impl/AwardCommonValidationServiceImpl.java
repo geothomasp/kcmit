@@ -522,9 +522,9 @@ public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerso
     if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName) || 
 			(primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName))) {
     	disclosurePerson.setTrainingRequired(true);
+    }else if(disclosurePerson.getRoleCode().equals(Constants.KEY_PERSON_ROLE)){
+    	disclosurePerson.setDisclosuerNotRequired(true);
     }
-	
-	
 	if(awardPromptCoi && disclosurePerson.getPersonId()!=null){	
 		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
 				"COI Disclosures") || (primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode,"COI Disclosures"))) {		
@@ -558,10 +558,9 @@ public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerso
 		}
 		}
 	if(disclosurePersons!=null && disclosurePersons.isEmpty() && disclosurePerson.getPersonId()!=null){
-		disclosurePerson.setDisclosuerNotRequired(true);
+		//disclosurePerson.setDisclosuerNotRequired(true);
 		disclosurePersons.add(disclosurePerson);
 	}
-	
 	return disclosurePersons;
 }
 protected List<AwardPerson> checkPCKCustomData(Award award,AwardPerson disclosurePerson){
