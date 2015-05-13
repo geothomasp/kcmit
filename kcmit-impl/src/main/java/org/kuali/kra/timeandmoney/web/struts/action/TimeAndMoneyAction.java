@@ -41,6 +41,7 @@ import org.kuali.kra.timeandmoney.TimeAndMoneyForm;
 import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
 import org.kuali.kra.timeandmoney.history.TransactionDetail;
 import org.kuali.kra.timeandmoney.history.TransactionDetailType;
+import org.kuali.kra.timeandmoney.rules.TimeAndMoneyAwardDateSaveRuleImpl;
 import org.kuali.kra.timeandmoney.service.ActivePendingTransactionsService;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyActionSummaryService;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyHistoryService;
@@ -337,8 +338,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
 
             String dateChangedComment = null;
             AwardHierarchyNode currentAwardHierarchyNode = timeAndMoneyForm.getAwardHierarchyNodeItems().get(index);
-            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) && 
-            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) && 
+            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
+            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
             		isFinalExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai)) {
             	dateChangedComment = DATE_CHANGED_COMMENT;
             }
@@ -349,7 +350,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 Date finalExpirationDate = currentAwardHierarchyNode.getFinalExpirationDate();
             	createDateChangeTransaction(timeAndMoneyDocument, award, aai, awardHierarchyNode, dateChangeTransactionDetailItems, 
             			currentFundEffectiveDate, currentObligationExpirationDate, finalExpirationDate, dateChangedComment);
-            	needToSaveAward = true;
+            	needToSaveTransaction = true;
+                needToSaveAward = true;
             }
             
             //capture any changes of DirectFandADistributions, and add them to the Award working version for persistence.
@@ -360,6 +362,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 if (mustSetFandADistributions(awardDocument.getAward().getAwardDirectFandADistributions(),timeAndMoneyDocument.getAward().getAwardDirectFandADistributions())) {
                     awardDocument.getAward().setAwardDirectFandADistributions(timeAndMoneyDocument.getAward().getAwardDirectFandADistributions());
                     getDocumentService().saveDocument(awardDocument);
+                	needToSaveTransaction = true;
                     needToSaveAward = true;
                 }
             }
@@ -369,10 +372,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 //getBusinessObjectService().save(award);
             	awardsToSave.add(award);
             }
-            needToSaveTransaction &= needToSaveAward;
         }
         
-        if(needToSaveTransaction) {
+        if(needToSaveTransaction && new TimeAndMoneyAwardDateSaveRuleImpl().validateObligatedDates(timeAndMoneyDocument)) {
             getBusinessObjectService().save(awardsToSave);
             updateSapFeedDetails(awardsToSave);
             //we want to apply save rules to doc before we save any captured changes.
