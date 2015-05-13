@@ -53,7 +53,7 @@ public class TimeAndMoneyAwardDateSaveRuleImpl extends KcTransactionalDocumentRu
         return validateObligatedDates(timeAndMoneyDocument);
     }
     
-    private boolean validateObligatedDates(TimeAndMoneyDocument document) {
+    public boolean validateObligatedDates(TimeAndMoneyDocument document) {
         boolean valid = true;
         int i = 0;
         for(Entry<String, AwardHierarchyNode> awardHierarchyNode : document.getAwardHierarchyNodes().entrySet()) {
