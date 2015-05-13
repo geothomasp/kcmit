@@ -147,10 +147,12 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     				}
     			}			
     			awardNewPerList=awardPersonList.toString();
-    			if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-    				isHoldprompt = false;
+    			if(awardNewPerList!=null && !awardNewPerList.isEmpty()){
+    				if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    					auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+    					GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+    					isHoldprompt = false;
+    				}
     			}
     		}
     	       String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
@@ -166,19 +168,22 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     				}
     			}			
     			awardNewPerList=awardPersonList.toString();		
-    			if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-    				for(AwardPerson awardPerson:award.getKeyPersons()){	
-    					if(awardPerson.getConfirmed().equals("false")){	
-    						auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED, link));
-    						GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED,KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED);
-    						isHoldprompt = false;
+    			if(awardNewPerList!=null && !awardNewPerList.isEmpty()){
+    				if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    					for(AwardPerson awardPerson:award.getKeyPersons()){	
+    						if(awardPerson.getConfirmed().equals("false")){	
+    							auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED, link));
+    							GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED,KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED);
+    							isHoldprompt = false;
+    						}
     					}
+    				}else{
+    					auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
+    					GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
+    					isHoldprompt = false;
     				}
-    			}else{
-    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-    				isHoldprompt = false;
-    			}}
+    			}
+    		}
     	}
     	return isHoldprompt;
     }
@@ -203,20 +208,21 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     				}
     			}			
     			awardNewPerList=awardPersonList.toString();		
-    			if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-    				for(AwardPerson awardPerson:award.getKeyPersons()){	
-    					if(awardPerson.getConfirmed().equals("false")){	
-    						auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED, link));
-    						GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED,KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED);
-    						isHoldprompt = false;
+    			if(awardNewPerList!=null && !awardNewPerList.isEmpty()){
+    				if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    					for(AwardPerson awardPerson:award.getKeyPersons()){	
+    						if(awardPerson.getConfirmed().equals("false")){	
+    							auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED, link));
+    							GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED,KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED);
+    							isHoldprompt = false;
+    						}
     					}
+    				}else{
+    					auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
+    					GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
+    					isHoldprompt = false;
     				}
-    			}else{
-    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP, link));
-    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP);
-    				isHoldprompt = false;
     			}
-
     			StringBuilder awardInvestigatorList = new StringBuilder();
     			for(AwardPerson awardPerson:award.getInvestigators()){		
     				if(awardPerson.getPersonId()!=null){
@@ -225,13 +231,14 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     				}
     			}			
     			awardNewPerList=awardInvestigatorList.toString();
+    			if(awardNewPerList!=null && !awardNewPerList.isEmpty()){
 
-    			if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-    				isHoldprompt = false;
+    				if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    					auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+    					GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+    					isHoldprompt = false;
+    				}
     			}
-
     		} else if (customAttribute.getName().equals("COI_REQUIREMENT")	&& (awardCustomData.getValue()!= null && awardCustomData.getValue().equals("PC"))) {
     			StringBuilder awardPersonList = new StringBuilder();
     			for(AwardPerson awardPerson:award.getInvestigators()){		
@@ -241,11 +248,13 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     				}
     			}			
     			awardNewPerList=awardPersonList.toString();
+    			if(awardNewPerList!=null && !awardNewPerList.isEmpty()){
 
-    			if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
-    				auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
-    				GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
-    				isHoldprompt = false;
+    				if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
+    					auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+    					GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+    					isHoldprompt = false;
+    				}
     			}
     		}
     	}
@@ -499,10 +508,15 @@ public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerso
 	String sponsorCode=award.getSponsorCode();
 	String primeSponsorCode=award.getPrimeSponsorCode(); 
 	disclosurePerson.setTrainingRequired(false);
+	disclosurePerson.setDisclosuerNotRequired(false);
+	
+   
 	disclosurePersons = checkPCKCustomData(award,disclosurePerson);
+
 	if(disclosurePersons!=null && !disclosurePersons.isEmpty()){
 		return disclosurePersons;
 	}
+	
 	String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
     String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
     if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName) || 
@@ -510,12 +524,13 @@ public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerso
     	disclosurePerson.setTrainingRequired(true);
     }
 	
+	
 	if(awardPromptCoi && disclosurePerson.getPersonId()!=null){	
 		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode,
 				"COI Disclosures") || (primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode,"COI Disclosures"))) {		
 			StringBuilder awardPersonList = new StringBuilder();
 			award.refreshReferenceObject("investigators");
-			if(award.getInvestigators().contains(disclosurePerson)){
+			if(award.getInvestigators().contains(disclosurePerson) && disclosurePerson.getPersonId()!=null){
 				awardPersonList.append(disclosurePerson.getPersonId());
 				awardNewPerList=awardPersonList.toString();
 				if (!hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
@@ -528,7 +543,7 @@ public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerso
 		if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName) || 
 				(primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName))) {
 			StringBuilder awardPersonList = new StringBuilder();
-			if(award.getKeyPersons().contains(disclosurePerson)){
+			if(award.getKeyPersons().contains(disclosurePerson) && disclosurePerson.getPersonId()!=null){
 				awardPersonList.append(disclosurePerson.getPersonId());
 				awardNewPerList=awardPersonList.toString();		
 				if (hasCoiDisclosure(awardNumber,AWARD_MODULE_CODE,awardNewPerList) ) {
@@ -542,6 +557,11 @@ public List<AwardPerson> getCOIHoldPromptDisclousureItems(Award award,AwardPerso
 				}}
 		}
 		}
+	if(disclosurePersons!=null && disclosurePersons.isEmpty() && disclosurePerson.getPersonId()!=null){
+		disclosurePerson.setDisclosuerNotRequired(true);
+		disclosurePersons.add(disclosurePerson);
+	}
+	
 	return disclosurePersons;
 }
 protected List<AwardPerson> checkPCKCustomData(Award award,AwardPerson disclosurePerson){

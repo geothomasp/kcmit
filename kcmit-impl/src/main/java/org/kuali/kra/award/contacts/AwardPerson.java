@@ -82,6 +82,10 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     
     private transient boolean trainingRequired = false;
     
+    private transient boolean disclosuerNotRequired = false;
+    
+	
+
 	public String getConfirmed() {    
     	List awardPersonList = new ArrayList<AwardPersonConfirm>();
     	AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
@@ -524,5 +528,11 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
 	public void setTrainingRequired(boolean trainingRequired) {
 		this.trainingRequired = trainingRequired;
 	}
+	public boolean isDisclosuerNotRequired() {
+		return disclosuerNotRequired;
+	}
 
+	public void setDisclosuerNotRequired(boolean disclosuerNotRequired) {
+		this.disclosuerNotRequired = disclosuerNotRequired;
+	}
 }

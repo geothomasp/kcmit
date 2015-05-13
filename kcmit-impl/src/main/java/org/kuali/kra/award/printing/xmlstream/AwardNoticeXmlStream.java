@@ -447,38 +447,46 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	 */
 	private DisclosureItemType[] getDisclosureItems(AwardDisclosureType awardDisclosureType) {
 		List<DisclosureItemType> disclosureItems = new ArrayList<DisclosureItemType>();
-
-		for (AwardPerson awardPerson : award.getProjectPersons()) {
-			List<AwardPerson> awardPersons = KcServiceLocator.getService(AwardCommonValidationService.class).getCOIHoldPromptDisclousureItems(award, awardPerson);
-			if(awardPersons!=null && !awardPersons.isEmpty()){
-				for(AwardPerson person : awardPersons){
-					DisclosureItemType disclosureItemType = DisclosureItemType.Factory
-							.newInstance();
-					Map<String, String> queryMap = new HashMap<String, String>();
-					queryMap.put("trainingCode", "54");
-					queryMap.put("personId",person.getPersonId());
-					List <PersonTraining> personTrainingList = (List<PersonTraining>) getBusinessObjectService().findMatching(PersonTraining.class, queryMap);
-					disclosureItemType.setPersonName(person.getPerson().getFullName());
-					disclosureItemType.setDisclosureNumber(person.getRole().getRoleDescription());
-					String disclosureStatusDesc = KcServiceLocator.getService(AwardCommonValidationService.class).getAwardDisclousureStatusForPerson(award, person.getPerson().getPersonId());
-					disclosureItemType.setDisclosureTypeDesc(disclosureStatusDesc);
-					if(person.isTrainingRequired()){
-						if(personTrainingList!=null && !personTrainingList.isEmpty()){
-							PersonTraining personTraining = personTrainingList.get(0);
-							if(personTraining.getFollowupDate()!=null && personTraining.getFollowupDate().after(KcServiceLocator.getService(DateTimeService.class).getCurrentDate())){
-								disclosureItemType.setDisclosureStatusDesc("Training Completed");
-							}
-							else{
+		boolean isHoldPrompt = true;
+		
+		isHoldPrompt = KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardOnCOI(award);
+		if(!isHoldPrompt){
+			for (AwardPerson awardPerson : award.getProjectPersons()) {
+				List<AwardPerson> awardPersons = KcServiceLocator.getService(AwardCommonValidationService.class).getCOIHoldPromptDisclousureItems(award, awardPerson);
+				if(awardPersons!=null && !awardPersons.isEmpty()){
+					for(AwardPerson person : awardPersons){
+						DisclosureItemType disclosureItemType = DisclosureItemType.Factory
+								.newInstance();
+						Map<String, String> queryMap = new HashMap<String, String>();
+						queryMap.put("trainingCode", "54");
+						queryMap.put("personId",person.getPersonId());
+						List <PersonTraining> personTrainingList = (List<PersonTraining>) getBusinessObjectService().findMatching(PersonTraining.class, queryMap);
+						disclosureItemType.setPersonName(person.getPerson().getFullName());
+						disclosureItemType.setDisclosureNumber(person.getRole().getRoleDescription());
+						if(person.isDisclosuerNotRequired()){
+							disclosureItemType.setDisclosureTypeDesc("Disclosure Not Required");
+						}else{
+							String disclosureStatusDesc = KcServiceLocator.getService(AwardCommonValidationService.class).getAwardDisclousureStatusForPerson(award, person.getPerson().getPersonId());
+							disclosureItemType.setDisclosureTypeDesc(disclosureStatusDesc);
+						}
+						if(person.isTrainingRequired()){
+							if(personTrainingList!=null && !personTrainingList.isEmpty()){
+								PersonTraining personTraining = personTrainingList.get(0);
+								if(personTraining.getFollowupDate()!=null && personTraining.getFollowupDate().after(KcServiceLocator.getService(DateTimeService.class).getCurrentDate())){
+									disclosureItemType.setDisclosureStatusDesc("Training Completed");
+								}
+								else{
+									disclosureItemType.setDisclosureStatusDesc("Training Required");
+								}
+							}else{
 								disclosureItemType.setDisclosureStatusDesc("Training Required");
 							}
 						}else{
-							disclosureItemType.setDisclosureStatusDesc("Training Required");
+							disclosureItemType.setDisclosureStatusDesc("Training Not Required");
 						}
-					}else{
-						disclosureItemType.setDisclosureStatusDesc("Training Not Required");
+						disclosureItems.add(disclosureItemType);
+						awardDisclosureType.setDisclosureValidation("1");
 					}
-					disclosureItems.add(disclosureItemType);
-					awardDisclosureType.setDisclosureValidation("1");
 				}
 			}
 		}
@@ -584,6 +592,11 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP)!=null){
 			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
 			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED));
 			 awardValidationTypes.add(awardValidationType);
 		 }
 		return awardValidationTypes.toArray(new AwardValidationType[0]);
