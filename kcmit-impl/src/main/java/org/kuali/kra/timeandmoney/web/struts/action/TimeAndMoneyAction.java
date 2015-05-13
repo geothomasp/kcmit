@@ -338,8 +338,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
 
             String dateChangedComment = null;
             AwardHierarchyNode currentAwardHierarchyNode = timeAndMoneyForm.getAwardHierarchyNodeItems().get(index);
-            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
-            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) || 
+            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) | 
+            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) | 
             		isFinalExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai)) {
             	dateChangedComment = DATE_CHANGED_COMMENT;
             }
