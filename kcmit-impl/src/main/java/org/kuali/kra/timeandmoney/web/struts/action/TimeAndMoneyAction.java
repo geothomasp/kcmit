@@ -396,38 +396,44 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
     protected boolean isFundEffectiveDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
         Date currentEffectiveDate = awardHierarchyNode.getCurrentFundEffectiveDate();
         Date previousEffectiveDate = awardAmountInfo.getCurrentFundEffectiveDate();
-        if(currentEffectiveDate == null) {
+        boolean isDateChanged = false;
+        if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentEffectiveDate, previousEffectiveDate)) {
+        	isDateChanged = true;
+        } else if (awardHierarchyNode.isPopulatedFromClient() && currentEffectiveDate == null) {
         	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(null);
-            return false;
-        }else {
-        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
-        	return isTimeAndMoneyDateChanged(currentEffectiveDate, previousEffectiveDate);
         }
+        if(currentEffectiveDate != null && currentEffectiveDate.equals(previousEffectiveDate) &&
+                !currentEffectiveDate.equals(docAwardHierarchyNode.getValue().getCurrentFundEffectiveDate())) {
+        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
+        }
+        return isDateChanged;
     }
     
     protected boolean isObligationExpirationDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
         Date previousObligationExpirationDate = awardAmountInfo.getObligationExpirationDate();
         Date currentObligationExpirationDate = awardHierarchyNode.getObligationExpirationDate();
-        if(currentObligationExpirationDate == null) {
-        	docAwardHierarchyNode.getValue().setObligationExpirationDate(null);
-            return false;
-        }else {
+        boolean isDateChanged = false;
+        if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentObligationExpirationDate, previousObligationExpirationDate)) {
+        	isDateChanged = true;
         	docAwardHierarchyNode.getValue().setObligationExpirationDate(currentObligationExpirationDate);
-        	return isTimeAndMoneyDateChanged(currentObligationExpirationDate, previousObligationExpirationDate);
+        } else if (awardHierarchyNode.isPopulatedFromClient() && currentObligationExpirationDate == null) {
+        	docAwardHierarchyNode.getValue().setObligationExpirationDate(null);
         }
+        return isDateChanged;
     }
     
     protected boolean isFinalExpirationDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
         Date previousFinalExpirationDate = awardAmountInfo.getFinalExpirationDate();
         Date currentFinalExpirationDate = awardHierarchyNode.getFinalExpirationDate();
-        if(currentFinalExpirationDate == null) {
+        boolean isDateChanged = false;
+        if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentFinalExpirationDate, previousFinalExpirationDate)) {
+        	isDateChanged = true;
+      	  	docAwardHierarchyNode.getValue().setFinalExpirationDate(currentFinalExpirationDate);
+        } else if (awardHierarchyNode.isPopulatedFromClient() && currentFinalExpirationDate == null) {
         	docAwardHierarchyNode.getValue().setFinalExpirationDate(null);
-            return false;
-        }else {
-        	docAwardHierarchyNode.getValue().setFinalExpirationDate(currentFinalExpirationDate);
-        	return isTimeAndMoneyDateChanged(currentFinalExpirationDate, previousFinalExpirationDate);
         }
-    }
+        return isDateChanged;
+     }
     
     protected boolean isTimeAndMoneyDateChanged(Date currentDate, Date previousDate) {
         if(currentDate != null && previousDate != null && (currentDate.before(previousDate) || 
