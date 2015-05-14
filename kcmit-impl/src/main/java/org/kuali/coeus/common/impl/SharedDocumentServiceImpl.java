@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
 import org.kuali.coeus.common.framework.medusa.MedusaBean;
 import org.kuali.coeus.common.framework.medusa.MedusaNode;
 import org.kuali.coeus.common.framework.module.CoeusModule;
@@ -16,6 +17,7 @@ import org.kuali.kra.award.contacts.AwardPerson;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.coi.disclosure.CoiDisclosedProjectBean;
+import org.kuali.kra.infrastructure.PermissionConstants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalPerson;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
@@ -39,7 +41,14 @@ public class SharedDocumentServiceImpl implements SharedDocumentService {
 	@Autowired
 	@Qualifier("unitAuthorizationService")
     private UnitAuthorizationService unitAuthorizationService;
+	
+	
+	@Autowired
+	@Qualifier("kcAuthorizationService")
+	private KcAuthorizationService kcAuthorizationService;
     
+	
+
 	@Override
 	public String getSharedDocumentTypeForModule(String moduleCode) {
 		List<SharedDocumentType> sharedDocTypes = getSharedDocumentTypes(moduleCode);
@@ -179,9 +188,9 @@ public class SharedDocumentServiceImpl implements SharedDocumentService {
 		boolean viewAttachment = false;
 		boolean viewSharedDoc = false;
 		String sharedDocTypes = null;
-		 if ((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-PD", "VIEW_DEV_PROPOSAL_DOC"))) {
+		 if ((getKcAuthorizationService().hasPermission(currentUser, developmentProposal.getProposalDocument(), "VIEW_DEV_PROPOSAL_DOC"))) {
 			 viewAttachment = true;
-		 }else if((getUnitAuthorizationService().hasPermission(currentUser, unitNumber, "KC-SYS", "VIEW_ALL_SHARED_DOC"))) {
+		 }else if((getKcAuthorizationService().hasPermission(currentUser,developmentProposal.getProposalDocument(), "VIEW_ALL_SHARED_DOC"))) {
 			sharedDocTypes = getSharedDocumentTypeForModule(sharedDocumentTypes, CoeusModule.PROPOSAL_DEVELOPMENT_MODULE_CODE);
 			viewSharedDoc = true;
 		 }
@@ -296,6 +305,13 @@ public class SharedDocumentServiceImpl implements SharedDocumentService {
 		this.unitAuthorizationService = unitAuthorizationService;
 	}
 	
+	public KcAuthorizationService getKcAuthorizationService() {
+		return kcAuthorizationService;
+	}
 
+	public void setKcAuthorizationService(
+			KcAuthorizationService kcAuthorizationService) {
+		this.kcAuthorizationService = kcAuthorizationService;
+	}
 
 }
