@@ -271,28 +271,36 @@ public class SapFeedServiceImpl implements SapFeedService
 		return null;
 	}
 	
+	protected  boolean isAnySapFeedSuccess(String awardNumber) {
+		boolean sapFeedSuccess = false;
+    	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(PredicateFactory.equal("awardNumber", awardNumber));
+    	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+        List<SapFeedDetails> sapFeedDetails = getDataObjectService().findMatching(SapFeedDetails.class, builder.build()).getResults();
+        for(SapFeedDetails sapFeedDetail : sapFeedDetails){
+        	 if(sapFeedDetail.getFeedStatus().equals(SAPFEED_FEEDSTATUS_ERROR) || 
+        			 sapFeedDetail.getFeedStatus().equals(SAPFEED_FEEDSTATUS_REJECTED)){
+        		 sapFeedSuccess = false;
+        	 }else{
+        		 sapFeedSuccess = true;
+        		 break;
+        	 }
+        }
+		return sapFeedSuccess;
+	}
+	
 	protected String getSapFeedType(String awardNumber, Integer sequenceNumber) {
 		String feedType = null;
 		SapFeedDetails latestFeedDetails = getLatestSapFeedDetail(awardNumber);
 		if (latestFeedDetails != null) {
-			if ((latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_FED) || 
-					latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_PENDING)) && 
-					(latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_NEW) || 
-							latestFeedDetails.getFeedType().equals(SAPFEED_FEEDTYPE_CHANGED)) ) {
-			  	feedType = SAPFEED_FEEDTYPE_CHANGED;
-			} else if(latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_ERROR) || 
-					latestFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_REJECTED)) {
-				feedType = SAPFEED_FEEDTYPE_NEW;
-			} else {
+			if (isAnySapFeedSuccess(awardNumber)) {
 				feedType = SAPFEED_FEEDTYPE_CHANGED;
-			  	String feedStatus = latestFeedDetails.getFeedStatus();
-			  	latestFeedDetails.setFeedType(feedType);
-			  	latestFeedDetails.setFeedStatus(feedStatus);
-			  	latestFeedDetails.setSequenceNumber(sequenceNumber);
-			  	getBusinessObjectService().save(latestFeedDetails);
+			}else{
+				feedType = SAPFEED_FEEDTYPE_NEW;
 			}
 		} else {
-			 	feedType = SAPFEED_FEEDTYPE_NEW;
+			feedType = SAPFEED_FEEDTYPE_NEW;
 		}
 		return feedType;
 	}
