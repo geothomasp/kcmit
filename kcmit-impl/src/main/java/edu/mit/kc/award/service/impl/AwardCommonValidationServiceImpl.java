@@ -614,6 +614,21 @@ protected List<AwardPerson> checkPCKCustomData(Award award,AwardPerson disclosur
 		}
 		return disclosurePersons;
 }
+
+public boolean getTrainingRequired(Award award){
+
+	String sponsorCode=award.getSponsorCode();
+	String primeSponsorCode=award.getPrimeSponsorCode(); 
+	String sponsorHeirarchy =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, SPONSOR_HEIRARCHY); 
+	String sponsorHeirarchyLevelName =   getParameterService().getParameterValueAsString(ProposalDevelopmentDocument.class, COI_SPONSOR_HEIRARCHY_LEVEL1); 
+	if (getSponsorHierarchyService().isSponsorInHierarchy(sponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName) || 
+			(primeSponsorCode!=null && getSponsorHierarchyService().isSponsorInHierarchy(primeSponsorCode, sponsorHeirarchy,1,sponsorHeirarchyLevelName))) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
 public String getAwardDisclousureStatusForPerson(Award award,String personId) {
 	List<Object> paramValues = new ArrayList<Object>();
 	String result = "";	

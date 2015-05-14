@@ -68,5 +68,8 @@ boolean validateAwardOnCOI(Award award);
   
   
   public String getAwardDisclousureStatusForPerson(Award award,String personId);
+  
+  
+  public boolean getTrainingRequired(Award award);
 /*  boolean validateAwardOnCOI(Award award);*/
 }
