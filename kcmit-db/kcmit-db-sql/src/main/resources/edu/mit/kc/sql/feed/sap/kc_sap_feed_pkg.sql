@@ -1305,7 +1305,7 @@ BEGIN
 	
 EXCEPTION
 WHEN OTHERS THEN
- upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_get_money_and_dates, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number||',Error is'|| SUBSTR(SQLERRM, 1, 200));
+ upd_sap_feed_log_error(gi_sap_feed_batch_id,gi_batch_id, gi_feed_id,'Exception in fn_get_money_and_dates, Award number = '||gs_award_number||', sequence number = '||gi_sequence_number ||', transaction id = '||gs_transaction_id||',Error is'|| SUBSTR(SQLERRM, 1, 200));
  return -1;
 END;
 
