@@ -79,7 +79,8 @@ INSERT INTO TMP_KREW_USR_OPTN_T(PRSN_OPTN_ID,VAL)
 VALUES('DocSearch.LastSearch.Holding0','{"documentStatuses":[],"documentStatusCategories":[],"additionalDocumentTypeNames":[],"dateCreatedFrom":1430679105372,"documentAttributeValues":{},"isAdvancedSearch":"NO","searchOptions":{},"applicationDocumentStatuses":[]}');
 INSERT INTO TMP_KREW_USR_OPTN_T(PRSN_OPTN_ID,VAL)
 VALUES('PRIMARY_DELEGATE_FILTER','Primary Delegates on Action List Page');
-commit
+INSERT INTO TMP_KREW_USR_OPTN_T(PRSN_OPTN_ID,VAL)
+VALUES('ProtocolDocument.DocumentTypeNotificationcommit','no');
 /
 declare
 cursor c_krew_usr is
