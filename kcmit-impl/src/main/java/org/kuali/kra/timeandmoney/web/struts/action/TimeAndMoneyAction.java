@@ -399,12 +399,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         boolean isDateChanged = false;
         if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentEffectiveDate, previousEffectiveDate)) {
         	isDateChanged = true;
+        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
         } else if (awardHierarchyNode.isPopulatedFromClient() && currentEffectiveDate == null) {
         	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(null);
-        }
-        if(currentEffectiveDate != null && currentEffectiveDate.equals(previousEffectiveDate) &&
-                !currentEffectiveDate.equals(docAwardHierarchyNode.getValue().getCurrentFundEffectiveDate())) {
-        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
         }
         return isDateChanged;
     }
