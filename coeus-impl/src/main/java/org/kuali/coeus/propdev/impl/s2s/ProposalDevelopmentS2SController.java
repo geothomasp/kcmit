@@ -21,6 +21,7 @@ package org.kuali.coeus.propdev.impl.s2s;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.coeus.common.framework.attachment.KcAttachmentService;
 import org.kuali.coeus.propdev.api.s2s.S2sUserAttachedFormFileContract;
 import org.kuali.coeus.propdev.api.s2s.UserAttachedFormService;
 import org.kuali.coeus.propdev.impl.auth.ProposalDevelopmentDocumentAuthorizer;
@@ -94,8 +95,14 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
     @Autowired
     @Qualifier("proposalDevelopmentDocumentViewAuthorizer")
     private ProposalDevelopmentDocumentViewAuthorizer proposalDevelopmentDocumentViewAuthorizer;
+    
+    
+    @Autowired
+    @Qualifier("kcAttachmentService")
+    private KcAttachmentService kcAttachmentService;
 
-    private static final String ERROR_NO_GRANTS_GOV_FORM_SELECTED = "error.proposalDevelopment.no.grants.gov.form.selected";
+
+	private static final String ERROR_NO_GRANTS_GOV_FORM_SELECTED = "error.proposalDevelopment.no.grants.gov.form.selected";
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=refresh", "refreshCaller=S2sOpportunity-LookupView"})
    public ModelAndView refresh(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response)
@@ -104,7 +111,14 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
        DevelopmentProposal proposal = document.getDevelopmentProposal();
        if(form.getNewS2sOpportunity() != null 
                && StringUtils.isNotEmpty(form.getNewS2sOpportunity().getOpportunityId())) {
-
+    	   
+    	   S2sOpportunity s2sOpportunity = form.getNewS2sOpportunity();
+    	   String opprtunityTitle = getKcAttachmentService().checkAndReplaceSpecialCharacters(s2sOpportunity.getOpportunityTitle());
+    	   s2sOpportunity.setOpportunityTitle(opprtunityTitle);
+    	   form.setNewS2sOpportunity(s2sOpportunity);
+    	   
+    	   
+    	   
            proposal.setS2sOpportunity(form.getNewS2sOpportunity());
            proposal.getS2sOpportunity().setDevelopmentProposal(proposal);
 
@@ -433,5 +447,13 @@ public class ProposalDevelopmentS2SController extends ProposalDevelopmentControl
         }
         return proposalTypeService;
     }
+    
+    public KcAttachmentService getKcAttachmentService() {
+		return kcAttachmentService;
+	}
+
+	public void setKcAttachmentService(KcAttachmentService kcAttachmentService) {
+		this.kcAttachmentService = kcAttachmentService;
+	}
 }
 
