@@ -546,7 +546,7 @@ public abstract class ProposalDevelopmentControllerBase {
 	public void saveAnswerHeaders(ProposalDevelopmentDocumentForm pdForm,String pageId) {
         boolean allCertificationsWereComplete = true;
         boolean allCertificationAreNowComplete = true;
-        
+        Person loggedinUser = getGlobalVariableService().getUserSession().getPerson();
         setUpdatedToCoi(false);
         if (StringUtils.equalsIgnoreCase(pageId, Constants.KEY_PERSONNEL_PAGE) ||
                 StringUtils.equalsIgnoreCase(pageId,"PropDev-CertificationView-Page")) {
@@ -562,11 +562,16 @@ public abstract class ProposalDevelopmentControllerBase {
                         && !person.getQuestionnaireHelper().getAnswerHeaders().isEmpty()) {
                     for (AnswerHeader answerHeader : person.getQuestionnaireHelper().getAnswerHeaders()) {
                         boolean wasComplete = answerHeader.isCompleted();
-                        allCertificationsWereComplete &= wasComplete;
+                        boolean hasCertficationPermission = getProposalDevelopmentPermissionsService().hasCertificationPermissions(pdForm.getProposalDevelopmentDocument(), loggedinUser, person);
+                        if(hasCertficationPermission){
+                        	allCertificationsWereComplete &= wasComplete;
+                        }
                         getLegacyDataAdapter().save(answerHeader);
                         person.getQuestionnaireHelper().populateAnswers();
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
-                        allCertificationAreNowComplete &= isComplete;
+                        if(hasCertficationPermission){
+                        	allCertificationAreNowComplete &= isComplete;
+                        }
                         if(isComplete && !wasComplete){
                         	getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-CertificationView", KcMitConstants.CERTIFICATION_COMPLETED,"");
                         	person.setCertifiedBy(getGlobalVariableService().getUserSession().getPrincipalName());
