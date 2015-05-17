@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.Normalizer;
 import java.util.*;
 
 @Component("s2sSubmissionService")
@@ -416,7 +417,8 @@ public class S2sSubmissionServiceImpl implements S2sSubmissionService {
                         .toGregorianCalendar());
 
         s2Opportunity.setOpportunityId(oppInfo.getFundingOpportunityNumber());
-        s2Opportunity.setOpportunityTitle(oppInfo.getFundingOpportunityTitle());
+        String opportunityTitle = replaceSpecialCharacters(oppInfo.getFundingOpportunityTitle());
+        s2Opportunity.setOpportunityTitle(opportunityTitle);
         s2Opportunity.setSchemaUrl(oppInfo.getSchemaURL());
         s2Opportunity.setProviderCode(providerCode);
         s2Opportunity.setOfferingAgency(oppInfo.getOfferingAgency());
@@ -427,7 +429,15 @@ public class S2sSubmissionServiceImpl implements S2sSubmissionService {
         return s2Opportunity;
     }
 
-    /**
+    private String replaceSpecialCharacters(String fundingOpportunityTitle) {
+    	String convertedString = 
+    		       Normalizer
+    		           .normalize(fundingOpportunityTitle, Normalizer.Form.NFD)
+    		           .replaceAll("[^\\p{ASCII}]", "");
+    	return convertedString;
+	}
+
+	/**
      * This method is to find the list of available opportunities for a given
      * cfda number, opportunity ID and competition ID.
      *
