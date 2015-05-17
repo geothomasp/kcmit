@@ -159,8 +159,8 @@ FROM WAREUSER.COEUS_PERSON@WAREHOUSE_COEUS.MIT.EDU cp,
 
 commit
 /
-select 'Inserting new rows into kcperson tables.'  from dual
-/
+--select 'Inserting new rows into kcperson tables.'  from dual
+--/
 DECLARE
 li_seq_entity_id NUMBER(8);
 li_seq_entity_afltn_id NUMBER(8);
@@ -812,6 +812,9 @@ when others then
 
 				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
 				values(r_pers.person_id,'PRIMARY_DELEGATE_FILTER','Primary Delegates on Action List Page',1);
+				
+				INSERT INTO KREW_USR_OPTN_T(PRNCPL_ID,PRSN_OPTN_ID,VAL,VER_NBR)
+				VALUES(r_pers.person_id,'ProtocolDocument.DocumentTypeNotificationcommit','no',1);
 
                 commit;
 
@@ -869,9 +872,9 @@ END;
 
 commit
 /
-select 'Completed Inserting new rows into kcperson tables.'  from dual
-/
-select 'Updation of changed last_name begins.'  from dual
+--select 'Completed Inserting new rows into kcperson tables.'  from dual
+--/
+--select 'Updation of changed last_name begins.'  from dual
 /
 DECLARE
 li_count number;
@@ -921,10 +924,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed last_name ends.'  from dual
-/
-select 'Updation of changed first_name begins.'  from dual
-/
+--select 'Updation of changed last_name ends.'  from dual
+--/
+--select 'Updation of changed first_name begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -973,10 +976,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed first_name ends.'  from dual
-/
-select 'Updation of changed middle_name begins.'  from dual
-/
+--select 'Updation of changed first_name ends.'  from dual
+--/
+--select 'Updation of changed middle_name begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1025,10 +1028,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed middle_name ends.'  from dual
-/
-select 'Updation of changed user_name begins.'  from dual
-/
+--select 'Updation of changed middle_name ends.'  from dual
+--/
+--select 'Updation of changed user_name begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1113,18 +1116,18 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed user_name ends.'  from dual
-/
-select 'Set people as inactive if username is NULL in warehouse.' from dual
-/
+--select 'Updation of changed user_name ends.'  from dual
+--/
+--select 'Set people as inactive if username is NULL in warehouse.' from dual
+--/
 DECLARE
 li_ret number;
 BEGIN
 li_ret:=fn_inactive_users_pfeed();
 END;
 /
-select 'Updation of changed email_address begins.'  from dual
-/
+--select 'Updation of changed email_address begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1174,10 +1177,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed email_address ends.'  from dual
-/
-select 'Updation of changed date_of_birth begins.'  from dual
-/
+--select 'Updation of changed email_address ends.'  from dual
+--/
+--select 'Updation of changed date_of_birth begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1227,10 +1230,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed date_of_birth ends.'  from dual
-/
-select 'Updation of changed age_by_fiscal_year begins.'  from dual
-/
+--select 'Updation of changed date_of_birth ends.'  from dual
+--/
+--select 'Updation of changed age_by_fiscal_year begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1264,10 +1267,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed age_by_fiscal_year ends.'  from dual
-/
-select 'Updation of changed gender_cd begins.'  from dual
-/
+--select 'Updation of changed age_by_fiscal_year ends.'  from dual
+--/
+--select 'Updation of changed gender_cd begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1318,10 +1321,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed gender_cd ends.'  from dual
-/
-select 'Updation of changed race begins.'  from dual
-/
+--select 'Updation of changed gender_cd ends.'  from dual
+--/
+--select 'Updation of changed race begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1355,10 +1358,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed race ends.'  from dual
-/
-select 'Updation of changed education level begins.'  from dual
-/
+--select 'Updation of changed race ends.'  from dual
+--/
+--select 'Updation of changed education level begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1392,10 +1395,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed education level ends.'  from dual
-/
-select 'Updation of changed major begins.'  from dual
-/
+--select 'Updation of changed education level ends.'  from dual
+--/
+--select 'Updation of changed major begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1429,10 +1432,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed major ends.'  from dual
-/
-select 'Updation of changed is_handicapped begins.'  from dual
-/
+--select 'Updation of changed major ends.'  from dual
+--/
+--select 'Updation of changed is_handicapped begins.'  from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1466,10 +1469,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_handicapped ends.'  from dual
-/
-select 'Updation of changed handicap_type begins.' from dual
-/
+--select 'Updation of changed is_handicapped ends.'  from dual
+--/
+--select 'Updation of changed handicap_type begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1503,10 +1506,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed handicap_type ends.' from dual
-/
-select 'Updation of changed is_veteran begins.' from dual
-/
+--select 'Updation of changed handicap_type ends.' from dual
+--/
+--select 'Updation of changed is_veteran begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1540,10 +1543,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_veteran ends.' from dual
-/
-select 'Updation of changed veteran_type begins.' from dual
-/
+--select 'Updation of changed is_veteran ends.' from dual
+--/
+--select 'Updation of changed veteran_type begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1577,10 +1580,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed veteran_type ends.' from dual
-/
-select 'Updation of changed visa_code begins.' from dual
-/
+--select 'Updation of changed veteran_type ends.' from dual
+--/
+--select 'Updation of changed visa_code begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1614,10 +1617,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed visa_code ends.' from dual
-/
-select 'Updation of changed visa_type begins.' from dual
-/
+--select 'Updation of changed visa_code ends.' from dual
+--/
+--select 'Updation of changed visa_type begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1651,10 +1654,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed visa_type ends.' from dual
-/
-select 'Updation of changed visa_renewal_date begins.' from dual
-/
+--select 'Updation of changed visa_type ends.' from dual
+--/
+--select 'Updation of changed visa_renewal_date begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1688,10 +1691,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed visa_renewal_date ends.' from dual
-/
-select 'Updation of changed  has_visa begins.' from dual
-/
+--select 'Updation of changed visa_renewal_date ends.' from dual
+--/
+--select 'Updation of changed  has_visa begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1725,10 +1728,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed  has_visa ends.' from dual
-/
-select 'Updation of changed office_location begins.' from dual
-/
+--select 'Updation of changed  has_visa ends.' from dual
+--/
+--select 'Updation of changed office_location begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1762,10 +1765,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed office_location ends.' from dual
-/
-select 'Updation of changed office_phone begins.' from dual
-/
+--select 'Updation of changed office_location ends.' from dual
+--/
+--select 'Updation of changed office_phone begins.' from dual
+--/
 DECLARE
 li_count number;
 ls_phone_number varchar2(20);
@@ -1789,8 +1792,6 @@ OPEN c_update;
 LOOP
 FETCH c_update INTO r_update;
 EXIT WHEN c_update%NOTFOUND;
-
-dbms_output.put_line('begin');
 
 IF r_update.office_phone IS NOT NULL THEN
 
@@ -1825,11 +1826,11 @@ END;
 /
 commit
 /
-
-select 'Updation of changed office_phone ends.' from dual
-/
-select 'Updation of changed secondry_office_location begins.' from dual
-/
+--
+--select 'Updation of changed office_phone ends.' from dual
+--/
+--select 'Updation of changed secondry_office_location begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1863,10 +1864,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed secondry_office_location ends.' from dual
-/
-select 'Updation of changed secondry_office_phone begins.' from dual
-/
+----select 'Updation of changed secondry_office_location ends.' from dual
+----/
+----select 'Updation of changed secondry_office_phone begins.' from dual
+--/
 DECLARE
 li_count number;
 ls_phone_number varchar2(20);
@@ -1921,10 +1922,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed secondry_office_phone ends.' from dual
-/
-select 'Updation of changed school begins.' from dual
-/
+--select 'Updation of changed secondry_office_phone ends.' from dual
+--/
+--select 'Updation of changed school begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1958,10 +1959,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed school ends.' from dual
-/
-select 'Updation of changed year_graduated begins.' from dual
-/
+--select 'Updation of changed school ends.' from dual
+--/
+--select 'Updation of changed year_graduated begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -1995,10 +1996,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed year_graduated ends.' from dual
-/
-select 'Updation of changed primary_title begins.' from dual
-/
+--select 'Updation of changed year_graduated ends.' from dual
+--/
+--select 'Updation of changed primary_title begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -2032,10 +2033,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed primary_title ends.' from dual
-/
-select 'Updation of changed directory_title begins.' from dual
-/
+--select 'Updation of changed primary_title ends.' from dual
+--/
+--select 'Updation of changed directory_title begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -2069,10 +2070,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed directory_title ends.' from dual
-/
-select 'Updation of changed is_faculty begins.' from dual
-/
+--select 'Updation of changed directory_title ends.' from dual
+--/
+--select 'Updation of changed is_faculty begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2124,10 +2125,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_faculty ends.' from dual
-/
-select 'Updation of changed is_graduate_student_staff begins.' from dual
-/
+--select 'Updation of changed is_faculty ends.' from dual
+--/
+--select 'Updation of changed is_graduate_student_staff begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2179,10 +2180,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_graduate_student_staff ends.' from dual
-/
-select 'Updation of changed is_research_staff begins.' from dual
-/
+--select 'Updation of changed is_graduate_student_staff ends.' from dual
+--/
+--select 'Updation of changed is_research_staff begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2234,10 +2235,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_research_staff ends.' from dual
-/
-select 'Updation of changed is_service_staff begins.' from dual
-/
+--select 'Updation of changed is_research_staff ends.' from dual
+--/
+--select 'Updation of changed is_service_staff begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2289,10 +2290,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_service_staff ends.' from dual
-/
-select 'Updation of changed is_support_staff begins.' from dual
-/
+--select 'Updation of changed is_service_staff ends.' from dual
+--/
+--select 'Updation of changed is_support_staff begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2344,10 +2345,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_support_staff ends.' from dual
-/
-select 'Updation of changed IS_OTHER_ACCADEMIC_GROUP begins.' from dual
-/
+--select 'Updation of changed is_support_staff ends.' from dual
+--/
+--select 'Updation of changed IS_OTHER_ACCADEMIC_GROUP begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2399,10 +2400,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed IS_OTHER_ACCADEMIC_GROUP ends.' from dual
-/
-select 'Updation of changed is_medical_staff begins.' from dual
-/
+--select 'Updation of changed IS_OTHER_ACCADEMIC_GROUP ends.' from dual
+--/
+--select 'Updation of changed is_medical_staff begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2454,10 +2455,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_medical_staff ends.' from dual
-/
-select 'Updation of changed home_unit begins.' from dual
-/
+--select 'Updation of changed is_medical_staff ends.' from dual
+--/
+--select 'Updation of changed home_unit begins.' from dual
+--/
 DECLARE
 li_count number;
 li_seq_entity_afltn_id NUMBER(12,0);
@@ -2509,10 +2510,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed home_unit ends.' from dual
-/
-select 'Updation of changed vacation_accural begins.' from dual
-/
+--select 'Updation of changed home_unit ends.' from dual
+--/
+--select 'Updation of changed vacation_accural begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -2546,10 +2547,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed vacation_accural ends.' from dual
-/
-select 'Updation of changed is_on_sabbatical begins.' from dual
-/
+--select 'Updation of changed vacation_accural ends.' from dual
+--/
+--select 'Updation of changed is_on_sabbatical begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -2583,10 +2584,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed is_on_sabbatical ends.' from dual
-/
-select 'Updation of changed id_provided begins.' from dual
-/
+--select 'Updation of changed is_on_sabbatical ends.' from dual
+--/
+--select 'Updation of changed id_provided begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -2620,10 +2621,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed id_provided ends.' from dual
-/
-select 'Updation of changed id_verified begins.' from dual
-/
+--select 'Updation of changed id_provided ends.' from dual
+--/
+--select 'Updation of changed id_verified begins.' from dual
+--/
 DECLARE
 li_count number;
 cursor c_update is
@@ -2657,10 +2658,10 @@ END LOOP;
 CLOSE c_update;
 END;
 /
-select 'Updation of changed id_verified ends.' from dual
-/
-select 'Updation of changed address_line2 begins.' from dual
-/
+--select 'Updation of changed id_verified ends.' from dual
+--/
+--select 'Updation of changed address_line2 begins.' from dual
+--/
 DECLARE
 li_count number;
 li_country_cd varchar2(2);
@@ -2720,20 +2721,20 @@ END;
 /
 commit
 /
-select 'Updation of changed address_line2 ends.' from dual
-/
-select 'Updation of changed primary_dept_cd begins.' from dual
-/
+--select 'Updation of changed address_line2 ends.' from dual
+--/
+--select 'Updation of changed primary_dept_cd begins.' from dual
+--/
 update KRIM_ENTITY_EMP_INFO_T
 set PRMRY_DEPT_CD = '999999'
 where PRMRY_DEPT_CD is null
 /
 commit
 /
-select 'Updation of changed primary_dept_cd ends.' from dual
-/
-select 'Updation of changed AWARD_PERSONS begins.' from dual
-/
+--select 'Updation of changed primary_dept_cd ends.' from dual
+--/
+--select 'Updation of changed AWARD_PERSONS begins.' from dual
+--/
 create table temp_full_name as
 select p.prncpl_id, (case 
 when e.last_nm is null then 
@@ -2769,10 +2770,10 @@ where person_id in (select person_id
 /
 commit
 /
-select 'Updation of changed AWARD_PERSONS ends.' from dual
-/
-select 'Updation of changed AWARD_APPROVED_FOREIGN_TRAVEL begins.' from dual
-/
+--select 'Updation of changed AWARD_PERSONS ends.' from dual
+--/
+--select 'Updation of changed AWARD_APPROVED_FOREIGN_TRAVEL begins.' from dual
+--/
 drop   table temp
 /
 create table temp 
@@ -2791,10 +2792,10 @@ where person_id in (select person_id
 /
 commit
 /
-select 'Updation of changed AWARD_APPROVED_FOREIGN_TRAVEL ends.' from dual
-/
-select 'Updation of changed PROPOSAL_PERSONS begins.' from dual
-/
+--select 'Updation of changed AWARD_APPROVED_FOREIGN_TRAVEL ends.' from dual
+--/
+--select 'Updation of changed PROPOSAL_PERSONS begins.' from dual
+--/
 drop   table temp
 /
 create table temp 
@@ -2814,10 +2815,10 @@ where person_id in (select person_id
 /
 commit
 /
-select 'Updation of changed PROPOSAL_PERSONS ends.' from dual
-/
-select 'Updation of changed EPS_PROP_PERSON begins.' from dual
-/
+--select 'Updation of changed PROPOSAL_PERSONS ends.' from dual
+--/
+--select 'Updation of changed EPS_PROP_PERSON begins.' from dual
+--/
 drop   table temp
 /
 create table temp 
@@ -2837,10 +2838,10 @@ where person_id in (select person_id
 /
 commit
 /
-select 'Updation of changed EPS_PROP_PERSON ends.' from dual
-/
-select 'Updation of changed PROPOSAL_LOG begins.' from dual
-/
+--select 'Updation of changed EPS_PROP_PERSON ends.' from dual
+--/
+--select 'Updation of changed PROPOSAL_LOG begins.' from dual
+--/
 drop   table temp
 /
 create table temp 
@@ -2862,8 +2863,8 @@ commit
 /
 drop table temp_full_name
 /
-select 'Updation of changed PROPOSAL_LOG ends.' from dual
-/
+--select 'Updation of changed PROPOSAL_LOG ends.' from dual
+--/
 select 'Purge all rows from  warehouse_appointment ' from dual
 /
 delete from warehouse_appointment

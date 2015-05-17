@@ -5,6 +5,7 @@
 --user directory 
 --create or replace directory DIR_KC_SAP_FEED as '/u01/app/oracle/oradata'
 --grant read, write on directory DIR_KC_SAP_FEED to km60010215
+
 set serveroutput on;
 
 DECLARE
@@ -13,6 +14,23 @@ BEGIN
 
 li_ret:=fn_generate_master_sap_feed('TEST','admin');
 dbms_output.put_line(li_ret);
+end;
+/
+
+DECLARE
+li_ret number;
+li_batch_id 				SAP_FEED_BATCH_LIST.BATCH_ID%TYPE;
+ld_now						DATE;
+ret_sap						number;
+ret_sap_bud					number;
+ret 						varchar2(30);
+BEGIN
+	SELECT seq_sap_batch_id.NEXTVAL, sysdate
+	INTO li_batch_id, ld_now
+	FROM DUAL;
+
+  li_ret:=fn_generate_sap_feed('TEST','admin',li_batch_id,ld_now);
+  dbms_output.put_line(li_ret);
 end;
 /
 
@@ -41,6 +59,6 @@ end;
 
 --SELECT * FROM all_directories
 
-select * from dba_directories where directory_name = 'TEST'
+select * from dba_directories where directory_name = 'PROD'
 
 grant read, write on directory TEST to PUBLIC;

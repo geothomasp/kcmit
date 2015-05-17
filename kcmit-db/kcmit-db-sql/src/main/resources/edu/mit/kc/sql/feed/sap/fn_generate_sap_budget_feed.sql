@@ -25,7 +25,8 @@ ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
 		t2.sequence_number
 		FROM AWARD_BUDGET_EXT t1
 		INNER JOIN AWARD t2 on t1.award_id = t2.award_id
-		WHERE t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
+		WHERE t2.status_code != 6 and -- do not include award on hold status 
+		t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
 												connect by regexp_substr(ls_award_budget_status, '[^,]+', 1, level) is not null );		
 		r_sap_bud_det c_sap_bud_det%rowtype;
 
@@ -79,7 +80,8 @@ begin
 		SELECT	count(t1.budget_id) INTO li_count
 		FROM AWARD_BUDGET_EXT t1
 		INNER JOIN AWARD t2 on t1.award_id = t2.award_id
-		WHERE t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
+		WHERE t2.status_code != 6 and -- do not include award on hold status 
+		t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
 												connect by regexp_substr(ls_award_budget_status, '[^,]+', 1, level) is not null );
 		
 		IF li_count = 0 THEN -- There is nothing to feed

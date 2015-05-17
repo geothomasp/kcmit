@@ -189,3 +189,7 @@ insert into document_nextvalue (document_number,property_name,next_value,update_
 create index IDX_EPS_PROP_PERSON_BIO_ATCH on EPS_PROP_PERSON_BIO_ATTACHMENT (FILE_DATA_ID);        
 
 create index IDX_NARRATIVE_ATTACHMENT on NARRATIVE_ATTACHMENT (FILE_DATA_ID);        
+
+update time_and_money_document a set award_number=(select ROOT_AWARD_NUMBER from award_hierarchy b where b.award_number=a.award_number)
+
+update krcr_parm_t set val ='10,15' where parm_nm = 'SAP_AWD_BUD_FEED_STATUS';
