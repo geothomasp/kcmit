@@ -104,8 +104,13 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 		Map<String,Long> personComplexityMap = new HashMap<String,Long>();
 		List<Long> complextyList = new ArrayList<Long>();
 		List<String> ospPersonList = getAllOspPeople(simNumber);
+		
+		List<String> unLoadedPersonList = new ArrayList<String>(ospPersonList);
+		
+		
 		for(WLCurrentLoadSim wLCurrentLoadSim : wLCurrentLoadSimList){
-			if(ospPersonList.contains(wLCurrentLoadSim.getSimulatedPersonId()) && !isAbsent(wLCurrentLoadSim.getSimulatedPersonId(),arrivalDate)){
+			if(ospPersonList.contains(wLCurrentLoadSim.getSimulatedPersonId()) && wLCurrentLoadSim.getComplexity()!=null &&!isAbsent(wLCurrentLoadSim.getSimulatedPersonId(),arrivalDate)){
+				unLoadedPersonList.remove(wLCurrentLoadSim.getSimulatedPersonId());
 				if(personComplexityMap.containsKey(wLCurrentLoadSim.getSimulatedPersonId())){
 
 					complexityValue = personComplexityMap.get(wLCurrentLoadSim.getSimulatedPersonId());
@@ -128,11 +133,14 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 					 break;
 				 }
 			 }
-			 if(leastLoadedOspPerson!=null){
+			 unLoadedPersonList.add(leastLoadedOspPerson);
+			 /*if(leastLoadedOspPerson!=null){
 				 break;
-			 }
+			 }*/
 		 }
-		
+		if(unLoadedPersonList!=null && !unLoadedPersonList.isEmpty()){
+			leastLoadedOspPerson = unLoadedPersonList.get(0);
+		}
 		
 	
 		
@@ -141,7 +149,7 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 	
 	public List<String> getOspAdminsByCurrentLoad(Integer simNumber,String sponsorGroup,Timestamp arrivalDate){
 		
-		List<String> sortedPersons = new ArrayList<String>();
+		
 		Long complexityValue = 0L;
 		Calendar calendar  = getDateTimeService().getCalendar(arrivalDate);
 	    calendar.add(Calendar.DAY_OF_MONTH, -6);
@@ -152,8 +160,10 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 		Map<String,Long> personComplexityMap = new HashMap<String,Long>();
 		List<Long> complextyList = new ArrayList<Long>();
 		List<String> ospPersonList = getAllOspPeople(simNumber);
+		List<String> sortedPersons = new ArrayList<String>(ospPersonList);
 		for(WLCurrentLoadSim wLCurrentLoadSim : wLCurrentLoadSimList){
 			if(ospPersonList.contains(wLCurrentLoadSim.getSimulatedPersonId()) && !isAbsent(wLCurrentLoadSim.getSimulatedPersonId(),arrivalDate)){
+				sortedPersons.remove(wLCurrentLoadSim.getSimulatedPersonId());
 				if(personComplexityMap.containsKey(wLCurrentLoadSim.getSimulatedPersonId())){
 
 					complexityValue = personComplexityMap.get(wLCurrentLoadSim.getSimulatedPersonId());
@@ -343,8 +353,8 @@ public class WLSimCurrentLoadServiceImpl implements WLSimCurrentLoadService{
 		
 		 List<WlAbsentee> wlAbsentees = getDataObjectService().findMatching(WlAbsentee.class,QueryByCriteria.Builder.fromPredicates(
 				 PredicateFactory.equal("personId", personId),
-				 PredicateFactory.greaterThanOrEqual("leaveStartDate", arrivalDate),
-				 PredicateFactory.lessThanOrEqual("leaveEndDate", arrivalDate))).getResults();
+				 PredicateFactory.lessThanOrEqual("leaveStartDate", arrivalDate),
+				 PredicateFactory.greaterThanOrEqual("leaveEndDate", arrivalDate))).getResults();
 		 
 		if(wlAbsentees!=null && wlAbsentees.size()>0){
 			return true;

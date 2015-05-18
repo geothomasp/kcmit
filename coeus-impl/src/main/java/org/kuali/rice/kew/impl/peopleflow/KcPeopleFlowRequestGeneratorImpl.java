@@ -144,6 +144,8 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     		     if(WlPropAggregatorComplexityList!=null && !WlPropAggregatorComplexityList.isEmpty()){
     		    	 WlPropAggregatorComplexity wlPropAggregatorComplexity = WlPropAggregatorComplexityList.get(0);
     		    	 complexity = wlPropAggregatorComplexity.getComplexity();
+    		     }else{
+    		    	 complexity =3l;
     		     }
     			 WLCurrentLoad wLCurrentLoad = new WLCurrentLoad();
     			 wLCurrentLoad.setRoutingNumber("1");

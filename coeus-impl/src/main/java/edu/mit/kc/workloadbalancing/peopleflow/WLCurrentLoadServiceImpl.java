@@ -1,6 +1,8 @@
 package edu.mit.kc.workloadbalancing.peopleflow;
 
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -127,6 +129,7 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 	// Output: Returns a sorted list of person IDs	
 	public String getLeastLoadedOspPerson() {
 		List<String> ospPersonList = getAllOspPeople();
+		List<String> sortedPersonList = new ArrayList<String>(ospPersonList);
 		String leastLoadedOspPerson = null;
 		Long complexityValue = 0L;
 		Calendar calendar = getDateTimeService().getCurrentCalendar();
@@ -135,8 +138,10 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 				 PredicateFactory.between("arrivalDate", calendar.getTime(), getDateTimeService().getCurrentDate()))).getResults();
 		Map<String,Long> personComplexityMap = new HashMap<String,Long>();
 		List<Long> complextyList = new ArrayList<Long>();
+		
 		for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
-			if(ospPersonList.contains(wLCurrentLoad.getPerson_id()) && !isAbsent(wLCurrentLoad.getPerson_id())){
+			if(ospPersonList.contains(wLCurrentLoad.getPerson_id()) && wLCurrentLoad.getComplexity()!=null){
+				sortedPersonList.remove(wLCurrentLoad.getPerson_id());
 				if(personComplexityMap.containsKey(wLCurrentLoad.getPerson_id())){
 
 					complexityValue = personComplexityMap.get(wLCurrentLoad.getPerson_id());
@@ -159,11 +164,20 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 					 break;
 				 }
 			 }
-			 if(leastLoadedOspPerson!=null){
+			 sortedPersonList.add(leastLoadedOspPerson);
+			/* if(leastLoadedOspPerson!=null){
+				 break;
+			 }*/
+		 }
+		
+		 
+		 for(String sortedPerson : sortedPersonList){
+			 if(!isAbsent(sortedPerson)){
+				 leastLoadedOspPerson = sortedPerson;
 				 break;
 			 }
 		 }
-		
+		 
 		return leastLoadedOspPerson;
 	}
 	
@@ -177,8 +191,24 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 		 Calendar calendar = getDateTimeService().getCurrentCalendar();
 		 List<WlAbsentee> wlAbsentees = getDataObjectService().findMatching(WlAbsentee.class,QueryByCriteria.Builder.fromPredicates(
 				 PredicateFactory.equal("personId", personId),
-				 PredicateFactory.greaterThanOrEqual("leaveStartDate", calendar.getTime()),
-				 PredicateFactory.lessThanOrEqual("leaveEndDate", calendar.getTime()))).getResults();
+				 PredicateFactory.lessThanOrEqual("leaveStartDate", calendar.getTime()),
+				 PredicateFactory.greaterThanOrEqual("leaveEndDate", calendar.getTime()))).getResults();
+		 
+		if(wlAbsentees!=null && wlAbsentees.size()>0){
+			return true;
+		}
+		return false;
+	}
+	
+	//Nataly
+	// Function to tell if someone is absent on the arrival date
+	// Input : None
+	// Output: Returns a sorted list of person IDs
+	public boolean isAbsent(String personId , Timestamp arrivaldate){
+		 List<WlAbsentee> wlAbsentees = getDataObjectService().findMatching(WlAbsentee.class,QueryByCriteria.Builder.fromPredicates(
+				 PredicateFactory.equal("personId", personId),
+				 PredicateFactory.lessThanOrEqual("leaveStartDate", arrivaldate),
+				 PredicateFactory.greaterThanOrEqual("leaveEndDate", arrivaldate))).getResults();
 		 
 		if(wlAbsentees!=null && wlAbsentees.size()>0){
 			return true;
@@ -193,7 +223,7 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 	// Output: Returns a sorted list of person IDs	
 	public List<String> getOspAdminsByCurrentLoad(String sponsorGroup) {
 		List<String> flexiblePersonIds = getFlexiblePersons(sponsorGroup);
-		List<String> sortedPersons = new ArrayList<String>();
+		List<String> sortedPersons = new ArrayList<String>(flexiblePersonIds);
 		Calendar calendar = getDateTimeService().getCurrentCalendar();
         calendar.add(Calendar.DAY_OF_MONTH, -6);
 		List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class,QueryByCriteria.Builder.fromPredicates(
@@ -202,7 +232,8 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 		Map<String,Long> personComplexityMap = new HashMap<String,Long>();
 		List<Long> complextyList = new ArrayList<Long>();
 		for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
-			if(flexiblePersonIds.contains(wLCurrentLoad.getPerson_id()) && !isAbsent(wLCurrentLoad.getPerson_id())){
+			if(flexiblePersonIds.contains(wLCurrentLoad.getPerson_id()) && wLCurrentLoad.getComplexity()!=null && !isAbsent(wLCurrentLoad.getPerson_id(),wLCurrentLoad.getArrivalDate())){
+				sortedPersons.remove(wLCurrentLoad.getPerson_id());
 				if(personComplexityMap.containsKey(wLCurrentLoad.getPerson_id())){
 
 					Long complexity = personComplexityMap.get(wLCurrentLoad.getPerson_id());
@@ -246,7 +277,7 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 		 queryMap.put("hierarchyName",wlHieararchyname);
 		 SponsorHierarchy sponsorHierarchy = (SponsorHierarchy)getBusinessObjectService().findByPrimaryKey(SponsorHierarchy.class, queryMap);
 		 if(sponsorHierarchy!=null){
-			 sponsorGroup = sponsorHierarchy.getHierarchyName();
+			 sponsorGroup = sponsorHierarchy.getLevel1();
 		 }
 	
 		return sponsorGroup;
@@ -305,8 +336,8 @@ public class WLCurrentLoadServiceImpl implements WLCurrentLoadService{
 				 PredicateFactory.greaterThan("flexibility", 0))).getResults();
 	    
 		List<WlAbsentee> wlAbsentees = getDataObjectService().findMatching(WlAbsentee.class,QueryByCriteria.Builder.fromPredicates(
-				 PredicateFactory.greaterThanOrEqual("leaveStartDate", calendar.getTime()),
-				 PredicateFactory.lessThanOrEqual("leaveEndDate", calendar.getTime()))).getResults();
+				 PredicateFactory.lessThanOrEqual("leaveStartDate", calendar.getTime()),
+				 PredicateFactory.greaterThanOrEqual("leaveEndDate", calendar.getTime()))).getResults();
 		
 		for(WlFlexibility wlFlexibility : wlFlexibilityList){
 			for(WlAbsentee wlAbsentee : wlAbsentees){
