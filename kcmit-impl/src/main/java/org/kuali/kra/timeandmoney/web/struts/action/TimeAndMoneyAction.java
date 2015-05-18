@@ -123,9 +123,6 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);
                 if (refreshNeeded) {
                     refreshView(mapping, timeAndMoneyForm, request, response);
-                	if(!getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
-                		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
-                	}
                 }
             }
         }   
@@ -152,6 +149,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         ScaleTwoDecimal currentObligatedIndirect = aai.getObligatedTotalIndirect();
         ScaleTwoDecimal currentAnticipatedDirect = aai.getAnticipatedTotalDirect();
         ScaleTwoDecimal currentAnticipatedIndirect = aai.getAnticipatedTotalIndirect();
+        boolean amountChanged = false;
         for(PendingTransaction penTran : timeAndMoneyDocument.getPendingTransactions()) {
             // if incoming transaction
             if (StringUtils.equalsIgnoreCase(penTran.getSourceAwardNumber(),Constants.AWARD_HIERARCHY_DEFAULT_PARENT_OF_ROOT)){
@@ -165,6 +163,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 currentAnticipatedDirect = currentAnticipatedDirect.subtract(penTran.getAnticipatedDirectAmount());
                 currentAnticipatedIndirect = currentAnticipatedIndirect.subtract(penTran.getAnticipatedIndirectAmount());
             }
+            amountChanged = true;
         }
         if(timeAndMoneyForm.getTimeAndMoneyDocument().getPendingTransactions().size() == 0 && (!awardHierarchyNode.getObligatedTotalDirect().equals(currentObligatedDirect)||
                 !awardHierarchyNode.getObligatedTotalIndirect().equals(currentObligatedIndirect) ||
@@ -174,6 +173,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
             ScaleTwoDecimal obligatedChangeIndirect = awardHierarchyNode.getObligatedTotalIndirect().subtract(currentObligatedIndirect);
             ScaleTwoDecimal anticipatedChangeDirect = awardHierarchyNode.getAnticipatedTotalDirect().subtract(currentAnticipatedDirect);
             ScaleTwoDecimal anticipatedChangeIndirect = awardHierarchyNode.getAnticipatedTotalIndirect().subtract(currentAnticipatedIndirect);
+            amountChanged = true;
             if(transactionRuleImpl.processParameterEnabledRules(awardHierarchyNode, aai, timeAndMoneyDocument)){
                 if (obligatedChangeDirect.isGreaterThan(ScaleTwoDecimal.ZERO)) {
                     pendingTransaction.setSourceAwardNumber(Constants.AWARD_HIERARCHY_DEFAULT_PARENT_OF_ROOT);
@@ -231,6 +231,10 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 ahn.setAntDistributableAmount(awardHierarchyNode.getAntDistributableAmount());
             }
         }
+    	if(amountChanged && !getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+    		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+    	}
+        
         return result;
     }
     
@@ -245,6 +249,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         // total up "current values" from transactions against current values
         ScaleTwoDecimal currentObligated = aai.getAmountObligatedToDate();
         ScaleTwoDecimal currentAnticipated = aai.getAnticipatedTotalAmount();
+        boolean amountChanged = false;
         for(PendingTransaction penTran : timeAndMoneyDocument.getPendingTransactions()) {
             // if incoming transaction
             if (StringUtils.equalsIgnoreCase(penTran.getSourceAwardNumber(),Constants.AWARD_HIERARCHY_DEFAULT_PARENT_OF_ROOT)){
@@ -254,6 +259,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 currentObligated = currentObligated.subtract(penTran.getObligatedAmount());
                 currentAnticipated = currentAnticipated.subtract(penTran.getAnticipatedAmount());
             }
+            amountChanged = true;
         }
 
         /*
@@ -265,6 +271,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 || !awardHierarchyNode.getAnticipatedTotalAmount().equals(currentAnticipated))) {
             ScaleTwoDecimal obligatedChange = awardHierarchyNode.getAmountObligatedToDate().subtract(currentObligated);
             ScaleTwoDecimal anticipatedChange = awardHierarchyNode.getAnticipatedTotalAmount().subtract(currentAnticipated);
+            amountChanged = true;
 
             if(transactionRuleImpl.processParameterDisabledRules(awardHierarchyNode, aai, timeAndMoneyDocument)){
                 if (obligatedChange.isGreaterThan(ScaleTwoDecimal.ZERO)) {
@@ -299,6 +306,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 ahn.setAntDistributableAmount(awardHierarchyNode.getAntDistributableAmount());
             }
         }
+    	if(amountChanged && !getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+    		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+    	}
         return result;
     }
     
