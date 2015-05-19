@@ -622,6 +622,11 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED));
 			 awardValidationTypes.add(awardValidationType);
 		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW));
+			 awardValidationTypes.add(awardValidationType);
+		 }
 		return awardValidationTypes.toArray(new AwardValidationType[0]);
 	}
 	

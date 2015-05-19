@@ -72,4 +72,12 @@ boolean validateAwardOnCOI(Award award);
   
   public boolean getTrainingRequired(Award award);
 /*  boolean validateAwardOnCOI(Award award);*/
+  
+  /**
+   * This method validate Training Required for a person  based on that decides whether to make Award Status as Hold
+   *
+   * @param Award
+   * @return boolean
+   */
+  public boolean validateTrainingRequirements(Award award);
 }

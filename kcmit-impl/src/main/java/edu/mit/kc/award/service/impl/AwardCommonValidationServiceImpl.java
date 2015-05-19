@@ -29,6 +29,7 @@ import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
 import org.kuali.coeus.common.framework.module.CoeusModule;
+import org.kuali.coeus.common.framework.person.attr.PersonTraining;
 import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.questionnaire.framework.answer.ModuleQuestionnaireBean;
@@ -40,6 +41,8 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import edu.mit.kc.award.service.AwardCommonValidationService;
 import edu.mit.kc.common.DbFunctionExecuteService;
 import edu.mit.kc.infrastructure.KcMitConstants;
+
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -64,7 +67,8 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
     
     private List<AuditError> auditWarnings = new ArrayList<AuditError>();
     private ParameterService parameterService;  
-    private Integer AWARD_MODULE_CODE=1;
+    private BusinessObjectService businessObjectService;
+	private Integer AWARD_MODULE_CODE=1;
     private String SPONSOR_TERM_CODE_HOLD ="143";
     private String NIH_SPONSOR_CODE="000500";
     private String REPORT_TRACKING_FREQ_CODE="4";
@@ -447,6 +451,50 @@ public class AwardCommonValidationServiceImpl implements AwardCommonValidationSe
         return valid;
     }
     
+    
+    public boolean validateTrainingRequirements(Award award){
+    	boolean isValid = true;
+    	String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+    	String errorKey = "document.awardList[0].statusCode";
+		boolean trainingRequired = getTrainingRequired(award);
+		if(trainingRequired){
+			for(AwardPerson awardPerson : award.getProjectPersons()){
+				if(awardPerson.getPersonId()!=null){
+					if(!getTrainingStatus(awardPerson).equalsIgnoreCase("Training Completed")){ 
+						isValid = false;
+						if(!isValid){
+							auditWarnings.add(new AuditError(errorKey, KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV, link));
+							GlobalVariables.getMessageMap().putWarning(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV,KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV);
+							return isValid;
+						}
+					}else{
+						isValid = true;
+					}
+				}
+			}
+		}
+		
+		return isValid;
+	}
+	
+    public String getTrainingStatus(AwardPerson person){
+		String training = "Training Required";
+		Map<String, String> queryMap = new HashMap<String, String>();
+		queryMap.put("trainingCode", "54");
+		queryMap.put("personId",person.getPersonId());
+		List <PersonTraining> personTrainingList = (List<PersonTraining>) getBusinessObjectService().findMatching(PersonTraining.class, queryMap);
+		if(personTrainingList!=null && !personTrainingList.isEmpty()){
+			PersonTraining personTraining = personTrainingList.get(0);
+			if(personTraining.getFollowupDate()!=null && personTraining.getFollowupDate().after(KcServiceLocator.getService(DateTimeService.class).getCurrentDate())){
+				training = "Training Completed";
+			}
+			else{
+				training = "Training Required";
+			}
+		}
+		return training;
+	}
+    
 /*   public boolean validateAwardOnCOI (Award award) {
        // To be Implemented later
       return true;
@@ -703,5 +751,16 @@ public QuestionnaireAnswerService getQuestionnaireAnswerService() {
 
 public void setQuestionnaireAnswerService(QuestionnaireAnswerService questionnaireAnswerService) {
 	this.questionnaireAnswerService = questionnaireAnswerService;
+}
+
+public BusinessObjectService getBusinessObjectService() {
+	if (businessObjectService == null) {
+		businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
+	}
+	return businessObjectService;
+}
+
+public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+	this.businessObjectService = businessObjectService;
 }
 }
