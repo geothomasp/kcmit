@@ -120,7 +120,7 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 		this.award = award;
 		List<AwardAmountInfo> awardAmountInfos = award.getAwardAmountInfos();
 		if (awardAmountInfos != null && !awardAmountInfos.isEmpty()) {
-			awardAmountInfo = awardAmountInfos.get(0);
+			awardAmountInfo = awardAmountInfos.get(awardAmountInfos.size() - 1);
 		}
 	}
 
