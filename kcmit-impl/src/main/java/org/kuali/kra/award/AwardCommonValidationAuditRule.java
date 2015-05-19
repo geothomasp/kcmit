@@ -54,6 +54,7 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	boolean retvalReports =true;
 	boolean retvalTerm =true;
 	boolean retvalCoi =true;
+	boolean retvalTraining =true;
 	  AwardDocument awardDocument = (AwardDocument)document;
 	 Award award = awardDocument.getAward();
 	 Integer status=award.getStatusCode();
@@ -65,6 +66,10 @@ public class AwardCommonValidationAuditRule implements DocumentAuditRule {
 	 retvalReports &= getAwardCommonValidationService().validateReports(award);
 	 retvalTerm &= getAwardCommonValidationService().validateAwardTerm(award);
 	 retvalCoi &=getAwardCommonValidationService().validateAwardOnCOI(award);
+	 if(retvalCoi){
+		 retvalCoi &=getAwardCommonValidationService().validateTrainingRequirements(award);
+	 }
+	 
 	}else{
 		retval = true;
 	}
