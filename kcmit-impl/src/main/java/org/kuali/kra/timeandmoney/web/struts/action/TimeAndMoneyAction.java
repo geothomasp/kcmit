@@ -106,6 +106,20 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         return super.save(mapping, form, request, response);
     }
     
+    protected void captureSapFeedForPendingTransactions(TimeAndMoneyDocument timeAndMoneyDocument) {
+    	Set<String> pendingAwards = new HashSet<String>();
+        for(PendingTransaction pendingTran : timeAndMoneyDocument.getPendingTransactions()) {
+            Award sourceAward = getAwardVersionService().getWorkingAwardVersion(pendingTran.getSourceAwardNumber());
+            Award destAward = getAwardVersionService().getWorkingAwardVersion(pendingTran.getDestinationAwardNumber());
+            if(pendingAwards.add(sourceAward.getAwardNumber())) {
+                getSapFeedService().updateSapFeedDetails(sourceAward.getAwardNumber(), sourceAward.getSequenceNumber());
+            }
+            if(pendingAwards.add(destAward.getAwardNumber())) {
+        		getSapFeedService().updateSapFeedDetails(destAward.getAwardNumber(), destAward.getSequenceNumber());
+            }
+        }
+    }
+    		
     private void captureSingleNodeMoneyTransactions(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
             HttpServletResponse response) throws Exception {
         TimeAndMoneyForm timeAndMoneyForm = (TimeAndMoneyForm) form;
@@ -725,6 +739,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         TimeAndMoneyForm timeAndMoneyForm = (TimeAndMoneyForm) form;
         actionForward = super.route(mapping, form, request, response);  
         TimeAndMoneyDocument timeAndMoneyDocument = timeAndMoneyForm.getTimeAndMoneyDocument();
+        captureSapFeedForPendingTransactions(timeAndMoneyForm.getTimeAndMoneyDocument());
         getSapFeedService().setAllWorkInProgressSapFeedDetailsToPending(timeAndMoneyDocument.getAwardHierarchyNodes());
         // save report tracking items
         saveReportTrackingItems(timeAndMoneyForm);
