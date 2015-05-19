@@ -127,7 +127,7 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 
 		for (AwardAmountInfo awardAmountInfo : validInfos) {
 			if (awardAmountInfo.getTimeAndMoneyDocumentNumber() != null && StringUtils.equalsIgnoreCase(timeAndMoneyDocumentNumber, awardAmountInfo.getTimeAndMoneyDocumentNumber())) {
-				CollectionUtils.addIgnoreNull(moneyInfoHistoryList, getMoneyInfoHistory(awardAmountInfo, getTransactions(awardAmountInfo.getTransactionId())));
+				CollectionUtils.addIgnoreNull(moneyInfoHistoryList, getMoneyInfoHistory(awardAmountInfo, getTransactions(awardAmountInfo)));
 			}
 		}
 		return moneyInfoHistoryList;
@@ -166,9 +166,10 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 		});
 	}
 
-	protected List<TransactionDetail> getTransactions(Long transactionId) {
+	protected List<TransactionDetail> getTransactions(AwardAmountInfo awardAmountInfo) {
 		Map<String, Object> values = new HashMap<>();
-		values.put(TRANSACTION_ID, transactionId);
+		values.put(TRANSACTION_ID, awardAmountInfo.getTransactionId());
+		values.put(TIME_AND_MONEY_DOCUMENT_NUMBER, awardAmountInfo.getTimeAndMoneyDocumentNumber());
 		return ((List<TransactionDetail>) businessObjectService.findMatchingOrderBy(TransactionDetail.class, values, TRANSACTION_DETAIL_ID, true));
 	}
 
@@ -367,7 +368,7 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	protected String buildForwardUrl(String documentNumber) {
 		String forward = getDocHandlerService().getDocHandlerUrl(documentNumber);
 		forward = forward.replaceFirst(DEFAULT_TAB, ALTERNATE_OPEN_TAB);
-		if (forward.contains("?")) {
+		if (forward.indexOf("?") == -1) {
 			forward += "?";
 		} else {
 			forward += "&";
