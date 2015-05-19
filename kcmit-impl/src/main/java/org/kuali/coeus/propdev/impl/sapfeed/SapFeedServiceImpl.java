@@ -142,6 +142,14 @@ public class SapFeedServiceImpl implements SapFeedService
         return feedDetails != null && !feedDetails.isEmpty();
 	}
 
+	public void removeWorkInProgressSapDetails(String awardNumber,Integer sequenceNumber) {
+        Map<String, Object> keys = new HashMap<String, Object>();
+        keys.put("awardNumber", awardNumber);
+        keys.put("sequenceNumber", sequenceNumber);
+        keys.put("feedStatus", SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS);
+        getDataObjectService().deleteMatching(SapFeedDetails.class, QueryByCriteria.Builder.andAttributes(keys).build());
+	}
+	
 	public DbFunctionService getDbFunctionService() {
 		if (dbFunctionService == null) {
 			dbFunctionService = KcServiceLocator

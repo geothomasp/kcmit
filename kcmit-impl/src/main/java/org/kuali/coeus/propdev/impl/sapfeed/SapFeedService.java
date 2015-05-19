@@ -34,4 +34,6 @@ public interface SapFeedService {
 	
 	public void setAllWorkInProgressSapFeedDetailsToPending(Map<String, AwardHierarchyNode> awardHierarchyNodes);
 
+	public void removeWorkInProgressSapDetails(String awardNumber,Integer sequenceNumber);
+	
 }
