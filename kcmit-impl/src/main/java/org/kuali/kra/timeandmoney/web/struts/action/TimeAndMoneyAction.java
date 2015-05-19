@@ -111,10 +111,10 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         for(PendingTransaction pendingTran : timeAndMoneyDocument.getPendingTransactions()) {
             Award sourceAward = getAwardVersionService().getWorkingAwardVersion(pendingTran.getSourceAwardNumber());
             Award destAward = getAwardVersionService().getWorkingAwardVersion(pendingTran.getDestinationAwardNumber());
-            if(pendingAwards.add(sourceAward.getAwardNumber())) {
+            if(sourceAward != null && pendingAwards.add(sourceAward.getAwardNumber())) {
                 getSapFeedService().updateSapFeedDetails(sourceAward.getAwardNumber(), sourceAward.getSequenceNumber());
             }
-            if(pendingAwards.add(destAward.getAwardNumber())) {
+            if(destAward != null && pendingAwards.add(destAward.getAwardNumber())) {
         		getSapFeedService().updateSapFeedDetails(destAward.getAwardNumber(), destAward.getSequenceNumber());
             }
         }
