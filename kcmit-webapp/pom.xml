@@ -4,7 +4,7 @@
   <parent>
       <groupId>edu.mit.kc</groupId>
       <artifactId>kcmit</artifactId>
-      <version>6.0.2.1-prd</version>
+      <version>6.0.2.1</version>
   </parent>
 
   <artifactId>kcmit-webapp</artifactId>
