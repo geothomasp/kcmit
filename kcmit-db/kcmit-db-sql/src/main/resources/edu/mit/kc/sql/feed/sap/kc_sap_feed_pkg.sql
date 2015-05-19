@@ -1257,12 +1257,12 @@ begin
 --earlier we were retrieving max amount sequence for the given sequence_number
 BEGIN
 	
-	SELECT count(s0.DOC_HDR_ID) INTO li_Count from KREW_DOC_HDR_T s0 
-	inner join TIME_AND_MONEY_DOCUMENT s1 on s0.DOC_HDR_ID = s1.DOCUMENT_NUMBER
+SELECT count(s0.DOC_HDR_ID) INTO li_Count  from KREW_DOC_HDR_T s0
+	inner join award_amount_info s1 on s0.DOC_HDR_ID = s1.TNM_DOCUMENT_NUMBER
 	where s1.AWARD_NUMBER = gs_award_number
 	and s0.DOC_HDR_STAT_CD = 'F';
-	
-	IF(li_Count > 0) THEN
+
+  IF(li_Count > 0 ) THEN
   		SELECT AWARD_AMOUNT_INFO.OBLIGATION_EXPIRATION_DATE,
          AWARD_AMOUNT_INFO.ANTICIPATED_TOTAL_AMOUNT,
          AWARD_AMOUNT_INFO.AMOUNT_OBLIGATED_TO_DATE
@@ -1270,14 +1270,10 @@ BEGIN
 		  gn_anticipated_total,
 		  gn_obligated_total
     	FROM AWARD_AMOUNT_INFO
-		WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number 
-		AND     AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
-														where    t1.AWARD_NUMBER =	AWARD_AMOUNT_INFO.AWARD_NUMBER	
-														and t1.tnm_document_number in ( select s0.DOC_HDR_ID from KREW_DOC_HDR_T s0 
-																						inner join TIME_AND_MONEY_DOCUMENT s1 on s0.DOC_HDR_ID = s1.DOCUMENT_NUMBER
-																						where s1.AWARD_NUMBER = gs_award_number
-																						and s0.DOC_HDR_STAT_CD = 'F')
-														)
+		WHERE AWARD_AMOUNT_INFO.AWARD_NUMBER = gs_award_number
+		AND AWARD_AMOUNT_INFO.AWARD_AMOUNT_INFO_ID = ( select max(t1.AWARD_AMOUNT_INFO_ID) from AWARD_AMOUNT_INFO t1
+														where t1.AWARD_NUMBER =	AWARD_AMOUNT_INFO.AWARD_NUMBER and t1.TNM_DOCUMENT_NUMBER in 
+                                  (select DOC_HDR_ID from KREW_DOC_HDR_T where DOC_HDR_ID = TNM_DOCUMENT_NUMBER and DOC_HDR_STAT_CD = 'F'))
 		AND		TO_NUMBER(nvl(AWARD_AMOUNT_INFO.TRANSACTION_ID,0)) = ( SELECT MAX(TO_NUMBER(nvl(AMOUNT3.TRANSACTION_ID,0)))
 																	FROM   AWARD_AMOUNT_INFO AMOUNT3
 															WHERE  AMOUNT3.AWARD_NUMBER 	 = AWARD_AMOUNT_INFO.AWARD_NUMBER
