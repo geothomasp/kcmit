@@ -290,7 +290,7 @@
 			<bean p:attributeName="awardAmountInfo.obliDistributableAmount" parent="FieldDefinition" />
 			<bean p:attributeName="awardAmountInfo.antDistributableAmount" parent="FieldDefinition" />
 			<bean p:attributeName="awardEffectiveDate" parent="FieldDefinition" />
-			<bean p:attributeName="awardAmountInfo.obligationExpirationDate" parent="FieldDefinition" />
+			<bean p:attributeName="awardAmountInfo.obligationExpirationDate" parent="FieldDefinition" /> 
 			<bean p:attributeName="awardAmountInfo.finalExpirationDate" parent="FieldDefinition" />
 			<bean p:attributeName="archiveLocation" parent="FieldDefinition" />
 		    <bean p:attributeName="closeoutDate" parent="FieldDefinition" />
