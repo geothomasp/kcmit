@@ -231,18 +231,45 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 
 	public void setAllWorkInProgressSapFeedDetailsToPending(Map<String, AwardHierarchyNode> awardHierarchyNodes) {
-        for(Entry<String, AwardHierarchyNode> awardHierarchyNode : awardHierarchyNodes.entrySet()){
-            Award award = getAwardVersionService().getWorkingAwardVersion(awardHierarchyNode.getValue().getAwardNumber());
-        	try {
-        		Connection conn = getDataSource().getConnection();
-        	    PreparedStatement stmt = conn.prepareStatement("UPDATE SAP_FEED_DETAILS SET FEED_STATUS = '" + SAPFEED_FEEDSTATUS_PENDING + 
-        	    		"' WHERE AWARD_NUMBER = ? AND SEQUENCE_NUMBER = ? AND FEED_STATUS = '" + SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS + "'");
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try{
+			conn = getDataSource().getConnection();
+//    		final ReportQueryByCriteria query = QueryFactory.newReportQuery(Questionnaire.class, columns, criteria, false);
+//    		final Iterator iter = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(query);
+    	    stmt = conn.prepareStatement("UPDATE SAP_FEED_DETAILS SET FEED_STATUS = '" + SAPFEED_FEEDSTATUS_PENDING + 
+    	    		"' WHERE AWARD_NUMBER = ? AND SEQUENCE_NUMBER = ? AND FEED_STATUS = '" + SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS + "'");
+	        for(Entry<String, AwardHierarchyNode> awardHierarchyNode : awardHierarchyNodes.entrySet()){
+	            Award award = getAwardVersionService().getWorkingAwardVersion(awardHierarchyNode.getValue().getAwardNumber());
         	    stmt.setString(1, award.getAwardNumber());
         	    stmt.setInt(2, award.getSequenceNumber());
         		stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        	}
+    		conn.commit();
+        } catch (SQLException e) {
+            try {
+            	if(conn!=null){
+            		conn.rollback();
+            	}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+            e.printStackTrace();
+        }finally{
+        	if(stmt!=null){
+        		try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+        	}
+        	if(conn!=null){
+        		try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+        	}
         }
 	}
 
