@@ -24,9 +24,14 @@ ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
 		t2.award_number,
 		t2.sequence_number
 		FROM AWARD_BUDGET_EXT t1
-		INNER JOIN AWARD t2 on t1.award_id = t2.award_id
-		WHERE t2.status_code != 6 and -- do not include award on hold status 
-		t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
+		INNER JOIN AWARD t2 on t1.award_id = t2.award_id    
+		WHERE t2.SEQUENCE_NUMBER in ( select  max(s1.sequence_number)  from  AWARD s1
+									  INNER JOIN KREW_DOC_HDR_T s2 on s2.DOC_HDR_ID = s1.DOCUMENT_NUMBER    
+									  WHERE s1.award_number  =  t2.award_number
+									  AND s2.DOC_HDR_STAT_CD = 'F' 
+									)
+		AND t2.status_code <> 6  -- do not include award on hold status                             
+		AND t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
 												connect by regexp_substr(ls_award_budget_status, '[^,]+', 1, level) is not null );		
 		r_sap_bud_det c_sap_bud_det%rowtype;
 
