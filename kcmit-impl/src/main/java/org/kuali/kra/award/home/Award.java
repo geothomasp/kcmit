@@ -1930,6 +1930,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         syncStatuses = new ArrayList<AwardSyncStatus>();
         subAwardList = new ArrayList<SubAward>();
         currentVersionBudgets = new ArrayList<AwardBudgetExt>();
+        budgets = new ArrayList<AwardBudgetExt>();
         awardCgbList = new ArrayList<AwardCgb>();
     }
 
