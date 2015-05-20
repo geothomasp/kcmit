@@ -39,14 +39,18 @@ public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationServ
     private BusinessObjectService businessObjectService;
     
 	public void createDocumentForMigratedProtocol(ProtocolBase protocol) throws Exception {
-    	String documentNumber = protocol.getProtocolDocument().getDocumentNumber();
-    	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class);
-        newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol");
-        newDoc.setProtocol(protocol);
-        protocol.setProtocolDocument(newDoc);
-        associateDocumentNextvalues(documentNumber, newDoc);
-        KRADServiceLocatorWeb.getDocumentService().saveDocument(newDoc);
-        businessObjectService.save(protocol);
+		ProtocolDocument protocolDocument = (ProtocolDocument)protocol.getProtocolDocument();
+		boolean finalDocument = protocolDocument.getDocumentHeader().getWorkflowDocument().isFinal();
+		if(!finalDocument) {
+	    	String documentNumber = protocol.getProtocolDocument().getDocumentNumber();
+	    	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class);
+	        newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol");
+	        newDoc.setProtocol(protocol);
+	        protocol.setProtocolDocument(newDoc);
+	        associateDocumentNextvalues(documentNumber, newDoc);
+	        KRADServiceLocatorWeb.getDocumentService().saveDocument(newDoc);
+	        businessObjectService.save(protocol);
+		}
 	}
 
 	protected void associateDocumentNextvalues(String oldDocNum, ProtocolDocument newDoc) { 
@@ -61,42 +65,46 @@ public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationServ
 	   } 
 
 	public boolean createDocumentForMigratedProtocolAndRoute(ActionMapping mapping, HttpServletRequest request, HttpServletResponse response, ProtocolForm protocolForm, String docIdRequestParameter) throws Exception { 
-		long protocolId = protocolForm.getProtocolDocument().getProtocol().getProtocolId();
-	   	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class); 
-	       newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol"); 
-	       Protocol protocol = getBusinessObjectService().findBySinglePrimaryKey(Protocol.class, protocolId); 
-	       newDoc.setProtocol(protocol); 
-	       protocol.setProtocolDocument(newDoc); 
-	       associateDocumentNextvalues(docIdRequestParameter, newDoc); 
-	       KRADServiceLocatorWeb.getDocumentService().saveDocument(newDoc); 
-	       getBusinessObjectService().save(protocol); 
-	       protocolForm.setDocument(newDoc); 
-	       request.setAttribute(KRADConstants.PARAMETER_DOC_ID, newDoc.getDocumentNumber()); 
-	       protocolForm.setDocId(newDoc.getDocumentNumber()); 
+		ProtocolDocument protocolDocument = protocolForm.getProtocolDocument();
+		boolean finalDocument = protocolDocument.getDocumentHeader().getWorkflowDocument().isFinal();
+		if(!finalDocument) {
+			long protocolId = protocolForm.getProtocolDocument().getProtocol().getProtocolId();
+		   	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class); 
+		       newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol"); 
+		       Protocol protocol = getBusinessObjectService().findBySinglePrimaryKey(Protocol.class, protocolId); 
+		       newDoc.setProtocol(protocol); 
+		       protocol.setProtocolDocument(newDoc); 
+		       associateDocumentNextvalues(docIdRequestParameter, newDoc); 
+		       KRADServiceLocatorWeb.getDocumentService().saveDocument(newDoc); 
+		       getBusinessObjectService().save(protocol); 
+		       protocolForm.setDocument(newDoc); 
+		       request.setAttribute(KRADConstants.PARAMETER_DOC_ID, newDoc.getDocumentNumber()); 
+		       protocolForm.setDocId(newDoc.getDocumentNumber()); 
 
-	       /** UITSRA-2413 - Need to route protocol if it should already be "ENROUTE" */ 
-	       if(protocol.getProtocolStatusCode().equals(ProtocolStatus.SUBMITTED_TO_IRB)) { 
-		       	if(StringUtils.isBlank(protocolForm.getDocTypeName())) { 
-			       	 protocolForm.setDocTypeName(newDoc.getDocumentHeader().getWorkflowDocument().getDocumentTypeName()); 
-		       	} 
-		       	return true; 
-	       } 
-	       /** UITSRA-2998 - Get rid of "Complete" action requests unless protocol still needs to be routed */ 
-	       else if (protocol.getProtocolSubmission() != null && protocol.getProtocolSubmission().getSubmissionStatusCode() != null) { 
-		       	ActionRequestService arService = KEWServiceLocator.getActionRequestService(); 
-		       	ActionListService alService = KEWServiceLocator.getActionListService(); 
-		       	List<ActionRequestValue> actionRequests = arService.findPendingByDoc(newDoc.getDocumentNumber()); 
-		       	for (ActionRequestValue actionRequest : actionRequests) { 
-			       	 if (actionRequest.isCompleteRequst()) { 
-				       	 // Actually, just delete action items so that Acknowledge and Approve requests aren't generated. 
-				       	 for (ActionItem actionItem : actionRequest.getActionItems()) { 
-					       	 alService.deleteActionItem(actionItem); 
+		       /** UITSRA-2413 - Need to route protocol if it should already be "ENROUTE" */ 
+		       if(protocol.getProtocolStatusCode().equals(ProtocolStatus.SUBMITTED_TO_IRB)) { 
+			       	if(StringUtils.isBlank(protocolForm.getDocTypeName())) { 
+				       	 protocolForm.setDocTypeName(newDoc.getDocumentHeader().getWorkflowDocument().getDocumentTypeName()); 
+			       	} 
+			       	return true; 
+		       } 
+		       /** UITSRA-2998 - Get rid of "Complete" action requests unless protocol still needs to be routed */ 
+		       else if (protocol.getProtocolSubmission() != null && protocol.getProtocolSubmission().getSubmissionStatusCode() != null) { 
+			       	ActionRequestService arService = KEWServiceLocator.getActionRequestService(); 
+			       	ActionListService alService = KEWServiceLocator.getActionListService(); 
+			       	List<ActionRequestValue> actionRequests = arService.findPendingByDoc(newDoc.getDocumentNumber()); 
+			       	for (ActionRequestValue actionRequest : actionRequests) { 
+				       	 if (actionRequest.isCompleteRequst()) { 
+					       	 // Actually, just delete action items so that Acknowledge and Approve requests aren't generated. 
+					       	 for (ActionItem actionItem : actionRequest.getActionItems()) { 
+						       	 alService.deleteActionItem(actionItem); 
+					       	 } 
 				       	 } 
-			       	 } 
-		       	} 
-	       }
+			       	} 
+		       }
+		}
 	       return false;
-	   } 
+	} 
 	
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;

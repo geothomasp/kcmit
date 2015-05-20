@@ -32,6 +32,7 @@ import org.kuali.coeus.sys.framework.controller.KcTransactionalDocumentActionBas
 import org.kuali.coeus.sys.framework.controller.NonCancellingRecallQuestion;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.kra.irb.ProtocolForm;
 import org.kuali.kra.irb.protocol.research.ProtocolResearchAreaAuditRule;
 import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.framework.print.AttachmentDataSource;
@@ -64,6 +65,8 @@ import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.KRADUtils;
 
+import edu.mit.kc.protocol.service.MitProtocolMigrationService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -78,11 +81,22 @@ import java.util.Map;
  */
 public abstract class ProtocolActionBase extends KcTransactionalDocumentActionBase {
 
+    private MitProtocolMigrationService mitProtocolMigrationService;
+    
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         final ActionForward forward = super.execute(mapping, form, request, response);
         ProtocolFormBase protocolForm = (ProtocolFormBase) form;
+        
+        if (protocolForm.getDocId().startsWith("MP")) { 
+        	boolean route = getMitProtocolMigrationService().createDocumentForMigratedProtocolAndRoute(mapping, request, response, (ProtocolForm) form, protocolForm.getDocId()); 
+        	if(route) {
+        		route(mapping, protocolForm, request, response);
+        	}
+            loadDocument(protocolForm);
+        } 
+        
         if (protocolForm.isAuditActivated()) {
             protocolForm.setUnitRulesMessages(getUnitRulesMessages(protocolForm.getProtocolDocument()));
         }
@@ -790,4 +804,16 @@ public abstract class ProtocolActionBase extends KcTransactionalDocumentActionBa
     protected KcNotificationService getNotificationService() {
         return KcServiceLocator.getService(KcNotificationService.class);
     }
+    
+	public MitProtocolMigrationService getMitProtocolMigrationService() {
+		if (mitProtocolMigrationService == null) {
+			mitProtocolMigrationService = KcServiceLocator.getService(MitProtocolMigrationService.class);
+        }
+		return mitProtocolMigrationService;
+	}
+
+	public void setMitProtocolMigrationService(MitProtocolMigrationService mitProtocolMigrationService) {
+		this.mitProtocolMigrationService = mitProtocolMigrationService;
+	}
+    
 }
