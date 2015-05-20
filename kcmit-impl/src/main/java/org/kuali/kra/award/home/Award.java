@@ -93,6 +93,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.role.Role;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.AutoPopulatingList;
 
@@ -1929,6 +1930,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         syncStatuses = new ArrayList<AwardSyncStatus>();
         subAwardList = new ArrayList<SubAward>();
         budgets = new ArrayList<AwardBudgetExt>();
+        awardCgbList = new ArrayList<AwardCgb>();
     }
 
     public void initializeAwardAmountInfoObjects() {
