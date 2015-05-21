@@ -345,7 +345,7 @@ public
     private AwardPerson findPrincipalInvestigator() {
         AwardPerson awardPerson = null;
         for(AwardContact person: getAward().getProjectPersons()) {
-            if(ContactRole.PI_CODE.equals(person.getContactRole().getRoleCode())) {
+            if(ContactRole.PI_CODE.equals(person.getRoleCode())) {
                 awardPerson = (AwardPerson) person;
                 break;
             }
