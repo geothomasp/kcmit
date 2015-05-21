@@ -311,7 +311,7 @@ public class AwardDocument extends BudgetParentDocument<Award> implements  Copya
 
 	void removeKeyPersonRoleForNoneKeyPerson() {
         for ( AwardPerson person : this.getAward().getProjectPersons() ) {
-            if ( !StringUtils.equalsIgnoreCase(person.getContactRole().getRoleCode(), ContactRole.KEY_PERSON_CODE) &&
+            if ( !StringUtils.equalsIgnoreCase(person.getRoleCode(), ContactRole.KEY_PERSON_CODE) &&
                     StringUtils.isNotEmpty(person.getKeyPersonRole()) ) {
                 person.setKeyPersonRole(null);
             }
