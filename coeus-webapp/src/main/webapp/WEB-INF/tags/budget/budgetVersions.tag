@@ -202,9 +202,9 @@
 	           			<td nowrap class="tab-subhead">
 	           				<div align=center>
 	           					<html:image property="methodToCall.openBudgetVersion.line${status.index}" src='${ConfigProperties.kra.externalizable.images.url}tinybutton-open.gif' alt="open budget" />
-	           					<kra:section permission="addBudget">
+	           					<%-- <kra:section permission="addBudget">
 	           					    <html:image property="methodToCall.copyBudgetVersion.line${status.index}" src='${ConfigProperties.kra.externalizable.images.url}tinybutton-copy2.gif' alt="copy budget" />
-	           				    </kra:section>
+	           				    </kra:section> --%>
 	           				</div>
 	           			</td>
 	           		</kra:section>
