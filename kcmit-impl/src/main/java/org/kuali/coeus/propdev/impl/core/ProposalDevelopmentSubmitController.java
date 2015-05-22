@@ -368,8 +368,8 @@ public class ProposalDevelopmentSubmitController extends
 	    form.setShowSubmissionDetails(true);
         form.setDirtyForm(false);
 
-        if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
+    			setProposalTypeCodeChangedAndCorrected(form);
     			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
     			if(autogenerateInstitutionalProposal() && ! hasInstitutionalProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalNumber())) {
     				submitApplication(form);
@@ -379,9 +379,6 @@ public class ProposalDevelopmentSubmitController extends
             } else {
     			return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-        } else {
-        	return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
-        }
     }
 
     protected void handleSubmissionToS2S(ProposalDevelopmentDocumentForm form) throws Exception {
@@ -401,9 +398,8 @@ public class ProposalDevelopmentSubmitController extends
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=submitToSponsor")
     public  ModelAndView submitToSponsor(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
 
-    	if (!requiresResubmissionPrompt(form)) {
     		if(validToSubmitToSponsor(form) ) {
-    			setProposalTypeCodeNewChangedAndCorrected(form);
+    			setProposalTypeCodeChangedAndCorrected(form);
                 submitApplication(form);
                 handleSubmissionNotification(form);
                 form.setDeferredMessages(getGlobalVariableService().getMessageMap());
@@ -411,11 +407,6 @@ public class ProposalDevelopmentSubmitController extends
     		} else {
                 return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-    	}else if(sequenceIPToSubmitToSponsor(form)) {
-            return getModelAndViewService().showDialog("PropDev-ResumbitSequence-OptionsSection", true, form);
-        }else {
-            return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
-    	}
     }
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteLineNotificationRecipient")
     public ModelAndView deleteLine(@ModelAttribute("KualiForm") DocumentFormBase form, @RequestParam("actionParameters[" + UifParameters.SELECTED_COLLECTION_PATH + "]") String selectedCollectionPath) {
@@ -477,11 +468,15 @@ public class ProposalDevelopmentSubmitController extends
     	return isValid;
     }
     
-    protected void setProposalTypeCodeNewChangedAndCorrected(ProposalDevelopmentDocumentForm form) {
+    protected void setProposalTypeCodeChangedAndCorrected(ProposalDevelopmentDocumentForm form) {
     	ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
     	DevelopmentProposal developmentProposal= proposalDevelopmentDocument.getDevelopmentProposal();
-    	if( StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
-    			&& developmentProposal.getContinuedFrom() != null) {
+    	if( (StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+    			||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
+    					||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getBudgetSowUpdateProposalTypeCode())
+    					        ||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())
+    							        ||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode()))
+    					&& developmentProposal.getContinuedFrom() != null) {
     	form.setResubmissionOption(ProposalDevelopmentConstants.ResubmissionOptions.GENERATE_NEW_VERSION_OF_ORIGINAL_IP);
     	}
     }
@@ -583,7 +578,7 @@ public class ProposalDevelopmentSubmitController extends
                 proposalDevelopmentDocument.getDevelopmentProposal(),
                 proposalDevelopmentDocument.getDevelopmentProposal().getFinalBudget());
 
-        getGlobalVariableService().getMessageMap().putInfo(KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_VERSIONED, versionNumber, proposalDevelopmentForm.getInstitutionalProposalToVersion());
+        getGlobalVariableService().getMessageMap().putInfo(Constants.NO_FIELD,KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_VERSIONED, versionNumber, proposalDevelopmentForm.getInstitutionalProposalToVersion());
 
         Long institutionalProposalId = getActiveProposalId(proposalDevelopmentForm.getInstitutionalProposalToVersion());
         proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(proposalDevelopmentForm.getInstitutionalProposalToVersion());
@@ -681,7 +676,11 @@ public class ProposalDevelopmentSubmitController extends
         }
 
         getTransactionalDocumentControllerService().performWorkflowAction(form, UifConstants.WorkflowAction.APPROVE);
-        if (form.getActionFlags().containsKey("submitToSponsor")
+        if (form.getActionFlags().containsKey("submitToS2s") && form.getActionFlags().containsKey("submitToSponsor")
+                && getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, "autoSubmitToSponsorOnFinalApproval")
+                && getKcWorkflowService().isFinalApproval(workflowDoc)) {
+            return submitToS2s(form);
+        }else if (form.getActionFlags().containsKey("submitToSponsor")
                 && getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, "autoSubmitToSponsorOnFinalApproval")
                 && getKcWorkflowService().isFinalApproval(workflowDoc)) {
             return submitToSponsor(form);
