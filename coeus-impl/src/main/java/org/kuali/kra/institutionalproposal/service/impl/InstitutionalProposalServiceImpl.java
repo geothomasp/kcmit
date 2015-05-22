@@ -373,7 +373,7 @@ public class InstitutionalProposalServiceImpl implements InstitutionalProposalSe
         DecimalFormat formatter = new DecimalFormat(DECIMAL_FORMAT_FOR_NEW_IP);   
         Long nextProposalNumberSeq = sequenceAccessorService.getNextAvailableSequenceNumber(Constants.IP_NUMBER_SEQUENCE_FY_BASED, InstitutionalProposal.class);
        	String fiscalYear =  this.getFiscalYearMonthService().getCurrentFiscalYear().toString();    
-        String IpBuilderFiscalMonth = this.getFiscalYearMonthService().getCurrentFiscalMonth().toString();    
+        String IpBuilderFiscalMonth = this.getFiscalYearMonthService().getCurrentFiscalMonthForDisplay().toString();    
         return ((!fiscalYear.isEmpty())?fiscalYear.substring(2, 4):"")+((!IpBuilderFiscalMonth.isEmpty())?((IpBuilderFiscalMonth.length()<2)?("0"+IpBuilderFiscalMonth):IpBuilderFiscalMonth):"")+formatter.format(nextProposalNumberSeq);
     }
     
