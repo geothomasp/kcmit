@@ -198,3 +198,11 @@ update protocol_attachment_protocol set status_cd = '2'
 
 update protocol_attachment_protocol a set PROTOCOL_ID_FK = 
   (select protocol_id from protocol where protocol_number=a.protocol_number and sequence_number=a.sequence_number)
+  
+update eps_proposal p
+  set create_user = (select prncpl_nm from krim_prncpl_t a,krew_doc_hdr_t b 
+                      where a.prncpl_id=b.INITR_PRNCPL_ID and b.doc_hdr_id = p.document_number),
+      create_timestamp = (select CRTE_DT from krew_doc_hdr_t b where b.doc_hdr_id = p.document_number)
+      where  create_user is null
+      
+update award_budget_ext a set award_budget_status_code = '14' where budget_id in ('148673','148674','148675','148676','146054')      
