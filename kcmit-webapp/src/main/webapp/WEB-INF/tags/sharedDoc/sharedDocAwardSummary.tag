@@ -18,7 +18,7 @@
      <c:set var="viewSharedDoc" value="${KualiForm.awardProjectDocView || KualiForm.awardProjectSharedDocView}" />      
      <c:set var="sharedDocTypes" value="${KualiForm.awardSharedDocTypes}" />      
      <c:forEach items="${node.bo.awardAttachments}" var="attachment" varStatus="itrStatus">
-    	<c:if test="${attachment.documentStatusCode == 'A' && attachment.viewAttachment}">
+    	<c:if test="${attachment.viewAttachment}">
           <tr>
 	         <td style="text-align: center;" colspan="2">
 	            <c:out value="${attachment.type.description}"/>

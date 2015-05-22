@@ -17,7 +17,7 @@
     </tr>
 
     <c:forEach items="${node.bo.instProposalAttachments}" var="ipAttachment" varStatus="itrStatus">
-   		<c:if test="${ipAttachment.documentStatusCode == 'A' && ipAttachment.viewAttachment}">
+   		<c:if test="${ipAttachment.viewAttachment}">
 	      <tr>
 	        <td style="text-align: center;" colspan="2">
 	           <c:out value="${ipAttachment.type.description}"/>                        
