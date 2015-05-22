@@ -342,8 +342,18 @@ public class ReportTrackingServiceImpl implements ReportTrackingService {
         Collection<ReportTracking> reportTrackingCollection = this.getBusinessObjectService().findMatching(ReportTracking.class, params);
         List<ReportTracking> reportTrackings = new ArrayList<ReportTracking>();
         reportTrackings.addAll(reportTrackingCollection);
-        Collections.sort(reportTrackings);
-        return reportTrackings;
+        List<ReportTracking> reportTrackingSorted = new ArrayList<ReportTracking>();
+        List<ReportTracking> reportTrackingList = new ArrayList<ReportTracking>();
+        for(ReportTracking reportTracking : reportTrackings){
+        	if(reportTracking.getDueDate()!=null){
+        		reportTrackingSorted.add(reportTracking);
+        	}else{
+        		reportTrackingList.add(reportTracking);
+        	}
+        }
+        Collections.sort(reportTrackingSorted);
+        reportTrackingSorted.addAll(reportTrackingList);
+        return reportTrackingSorted;
     }
     
     @Override
