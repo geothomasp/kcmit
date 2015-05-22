@@ -48,8 +48,9 @@ public class ProposalDevelopmentRulesEngineExecutorImpl  extends KcRulesEngineEx
         String docContent = routeContext.getDocument().getDocContent();
         String proposalNumber = getElementValue(docContent, "//proposalNumber");
         List<String> unitNumbers = getProposalPersonUnits(proposalNumber);
-        
+      
         String leadUnitNumber = getLeadUnitNumber(proposalNumber);
+        unitNumbers = removeDuplicateUnits(unitNumbers,leadUnitNumber);
         String unitNumbersAsString = unitNumbers.isEmpty()?leadUnitNumber:StringUtils.join(unitNumbers,',');
         KcKrmsFactBuilderServiceHelper fbService = KcServiceLocator.getService("proposalDevelopmentFactBuilderService");
         Facts.Builder factsBuilder = Facts.Builder.create();
@@ -96,6 +97,16 @@ public class ProposalDevelopmentRulesEngineExecutorImpl  extends KcRulesEngineEx
             units.add(unit.getUnitNumber());
         }
         return units;
+    }
+    
+    private List<String> removeDuplicateUnits(List<String> proposalunitNumbers,String leadnitNumber) {
+    	List<String> unitNumbers = getUnitNumbersInOrder(leadnitNumber);
+        for (String unit : unitNumbers) {
+            if(proposalunitNumbers.contains(unit)){
+            	proposalunitNumbers.remove(unit);
+            }
+        }
+        return proposalunitNumbers;
     }
 
     private List<String> getProposalPersonUnits(String proposalNumber) {
