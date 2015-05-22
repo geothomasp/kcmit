@@ -138,9 +138,9 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
     		    		 sponsorGroup = sponsorHierarchy.getLevel1();
     		    	 }
     		     }
-    		     
+    		     String aggregator = context.getRouteContext().getRouteHeader().getRoutedByPrincipalId();
     		     List<WlPropAggregatorComplexity> WlPropAggregatorComplexityList = getDataObjectService().findMatching(WlPropAggregatorComplexity.class, QueryByCriteria.Builder.fromPredicates
-    					 (PredicateFactory.equal("aggregatorPersonId", personId))).getResults();
+    					 (PredicateFactory.equal("aggregatorPersonId", aggregator))).getResults();
     		     if(WlPropAggregatorComplexityList!=null && !WlPropAggregatorComplexityList.isEmpty()){
     		    	 WlPropAggregatorComplexity wlPropAggregatorComplexity = WlPropAggregatorComplexityList.get(0);
     		    	 complexity = wlPropAggregatorComplexity.getComplexity();
