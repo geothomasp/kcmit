@@ -1077,6 +1077,7 @@ end fn_get_agree_type;
 function fn_init_lead_unit return number is
 /***************************************************************************/
 
+v_award_person_id NUMBER(12);
 
 pi_not_found    	EXCEPTION;
 pi_name_too_long	EXCEPTION;
@@ -1085,7 +1086,7 @@ lu_not_found    	EXCEPTION;
 --ls_person_id 	AWARD_PERSONS.PERSON_ID%TYPE;
 
 cursor cur_pi is
-  SELECT AWARD_PERSONS.PERSON_ID,
+  SELECT AWARD_PERSONS.AWARD_PERSON_ID, AWARD_PERSONS.PERSON_ID,
          AWARD_PERSONS.FULL_NAME
          FROM AWARD_PERSONS
 	 WHERE AWARD_PERSONS.AWARD_NUMBER = gs_award_number and
@@ -1093,12 +1094,13 @@ cursor cur_pi is
       AND AWARD_PERSONS.SEQUENCE_NUMBER =		 (SELECT MAX(INV2.SEQUENCE_NUMBER)
           FROM AWARD_PERSONS INV2 WHERE
             INV2.AWARD_NUMBER =			 AWARD_PERSONS.AWARD_NUMBER	and
-				INV2.SEQUENCE_NUMBER <= gi_sequence_number	);
+				INV2.SEQUENCE_NUMBER <= gi_sequence_number	)
+	 order by AWARD_PERSON_ID desc;
 
 begin
 
 	OPEN cur_pi;
-	FETCH cur_pi INTO gs_pi_id, gs_pi_name;
+	FETCH cur_pi INTO v_award_person_id, gs_pi_id, gs_pi_name;
 
 	IF cur_pi%NOTFOUND THEN
 		raise pi_not_found;
@@ -1128,6 +1130,13 @@ BEGIN
 
 	SELECT LTRIM(RTRIM(AWARD_PERSON_UNITS.UNIT_NUMBER))
 	INTO gs_unit_number
+	FROM AWARD_PERSON_UNITS
+	WHERE AWARD_PERSON_ID = v_award_person_id;
+	
+
+	/*
+	SELECT LTRIM(RTRIM(AWARD_PERSON_UNITS.UNIT_NUMBER))
+	INTO gs_unit_number
 	FROM AWARD_PERSON_UNITS,AWARD_PERSONS
 	WHERE AWARD_PERSON_UNITS.AWARD_PERSON_ID=AWARD_PERSONS.AWARD_PERSON_ID and
  AWARD_PERSONS.AWARD_NUMBER = gs_award_number and
@@ -1137,6 +1146,8 @@ BEGIN
 	FROM AWARD_PERSONS UNIT2		 WHERE
 	UNIT2.AWARD_NUMBER =			AWARD_PERSONS.AWARD_NUMBER	and
 	UNIT2.SEQUENCE_NUMBER <= gi_sequence_number	);
+	*/
+	
 
 EXCEPTION
 		WHEN OTHERS THEN
