@@ -50,7 +50,6 @@ public class ProposalDevelopmentRulesEngineExecutorImpl  extends KcRulesEngineEx
         List<String> unitNumbers = getProposalPersonUnits(proposalNumber);
       
         String leadUnitNumber = getLeadUnitNumber(proposalNumber);
-        unitNumbers = removeDuplicateUnits(unitNumbers,leadUnitNumber);
         String unitNumbersAsString = unitNumbers.isEmpty()?leadUnitNumber:StringUtils.join(unitNumbers,',');
         KcKrmsFactBuilderServiceHelper fbService = KcServiceLocator.getService("proposalDevelopmentFactBuilderService");
         Facts.Builder factsBuilder = Facts.Builder.create();
@@ -58,7 +57,7 @@ public class ProposalDevelopmentRulesEngineExecutorImpl  extends KcRulesEngineEx
         Facts facts = factsBuilder.build();
         EngineResults combinedResults = callEngineForOneUnit(engine, facts, unitNumbersAsString);
         List<String> unitNumbersSortedList = getUnitNumbersInOrder(leadUnitNumber);
-        unitNumbersSortedList.remove(leadUnitNumber);
+        unitNumbersSortedList.removeAll(unitNumbers);
         for (String unit : unitNumbersSortedList) {
             EngineResults unitResults = callEngineForOneUnit(engine, facts,unit);
             appendPeopleFlowData(combinedResults, unitResults);
@@ -99,15 +98,7 @@ public class ProposalDevelopmentRulesEngineExecutorImpl  extends KcRulesEngineEx
         return units;
     }
     
-    private List<String> removeDuplicateUnits(List<String> proposalunitNumbers,String leadnitNumber) {
-    	List<String> unitNumbers = getUnitNumbersInOrder(leadnitNumber);
-        for (String unit : unitNumbers) {
-            if(proposalunitNumbers.contains(unit)){
-            	proposalunitNumbers.remove(unit);
-            }
-        }
-        return proposalunitNumbers;
-    }
+   
 
     private List<String> getProposalPersonUnits(String proposalNumber) {
     	
