@@ -14,7 +14,7 @@
       <th colspan="2">File Name</th>
     </tr>
 	    <c:forEach items="${node.bo.subAwardAttachments}" var="attachment" varStatus="itrStatus">
-    		<c:if test="${attachment.documentStatusCode == 'A' && attachment.viewAttachment}">
+    		<c:if test="${attachment.viewAttachment}">
 		          <tr>
 		        <td style="text-align: center;" colspan="2">
 		            <c:out value="${attachment.description}"/>(Attachment Desc)
