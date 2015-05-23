@@ -205,4 +205,6 @@ update eps_proposal p
       create_timestamp = (select CRTE_DT from krew_doc_hdr_t b where b.doc_hdr_id = p.document_number)
       where  create_user is null
       
-update award_budget_ext a set award_budget_status_code = '14' where budget_id in ('148673','148674','148675','148676','146054')      
+update award_budget_ext a set award_budget_status_code = '14' where budget_id in ('148673','148674','148675','148676','146054')
+
+update wl_current_load a set complexity= (select fn_get_complexity(a.proposal_number) from dual) where complexity is null
