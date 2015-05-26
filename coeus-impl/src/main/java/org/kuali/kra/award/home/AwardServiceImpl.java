@@ -24,6 +24,7 @@ import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.VersioningService;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
+import org.kuali.kra.award.budget.AwardBudgetExt;
 import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.dao.AwardDao;
 import org.kuali.kra.award.document.AwardDocument;
@@ -78,7 +79,7 @@ public class AwardServiceImpl implements AwardService {
 
     public AwardDocument createNewAwardVersion(AwardDocument awardDocument) throws VersionException, WorkflowException {
         Award newVersion = getVersioningService().createNewVersion(awardDocument.getAward());
-        newVersion.setBudgets(new ArrayList<>());
+        newVersion.setBudgets(new ArrayList<AwardBudgetExt>());
         for (AwardAttachment attach : newVersion.getAwardAttachments()) {
             AwardAttachment orignalAttachment = findMatchingAwardAttachment(awardDocument.getAward().getAwardAttachments(), attach.getFileId());
             attach.setUpdateUser(orignalAttachment.getUpdateUser());
