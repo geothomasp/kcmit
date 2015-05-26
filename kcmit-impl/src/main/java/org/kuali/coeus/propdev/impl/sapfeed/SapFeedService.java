@@ -36,4 +36,6 @@ public interface SapFeedService {
 
 	public void removeWorkInProgressSapDetails(String awardNumber,Integer sequenceNumber);
 	
+	public void performCancelAction(Integer feedId);
+	
 }

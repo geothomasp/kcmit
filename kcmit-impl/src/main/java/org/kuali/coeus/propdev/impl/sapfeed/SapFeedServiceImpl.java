@@ -44,6 +44,7 @@ public class SapFeedServiceImpl implements SapFeedService
 	private static final String SAPFEED_FEEDSTATUS_REJECTED = "R";
 	private static final String SAPFEED_FEEDSTATUS_ERROR = "E";
 	private static final String SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS = "W";
+	private static final String SAPFEED_FEEDSTATUS_CANCELLED = "C";
 	
 	
 	@Autowired
@@ -190,6 +191,17 @@ public class SapFeedServiceImpl implements SapFeedService
 		this.dataObjectService = dataObjectService;
 	}
 
+	@Override
+	public void performCancelAction(Integer feedId) {
+		SapFeedDetails sapFeedDetails = getDataObjectService().findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
+		if (sapFeedDetails != null) {
+			if (sapFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_PENDING)) {
+				sapFeedDetails.setFeedStatus(SAPFEED_FEEDSTATUS_CANCELLED);
+				getDataObjectService().save(sapFeedDetails);
+			}
+		}
+	}
+	
 	@Override
 	public void performRejectAction(Integer feedId) {
 		SapFeedDetails sapFeedDetails = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
