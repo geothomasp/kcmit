@@ -305,6 +305,7 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	protected Map<String, String> getHashMapToFindActiveAward(String goToAwardNumber) {
 		Map<String, String> map = new HashMap<>();
 		map.put(AWARD_NUMBER, goToAwardNumber);
+
 		return map;
 	}
 
