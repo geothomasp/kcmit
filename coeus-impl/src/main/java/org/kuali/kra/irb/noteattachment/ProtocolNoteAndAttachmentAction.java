@@ -262,7 +262,7 @@ public class ProtocolNoteAndAttachmentAction extends ProtocolAction {
             HttpServletResponse response) throws Exception {
         
         final int selection = this.getSelectedLine(request);
-        ProtocolAttachmentProtocol attachment = (ProtocolAttachmentProtocol) CollectionUtils.getFromList(selection, form.getProtocolDocument().getProtocol().getAttachmentProtocols());
+        ProtocolAttachmentProtocol attachment = (ProtocolAttachmentProtocol) CollectionUtils.getFromList(selection, form.getProtocolDocument().getProtocol().getFilteredAttachmentProtocols());
                
         if (attachment == null) {
             LOG.info(NOT_FOUND_SELECTION + selection);
