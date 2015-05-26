@@ -198,6 +198,14 @@ public class SapFeedSearchController {
     }
 
     @Transactional
+    @RequestMapping(params = "methodToCall=cancelFeed")
+    public ModelAndView cancelFeed(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+        String feedId = request.getParameter("feedId").trim();
+        sapFeedService.performCancelAction(Integer.valueOf(feedId));
+        return getRefreshControllerService().refresh(form);
+    }
+    
+    @Transactional
     @RequestMapping(params = "methodToCall=resendBatch")
     public ModelAndView resendBatch(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
         boolean resendSubsequent = false;

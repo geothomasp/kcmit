@@ -58,7 +58,7 @@ public class SapFeedDetails extends KcPersistableBusinessObjectBase {
     }
 
     public static enum FeedStatusNames {
-        F("Fed"), E("Error"), R("Rejected"),P("Pending");
+        F("Fed"), E("Error"), R("Rejected"), C("Cancelled"), P("Pending");
 
         private final String name;
 
@@ -79,6 +79,18 @@ public class SapFeedDetails extends KcPersistableBusinessObjectBase {
         return FeedStatusNames.valueOf(feedStatus).getName();
     }
 
+    public boolean isFeedPending() {
+        return FeedStatusNames.valueOf(feedStatus).getName().equalsIgnoreCase(FeedStatusNames.P.getName());
+    }
+    
+    public boolean isFeedFed() {
+        return FeedStatusNames.valueOf(feedStatus).getName().equalsIgnoreCase(FeedStatusNames.F.getName());
+    }
+    
+    public boolean isFeedRejected() {
+        return FeedStatusNames.valueOf(feedStatus).getName().equalsIgnoreCase(FeedStatusNames.R.getName());
+    }
+    
     public Integer getFeedId() {
         return feedId;
     }
