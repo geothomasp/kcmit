@@ -29,6 +29,7 @@ import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.util.CollectionUtils;
 import org.kuali.kra.award.AwardAmountInfoService;
 import org.kuali.kra.award.AwardNumberService;
+import org.kuali.kra.award.budget.AwardBudgetExt;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
@@ -370,7 +371,8 @@ public class AwardHierarchyServiceImpl implements AwardHierarchyService {
             restoreOriginalAwardPropertiesAfterCopy(award, originalAwardNumber, originalSequenceNumber);
             award.setAwardDocument(document);
             copyAwardAmountDateInfo(award, newAward);
-
+            award.setBudgets(new ArrayList<AwardBudgetExt>());
+            
             List<AwardSpecialReview> awardSpecialReviews = new ArrayList<AwardSpecialReview>();
             newAward.setSpecialReviews(awardSpecialReviews);
             clearFilteredAttributes(newAward);
