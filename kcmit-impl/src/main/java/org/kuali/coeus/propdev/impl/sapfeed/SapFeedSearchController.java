@@ -211,12 +211,12 @@ public class SapFeedSearchController {
     public ModelAndView rejectFeed(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
         String feedId = request.getParameter("feedId").trim();
 		SapFeedDetails sapFeedDetails = getSapFeedDetails(feedId);
-		if (sapFeedDetails != null && sapFeedDetails.isFeedFed()) {
+		if (sapFeedDetails != null && (sapFeedDetails.isFeedFed() || sapFeedDetails.isFeedError())) {
 	        sapFeedService.performRejectAction(sapFeedDetails);
 	    	performSearch(form);
 	        return getNavigationControllerService().navigate(form);
 		}else {
-        	getGlobalVariableService().getMessageMap().putError(SAP_FEED_SEARCH_PAGE_ID, SAP_FEED_ACTION_ALLOWED_ERROR_KEY, new String[]{"Reject", "Fed"});
+        	getGlobalVariableService().getMessageMap().putError(SAP_FEED_SEARCH_PAGE_ID, SAP_FEED_ACTION_ALLOWED_ERROR_KEY, new String[]{"Reject", "Fed or Error"});
 		}
         return getRefreshControllerService().refresh(form);
     }
