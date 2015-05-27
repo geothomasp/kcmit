@@ -51,9 +51,8 @@ public class AwardBudgetVersionRule extends BudgetVersionRule {
         boolean success = true;
         Award award = (Award) event.getBudgetParent();
         if(!award.getObligatedDistributableTotal().isPositive()){
-            GlobalVariables.getMessageMap().putError(event.getErrorPath(), 
+            GlobalVariables.getMessageMap().putWarning(event.getErrorPath(), 
                   KeyConstants.ERROR_BUDGET_OBLIGATED_AMOUNT_INVALID, "Name");
-            success &= false;
         }
         if(award.getRequestedStartDateInitial() == null){
             GlobalVariables.getMessageMap().putError(event.getErrorPath(), 
