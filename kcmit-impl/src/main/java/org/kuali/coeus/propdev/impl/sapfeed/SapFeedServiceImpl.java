@@ -192,8 +192,7 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 
 	@Override
-	public void performCancelAction(Integer feedId) {
-		SapFeedDetails sapFeedDetails = getDataObjectService().findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
+	public void performCancelAction(SapFeedDetails sapFeedDetails) {
 		if (sapFeedDetails != null) {
 			if (sapFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_PENDING)) {
 				sapFeedDetails.setFeedStatus(SAPFEED_FEEDSTATUS_CANCELLED);
@@ -203,8 +202,7 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 	
 	@Override
-	public void performRejectAction(Integer feedId) {
-		SapFeedDetails sapFeedDetails = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
+	public void performRejectAction(SapFeedDetails sapFeedDetails) {
 		if (sapFeedDetails != null) {
 			if (sapFeedDetails.getFeedStatus().equals("F")) {
 				sapFeedDetails.setFeedStatus("R");
@@ -214,8 +212,7 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 
 	@Override
-	public void performUndoReject(Integer feedId) {
-		SapFeedDetails sapFeedDetails = KcServiceLocator.getService(DataObjectService.class).findUnique(SapFeedDetails.class,QueryByCriteria.Builder.andAttributes(Collections.singletonMap("feedId", feedId)).build());
+	public void performUndoReject(SapFeedDetails sapFeedDetails) {
 		if (sapFeedDetails != null) {
 			if (sapFeedDetails.getFeedStatus().equals("R")) {
 				sapFeedDetails.setFeedStatus("F");
