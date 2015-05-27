@@ -91,6 +91,10 @@ public class SapFeedDetails extends KcPersistableBusinessObjectBase {
         return FeedStatusNames.valueOf(feedStatus).getName().equalsIgnoreCase(FeedStatusNames.R.getName());
     }
     
+    public boolean isFeedError() {
+        return FeedStatusNames.valueOf(feedStatus).getName().equalsIgnoreCase(FeedStatusNames.E.getName());
+    }
+    
     public Integer getFeedId() {
         return feedId;
     }

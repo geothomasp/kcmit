@@ -204,8 +204,8 @@ public class SapFeedServiceImpl implements SapFeedService
 	@Override
 	public void performRejectAction(SapFeedDetails sapFeedDetails) {
 		if (sapFeedDetails != null) {
-			if (sapFeedDetails.getFeedStatus().equals("F")) {
-				sapFeedDetails.setFeedStatus("R");
+			if (sapFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_FED) || sapFeedDetails.getFeedStatus().equals(SAPFEED_FEEDSTATUS_ERROR)) {
+				sapFeedDetails.setFeedStatus(SAPFEED_FEEDSTATUS_REJECTED);
 				getBusinessObjectService().save(sapFeedDetails);
 			}
 		}
