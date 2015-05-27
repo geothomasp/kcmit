@@ -10,6 +10,12 @@ function restoreFeed(action) {
     ajaxSubmitForm("restoreFeed", data);
 }
 
+function cancelFeed(action) {
+    var data = {};
+    data.feedId = jQuery(action).closest("tr").find(".feedId").text();
+    ajaxSubmitForm("cancelFeed", data);
+}
+
 function setupLightTableCss() {
     jQuery(".uif-lightTable").addClass("table table-condensed table-bordered uif-tableCollectionLayout");
 }

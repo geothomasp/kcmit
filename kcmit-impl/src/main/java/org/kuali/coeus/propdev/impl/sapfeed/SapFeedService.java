@@ -20,9 +20,9 @@ public interface SapFeedService {
 	
 	public void insertSapFeedDetails(String awardNumber, Integer sequenceNumber, String feedType, String feedStatus);
 	
-	public void performRejectAction(Integer feedId);
+	public void performRejectAction(SapFeedDetails sapFeedDetails);
 	
-	public void performUndoReject(Integer feedId);
+	public void performUndoReject(SapFeedDetails sapFeedDetails);
 	
 	public void performResendBatch(Integer sapFeedBatchId,Integer batchId,Boolean processSubsequentBatches, String path);
 	
@@ -36,6 +36,6 @@ public interface SapFeedService {
 
 	public void removeWorkInProgressSapDetails(String awardNumber,Integer sequenceNumber);
 	
-	public void performCancelAction(Integer feedId);
+	public void performCancelAction(SapFeedDetails sapFeedDetails);
 	
 }

@@ -243,9 +243,9 @@
                 <bean parent="Uif-DropdownToggleMenu" p:additionalCssClasses="btn btn-default btn-xs" p:toggleText="Actions">
                     <property name="menuItems">
                         <list>
-                            <bean parent="Uif-MenuAction" p:render="@{#line.feedFed}" p:actionLabel="Reject This Feed" p:actionScript="rejectFeed(this);"/>
-                            <bean parent="Uif-MenuAction" p:render="@{#line.feedRejected}" p:actionLabel="Restore This Feed" p:actionScript="restoreFeed(this);"/>
-                            <bean parent="Uif-MenuAction" p:render="@{#line.feedPending}" p:actionLabel="Cancel This Feed" p:actionScript="cancelFeed(this);"/>
+                            <bean parent="Uif-MenuAction" p:actionLabel="Reject This Feed" p:actionScript="rejectFeed(this);"/>
+                            <bean parent="Uif-MenuAction" p:actionLabel="Restore This Feed" p:actionScript="restoreFeed(this);"/>
+                            <bean parent="Uif-MenuAction" p:actionLabel="Cancel This Feed" p:actionScript="cancelFeed(this);"/>
                         </list>
                     </property>
                 </bean>
