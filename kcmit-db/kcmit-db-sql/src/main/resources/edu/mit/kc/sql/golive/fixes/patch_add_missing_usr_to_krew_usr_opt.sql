@@ -81,6 +81,9 @@ INSERT INTO TMP_KREW_USR_OPTN_T(PRSN_OPTN_ID,VAL)
 VALUES('PRIMARY_DELEGATE_FILTER','Primary Delegates on Action List Page');
 INSERT INTO TMP_KREW_USR_OPTN_T(PRSN_OPTN_ID,VAL)
 VALUES('ProtocolDocument.DocumentTypeNotificationcommit','no');
+INSERT INTO TMP_KREW_USR_OPTN_T(PRSN_OPTN_ID,VAL)
+VALUES('ProtocolOnlineReviewDocument.DocumentTypeNotification','no');
+
 /
 declare
 cursor c_krew_usr is
