@@ -2898,7 +2898,7 @@ commit
 select 'Purge all rows from  PERSON_APPOINTMENT ' from dual
 /
 delete from PERSON_APPOINTMENT
-where person_id < '999999983'
+where person_id < '999999978'
 /
 commit
 /
