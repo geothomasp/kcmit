@@ -55,7 +55,6 @@
 <kra:dataValidation auditActivated="${KualiForm.auditActivated}" topTab="false" helpParameterNamespace="KC-PROTOCOL" helpParameterName="protocolDataValidationHelp" helpParameterDetailType="Document"/>
 </c:if>
 <kra-irb:protocolSummaryPrint/>
-<kra-irb:protocolSummaryViewPrint/>
 <kra-irb:protocolCopyProtocol />
 <kul:routeLog /> 
 <c:if test="${showActions}" >
