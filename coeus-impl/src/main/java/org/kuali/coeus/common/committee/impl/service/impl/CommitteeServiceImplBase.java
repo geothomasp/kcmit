@@ -18,21 +18,35 @@
  */
 package org.kuali.coeus.common.committee.impl.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.coeus.common.committee.impl.bo.*;
+import org.kuali.coeus.common.committee.impl.bo.CommitteeBase;
+import org.kuali.coeus.common.committee.impl.bo.CommitteeMembershipBase;
+import org.kuali.coeus.common.committee.impl.bo.CommitteeMembershipRole;
+import org.kuali.coeus.common.committee.impl.bo.CommitteeResearchAreaBase;
+import org.kuali.coeus.common.committee.impl.bo.CommitteeScheduleBase;
 import org.kuali.coeus.common.committee.impl.meeting.CommitteeScheduleMinuteBase;
 import org.kuali.coeus.common.committee.impl.service.CommitteeServiceBase;
 import org.kuali.coeus.common.framework.version.VersioningService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.bo.ResearchAreaBase;
+import org.kuali.kra.committee.bo.Committee;
+import org.kuali.kra.committee.bo.CommitteeSchedule;
+import org.kuali.kra.committee.dao.CustomCommitteeDao;
 import org.kuali.kra.protocol.actions.submit.ProtocolSubmissionBase;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.service.BusinessObjectService;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * The CommitteeBase Service implementation.
@@ -49,8 +63,10 @@ public abstract class CommitteeServiceImplBase<CMT extends CommitteeBase<CMT, ?,
 
     private BusinessObjectService businessObjectService;
     private VersioningService versioningService;
+    private CustomCommitteeDao customCommitteeDao;
 
-
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CommitteeServiceImplBase.class);
+    
     /**
      * Set the Business Object Service.
      * 
@@ -287,33 +303,39 @@ public abstract class CommitteeServiceImplBase<CMT extends CommitteeBase<CMT, ?,
         return committee.getCommitteeSchedule(scheduleId);
     }
     
-    @Override
-    public List<CS> mergeCommitteeSchedule(String committeeId) {
-        Map<String, Object> fieldValues = new HashMap<String, Object>();
-        fieldValues.put(COMMITTEE_ID, committeeId);
-        List<CMT> committees = (List<CMT>) getBusinessObjectService().findMatching(getCommitteeBOClassHook(), fieldValues);
-        Collections.sort(committees);
-        CMT newCommittee = committees.get(committees.size() - 1);
-        CMT oldCommittee = committees.get(committees.size() - 2);
-        List<CS> newMasterSchedules = new ArrayList<CS>();
-        
-        List<CS> oldMasterSchedules = oldCommittee.getCommitteeSchedules();
-        List<CS> newSchedules = newCommittee.getCommitteeSchedules();
-        
-        // remove the to-be-retained old schedules and new schedules from the old master list and the new master list 
-        // respectively, and combine these removed schedules to create the new master list.
-        if (CollectionUtils.isNotEmpty(newSchedules) || CollectionUtils.isNotEmpty(oldMasterSchedules)) {
-            newMasterSchedules = createNewMasterScheduleList(newSchedules, oldMasterSchedules);
+
+    public List<CS> mergeCommitteeSchedule(String committeeId) { 
+        Map<String, Object> fieldValues = new HashMap<String, Object>(); 
+        fieldValues.put(COMMITTEE_ID, committeeId); 
+        List<CMT> committees = (List<CMT>) getBusinessObjectService().findMatching(getCommitteeBOClassHook(), fieldValues); 
+        Collections.sort(committees); 
+        CMT newCommittee = committees.get(committees.size() - 1); 
+        CMT oldCommittee = committees.get(committees.size() - 2); 
+        List<CS> newMasterSchedules = new ArrayList<CS>(); 
+         
+        List<CS> oldMasterSchedules = oldCommittee.getCommitteeSchedules(); 
+        List<CS> newSchedules = newCommittee.getCommitteeSchedules(); 
+         
+        if (CollectionUtils.isNotEmpty(newSchedules) || CollectionUtils.isNotEmpty(oldMasterSchedules)) { 
+            newMasterSchedules = createNewMasterScheduleList(newSchedules, oldMasterSchedules); 
             // delete the remaining old master schedule list and the remaining new schedule list 
-            getBusinessObjectService().delete(oldMasterSchedules);
-            getBusinessObjectService().delete(newSchedules);
-        }
-        
-        
-        return newMasterSchedules;
-    }
-
-
+            removeSubmissionReferences(oldMasterSchedules); 
+            removeSubmissionReferences(newSchedules); 
+            getBusinessObjectService().delete(oldMasterSchedules); 
+            getBusinessObjectService().delete(newSchedules); 
+        } 
+         
+        removeSubmissionReferences(newMasterSchedules); 
+         
+        return newMasterSchedules; 
+    } 
+    
+    private void removeSubmissionReferences(List<CS> schedules) { 
+    	for (CS schedule : schedules) { 
+        	schedule.setProtocolSubmissions(null); 
+    	} 
+	}
+    
     /*
      * If any of the schedules in the old schedule list also exists in the new schedule liset, then copy over the light data from the 
      * corresponding new schedule to the old schedule. Move all such old schedules from the old master schedule list to the the return list. 
@@ -377,19 +399,15 @@ public abstract class CommitteeServiceImplBase<CMT extends CommitteeBase<CMT, ?,
     }
 
     
-    
-    @Override
-    public void updateCommitteeForProtocolSubmissions(CMT committee) {
-        // loop thru all the schedules for the committee and update each schedule's submissions if any
-        for(CS committeeSchedule : committee.getCommitteeSchedules()) {
-            for(PS protocolSubmission : committeeSchedule.getProtocolSubmissions()) {
-                protocolSubmission.setCommitteeIdFk(committee.getId());
-                protocolSubmission.setCommittee(committee);
-                getBusinessObjectService().save(protocolSubmission); 
-            }
-        }
-    }
-    
+    @Override 
+    public void updateCommitteeForProtocolSubmissions(CMT committee) { 
+        if(getCustomCommitteeDao() != null) { 
+        	getCustomCommitteeDao().updateSubmissionsToNewCommitteeVersion(committee, committee.getCommitteeSchedules()); 
+        } 
+        else { 
+            LOG.error("CommitteeDao not found-- Protocol Submissions not associated with new Committee and Schedule IDs"); 
+        } 
+    } 
     
     @Override
     public CMT getLightVersion(String committeeId) throws Exception{
@@ -402,6 +420,17 @@ public abstract class CommitteeServiceImplBase<CMT extends CommitteeBase<CMT, ?,
         }
         return getVersioningService().createNewVersion(committee);
     }
+
+	public CustomCommitteeDao getCustomCommitteeDao() {
+        if(this.customCommitteeDao == null) {
+            this.customCommitteeDao = KcServiceLocator.getService(CustomCommitteeDao.class);
+        }
+		return customCommitteeDao;
+	}
+
+	public void setCustomCommitteeDao(CustomCommitteeDao customCommitteeDao) {
+		this.customCommitteeDao = customCommitteeDao;
+	}
     
 
 }

@@ -115,6 +115,7 @@ public abstract class ActionHelperBase implements Serializable {
 
     private static final String DEFAULT_TAB = "Versions";
     private static final String ALTERNATE_OPEN_TAB = "Parameters";
+    private HashMap<Long,List<CommitteeScheduleMinuteBase>> scheduleToMinutesMap = new HashMap<Long,List<CommitteeScheduleMinuteBase>>();
     
     /**
      * Each Helper must contain a reference to its document form
@@ -892,11 +893,28 @@ public abstract class ActionHelperBase implements Serializable {
         protocolReturnToPIBean.getReviewCommentsBean().setReviewComments(getCopiedReviewComments());
     }
     
-    @SuppressWarnings({ "rawtypes" })
-    protected List<CommitteeScheduleMinuteBase> getCopiedReviewComments() {
-        List<CommitteeScheduleMinuteBase> minutes = getReviewCommentsUsingScheduleOrSubmission();
-        return cloneReviewComments(minutes);        
-    }
+    protected List<CommitteeScheduleMinuteBase> getCopiedReviewComments() { 
+        List<CommitteeScheduleMinuteBase> clonedMinutes = new ArrayList<CommitteeScheduleMinuteBase>(); 
+        Long scheduleIdFk = getProtocol().getProtocolSubmission().getScheduleIdFk(); 
+        List<CommitteeScheduleMinuteBase> minutes = null; 
+        if(scheduleIdFk != null) { 
+        	minutes = scheduleToMinutesMap.get(scheduleIdFk); 
+        	if(minutes == null) { 
+        		minutes = getCommitteeScheduleService().getMinutesBySchedule(scheduleIdFk); 
+        		scheduleToMinutesMap.put(scheduleIdFk, minutes); 
+    		} 
+        } 
+        if (CollectionUtils.isNotEmpty(minutes)) { 
+            for (CommitteeScheduleMinuteBase minute : minutes) { 
+                clonedMinutes.add(minute.getCopy()); 
+            } 
+        } 
+         
+        return clonedMinutes; 
+    } 
+
+    
+    
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected List<CommitteeScheduleMinuteBase> getReviewCommentsUsingScheduleOrSubmission() {

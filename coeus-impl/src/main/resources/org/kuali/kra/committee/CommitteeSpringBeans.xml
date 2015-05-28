@@ -298,6 +298,7 @@
 	<bean id="irbCommitteeIdByUnitValuesFinderService" class="org.kuali.kra.committee.lookup.keyvalue.IrbCommitteeIdByUnitValuesFinderServiceImpl" 
     	parent="committeeIdByUnitValuesFinderServiceParent" />
    
+    <bean id="customCommitteeDao" parent="platformAwareDao" class="org.kuali.kra.committee.dao.ojb.CustomCommitteeDaoOjb" /> 
     
 </beans>
 
