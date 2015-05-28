@@ -288,9 +288,9 @@
 					p:readOnly="@{#parent.readOnly or #fp.personSequenceNumber == #{T(org.kuali.coeus.common.budget.framework.core.BudgetConstants.BudgetPerson).SUMMARYPERSON.personId}}"
 					p:readOnlyDisplayReplacement="&amp;nbsp;"/>
 				<bean parent="Uif-InputField" p:propertyName="startDate"
-					p:required="true" p:order="60"/>
+					p:required="true" p:order="50"/>
 				<bean parent="Uif-InputField" p:propertyName="endDate"
-					p:required="true" p:order="70"/>
+					p:required="true" p:order="60"/>
 				<bean parent="PropBudget-AssignPersonnelToPeriodsPage-PercentField" p:propertyName="percentEffort" 
 					p:readOnly="@{#parent.readOnly or #fp.personSequenceNumber == #{T(org.kuali.coeus.common.budget.framework.core.BudgetConstants.BudgetPerson).SUMMARYPERSON.personId}}"
 					p:label="Effort" p:order="70" p:readOnlyDisplayReplacement="&amp;nbsp;"/>
