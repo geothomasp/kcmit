@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.struts.upload.FormFile;
+import org.eclipse.persistence.internal.weaving.RelationshipInfo;
 import org.kuali.coeus.common.framework.attachment.AttachmentFile;
+import org.kuali.coeus.common.framework.version.sequence.associate.SequenceAssociate;
+import org.kuali.coeus.common.framework.version.sequence.owner.SequenceOwner;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.institutionalproposal.InstitutionalProposalAssociate;
@@ -36,7 +39,7 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 
 
 
-public class InstitutionalProposalAttachments extends InstitutionalProposalAssociate  implements Comparable<InstitutionalProposalAttachments> {
+public class InstitutionalProposalAttachments extends InstitutionalProposalAssociate  implements Comparable<InstitutionalProposalAttachments>, SequenceAssociate {
 
 
     private static final long serialVersionUID = 502762283098287794L;
@@ -310,6 +313,11 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
         return updateUser != null ? updateUser.getName() : this.getUpdateUser();
     }
 
+    @Override
+    public void resetPersistenceState() {
+        this.proposalAttachmentId = null;
+    }
+    
 	@Override
 	public int compareTo(InstitutionalProposalAttachments o) {
 		return this.getProposalAttachmentsDataId().compareTo(o.getProposalAttachmentsDataId());
@@ -337,7 +345,16 @@ public class InstitutionalProposalAttachments extends InstitutionalProposalAssoc
 	public void setViewAttachment(boolean viewAttachment) {
 		this.viewAttachment = viewAttachment;
 	}
-	
-	
+
+
+	@Override
+	public void setSequenceOwner(SequenceOwner newlyVersionedOwner) {
+        setInstitutionalProposal((InstitutionalProposal) newlyVersionedOwner);
+	}
+
+	@Override
+	public SequenceOwner getSequenceOwner() {
+        return getInstitutionalProposal();
+	}
 	
 }

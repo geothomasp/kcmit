@@ -244,7 +244,7 @@
 		<collection-descriptor name="proposalComments" proxy="true" element-class-ref="org.kuali.kra.institutionalproposal.home.InstitutionalProposalComment" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none">
 			<inverse-foreignkey field-ref="proposalId"/>
 		</collection-descriptor>
-		<collection-descriptor name="instProposalAttachments" proxy="true" element-class-ref="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="true">
+		<collection-descriptor name="instProposalAttachments" proxy="true" element-class-ref="org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
 			<inverse-foreignkey field-ref="proposalId"/>
 			<orderby name="proposalAttachmentId" sort="ASC" />
 		</collection-descriptor>
