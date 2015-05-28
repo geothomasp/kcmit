@@ -1220,6 +1220,8 @@
         <property name="serviceName" value="printingService" />
     </bean>
 
+    <bean id="protocolAttachmentDao" parent="platformAwareDao" class="org.kuali.kra.protocol.ProtocolAttachmentDaoOjb" /> 
+
 </beans>
 
 
