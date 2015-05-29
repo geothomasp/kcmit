@@ -3509,24 +3509,12 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 	}
 
 	public List<AwardBudgetExt> getBudgets() {
-<<<<<<< HEAD
-=======
-
->>>>>>> fixed overlay issues.
 		if (budgets == null || budgets.isEmpty()) {
 			budgets = KcServiceLocator.getService(AwardBudgetService.class).getAllBudgetsForAward(this);
 		}
 		return budgets;
 	}
 
-	public List<AwardBudgetExt> getCurrentVersionBudgets() {
-		return currentVersionBudgets;
-	}
-
-	public void setCurrentVersionBudgets(List<AwardBudgetExt> budgets) {
-		this.currentVersionBudgets = budgets;
-	}
-	
 	public void setBudgets(List<AwardBudgetExt> budgets) {
 		this.budgets = budgets;
 	}
