@@ -211,7 +211,7 @@ public class SapFeedSearchController {
     public ModelAndView rejectFeed(@ModelAttribute("KualiForm") SapFeedSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
         String feedId = request.getParameter("feedId").trim();
 		SapFeedDetails sapFeedDetails = getSapFeedDetails(feedId);
-		if (sapFeedDetails != null && (sapFeedDetails.isFeedFed() || sapFeedDetails.isFeedError())) {
+		if (sapFeedDetails != null && sapFeedDetails.isFeedFed()) {
 	        sapFeedService.performRejectAction(sapFeedDetails);
 	    	performSearch(form);
 	        return getNavigationControllerService().navigate(form);
