@@ -62,6 +62,7 @@ public class IacucProtocolAction extends ProtocolActionBase {
     public static final String IACUC_PROTOCOL_SPECIAL_REVIEW_HOOK = "iacucSpecialReview";
     public static final String IACUC_PROTOCOL_NOTE_ATTACHMENT_HOOK = "iacucProtocolNoteAndAttachment";
     public static final String IACUC_PROTOCOL_ACTIONS_HOOK = "iacucProtocolActions";
+    public static final String IACUC_PROTOCOL_HISTORY_HOOK = "iacucProtocolHistory";
     public static final String IACUC_PROTOCOL_ONLINE_REVIEW_HOOK = "iacucProtocolOnlineReview";
     public static final String IACUC_PROTOCOL_PERMISSIONS_HOOK = "iacucProtocolPermissions";
     public static final String IACUC_PROTOCOL_THREE_RS = "iacucProtocolThreeRs";
@@ -137,6 +138,10 @@ public class IacucProtocolAction extends ProtocolActionBase {
         return IACUC_PROTOCOL_ACTIONS_HOOK;
     }
 
+    protected String getProtocolHistoryForwardNameHook() {
+        return IACUC_PROTOCOL_HISTORY_HOOK;
+    }
+    
     protected String getProtocolOnlineReviewForwardNameHook() {
         return IACUC_PROTOCOL_ONLINE_REVIEW_HOOK;
     }

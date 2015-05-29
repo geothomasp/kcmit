@@ -26,7 +26,7 @@
 	showTabButtons="true"
 	auditCount="0"
   	headerDispatch="${KualiForm.headerDispatch}"
-  	headerTabActive="protocolActions">
+  	headerTabActive="protocolHistory">
   	
 <script type="text/javascript">
    var $j = jQuery.noConflict();
@@ -49,19 +49,8 @@
    .compare td, .compare th { color:#666666; }
 </style>
   	
-<div align="right"><kul:help documentTypeName="ProtocolDocument" pageName="Protocol Actions" /></div>
-<kra-irb:protocolRequestAction />
-<c:if test="${showActions}" >
-<kra:dataValidation auditActivated="${KualiForm.auditActivated}" topTab="false" helpParameterNamespace="KC-PROTOCOL" helpParameterName="protocolDataValidationHelp" helpParameterDetailType="Document"/>
-</c:if>
-<kra-irb:protocolSummaryPrint/>
-<kra-irb:protocolSummaryViewPrint/>
-<kra-irb:protocolCopyProtocol />
-<kul:routeLog /> 
-<c:if test="${showActions}" >
-<kul:adHocRecipients />
-<kul:superUserActions showTab="false"/>	
-</c:if>
+<div align="right"><kul:help documentTypeName="ProtocolDocument" pageName="Protocol History" /></div>
+<kra-irb:protocolSubmissionAndHistoryViewPrint/>
 <kul:panelFooter />
 	            
 	<kul:documentControls 

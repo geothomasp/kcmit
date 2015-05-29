@@ -100,6 +100,7 @@ public abstract class ProtocolActionBase extends KcTransactionalDocumentActionBa
     protected abstract String getPersonnelForwardNameHook();
     protected abstract String getNoteAndAttachmentForwardNameHook();
     protected abstract String getProtocolActionsForwardNameHook();
+    protected abstract String getProtocolHistoryForwardNameHook();
     protected abstract String getProtocolOnlineReviewForwardNameHook();
     protected abstract String getProtocolPermissionsForwardNameHook();
     protected abstract String getSpecialReviewForwardNameHook();
@@ -754,6 +755,37 @@ public abstract class ProtocolActionBase extends KcTransactionalDocumentActionBa
     
     
     
+    public ActionForward protocolHistory(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception  {
+        // for protocol lookup copy link - rice 1.1 need this
+        ProtocolFormBase protocolForm = (ProtocolFormBase) form;
+        String command = request.getParameter("command");
+        if (KewApiConstants.DOCSEARCH_COMMAND.equals(command)) {
+            String docIdRequestParameter = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
+            Document retrievedDocument = KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(docIdRequestParameter);
+            protocolForm.setDocument(retrievedDocument);
+            request.setAttribute(KRADConstants.PARAMETER_DOC_ID, docIdRequestParameter);        
+       }
+       // make sure current submission is displayed when navigate to action page.
+       protocolForm.getActionHelper().setCurrentSubmissionNumber(-1);
+       protocolForm.getActionHelper().prepareView();
+       protocolForm.getActionHelper().prepareCommentsView();
+ 
+       
+       //When a user selects the Questionnaires tab, empty answerHeaders are generated and saved to the database so that subsequent methods relying
+       //on that persisted data have it available to render panels.  Make Protocol Actions tab work in this same manner so it's sub-tab 
+       //Print ==> Questionnaires will render when a user enters a protocol but does not select the Questionnaire tab to answer the questions.
+       protocolForm.getQuestionnaireHelper().prepareView();
+       protocolForm.getQuestionnaireHelper().populateAnswers();
+       protocolForm.getQuestionnaireHelper().setQuestionnaireActiveStatuses();
+       Document document = protocolForm.getDocument();
+       List<AnswerHeader> answerHeaders = protocolForm.getQuestionnaireHelper().getAnswerHeaders();       
+       if (applyRules(new SaveQuestionnaireAnswerEvent(document, answerHeaders)) && applyRules(new SaveProtocolQuestionnaireEvent(document, answerHeaders)) ) {
+           protocolForm.getQuestionnaireHelper().preSave();
+           getBusinessObjectService().save(answerHeaders);
+       }
+  
+       return branchToPanelOrNotificationEditor(mapping, protocolForm, getProtocolHistoryForwardNameHook());
+    }
     
     
     

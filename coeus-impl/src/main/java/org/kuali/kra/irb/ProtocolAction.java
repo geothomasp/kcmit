@@ -79,6 +79,7 @@ public abstract class ProtocolAction extends ProtocolActionBase {
     public static final String PROTOCOL_PERSONNEL_HOOK = "personnel";
     public static final String PROTOCOL_SPECIAL_REVIEW_HOOK = "specialReview";
     public static final String PROTOCOL_NOTE_ATTACHMENT_HOOK = "noteAndAttachment";
+    public static final String PROTOCOL_HISTORY_HOOK = "protocolHistory";
     public static final String PROTOCOL_ACTIONS_HOOK = "protocolActions";
     public static final String PROTOCOL_ONLINE_REVIEW_HOOK = Constants.MAPPING_PROTOCOL_ONLINE_REVIEW;
     public static final String PROTOCOL_PERMISSIONS_HOOK = "permissions";
@@ -161,6 +162,9 @@ public abstract class ProtocolAction extends ProtocolActionBase {
         
         if (Constants.MAPPING_PROTOCOL_ACTIONS.equals(command)) {
             forward = protocolActions(mapping, protocolForm, request, response);
+        }
+        if (Constants.MAPPING_PROTOCOL_HISTORY.equals(command)) {
+            forward = protocolHistory(mapping, protocolForm, request, response);
         }
         if (Constants.MAPPING_PROTOCOL_ONLINE_REVIEW.equals(command)) {
             forward = onlineReview(mapping, protocolForm, request, response);
@@ -321,6 +325,11 @@ public abstract class ProtocolAction extends ProtocolActionBase {
         return PROTOCOL_ACTIONS_HOOK;
     }
 
+    @Override
+    protected String getProtocolHistoryForwardNameHook() {
+        return PROTOCOL_HISTORY_HOOK;
+    }
+    
     @Override
     protected String getProtocolOnlineReviewForwardNameHook() {
         return PROTOCOL_ONLINE_REVIEW_HOOK;
