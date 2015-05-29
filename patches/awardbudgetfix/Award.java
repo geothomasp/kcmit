@@ -3507,15 +3507,23 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 		return getAwardDocument().getNextBudgetVersionNumber();
 	}
 
+	public List<AwardBudgetExt> getAllAwardBudgets() {
+		if (allAwardBudgets == null || allAwardBudgets.isEmpty()) {
+			allAwardBudgets = KcServiceLocator.getService(AwardBudgetService.class).getAllBudgetsForAward(this);
+		}
+		return allAwardBudgets;
+	}
+
+	public void setAllAwardBudgets(List<AwardBudgetExt> budgets) {
+		this.allAwardBudgets = budgets;
+	}
+	
 	public List<AwardBudgetExt> getBudgets() {
+
 		if (budgets == null || budgets.isEmpty()) {
 			budgets = KcServiceLocator.getService(AwardBudgetService.class).getAllBudgetsForAward(this);
 		}
 		return budgets;
-	}
-
-	public void setBudgets(List<AwardBudgetExt> budgets) {
-		this.budgets = budgets;
 	}
 
 	public List<AwardBudgetExt> getCurrentVersionBudgets() {
@@ -3524,6 +3532,10 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 
 	public void setCurrentVersionBudgets(List<AwardBudgetExt> budgets) {
 		this.currentVersionBudgets = budgets;
+	}
+	
+	public void setBudgets(List<AwardBudgetExt> budgets) {
+		this.budgets = budgets;
 	}
 	/*
 	 * This method will return true when the Active award is editing

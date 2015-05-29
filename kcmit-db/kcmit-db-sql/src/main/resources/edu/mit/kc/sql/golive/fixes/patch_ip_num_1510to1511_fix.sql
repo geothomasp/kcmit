@@ -166,6 +166,10 @@ UPDATE WL_PROP_REVIEW_DETAILS t1 SET t1.proposal_number = ( select t2.new_propos
                                               where t2.old_proposal_number = t1.proposal_number)
 WHERE EXISTS (select t2.new_proposal_number from tmp_new_ip_generd_for_1510 t2 where t2.old_proposal_number = t1.proposal_number)
 /
+UPDATE IP_REVIEW t1 SET t1.proposal_number = ( select t2.new_proposal_number from tmp_new_ip_generd_for_1510 t2 
+                                              where t2.old_proposal_number = t1.proposal_number)
+WHERE EXISTS (select t2.new_proposal_number from tmp_new_ip_generd_for_1510 t2 where t2.old_proposal_number = t1.proposal_number)
+/
 
 ALTER TABLE PROPOSAL_UNIT_CREDIT_SPLIT ENABLE CONSTRAINT FK1_PROPOSAL_UNIT_CREDIT_SPLIT
 /
