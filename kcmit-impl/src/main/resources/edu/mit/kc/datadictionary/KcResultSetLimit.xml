@@ -7,7 +7,7 @@
    
 	<bean id="Award-lookupDefinition" parent="MIT-Award-lookupDefinition-parentBean" />
 	<bean id="MIT-Award-lookupDefinition-parentBean" parent="MIT2-Award-lookupDefinition-parentBean">
-		<property name="resultSetLimit" value="1000" />
+		<property name="resultSetLimit" value="1500" />
 	</bean>
 
 	<bean id="AwardReportTerm-lookupDefinition" parent="MIT-AwardReportTerm-lookupDefinition-parentBean" />
