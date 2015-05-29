@@ -19,21 +19,14 @@ package edu.mit.kc.citizenship;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.util.List;
-
-import edu.mit.kc.wh.WareHousePerson;
-import gov.grants.apply.forms.phs398CareerDevelopmentAwardSup11V11.CitizenshipDataType;
-import gov.grants.apply.forms.phs398CareerDevelopmentAwardSup11V11.CitizenshipDataType.Enum;
-
-import org.kuali.coeus.common.api.person.attr.CitizenshipTypeContract;
 import org.kuali.coeus.propdev.api.person.ProposalPersonContract;
 import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipType;
-//import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipType;
 import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipTypeServiceImpl;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
-import org.kuali.rice.core.api.criteria.PredicateFactory;
-import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.krad.data.DataObjectService;
+
+import edu.mit.kc.wh.WareHousePerson;
+//import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipType;
 
 
 /**
