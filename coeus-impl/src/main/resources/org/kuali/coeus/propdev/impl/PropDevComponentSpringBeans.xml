@@ -435,7 +435,7 @@
         </property>
     </bean>
 
-    <bean id="citizenshipTypeService" class="edu.mit.kc.citizenship.KcMitCitizenshipTypeServiceImpl" scope="prototype">
+    <bean id="kcMitCitizenshipTypeService" class="edu.mit.kc.citizenship.KcMitCitizenshipTypeServiceImpl" scope="prototype">
     </bean>
 
 </beans>

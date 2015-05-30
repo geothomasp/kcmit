@@ -19,14 +19,12 @@ package edu.mit.kc.citizenship;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.kuali.coeus.propdev.api.person.ProposalPersonContract;
-import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipType;
-import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipTypeServiceImpl;
+
+import org.kuali.coeus.s2sgen.impl.citizenship.KcMitCitizenshipTypeService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.krad.data.DataObjectService;
 
 import edu.mit.kc.wh.WareHousePerson;
-//import org.kuali.coeus.s2sgen.impl.citizenship.CitizenshipType;
 
 
 /**
@@ -42,73 +40,18 @@ import edu.mit.kc.wh.WareHousePerson;
  * getEnumValueOfCitizenshipType has been included as a convenience method should it be needed.
  */
 
-public class KcMitCitizenshipTypeServiceImpl extends CitizenshipTypeServiceImpl {
-    
-     
-    @Override
-    public CitizenshipType getCitizenshipDataFromExternalSource(ProposalPersonContract proposalPerson) {
-    	CitizenshipType citizenship = null;
-    	CitizenshipType citizenshipWH = getCitizenShipFromWH(proposalPerson); //FN_GET_CITIZENSHIP_INFO(ls_person_id);
-    	CitizenshipType citizenshipTypeApp = getCitizenShipForRolodex(proposalPerson);//fn_get_citizen_for_rolo(ls_person_id,as_proposal_number);
-    	if(citizenshipWH==null){
-    		citizenship = citizenshipTypeApp;
-    	}else if(citizenshipWH.equals("Non-U.S. Citizen with temporary visa") && 
-    			citizenshipTypeApp.getCitizenShip().equals("Permanent Resident of U.S. Pending")){
-    		citizenship = CitizenshipType.PERMANENT_RESIDENT_OF_US_PENDING;
-    	}else{
-    		citizenship = citizenshipWH;
-    	}
-    	return citizenship;
-	}
+public class KcMitCitizenshipTypeServiceImpl implements KcMitCitizenshipTypeService {
 
-	private CitizenshipType getCitizenShipForRolodex(
-			ProposalPersonContract proposalPerson) {
-		CitizenshipType citizenship = null;
-		String visType = proposalPerson.getVisaType();
-		char visaChar = visType.charAt(0);
-		switch(visaChar){
-		case 'C':
-			citizenship=CitizenshipType.US_CITIZEN_OR_NONCITIZEN_NATIONAL;
-			break;
-		case 'N':
-			citizenship=CitizenshipType.PERMANENT_RESIDENT_OF_US;
-			break;
-		case 'A':
-			citizenship=CitizenshipType.NON_US_CITIZEN_WITH_TEMPORARY_VISA;
-			break;
-		case 'P':
-			citizenship=CitizenshipType.PERMANENT_RESIDENT_OF_US_PENDING;
-			break;
-		}
-		return citizenship;
-	}
-
-	private CitizenshipType getCitizenShipFromWH(ProposalPersonContract proposalPerson) {
-		CitizenshipType citizenship = null;
-		String visType = findVisaTypeFromWarehouse(proposalPerson);
-		char visaChar = visType!=null?visType.charAt(0):'N';
-		switch(visaChar){
-		case 'C':
-			citizenship=CitizenshipType.US_CITIZEN_OR_NONCITIZEN_NATIONAL;
-			break;
-		case 'N':
-			citizenship=CitizenshipType.PERMANENT_RESIDENT_OF_US;
-			break;
-		case 'A':
-			citizenship=CitizenshipType.NON_US_CITIZEN_WITH_TEMPORARY_VISA;
-			break;
-		}
-		return citizenship;
-	}
-
-	private String findVisaTypeFromWarehouse(
-			ProposalPersonContract proposalPerson) {
+	public String findVisaTypeFromWarehouse(
+			String proposalPersonId) {
 		String visaType = null;
-		WareHousePerson wareHousePersons = KcServiceLocator.getService(DataObjectService.class).find(WareHousePerson.class, proposalPerson.getPersonId());
+		WareHousePerson wareHousePersons = KcServiceLocator.getService(DataObjectService.class).find(WareHousePerson.class, proposalPersonId);
 		if(wareHousePersons!=null){
 			visaType = wareHousePersons.getResidencyStatusCode();
 		}
 		return visaType;
 	}
+
+	
 
 }
