@@ -75,7 +75,7 @@
     </bean>
 
     <bean id="Dashboard-Page" parent="Uif-Page" p:headerText="Dashboard">
-        <!-- <property name="header.rightGroup">
+         <property name="header.rightGroup">
           <bean parent="Uif-HeaderRightGroup">
             <property name="items">
               <list>
@@ -90,7 +90,7 @@
               </list>
             </property>
           </bean>
-        </property> -->
+        </property> 
         <property name="items">
             <list>
                 <ref bean="Dashboard-Top"/>
@@ -105,7 +105,7 @@
                 <bean parent="Uif-VerticalBoxSection" p:headerText="Expenditures Volume" p:colSpan="6">
                     <property name="items">
                         <list>
-                            <bean id="Dashboard-ExpendituresGraph" p:style="height:250px; width:100%;" p:onDocumentReadyScript="setupGraph(@{#form.expenditureDataAsJSON});"
+                            <bean id="Dashboard-ExpendituresGraph" p:render="@{#ViewHelper.showDashBoardGraph(dashboardPerson.personId)}" p:style="height:250px; width:100%;" p:onDocumentReadyScript="setupGraph(@{#form.expenditureDataAsJSON});"
                                   p:additionalCssClasses="dashboard-graph" parent="Uif-Div"/>
                         </list>
                     </property>
