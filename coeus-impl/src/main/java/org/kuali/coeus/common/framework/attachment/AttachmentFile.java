@@ -18,14 +18,12 @@
  */
 package org.kuali.coeus.common.framework.attachment;
 
+import org.apache.struts.upload.FormFile;
+import org.kuali.coeus.sys.api.model.KcFile;
+import org.kuali.coeus.common.framework.version.sequence.associate.SeparateAssociate;
+
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.apache.struts.upload.FormFile;
-import org.kuali.coeus.common.framework.version.sequence.associate.SeparateAssociate;
-import org.kuali.coeus.sys.api.model.KcFile;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
-import org.kuali.kra.protocol.ProtocolAttachmentDao;
 
 /**
  * Represents a Attachment File.
@@ -150,38 +148,13 @@ public class AttachmentFile extends SeparateAssociate implements KcFile {
         this.type = type;
     }
 
-    private static ProtocolAttachmentDao attachmentDao;
-    
+    /**
+     * Gets the Protocol Attachment File data.
+     * @return the Protocol Attachment File data
+     */
     public byte[] getData() {
-    	if(data != null) {
-    		return data;
-    	}
-    	return getProtocolAttachmentDao().getAttachmentData(id);
+        return (this.data == null) ? null : this.data.clone();
     }
-
-    @Override 
-    protected void postPersist() {
-    	if(data != null) {
-	    	getProtocolAttachmentDao().saveAttachmentData(id, data);
-	    	data = null;
-    	}
-    }
-    
-    @Override 
-    protected void postUpdate() {
-    	if(data != null) {
-	    	getProtocolAttachmentDao().saveAttachmentData(id, data);
-	    	data = null;
-    	}
-    }
-    
-    private static ProtocolAttachmentDao getProtocolAttachmentDao() {
-    	if(attachmentDao == null) {
-    		attachmentDao = KcServiceLocator.getService(ProtocolAttachmentDao.class);
-    	}
-    	return attachmentDao;
-    }
-    /** End IU Customization */
 
     /**
      * Sets the Protocol Attachment File data.
@@ -195,7 +168,7 @@ public class AttachmentFile extends SeparateAssociate implements KcFile {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Arrays.hashCode(new byte[] {});
+        result = prime * result + Arrays.hashCode(this.getData());
         result = prime * result + ((this.getName() == null) ? 0 : this.getName().hashCode());
         result = prime * result + ((this.getType() == null) ? 0 : this.getType().hashCode());
         return result;

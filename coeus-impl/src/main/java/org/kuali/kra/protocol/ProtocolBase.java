@@ -1249,10 +1249,9 @@ public abstract class ProtocolBase extends KcPersistableBusinessObjectBase imple
             attachment.setSequenceNumber(this.getSequenceNumber());
             attachment.setProtocolId(this.getProtocolId());
             attachment.setId(null);
-            /** Shouldn't need to do this-- don't want to create new copies of AttachmentFiles */
-     	 	// if (attachment.getFile() != null ) { 
-     	 	//     attachment.getFile().setId(null);
-     	 	// }
+            if (attachment.getFile() != null ) { 
+                attachment.getFile().setId(null);
+            }
             if (attachment.isDraft()) {
                 attachment.setDocumentStatusCode(ProtocolAttachmentStatusBase.FINALIZED);
                 attachmentProtocols.add(attachment);
@@ -1472,7 +1471,7 @@ public abstract class ProtocolBase extends KcPersistableBusinessObjectBase imple
                 attachmentSummary.setFileName(attachment.getFile().getName());
                 attachmentSummary.setAttachmentType("Protocol: " + attachment.getType().getDescription());
                 attachmentSummary.setDescription(attachment.getDescription());
-                // attachmentSummary.setDataLength(attachment.getFile().getData() == null ? 0 : attachment.getFile().getData().length);
+                attachmentSummary.setDataLength(attachment.getFile().getData() == null ? 0 : attachment.getFile().getData().length);
                 attachmentSummary.setUpdateTimestamp(attachment.getUpdateTimestamp());
                 attachmentSummary.setUpdateUser(attachment.getUpdateUser());
                 protocolSummary.add(attachmentSummary);
@@ -1486,7 +1485,7 @@ public abstract class ProtocolBase extends KcPersistableBusinessObjectBase imple
                 attachmentSummary.setFileName(attachment.getFile().getName());
                 attachmentSummary.setAttachmentType(person.getPersonName() + ": " + attachment.getType().getDescription());
                 attachmentSummary.setDescription(attachment.getDescription());
-                // attachmentSummary.setDataLength(attachment.getFile().getData() == null ? 0 : attachment.getFile().getData().length);
+                attachmentSummary.setDataLength(attachment.getFile().getData() == null ? 0 : attachment.getFile().getData().length);
                 attachmentSummary.setUpdateTimestamp(attachment.getUpdateTimestamp());
                 attachmentSummary.setUpdateUser(attachment.getUpdateUser());                
                 protocolSummary.add(attachmentSummary);
