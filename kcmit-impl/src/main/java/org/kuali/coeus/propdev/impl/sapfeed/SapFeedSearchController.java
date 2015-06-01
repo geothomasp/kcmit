@@ -216,7 +216,7 @@ public class SapFeedSearchController {
 	    	performSearch(form);
 	        return getNavigationControllerService().navigate(form);
 		}else {
-        	getGlobalVariableService().getMessageMap().putError(SAP_FEED_SEARCH_PAGE_ID, SAP_FEED_ACTION_ALLOWED_ERROR_KEY, new String[]{"Reject", "Fed or Error"});
+        	getGlobalVariableService().getMessageMap().putError(SAP_FEED_SEARCH_PAGE_ID, SAP_FEED_ACTION_ALLOWED_ERROR_KEY, new String[]{"Reject", "Fed"});
 		}
         return getRefreshControllerService().refresh(form);
     }
