@@ -15,6 +15,9 @@ import org.kuali.coeus.propdev.impl.docperm.ProposalUserRoles;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.rice.core.api.criteria.OrderByField;
+import org.kuali.rice.core.api.criteria.OrderDirection;
+import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -36,6 +39,7 @@ import org.w3c.dom.Document;
 
 import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
 import edu.mit.kc.workloadbalancing.bo.WlPropAggregatorComplexity;
+import edu.mit.kc.workloadbalancing.bo.WlPropReviewComments;
 import edu.mit.kc.workloadbalancing.peopleflow.WorkLoadService;
 
 import java.io.ByteArrayInputStream;
@@ -61,11 +65,25 @@ public class KcPeopleFlowRequestGeneratorImpl extends PeopleFlowRequestGenerator
 	protected void generateRequestForMember(Context context, PeopleFlowMember member) {
         String peopleflowName =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "OSP_PEOPLE_FLOW_NAME");
 		String enabledWlRouting =  KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "ENABLE_WL_ROUTING");  
-		 
+		String personId = null;
     	if(peopleflowName !=null && context.getPeopleFlow().getName().equalsIgnoreCase(peopleflowName)){
             String docContent = context.getRouteContext().getDocument().getDocContent();
             String proposalNumber = getElementValue(docContent, "//proposalNumber");
-    		String personId =  KcServiceLocator.getService(WorkLoadService.class).getNextRoutingOSP(proposalNumber);
+                   
+            QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            predicates.add(PredicateFactory.equal("proposalNUmber", proposalNumber));
+            predicates.add(PredicateFactory.equal("cannedReviwCommentCode", "999"));
+        	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+            builder.setOrderByFields(OrderByField.Builder.create("updateTimestamp", OrderDirection.DESCENDING).build());
+            List<WlPropReviewComments> wlPropReviewCommentsList = KcServiceLocator.getService(DataObjectService.class).findMatching(WlPropReviewComments.class, builder.build()).getResults();
+              
+            if(wlPropReviewCommentsList!=null && !wlPropReviewCommentsList.isEmpty()){
+            	WlPropReviewComments wlPropReviewComments = wlPropReviewCommentsList.get(0);
+            	personId = wlPropReviewComments.getPersonId();
+            }else{            
+            	personId =  KcServiceLocator.getService(WorkLoadService.class).getNextRoutingOSP(proposalNumber);
+            }
     		KcPerson orginalApprover = null;
     		 List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
 					 (PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
