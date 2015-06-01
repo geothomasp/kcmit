@@ -59,7 +59,7 @@
 	    <property name="forceUppercase" value="false" />
 	    <property name="label" value="File Name" />
 	    <property name="shortLabel" value="File Name" />
-	    <property name="maxLength" value="150" />
+	    <property name="maxLength" value="500" />
 	    
 	    <property name="validationPattern" >
       		<bean p:allowWhitespace="true" parent="AnyCharacterValidationPattern" />
