@@ -174,7 +174,7 @@
                     </td>
 
                     <#list row.wlflexibilityList as cell>
-                        <td id="wl-balance-vertical">
+                        <td class="wl-balance-vertical">
                             <#if cell.flexibility?? >
                                 ${cell.flexibility}
                               </#if>

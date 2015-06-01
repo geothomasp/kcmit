@@ -25,6 +25,7 @@
                 <value>rice-contrib/multiselect.js</value>
                 <value>scripts/propdev/core.js</value>
                 <value>scripts/common/dialog.js</value>
+                <value>scripts/workloadbalancing/workloadBalancing.js</value>
             </list>
         </property>
         <property name="additionalCssFiles">
@@ -36,6 +37,7 @@
 
             </list>
         </property>
+        <property name="onDocumentReadyScript" value="setupColumnHover();"/>
         <property name="header">
             <null/>
         </property>
