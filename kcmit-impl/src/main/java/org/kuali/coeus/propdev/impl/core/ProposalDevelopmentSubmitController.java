@@ -280,6 +280,7 @@ public class ProposalDevelopmentSubmitController extends
         ((ProposalDevelopmentViewHelperServiceImpl) form.getViewHelperService()).prepareSummaryPage(form);
         ModelAndView modelView = super.navigate(form,result,request,response);
         getProposalQuestionnaireValidationService().executeProposalQuestionnaireValidation(form.getDevelopmentProposal());
+        getSharedDocumentService().processDevelopmentProposalAttachments(form.getDevelopmentProposal());
        return modelView;
      }
 
