@@ -58,9 +58,9 @@ public class ProtocolOnlineReviewServiceImpl extends ProtocolOnlineReviewService
                             ProtocolSubmissionType.NOTIFY_IRB.equalsIgnoreCase(submission.getProtocolSubmissionType().getSubmissionTypeCode())); 
                 isReviewable &= (StringUtils.equals(submission.getSubmissionStatusCode(), ProtocolSubmissionStatus.SUBMITTED_TO_COMMITTEE) 
                         || StringUtils.equals(submission.getSubmissionStatusCode(), ProtocolSubmissionStatus.IN_AGENDA));
-                ProtocolDocument protocolDocument = (ProtocolDocument) documentService.getByDocumentHeaderId(protocol.getProtocolDocument().getDocumentNumber());
+                ProtocolDocument protocolDocument = (ProtocolDocument)protocol.getProtocolDocument(); //(ProtocolDocument) documentService.getByDocumentHeaderId(protocol.getProtocolDocument().getDocumentNumber());
                 isReviewable &= getKraWorkflowService().isCurrentNode(protocolDocument, Constants.PROTOCOL_IRBREVIEW_ROUTE_NODE_NAME);
-            } catch (WorkflowException e) {
+            } catch (Exception e) {
                 String errorString = String.format("WorkflowException checking route node for creating new ProtocolOnlineReviewDocument " +
                 		"for protocol %s", submission.getProtocolNumber());
                 LOG.error(errorString, e);
