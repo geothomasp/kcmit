@@ -18,6 +18,8 @@ ret 							number;
 li_inserted                     PLS_INTEGER := 0;
 li_count 						NUMBER;
 ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
+ls_auth_total					sap_feed.auth_total%type;
+
 	CURSOR c_sap_bud_det IS
 		SELECT	t1.budget_id,
 		t2.account_number,
@@ -215,7 +217,79 @@ begin
 			end loop;
 			close c_award_budget;
 			
+		--- cost sharing in the budget feed START
 	
+					--- checking if there is any cost sharing account in master feed batch id
+					SELECT count(t1.feed_id) into li_count
+					from sap_feed t1
+					inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
+					where t1.batch_id = as_batch_id
+					and t2.award_number = r_sap_bud_det.award_number
+					and t1.spon_code = '009906';
+					
+					if li_count > 0 then 
+						-- if present then checks if it is already added for the award
+						SELECT count(t1.cost_element) into li_count
+						from sap_budget_feed t1
+						inner join sap_budget_feed_details t2 on t1.sap_budget_feed_details_id = t2.sap_budget_feed_details_id
+						where t2.batch_id = as_batch_id
+						and t2.award_number = r_sap_bud_det.award_number
+						and t1.account_number = '009906';
+					
+						if li_count = 0 then
+						
+							-- fetching the  authorized total 
+							begin
+								SELECT t1.auth_total into ls_auth_total
+								from sap_feed t1
+								inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
+								where t1.batch_id = as_batch_id
+								and t2.award_number = r_sap_bud_det.award_number
+								and t1.spon_code = '009906';
+							exception
+							when others then	
+								ls_auth_total := '0';
+							end;	
+																	
+							if to_number(ls_auth_total) >= 0 then
+									ls_amount := '+'||LPAD( ( to_number(ls_auth_total) * 100 ), 9, '0');
+							else
+									ls_amount := '-'||LPAD(ABS( ( to_number(ls_auth_total) * 100 )), 9, '0');
+							end if;
+							
+							INSERT INTO SAP_BUDGET_FEED(
+										SAP_BUDGET_FEED_ID,
+										SAP_BUDGET_FEED_DETAILS_ID,
+										SAP_BUDGET_FEED_BATCH_ID,
+										BATCH_ID,
+										FISCAL_YEAR,
+										ACCOUNT_NUMBER,
+										COST_ELEMENT,
+										AMOUNT,
+										VER_NBR,
+										OBJ_ID
+										)
+							VALUES(  SEQ_SAP_BUDGET_FEED_ID.NEXTVAL,
+									 li_sap_budget_feed_details_id,
+									 li_sap_budget_feed_batch_id,
+									 as_batch_id,
+									 ls_sap_feed_fiscal_year,
+									 '009906',
+									 '400000',						 
+									 ls_amount,
+									 1,
+									 sys_guid()
+								  );
+								  
+							li_no_of_records := li_no_of_records + 1; 
+						
+						end if;		
+					
+					
+					
+					end if;	
+	
+		--- cost sharing in the budget feed START
 	
 	end loop;
 	close c_sap_bud_det;
