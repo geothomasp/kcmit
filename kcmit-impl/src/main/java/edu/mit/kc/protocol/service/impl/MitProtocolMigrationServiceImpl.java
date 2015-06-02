@@ -41,7 +41,7 @@ public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationServ
 	public void createDocumentForMigratedProtocol(ProtocolBase protocol) throws Exception {
 		ProtocolDocument protocolDocument = (ProtocolDocument)protocol.getProtocolDocument();
 		boolean finalDocument = protocolDocument.getDocumentHeader().getWorkflowDocument().isFinal();
-		if(!finalDocument) {
+		if(!finalDocument && isNewDocumentRequired(protocol)) {
 	    	String documentNumber = protocol.getProtocolDocument().getDocumentNumber();
 	    	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class);
 	        newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol");
@@ -53,6 +53,16 @@ public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationServ
 		}
 	}
 
+	protected boolean isNewDocumentRequired(ProtocolBase protocol) {
+	    if(protocol.getProtocolStatusCode().equals(ProtocolStatus.SUBMITTED_TO_IRB) ||
+	    	protocol.getProtocolStatusCode().equals(ProtocolStatus.IN_PROGRESS) ||
+	    	protocol.getProtocolStatusCode().equals(ProtocolStatus.AMENDMENT_IN_PROGRESS) ||
+	    	protocol.getProtocolStatusCode().equals(ProtocolStatus.RENEWAL_IN_PROGRESS)) {
+	    	return true;
+	    }
+		return false;
+	}
+	
 	protected void associateDocumentNextvalues(String oldDocNum, ProtocolDocument newDoc) { 
 	   	Map<String, String> query = new HashMap<String, String>(); 
 	   	query.put("documentKey", oldDocNum); 
@@ -67,7 +77,7 @@ public class MitProtocolMigrationServiceImpl implements MitProtocolMigrationServ
 	public boolean createDocumentForMigratedProtocolAndRoute(ActionMapping mapping, HttpServletRequest request, HttpServletResponse response, ProtocolForm protocolForm, String docIdRequestParameter) throws Exception { 
 		ProtocolDocument protocolDocument = protocolForm.getProtocolDocument();
 		boolean finalDocument = protocolDocument.getDocumentHeader().getWorkflowDocument().isFinal();
-		if(!finalDocument) {
+		if(!finalDocument && isNewDocumentRequired(protocolDocument.getProtocol())) {
 			long protocolId = protocolForm.getProtocolDocument().getProtocol().getProtocolId();
 		   	ProtocolDocument newDoc = (ProtocolDocument) KRADServiceLocatorWeb.getDocumentService().getNewDocument(ProtocolDocument.class); 
 		       newDoc.getDocumentHeader().setDocumentDescription("Migrated Protocol"); 
