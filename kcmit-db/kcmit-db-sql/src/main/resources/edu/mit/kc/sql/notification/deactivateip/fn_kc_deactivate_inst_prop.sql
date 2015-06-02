@@ -30,18 +30,18 @@ BEGIN
     --Calculate the Fiscal month's proposal to deactivate based on current calendar month
     case li_CalMonth
     
-    when 1 then li_FYMonth := 6;
-    when 2 then li_FYMonth := 7;
-    when 3 then li_FYMonth := 8;
-    when 4 then li_FYMonth := 9;
-    when 5 then li_FYMonth := 10;
-    when 6 then li_FYMonth := 11;
-    when 7 then li_FYMonth := 12;
-    when 8 then li_FYMonth := 1;
-    when 9 then li_FYMonth := 2;
-    when 10 then li_FYMonth := 3;
-    when 11 then li_FYMonth := 4;
-    when 12 then li_FYMonth := 5;
+    when 1 then li_FYMonth := 7;
+    when 2 then li_FYMonth := 8;
+    when 3 then li_FYMonth := 9;
+    when 4 then li_FYMonth := 10;
+    when 5 then li_FYMonth := 11;
+    when 6 then li_FYMonth := 12;
+    when 7 then li_FYMonth := 1;
+    when 8 then li_FYMonth := 2;
+    when 9 then li_FYMonth := 3;
+    when 10 then li_FYMonth := 4;
+    when 11 then li_FYMonth := 5;
+    when 12 then li_FYMonth := 6;
     
     end case;
     
