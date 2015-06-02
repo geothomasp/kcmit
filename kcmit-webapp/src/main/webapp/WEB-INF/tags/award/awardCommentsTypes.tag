@@ -56,10 +56,12 @@
         	    <td><c:choose>
 						<c:when test="${!readOnly}">
 							<div align="center">
+								<c:if test="${KualiForm.syncMode}">
 								<html:image
 									property="methodToCall.syncComment.awardCommentIdx${commentIndex}.anchor${currentTabIndex}"
 									src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif'
 									alt="sync" styleClass="tinybutton" />
+								</c:if>	
 							</div>
 						</c:when>
 						<c:otherwise>
