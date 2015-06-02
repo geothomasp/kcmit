@@ -208,3 +208,10 @@ update eps_proposal p
 update award_budget_ext a set award_budget_status_code = '14' where budget_id in ('148673','148674','148675','148676','146054')
 
 update wl_current_load a set complexity= (select fn_get_complexity(a.proposal_number) from dual) where complexity is null
+
+Insert into KRCR_PARM_T (NMSPC_CD,CMPNT_CD,PARM_NM,OBJ_ID,VER_NBR,PARM_TYP_CD,VAL,EVAL_OPRTR_CD,PARM_DESC_TXT,APPL_ID)
+values ('KC-PD','Document','PROPOSAL_TYPE_CODE_SUPPLEMENT',sys_guid(),1,'CONFG','4','A','Proposal Type:PreProposal','KUALI')
+/
+Insert into KRCR_PARM_T (NMSPC_CD,CMPNT_CD,PARM_NM,OBJ_ID,VER_NBR,PARM_TYP_CD,VAL,EVAL_OPRTR_CD,PARM_DESC_TXT,APPL_ID)
+values ('KC-S2S','All','PROPOSAL_TYPE_CODE_SUPPLEMENT',sys_guid(),1,'CONFG','@{#param("KC-PD", "Document", "PROPOSAL_TYPE_CODE_SUPPLEMENT")}','A','s2sCode corresponding to Proposal Type:Supplement','KUALI')
+/
