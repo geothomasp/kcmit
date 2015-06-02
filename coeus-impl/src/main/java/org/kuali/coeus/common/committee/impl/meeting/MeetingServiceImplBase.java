@@ -85,10 +85,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      * This method is to get the generated agenda for this committee schedule.
      */
     protected List<ScheduleAgendaBase> getAgenda(Long scheduleId) {
-        Map<String, Long> fieldValues = new HashMap<String, Long>();
-        fieldValues.put("scheduleIdFk", scheduleId);
-
-        return (List<ScheduleAgendaBase>) businessObjectService.findMatchingOrderBy(getScheduleAgendaBOClassHook(), fieldValues, "createTimestamp", true);
+        return (List<ScheduleAgendaBase>) businessObjectService.findMatchingOrderBy(getScheduleAgendaBOClassHook(), Collections.singletonMap("scheduleIdFk", scheduleId), "createTimestamp", true);
     }
 
     protected abstract Class<? extends ScheduleAgendaBase> getScheduleAgendaBOClassHook();
@@ -100,10 +97,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      * This method is get the meeting minute documents of the selected committee schedule
      */
     protected List<CommScheduleMinuteDocBase> getMinuteDoc(Long scheduleId) {
-        Map<String, Long> fieldValues = new HashMap<String, Long>();
-        fieldValues.put("scheduleIdFk", scheduleId);
-
-        return (List<CommScheduleMinuteDocBase>) businessObjectService.findMatchingOrderBy(getCommScheduleMinuteDocBOClassHook(), fieldValues, "createTimestamp", true);
+        return (List<CommScheduleMinuteDocBase>) businessObjectService.findMatchingOrderBy(getCommScheduleMinuteDocBOClassHook(), Collections.singletonMap("scheduleIdFk", scheduleId), "createTimestamp", true);
     }
     
     protected abstract Class<? extends CommScheduleMinuteDocBase> getCommScheduleMinuteDocBOClassHook();
@@ -115,16 +109,16 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      * to this committee schedule. ie, protocols that have been submitted to this committee schedule.
      */
     protected List<ProtocolCorrespondence> getCorrespondences(CS committeeSchedule) {
-        Map<String, Long> fieldValues = new HashMap<String, Long>();
-        List<Long> protocolIds = new ArrayList<Long>();
-        List<ProtocolCorrespondence> correspondences = new ArrayList<ProtocolCorrespondence>();
+        Map<String, Long> fieldValues = new HashMap<>();
+        List<Long> protocolIds = new ArrayList<>();
+        List<ProtocolCorrespondence> correspondences = new ArrayList<>();
         // TODO : check if want to use criteria/dao to get the list or use this loop
         for (ProtocolSubmissionBase submission : committeeSchedule.getLatestProtocolSubmissions()) {
             if (!protocolIds.contains(submission.getProtocolId())) {
                 protocolIds.add(submission.getProtocolId());
                 fieldValues.put("protocolId", submission.getProtocolId());
 
-                correspondences.addAll((List<? extends ProtocolCorrespondence>) businessObjectService.findMatching(getProtocolCorrespondenceBOClassHook(), fieldValues));
+                correspondences.addAll(businessObjectService.findMatching(getProtocolCorrespondenceBOClassHook(), fieldValues));
             }
         }
         return correspondences;
@@ -136,9 +130,9 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
     
     @Override
     public void saveMeetingDetails(CS committeeSchedule, List<? extends PersistableBusinessObject> deletedBos) {
-        committeeSchedule.setStartTime(addHrMinToDate(committeeSchedule.getStartTime(), committeeSchedule.getViewStartTime()));
-        committeeSchedule.setEndTime(addHrMinToDate(committeeSchedule.getEndTime(), committeeSchedule.getViewEndTime()));
-        committeeSchedule.setTime(addHrMinToDate(committeeSchedule.getTime(), committeeSchedule.getViewTime()));
+        committeeSchedule.setStartTime(addHrMinToDate(committeeSchedule.getViewStartTime()));
+        committeeSchedule.setEndTime(addHrMinToDate(committeeSchedule.getViewEndTime()));
+        committeeSchedule.setTime(addHrMinToDate(committeeSchedule.getViewTime()));
 
         if (!deletedBos.isEmpty()) {
             businessObjectService.delete(deletedBos);
@@ -154,7 +148,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
     @Override
     public String getStandardReviewComment(String protocolContingencyCode) {
         String description = null;
-        Map<String, String> queryMap = new HashMap<String, String>();
+        Map<String, String> queryMap = new HashMap<>();
         queryMap.put("protocolContingencyCode", protocolContingencyCode);
         ProtocolContingencyBase protocolContingency = businessObjectService.findByPrimaryKey(getProtocolContingencyBOClassHook(), queryMap);
         if (protocolContingency != null) {
@@ -168,7 +162,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
     /*
      * utility methods by adding minutes to date
      */
-    protected Timestamp addHrMinToDate(Timestamp time, Time12HrFmt viewTime) {
+    protected Timestamp addHrMinToDate(Time12HrFmt viewTime) {
         java.util.Date dt = new java.util.Date(0); // this is actually 12-31-1969 19:00.  its GMT time
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         try {
@@ -210,8 +204,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
     }
     
     protected Long getNextCommScheduleActItemId(Class boClass) {
-        Long nextCommScheduleActItemId = sequenceAccessorService.getNextAvailableSequenceNumber("SEQ_MEETING_ID", boClass);
-        return nextCommScheduleActItemId;
+        return sequenceAccessorService.getNextAvailableSequenceNumber("SEQ_MEETING_ID", boClass);
     }
 
     /*
@@ -423,9 +416,6 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      * This method is called when 'addOtherPresent'. It is to check if the selected person/rolodex is in member absent. if the
      * selected person/rolodex is in memberabsentbean list, then removed it from the membersentbean list; so this person will not be
      * displayed in member absent panel.
-     * 
-     * @param meetingHelper
-     * @param otherPresentBean
      */
     protected void memberHandling(MeetingHelperBase meetingHelper, OtherPresentBeanBase otherPresentBean) {
         MemberAbsentBean matchedMemberAbsentBean = null;
@@ -575,8 +565,8 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         for (CommitteeMembershipBase committeeMembership : commonCommitteeSchedule.getParentCommittee().getCommitteeMemberships()) {
             if ((StringUtils.isNotBlank(committeeMembership.getPersonId()) && committeeMembership.getPersonId()
                     .equals(alternateFor))
-                    || (StringUtils.isBlank(committeeMembership.getPersonId()) && committeeMembership.getRolodexId().equals(
-                            alternateFor))) {
+                    || (StringUtils.isBlank(committeeMembership.getPersonId()) && committeeMembership.getRolodexId().toString().equals(
+                    alternateFor))) {
                 personName = committeeMembership.getPersonName();
                 break;
             }
@@ -734,8 +724,8 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      */
     protected void populatePresentBean(MeetingHelperBase meetingHelper, List<CommitteeMembershipBase> committeeMemberships,
             CS commSchedule) {
-        meetingHelper.setOtherPresentBeans(new ArrayList<OtherPresentBeanBase>());
-        meetingHelper.setMemberPresentBeans(new ArrayList<MemberPresentBean>());
+        meetingHelper.setOtherPresentBeans(new ArrayList<>());
+        meetingHelper.setMemberPresentBeans(new ArrayList<>());
         for (CommitteeScheduleAttendanceBase committeeScheduleAttendance : commSchedule.getCommitteeScheduleAttendances()) {
             getRoleName(committeeScheduleAttendance, committeeMemberships, commSchedule.getScheduledDate());
             if (committeeScheduleAttendance.getGuestFlag()) {
@@ -763,8 +753,8 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      */
     protected void populateMemberAbsentBean(MeetingHelperBase meetingHelper, List<CommitteeMembershipBase> committeeMemberships,
             CS commSchedule) {
-        meetingHelper.setMemberAbsentBeans(new ArrayList<MemberAbsentBean>());
-        for (CommitteeMembershipBase committeeMembership : committeeMemberships) {
+        meetingHelper.setMemberAbsentBeans(new ArrayList<>());
+        committeeMemberships.forEach(committeeMembership -> {
             if (!isInMemberPresent(meetingHelper.getMemberPresentBeans(), committeeMembership)
                     && !isInOtherPresent(meetingHelper.getOtherPresentBeans(), committeeMembership)) {
                 MemberAbsentBean memberAbsentBean = new MemberAbsentBean();
@@ -797,7 +787,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
      */
     protected void initAttendance(List<MemberAbsentBean> memberAbsentBeans, CS commSchedule) {
         List<CommitteeMembershipBase> committeeMemberships = commSchedule.getParentCommittee().getCommitteeMemberships();
-        for (CommitteeMembershipBase committeeMembership : committeeMemberships) {
+        committeeMemberships.forEach(committeeMembership -> {
             if (isActiveMembership(committeeMembership, commSchedule.getScheduledDate())) {
 
                 CommitteeScheduleAttendanceBase committeeScheduleAttendance = getNewCommitteeScheduleAttendanceInstanceHook();
@@ -821,7 +811,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
                 memberAbsentBean.setAttendance(committeeScheduleAttendance);
                 memberAbsentBeans.add(memberAbsentBean);
             }
-        }
+        });
     }
 
     /*
@@ -869,7 +859,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
     private void refreshAndSaveSchedule(CS committeeSchedule) {
         // Since a refresh will wipe out all the newly added (unsaved) minutes from the schedule, we will
         // collect all newly added minutes in a separate collection and add them back after the refresh
-        List<CSM> preRefreshMinutes = new ArrayList<CSM>();
+        List<CSM> preRefreshMinutes = new ArrayList<>();
         // reset entryNumber in each entry because user may have changed ordering
         int nextEntry = 0;
         for (CSM minute:committeeSchedule.getCommitteeScheduleMinutes()) {
@@ -878,7 +868,7 @@ public abstract class MeetingServiceImplBase<CS extends CommitteeScheduleBase<CS
         }
 
         committeeSchedule.refreshReferenceObject(COMMITTEE_SCHEDULE_MINUTES_REF_ID);
-        List<CSM> newlyAddedMinutes = new ArrayList<CSM>();
+        List<CSM> newlyAddedMinutes = new ArrayList<>();
         for(CSM formMinute:preRefreshMinutes) {
             if(null == formMinute.getCommScheduleMinutesId()) {
                 newlyAddedMinutes.add(formMinute);
