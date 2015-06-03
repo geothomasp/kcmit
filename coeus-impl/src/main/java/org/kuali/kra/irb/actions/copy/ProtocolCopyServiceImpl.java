@@ -18,6 +18,8 @@
  */
 package org.kuali.kra.irb.actions.copy;
 
+import java.util.List;
+
 import org.kuali.kra.infrastructure.RoleConstants;
 import org.kuali.kra.irb.Protocol;
 import org.kuali.kra.irb.ProtocolDocument;
@@ -25,10 +27,12 @@ import org.kuali.kra.irb.actions.ProtocolAction;
 import org.kuali.kra.irb.actions.ProtocolActionType;
 import org.kuali.kra.irb.actions.submit.ProtocolSubmission;
 import org.kuali.kra.irb.protocol.ProtocolNumberService;
+import org.kuali.kra.irb.protocol.participant.ProtocolParticipant;
 import org.kuali.kra.protocol.ProtocolBase;
 import org.kuali.kra.protocol.actions.ProtocolActionBase;
 import org.kuali.kra.protocol.actions.copy.ProtocolCopyServiceImplBase;
 import org.kuali.kra.protocol.actions.submit.ProtocolSubmissionBase;
+import org.kuali.kra.protocol.specialreview.ProtocolSpecialReviewBase;
 
 /**
  * The Protocol Copy Service creates a new Protocol Document
@@ -110,4 +114,13 @@ public class ProtocolCopyServiceImpl extends ProtocolCopyServiceImplBase<Protoco
     public void setProtocolNumberService(ProtocolNumberService protocolNumberService) {
         this.protocolNumberService = protocolNumberService;
     }
+    
+    @SuppressWarnings("unchecked")
+    protected void copyProtocolLists(ProtocolDocument srcDoc, ProtocolDocument destDoc) {
+    	super.copyProtocolLists(srcDoc, destDoc);
+        Protocol srcProtocol = srcDoc.getProtocol();
+        Protocol destProtocol = destDoc.getProtocol();
+        destProtocol.setProtocolParticipants((List<ProtocolParticipant>) deepCopy(srcProtocol.getProtocolParticipants()));
+    }
+    
 }
