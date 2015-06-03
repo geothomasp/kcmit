@@ -24,6 +24,7 @@ package edu.mit.kc.citizenship;
 import org.kuali.coeus.common.api.person.attr.CitizenshipVisaTypeService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.krad.data.DataObjectService;
+import org.springframework.stereotype.Service;
 
 import edu.mit.kc.wh.WareHousePerson;
 
@@ -41,6 +42,7 @@ import edu.mit.kc.wh.WareHousePerson;
  * getEnumValueOfCitizenshipType has been included as a convenience method should it be needed.
  **/
 
+@Service("citizenshipTypeService")
 public class CitizenshipVisaTypeServiceImpl implements CitizenshipVisaTypeService {
 
 	public String findVisaTypeFromWarehouse(
