@@ -70,8 +70,8 @@ public abstract class ProtocolPersonTrainingServiceImplBase implements ProtocolP
             	 params.put("trainingCode", personTraining.getTrainingCode());
                  params.put("moduleCode", CoeusModule.IRB_MODULE_CODE);
             	 Collection<TrainingModules> tainingModules = getBusinessObjectService().findMatchingOrderBy(TrainingModules.class, params, "trainingModulesId", false);
-                if (tainingModules!=null && personTraining.getFollowupDate() == null ||
-                    getDateTimeService().getCurrentDate().before(personTraining.getFollowupDate())) {
+                if (!tainingModules.isEmpty() && (personTraining.getFollowupDate() == null ||
+                    getDateTimeService().getCurrentDate().compareTo(personTraining.getFollowupDate()) <= 0)) {
                     return true;
                 }
             }
