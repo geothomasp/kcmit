@@ -846,7 +846,8 @@ END IF;
 SELECT  count(AWARD_HIERARCHY.PARENT_AWARD_NUMBER)
 INTO  li_Count
    FROM AWARD_HIERARCHY
-   WHERE (AWARD_HIERARCHY.AWARD_NUMBER = gs_award_number ) ;
+   WHERE (AWARD_HIERARCHY.AWARD_NUMBER = gs_award_number ) 
+   AND ACTIVE = 'Y';
 
 IF li_Count = 0 THEN
 	raise parent_not_found;
@@ -860,7 +861,8 @@ END IF;
 SELECT  AWARD_HIERARCHY.PARENT_AWARD_NUMBER
 INTO gs_parent_award_number
    FROM AWARD_HIERARCHY
-   WHERE (AWARD_HIERARCHY.AWARD_NUMBER = gs_award_number ) ;
+   WHERE (AWARD_HIERARCHY.AWARD_NUMBER = gs_award_number )
+   AND ACTIVE = 'Y'   ;
 
 --IF Parent award_number = '000000-00000' then this award is a level 1 award.
 --ELSE get the parent award's account_number.
@@ -1131,7 +1133,8 @@ BEGIN
 	SELECT LTRIM(RTRIM(AWARD_PERSON_UNITS.UNIT_NUMBER))
 	INTO gs_unit_number
 	FROM AWARD_PERSON_UNITS
-	WHERE AWARD_PERSON_ID = v_award_person_id;
+	WHERE AWARD_PERSON_ID = v_award_person_id
+	AND LEAD_UNIT_FLAG = 'Y';
 	
 
 	/*
