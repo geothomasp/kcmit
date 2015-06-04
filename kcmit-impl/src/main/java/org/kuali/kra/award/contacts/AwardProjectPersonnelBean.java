@@ -90,11 +90,9 @@ public Collection<AwardPersonConfirm> getAwardPersonConfirmPrimary() {
     //use this for history population removal bo refer
   @SuppressWarnings("unchecked")
 public
-    Collection<AwardPersonRemove> getAwardPersonRemoval(
-			String awardId, String awardNumber) {
+    Collection<AwardPersonRemove> getAwardPersonRemoval(String awardNumber) {
 	  Collection<AwardPersonRemove> awardPersons =  new ArrayList<AwardPersonRemove>();
 	  Map<String, String> queryMap = new HashMap<String, String>();
-		queryMap.put("awardId", awardId);
 		queryMap.put("awardNumber", awardNumber);		
 		awardPersons = this.getBusinessObjectService().findMatching(AwardPersonRemove.class,queryMap);
 		queryMap.clear();

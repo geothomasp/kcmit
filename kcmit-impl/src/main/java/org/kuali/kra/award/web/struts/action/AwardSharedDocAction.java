@@ -385,9 +385,8 @@ public class AwardSharedDocAction extends AwardAction {
 	            throws Exception {   
 	    	Collection<AwardPersonRemove> awardPersonRemoves =  new ArrayList<AwardPersonRemove>();
 	    	SharedDocForm awardForm = (SharedDocForm)form;
-	    	if (awardForm.getAwardDocument().getAward().getAwardId() != null 
-	    			&& awardForm.getAwardDocument().getAward().getAwardNumber() != null) {
-	    		awardPersonRemoves =  getProjectPersonnelBean(form).getAwardPersonRemoval(awardForm.getAwardDocument().getAward().getAwardId().toString(),
+	    	if (awardForm.getAwardDocument().getAward().getAwardNumber() != null) {
+	    		awardPersonRemoves =  getProjectPersonnelBean(form).getAwardPersonRemoval(//awardForm.getAwardDocument().getAward().getAwardId().toString(),
 	    				awardForm.getAwardDocument().getAward().getAwardNumber());
 	    	}
 	    	if (!awardPersonRemoves.isEmpty()) {
