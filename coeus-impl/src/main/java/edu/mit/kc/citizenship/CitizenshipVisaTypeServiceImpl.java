@@ -42,7 +42,7 @@ import edu.mit.kc.wh.WareHousePerson;
  * getEnumValueOfCitizenshipType has been included as a convenience method should it be needed.
  **/
 
-@Service("citizenshipTypeService")
+@Service("citizenshipVisaTypeService")
 public class CitizenshipVisaTypeServiceImpl implements CitizenshipVisaTypeService {
 
 	public String findVisaTypeFromWarehouse(
