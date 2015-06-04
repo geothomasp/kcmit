@@ -34,7 +34,7 @@
         <avalon-framework.version>4.3.1</avalon-framework.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <cglib-nodep.version>3.1</cglib-nodep.version>
-        <coeus-api.version>6.0.0.1</coeus-api.version>
+        <coeus-api.version>1505.4-SNAPSHOT</coeus-api.version>
         <coeus-s2sgen.version>1505.2</coeus-s2sgen.version>
         <commons-beanutils.version>1.8.3-kuali-4</commons-beanutils.version>
         <commons-codec.version>1.9</commons-codec.version>
