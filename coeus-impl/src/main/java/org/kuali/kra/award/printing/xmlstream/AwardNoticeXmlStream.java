@@ -25,6 +25,7 @@ import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchy;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchyService;
+import org.kuali.kra.award.budget.AwardBudgetExt;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
 import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.home.Award;
@@ -236,9 +237,9 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	private AwardBudgetDetails getAwardBudgetDetails() {
 		AwardBudgetDetails awardBudgetDetails = AwardBudgetDetails.Factory.newInstance();
 		List<BudgetDetails> budgetDetailsList = new ArrayList<BudgetDetails>();
-		AwardBudgetDocument awardBudgetDocument = getBudgetDocument();
-		if (awardBudgetDocument != null) {
-			for (BudgetLineItem budgetLineItem : awardBudgetDocument.getBudget().getBudgetPeriod(0).getBudgetLineItems()) {
+		AwardBudgetExt budget  = getBudget();
+		if (budget != null) {
+			for (BudgetLineItem budgetLineItem : budget.getBudgetPeriod(0).getBudgetLineItems()) {
 				BudgetDetails budgetDetails = BudgetDetails.Factory.newInstance();
 				budgetDetails.setAwardNumber(award.getAwardNumber());
 				budgetDetails.setSequenceNumber(award.getSequenceNumber());
@@ -251,6 +252,9 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 		}
 		awardBudgetDetails.setBudgetDetailsArray(budgetDetailsList.toArray(new BudgetDetails[0]));
 		return awardBudgetDetails;
+	}
+	private AwardBudgetExt getBudget() {
+		return award.getCurrentVersionBudgets().isEmpty()?null:award.getCurrentVersionBudgets().get(0);
 	}
 
 	/*
