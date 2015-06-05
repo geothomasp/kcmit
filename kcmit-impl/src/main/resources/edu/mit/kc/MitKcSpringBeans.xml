@@ -122,7 +122,44 @@
 		class="edu.mit.kc.common.BackDoorLoginAuthorizationServiceImpl">
 		<property name="permissionService" ref="permissionService" />
 	</bean> 
-	  
+	     <bean id="budgetSummaryService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="budgetSummaryService" />
+    </bean>
+    
+       <bean id="kualiRuleService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="kualiRuleService" />
+    </bean>
+    
+    <bean id="budgetCalculationService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="budgetCalculationService" />
+    </bean>
+    
+    <bean id="budgetDistributionService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="budgetDistributionService" />
+    </bean>
+    
+    <bean id="kcDocumentRejectionService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="kcDocumentRejectionService" />
+    </bean>
+
+    <bean id="budgetRatesService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="budgetRatesService" />
+    </bean>
+    
+    <bean id="pessimisticLockService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="pessimisticLockService" />
+    </bean>  
+    
+    <bean id="fiscalYearMonthService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="fiscalYearMonthService" />
+    </bean>     
+    
+     <bean id="legacyDataAdapter" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="legacyDataAdapter" />
+     </bean>
+      <bean id="kcBusinessRulesEngine" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+        <property name="serviceName" value="kcBusinessRulesEngine" />
+    </bean>
 <!-- 	<bean id="mitPropNarrativeService" class="org.kuali.kra.proposaldevelopment.service.MitPropNarrativeServiceImpl">
 	</bean>
  -->	    
@@ -243,9 +280,9 @@
         <property name="serviceName" value="parameterService" />
     </bean>
 	
-	<bean id="awardBudgetService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+	<!-- <bean id="awardBudgetService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="awardBudgetService" />
-    </bean>
+    </bean> -->
 	<bean id="institutionalProposalService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="institutionalProposalService" />
     </bean>
@@ -460,4 +497,19 @@
 		<property name="dataObjectService" ref="dataObjectService" />
 		<property name="awardService" ref="awardService" />
 	</bean>  
+	<bean id="awardBudgetService"  class="edu.mit.kc.award.budget.MitKcAwardBudgetServiceImpl">
+     <property name="parameterService" ref="parameterService" />
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="documentService" ref="documentService" />
+        <property name="budgetSummaryService" ref="budgetSummaryService" />
+        <property name="budgetCalculationService" ref="budgetCalculationService" />
+        <property name="awardBudgetCalculationService" ref="awardBudgetCalculationService" />
+        <property name="versionHistoryService" ref="versionHistoryService" />
+        <property name="awardService" ref="awardService" />
+    </bean>
+    
+     <bean id="awardBudgetCalculationService" class="org.kuali.kra.award.budget.calculator.AwardBudgetCalculationServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="budgetDistributionService" ref="budgetDistributionService" />
+    </bean>
 </beans>
