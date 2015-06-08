@@ -1242,7 +1242,7 @@
         <bean p:propertyName="proposalState.description" parent="Uif-DataField">
             <property name="inquiry">
                 <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.coeus.propdev.impl.state.ProposalState"
-                      p:inquiryParameters="proposalType.code:code"/>
+                      p:inquiryParameters="proposalState.code:code"/>
             </property>
         </bean>
         <bean p:propertyName="title" parent="Uif-DataField"/>
