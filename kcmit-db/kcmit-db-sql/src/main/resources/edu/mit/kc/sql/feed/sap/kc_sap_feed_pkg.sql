@@ -31,6 +31,7 @@ gs_parent_award_number        	    AWARD.AWARD_NUMBER%TYPE;
 gs_Parent_account_number     	 	AWARD.ACCOUNT_NUMBER%TYPE;
 gs_award_number  					AWARD.AWARD_NUMBER%TYPE;
 gi_sequence_number 					AWARD.SEQUENCE_NUMBER%TYPE;
+gi_award_id 						AWARD.AWARD_ID%TYPE;
 gi_feed_id 							SAP_FEED_DETAILS.FEED_ID%TYPE;
 gi_batch_id							SAP_FEED_BATCH_LIST.BATCH_ID%TYPE;
 gi_sap_feed_batch_id				SAP_FEED_BATCH_LIST.SAP_FEED_BATCH_ID%TYPE;
@@ -111,6 +112,7 @@ function  generate_feed  (ai_sap_feed_batch_id number, ai_batch_id in number, ai
 	gs_parent_award_number        		:= NULL;
 	gs_Parent_account_number     	 	:= NULL;
 	gs_award_number  					:= NULL;
+	gi_award_id                         := NULL; 
 	gi_sequence_number 					:= NULL;
 	gi_feed_id 							:= NULL;
 	gi_batch_id							:= NULL;
@@ -133,11 +135,20 @@ function  generate_feed  (ai_sap_feed_batch_id number, ai_batch_id in number, ai
      gi_sequence_number := ai_sequence_number;
 	 gs_transaction_id := as_transaction_id;
 
+		 SELECT AWARD_ID
+   		 INTO gi_award_id
+  		 FROM AWARD
+  		 WHERE  AWARD.AWARD_NUMBER = gs_award_number AND
+				AWARD.SEQUENCE_NUMBER = gi_sequence_number  AND
+				AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED';	 
+	 
+	 
 		SELECT *
    		 INTO grec_award
   		  FROM AWARD
   		 WHERE ( AWARD.AWARD_NUMBER = gs_award_number ) AND
-         ( AWARD.SEQUENCE_NUMBER = gi_sequence_number )   ;
+         ( AWARD.SEQUENCE_NUMBER = gi_sequence_number ) AND
+		 ( AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED' )		 ;
 
 		li_ret := fn_is_valid_award;
 		IF li_ret = -1 THEN
@@ -824,7 +835,8 @@ END IF;
     INTO gs_account_number
     FROM AWARD
    WHERE ( AWARD.AWARD_NUMBER = gs_award_number ) AND
-         ( AWARD.SEQUENCE_NUMBER = gi_sequence_number )   ;
+         ( AWARD.SEQUENCE_NUMBER = gi_sequence_number ) AND
+		 ( AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED') 	 ;
 
 IF gs_account_number is null THEN
    raise null_account_number;
@@ -872,6 +884,7 @@ IF gs_parent_award_number <> '000000-00000' THEN
     INTO gs_parent_account_number
     FROM AWARD
    WHERE ( AWARD.AWARD_NUMBER = gs_parent_award_number ) AND
+		   AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED' AND
          ( AWARD.SEQUENCE_NUMBER = (SELECT MAX(AWARD2.SEQUENCE_NUMBER)
 													FROM AWARD AWARD2		 WHERE
 													AWARD2.AWARD_NUMBER =AWARD.AWARD_NUMBER));
@@ -1090,9 +1103,10 @@ lu_not_found    	EXCEPTION;
 cursor cur_pi is
   SELECT AWARD_PERSONS.AWARD_PERSON_ID, AWARD_PERSONS.PERSON_ID,
          AWARD_PERSONS.FULL_NAME
-         FROM AWARD_PERSONS
-	 WHERE AWARD_PERSONS.AWARD_NUMBER = gs_award_number and
-			 AWARD_PERSONS.CONTACT_ROLE_CODE = 'PI'
+         FROM AWARD_PERSONS INNER JOIN AWARD on AWARD_PERSONS.AWARD_ID = AWARD.AWARD_ID
+	 WHERE AWARD_PERSONS.AWARD_ID = gs_award_number
+	 and AWARD_PERSONS.CONTACT_ROLE_CODE = 'PI'
+	 AND AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED'
       AND AWARD_PERSONS.SEQUENCE_NUMBER =		 (SELECT MAX(INV2.SEQUENCE_NUMBER)
           FROM AWARD_PERSONS INV2 WHERE
             INV2.AWARD_NUMBER =			 AWARD_PERSONS.AWARD_NUMBER	and
@@ -1482,9 +1496,8 @@ cursor cur_idc is
 				 idc_rate_type.description
     FROM AWARD_IDC_RATE,idc_rate_type
    WHERE (AWARD_IDC_RATE.idc_rate_type_code =idc_rate_type.idc_rate_type_code) AND
-		(AWARD_IDC_RATE.AWARD_NUMBER = gs_award_number ) AND
-         (AWARD_IDC_RATE.START_DATE <= SYSDATE )   AND                 --Added on 8/13/03
-	     (AWARD_IDC_RATE.SEQUENCE_NUMBER = gi_sequence_number)
+		(AWARD_IDC_RATE.AWARD_ID = gi_award_id ) AND
+         (AWARD_IDC_RATE.START_DATE <= SYSDATE )                 --Added on 8/13/03	     
 	order by AWARD_IDC_RATE.start_date DESC;             --Changed order by to start_date
 
 begin
@@ -1666,10 +1679,9 @@ cursor cur_idc_on is
 		SELECT AWARD_IDC_RATE.APPLICABLE_IDC_RATE, AWARD_IDC_RATE.FISCAL_YEAR,
 				AWARD_IDC_RATE.START_DATE
     FROM AWARD_IDC_RATE
-   WHERE ( AWARD_IDC_RATE.AWARD_NUMBER = gs_award_number ) AND
+   WHERE ( AWARD_IDC_RATE.AWARD_ID = gi_award_id ) AND
          ( AWARD_IDC_RATE.START_DATE <= SYSDATE )   AND         --Added on 8/13/03
-         ( AWARD_IDC_RATE.ON_CAMPUS_FLAG = 'N' ) AND
-		(AWARD_IDC_RATE.SEQUENCE_NUMBER =	gi_sequence_number)
+         ( AWARD_IDC_RATE.ON_CAMPUS_FLAG = 'N' )
 	order by AWARD_IDC_RATE.START_DATE DESC;
 
 --Declare a cursor to retrieve IDC Off campus rates rates
@@ -1680,11 +1692,10 @@ cursor cur_idc_off (as_fy in AWARD_IDC_RATE.FISCAL_YEAR%TYPE,
 						  ad_sd in AWARD_IDC_RATE.START_DATE%TYPE ) is
 		SELECT AWARD_IDC_RATE.APPLICABLE_IDC_RATE
     FROM AWARD_IDC_RATE
-   WHERE ( AWARD_IDC_RATE.AWARD_NUMBER = gs_award_number ) AND
+   WHERE ( AWARD_IDC_RATE.AWARD_ID = gi_award_id ) AND
          ( AWARD_IDC_RATE.FISCAL_YEAR = as_fy)   AND
          ( AWARD_IDC_RATE.START_DATE = ad_sd)   AND  -- Added on 8/13/03
-         ( AWARD_IDC_RATE.ON_CAMPUS_FLAG = 'F' ) AND
-		 ( AWARD_IDC_RATE.SEQUENCE_NUMBER = gi_sequence_number	)
+         ( AWARD_IDC_RATE.ON_CAMPUS_FLAG = 'F' )
 	order by AWARD_IDC_RATE.START_DATE DESC;
 
 
@@ -1696,7 +1707,8 @@ SELECT AWARD.SPECIAL_EB_RATE_OFF_CAMPUS,
 		INTO gc_eb_off, gc_eb_on
     FROM AWARD
    WHERE ( AWARD.AWARD_NUMBER = gs_award_number ) AND
-         ( AWARD.SEQUENCE_NUMBER = gi_sequence_number )   ;
+         ( AWARD.SEQUENCE_NUMBER = gi_sequence_number ) AND
+		 ( AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED' );
 
 IF ((gc_eb_off is NULL) and (gc_eb_on is NULL)) or
    ((gc_eb_off = 999.99) and (gc_eb_on = 999.99)) THEN
@@ -1802,9 +1814,10 @@ li_rolodex_id AWARD_SPONSOR_CONTACTS.ROLODEX_ID%TYPE;
 
 cursor cur_customer is
   SELECT AWARD_SPONSOR_CONTACTS.ROLODEX_ID
-    FROM AWARD_SPONSOR_CONTACTS
-	 WHERE AWARD_SPONSOR_CONTACTS.AWARD_NUMBER = gs_award_number and
-			 AWARD_SPONSOR_CONTACTS.CONTACT_ROLE_CODE = 3
+    FROM AWARD_SPONSOR_CONTACTS INNER JOIN AWARD  on AWARD_SPONSOR_CONTACTS.AWARD_ID = AWARD.AWARD_ID
+	 WHERE AWARD_SPONSOR_CONTACTS.AWARD_NUMBER = gs_award_number
+	 and AWARD_SPONSOR_CONTACTS.CONTACT_ROLE_CODE = 3
+	 AND AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED'
       AND AWARD_SPONSOR_CONTACTS.SEQUENCE_NUMBER =		 (SELECT MAX(CONTACT2.SEQUENCE_NUMBER)
           FROM AWARD_SPONSOR_CONTACTS CONTACT2 WHERE
             CONTACT2.AWARD_NUMBER =			 AWARD_SPONSOR_CONTACTS.AWARD_NUMBER	and
@@ -1997,9 +2010,8 @@ END IF;
   	SELECT SUM(AWARD_COST_SHARE.COMMITMENT_AMOUNT)
 		INTO lc_temp_amt
     	FROM AWARD_COST_SHARE
-		WHERE ( AWARD_COST_SHARE.AWARD_NUMBER = gs_award_number ) AND
+		WHERE ( AWARD_COST_SHARE.AWARD_ID = gi_award_id ) AND
          	( AWARD_COST_SHARE.PROJECT_PERIOD <= gs_fiscal_year )   AND
-			(AWARD_COST_SHARE.SEQUENCE_NUMBER = gi_sequence_number	) and
 			(SUBSTR(LTRIM(SOURCE), 1, 1) <> '0') ;      --SUBSTR condition added on 4/11/03
 
 	IF lc_temp_amt IS NULL THEN
@@ -2498,11 +2510,19 @@ begin
 		select count(*) into li_Count from (           
 			select applicable_idc_rate,idc_rate_type_code,fiscal_year,
 			on_campus_flag,underrecovery_of_idc,source_account,destination_account,start_date,decode(end_date,null,'0',end_date) as  end_date
-			from award_idc_rate where award_number = gs_award_number and sequence_number = gi_sequence_number
+			from award_idc_rate INNER JOIN AWARD  on award_idc_rate.AWARD_ID = AWARD.AWARD_ID 
+			where award_idc_rate.award_number = gs_award_number 
+			and award_idc_rate.sequence_number = gi_sequence_number
+			and AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED'
+			
 			minus           
 			 select applicable_idc_rate,idc_rate_type_code,fiscal_year,
 			on_campus_flag,underrecovery_of_idc,source_account,destination_account,start_date,decode(end_date,null,'0',end_date) as  end_date
-			from award_idc_rate where award_number = gs_award_number and sequence_number = ( gi_sequence_number - 1 )          
+			from award_idc_rate INNER JOIN AWARD  on award_idc_rate.AWARD_ID = AWARD.AWARD_ID 
+			where award_idc_rate.award_number = gs_award_number 
+			and award_idc_rate.sequence_number = ( gi_sequence_number - 1 )   
+			and AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED'	
+			
 		) idc_rate ;       
 
 		IF li_Count > 0 THEN
@@ -2516,14 +2536,20 @@ begin
 			decode(cost_share_type_code,null,'0',cost_share_type_code) cost_share_type_code,decode(source,null,'0',source) source,
 			decode(destination,null,'0',destination) destination, decode(commitment_amount,null,'0',commitment_amount) commitment_amount,
 			decode(unit_number,null,'0',unit_number) unit_number
-			from award_cost_share where award_number = gs_award_number and sequence_number = gi_sequence_number
+			from award_cost_share inner join award  on award_cost_share.award_id = award.award_id
+			where award_cost_share.award_number = gs_award_number 
+			and award_cost_share.sequence_number = gi_sequence_number
+			and award.award_sequence_status <> 'CANCELED'
 		minus
 			select decode(verification_date,null,'0',verification_date) verification_date,decode(cost_share_met,null,'0',cost_share_met) cost_share_met,
 			decode(project_period,null,'0',project_period) project_period, decode(cost_share_percentage,null,'0',cost_share_percentage) cost_share_percentage,
 			decode(cost_share_type_code,null,'0',cost_share_type_code) cost_share_type_code,decode(source,null,'0',source) source,
 			decode(destination,null,'0',destination) destination, decode(commitment_amount,null,'0',commitment_amount) commitment_amount,
 			decode(unit_number,null,'0',unit_number) unit_number
-			from award_cost_share where award_number = gs_award_number and sequence_number = ( gi_sequence_number - 1 )
+			from award_cost_share  inner join award  on award_cost_share.award_id = award.award_id
+			where award_cost_share.award_number = gs_award_number
+			and award_cost_share.sequence_number = ( gi_sequence_number - 1 )
+			and award.award_sequence_status <> 'CANCELED'			
 		) cost_share;
 
 		IF li_Count > 0 THEN
@@ -2541,15 +2567,22 @@ begin
 		decode(overdue,null,'0',overdue) overdue,decode(report_status_code,null,'0',report_status_code) report_status_code,
 		decode(submitted_by_person_id,null,'0',submitted_by_person_id) submitted_by_person_id,
 		decode(award_report_term_desc,null,'0',award_report_term_desc) award_report_term_desc
-		from award_payment_schedule where award_number = gs_award_number and sequence_number = gi_sequence_number
+		from award_payment_schedule  inner join award  on award_payment_schedule.award_id = award.award_id
+		where award_payment_schedule.award_number = gs_award_number 
+		and award_payment_schedule.sequence_number = gi_sequence_number
+		and award.award_sequence_status <> 'CANCELED'
 			minus
+			
 		select decode(due_date,null,'0',due_date) due_date,decode(amount,null,'0',amount) amount,decode(submit_date,null,'0',submit_date) submit_date,
 		decode(submitted_by,null,'0',submitted_by) submitted_by,decode(invoice_number,null,'0',invoice_number) invoice_number,
 		decode(status_description,null,'0',status_description) status_description,decode(status,null,'0',status) status,
 		decode(overdue,null,'0',overdue) overdue,decode(report_status_code,null,'0',report_status_code) report_status_code,
 		decode(submitted_by_person_id,null,'0',submitted_by_person_id) submitted_by_person_id,
 		decode(award_report_term_desc,null,'0',award_report_term_desc) award_report_term_desc
-		from award_payment_schedule where award_number = gs_award_number and sequence_number = (gi_sequence_number-1)
+		from award_payment_schedule   inner join award  on award_payment_schedule.award_id = award.award_id
+		where award_payment_schedule.award_number = gs_award_number 
+		and award_payment_schedule.sequence_number = (gi_sequence_number-1)
+		and award.award_sequence_status <> 'CANCELED'
 		)	payment_schedule;
 
 		IF li_Count > 0 THEN
@@ -2559,8 +2592,7 @@ begin
 	SELECT COUNT(AWARD_NUMBER)
    		 INTO li_Count
   		  FROM AWARD_COMMENT
-  		 WHERE ( AWARD_COMMENT.AWARD_NUMBER = gs_award_number ) AND
-       	    ( AWARD_COMMENT.SEQUENCE_NUMBER = gi_sequence_number )   AND
+  		 WHERE ( AWARD_COMMENT.AWARD_ID = gi_award_id ) AND       	 
 				 ( AWARD_COMMENT.COMMENT_TYPE_CODE = '1') ;
 
 	IF li_Count > 0 THEN
@@ -2597,8 +2629,7 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
+		where award_id = gi_award_id and
 				cost_share_type_code = 2;
 
 		IF li_Count > 0 THEN
@@ -2609,9 +2640,8 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
-				cost_share_type_code = 3;
+		where award_id = gi_award_id and
+		cost_share_type_code = 3;
 
 		IF li_Count > 0 THEN
 			ls_CostShare := '3';
@@ -2621,8 +2651,7 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
+		where award_id = gi_award_id and			
 				cost_share_type_code = 4;
 
 		IF li_Count > 0 THEN
@@ -2633,8 +2662,7 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
+		where award_id = gi_award_id and				
 				cost_share_type_code = 5;
 
 		IF li_Count > 0 THEN
@@ -2645,8 +2673,7 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
+		where award_id = gi_award_id and			
 				cost_share_type_code = 6;
 
 		IF li_Count > 0 THEN
@@ -2657,8 +2684,7 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
+		where award_id = gi_award_id and				
 				cost_share_type_code = 7;
 
 		IF li_Count > 0 THEN
@@ -2669,8 +2695,7 @@ begin
 		select count(award_number)
 		into li_count
 		from award_cost_share
-		where award_number = gs_award_number and
-				sequence_number =  gi_sequence_number and
+		where award_id = gi_award_id and				
 				cost_share_type_code = 1;
 
 		IF li_Count > 0 THEN
@@ -2686,8 +2711,7 @@ begin
 			select comments
 			into ls_comment
 			from award_comment
-			where award_number = gs_award_number and
-				sequence_number = gi_sequence_number and
+			where award_id = gi_award_id and				
 				comment_type_code = 9;
 
 			IF ls_comment is null then
@@ -2728,9 +2752,11 @@ begin
 
 	select value
 		into ls_Value
-		from award_custom_data, custom_attribute
-		where award_custom_data.custom_attribute_id=custom_attribute.id and
-     award_custom_data.award_number = gs_award_number and
+		from award_custom_data, custom_attribute, award
+		where award_custom_data.custom_attribute_id=custom_attribute.id
+		and award.award_id = award_custom_data.award_id
+		and award.award_sequence_status <> 'CANCELED'
+		and  award_custom_data.award_number = gs_award_number and
 		      upper(custom_attribute.name) = upper( as_CustomElement ) and
 				award_custom_data.sequence_number = (select max(ac.sequence_number) from
 										 award_custom_data ac
