@@ -19,8 +19,9 @@ li_inserted                     PLS_INTEGER := 0;
 li_count 						NUMBER;
 ls_cost_element     			SAP_BUDGET_FEED.COST_ELEMENT%type;
 ls_auth_total					sap_feed.auth_total%type;
-ls_mit_account_number				sap_feed.mit_sap_account%type;
-
+ls_mit_account_number			sap_feed.mit_sap_account%type;
+li_cost_share_count				NUMBER;
+ls_sap_spon_code 				VARCHAR2(6) := '009906';
 	CURSOR c_sap_bud_det IS
 		SELECT	t1.budget_id,
 		t2.account_number,
@@ -68,6 +69,15 @@ ls_mit_account_number				sap_feed.mit_sap_account%type;
 		where t2.budget_id = li_budget_id;		
 	
 		r_award_budget c_award_budget%rowtype;
+	
+	CURSOR c_cs_award IS
+		SELECT nvl(t1.auth_total,'0') auth_total ,t1.mit_sap_account,t2.award_number,t2.sequence_number 
+		from sap_feed t1
+		inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
+		where t1.batch_id = as_batch_id
+		and t1.spon_code = ls_sap_spon_code;
+		
+	r_cs_award c_cs_award%rowtype;
 		
 begin	
 	
@@ -91,12 +101,19 @@ begin
 		WHERE t2.status_code != 6 and -- do not include award on hold status 
 		t1.AWARD_BUDGET_STATUS_CODE IN ( select regexp_substr(ls_award_budget_status,'[^,]+', 1, level) from dual
 												connect by regexp_substr(ls_award_budget_status, '[^,]+', 1, level) is not null );
+												
+												
+		--- checking if there is any cost sharing account in master feed batch id
+		SELECT count(t1.feed_id) into li_cost_share_count
+		from sap_feed t1
+		inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
+		where t1.batch_id = as_batch_id
+		and t1.spon_code = ls_sap_spon_code;										
 		
-		IF li_count = 0 THEN -- There is nothing to feed
+		IF li_count = 0 AND li_cost_share_count = 0 THEN -- There is nothing to feed
 			return -100;
 		END IF;	
-	
-	
+		
 	
 		ls_batch_file_name := concat(concat(concat('dospfpl1.', ltrim(to_char(as_batch_id, '000'))), '.'),
 															to_char(as_dt_now, 'YYYYMMDDHH24MISS'));
@@ -124,160 +141,185 @@ begin
 				sysdate,
 				1,
 				sys_guid()
-				);
-				
+				);				
 	
-	
-	
-	open c_sap_bud_det;
-	loop
-	fetch c_sap_bud_det into r_sap_bud_det;
-	exit when c_sap_bud_det%notfound;
-	
-		li_sap_budget_feed_details_id := seq_sap_budget_feed_details_id.nextval;
-		ls_account_number := r_sap_bud_det.account_number;
-		
-		INSERT INTO SAP_BUDGET_FEED_DETAILS(
-		SAP_BUDGET_FEED_DETAILS_ID,
-		SAP_BUDGET_FEED_BATCH_ID,
-		BATCH_ID,
-		BUDGET_ID,
-		AWARD_NUMBER,
-		SEQUENCE_NUMBER,
-		FEED_STATUS,
-		UPDATE_USER,
-		UPDATE_TIMESTAMP,
-		VER_NBR,
-		OBJ_ID
-		)
-		VALUES(
-		li_sap_budget_feed_details_id,
-		li_sap_budget_feed_batch_id,
-		as_batch_id,
-		r_sap_bud_det.budget_id,
-		r_sap_bud_det.award_number,
-		r_sap_bud_det.sequence_number,
-		'P',
-		lower(as_update_user),
-		sysdate,
-		1,
-		sys_guid()
-		);
-			li_inserted := 1;
-			li_budget_id := r_sap_bud_det.budget_id;
-			
-			open c_award_budget;
-			loop
-			fetch c_award_budget into r_award_budget;
-			exit when c_award_budget%notfound;
-			
-				if r_award_budget.amount >= 0 then
-						ls_amount := '+'||LPAD( ( to_number(r_award_budget.amount) * 100 ), 9, '0');
-				else
-						ls_amount := '-'||LPAD(ABS( ( to_number(r_award_budget.amount) * 100 )), 9, '0');
-				end if;
-				
-				
-				select count(sap_obj_cd) into li_count FROM SAP_KC_OBJ_CD_MAPPING WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
-				
-				if li_count = 1 then
-					SELECT SAP_OBJ_CD into ls_cost_element FROM SAP_KC_OBJ_CD_MAPPING WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
-					
-				else
-					ls_cost_element := r_award_budget.gl_account_key;
-					
-				end if;
+							open c_sap_bud_det;
+							loop
+							fetch c_sap_bud_det into r_sap_bud_det;
+							exit when c_sap_bud_det%notfound;
+							
+								li_sap_budget_feed_details_id := seq_sap_budget_feed_details_id.nextval;
+								ls_account_number := r_sap_bud_det.account_number;
 								
-			
-				INSERT INTO SAP_BUDGET_FEED(
-							SAP_BUDGET_FEED_ID,
-							SAP_BUDGET_FEED_DETAILS_ID,
-							SAP_BUDGET_FEED_BATCH_ID,
-							BATCH_ID,
-							FISCAL_YEAR,
-							ACCOUNT_NUMBER,
-							COST_ELEMENT,
-							AMOUNT,
-							VER_NBR,
-							OBJ_ID
-							)
-				VALUES(  SEQ_SAP_BUDGET_FEED_ID.NEXTVAL,
-						 li_sap_budget_feed_details_id,
-						 li_sap_budget_feed_batch_id,
-						 as_batch_id,
-						 ls_sap_feed_fiscal_year,
-						 ls_account_number,
-						 ls_cost_element,						 
-						 ls_amount,
-						 1,
-						 sys_guid()
-					  );
-					  
-					 li_no_of_records := li_no_of_records + 1; 
-					 
-			end loop;
-			close c_award_budget;
-			
-	
-	end loop;
-	close c_sap_bud_det;
-
+								INSERT INTO SAP_BUDGET_FEED_DETAILS(
+								SAP_BUDGET_FEED_DETAILS_ID,
+								SAP_BUDGET_FEED_BATCH_ID,
+								BATCH_ID,
+								BUDGET_ID,
+								AWARD_NUMBER,
+								SEQUENCE_NUMBER,
+								FEED_STATUS,
+								UPDATE_USER,
+								UPDATE_TIMESTAMP,
+								VER_NBR,
+								OBJ_ID
+								)
+								VALUES(
+								li_sap_budget_feed_details_id,
+								li_sap_budget_feed_batch_id,
+								as_batch_id,
+								r_sap_bud_det.budget_id,
+								r_sap_bud_det.award_number,
+								r_sap_bud_det.sequence_number,
+								'P',
+								lower(as_update_user),
+								sysdate,
+								1,
+								sys_guid()
+								);
+									li_inserted := 1;
+									li_budget_id := r_sap_bud_det.budget_id;
+									
+										open c_award_budget;
+										loop
+										fetch c_award_budget into r_award_budget;
+										exit when c_award_budget%notfound;
+										
+											if r_award_budget.amount >= 0 then
+													ls_amount := '+'||LPAD( ( to_number(r_award_budget.amount) * 100 ), 9, '0');
+											else
+													ls_amount := '-'||LPAD(ABS( ( to_number(r_award_budget.amount) * 100 )), 9, '0');
+											end if;
+											
+											
+											select count(sap_obj_cd) into li_count FROM SAP_KC_OBJ_CD_MAPPING WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
+											
+											if li_count = 1 then
+												SELECT SAP_OBJ_CD into ls_cost_element FROM SAP_KC_OBJ_CD_MAPPING WHERE KC_OBJ_CD = r_award_budget.gl_account_key;
+												
+											else
+												ls_cost_element := r_award_budget.gl_account_key;
+												
+											end if;
+															
+										
+											INSERT INTO SAP_BUDGET_FEED(
+														SAP_BUDGET_FEED_ID,
+														SAP_BUDGET_FEED_DETAILS_ID,
+														SAP_BUDGET_FEED_BATCH_ID,
+														BATCH_ID,
+														FISCAL_YEAR,
+														ACCOUNT_NUMBER,
+														COST_ELEMENT,
+														AMOUNT,
+														VER_NBR,
+														OBJ_ID
+														)
+											VALUES(  SEQ_SAP_BUDGET_FEED_ID.NEXTVAL,
+													 li_sap_budget_feed_details_id,
+													 li_sap_budget_feed_batch_id,
+													 as_batch_id,
+													 ls_sap_feed_fiscal_year,
+													 ls_account_number,
+													 ls_cost_element,						 
+													 ls_amount,
+													 1,
+													 sys_guid()
+												  );
+												  
+												 li_no_of_records := li_no_of_records + 1; 
+												 
+										end loop;
+										close c_award_budget;
+									
+							
+							end loop;
+							close c_sap_bud_det;
 		
-		--- cost sharing in the budget feed START
-	
-					--- checking if there is any cost sharing account in master feed batch id
-	SELECT count(t1.feed_id) into li_count
-	from sap_feed t1
-	inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
-	where t1.batch_id = as_batch_id
-	and t1.spon_code = '009906';
-	if li_count > 0 then 
-				begin
-					SELECT t1.auth_total,t1.mit_sap_account into ls_auth_total,ls_mit_account_number
-					from sap_feed t1
-					inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
-					where t1.batch_id = as_batch_id
-					and t2.award_number = r_sap_bud_det.award_number
-					and t1.spon_code = '009906';
-				exception
-				when others then	
-					ls_auth_total := '0';
-				end;	
-														
-				if to_number(ls_auth_total) >= 0 then
-						ls_amount := '+'||LPAD( ( to_number(ls_auth_total) ), 9, '0');
-				else
-						ls_amount := '-'||LPAD(ABS( ( to_number(ls_auth_total) )), 9, '0');
-				end if;
+	--- S T A R T S    cost sharing in the budget feed		
+		--- checking if there is any cost sharing account in master feed batch id	
+		SELECT count(t1.feed_id) into li_cost_share_count
+		from sap_feed t1
+		inner join sap_feed_details t2 on t1.feed_id = t2.feed_id
+		where t1.batch_id = as_batch_id
+		and t1.spon_code = ls_sap_spon_code;	
+		
+		if li_cost_share_count > 0 then 
+		
+				open c_cs_award;
+				loop
+				fetch c_cs_award into r_cs_award;
+				exit when c_cs_award%notfound;
 				
-				INSERT INTO SAP_BUDGET_FEED(
-							SAP_BUDGET_FEED_ID,
-							SAP_BUDGET_FEED_DETAILS_ID,
-							SAP_BUDGET_FEED_BATCH_ID,
-							BATCH_ID,
-							FISCAL_YEAR,
-							ACCOUNT_NUMBER,
-							COST_ELEMENT,
-							AMOUNT,
-							VER_NBR,
-							OBJ_ID
-							)
-				VALUES(  SEQ_SAP_BUDGET_FEED_ID.NEXTVAL,
-						 li_sap_budget_feed_details_id,
-						 li_sap_budget_feed_batch_id,
-						 as_batch_id,
-						 ls_sap_feed_fiscal_year,
-						 ls_mit_account_number,
-						 '400000',						 
-						 ls_amount,
-						 1,
-						 sys_guid()
-			  );
+					ls_auth_total 			:= r_cs_award.auth_total;
+					ls_mit_account_number	:= r_cs_award.mit_sap_account;
+				
+					if to_number(ls_auth_total) >= 0 then
+							ls_amount := '+'||LPAD( ( to_number(ls_auth_total) ), 9, '0');
+					else
+							ls_amount := '-'||LPAD(ABS( ( to_number(ls_auth_total) )), 9, '0');
+					end if;
+					
+					li_sap_budget_feed_details_id := seq_sap_budget_feed_details_id.nextval;					
+								
+					INSERT INTO SAP_BUDGET_FEED_DETAILS(
+					SAP_BUDGET_FEED_DETAILS_ID,
+					SAP_BUDGET_FEED_BATCH_ID,
+					BATCH_ID,
+					BUDGET_ID,
+					AWARD_NUMBER,
+					SEQUENCE_NUMBER,
+					FEED_STATUS,
+					UPDATE_USER,
+					UPDATE_TIMESTAMP,
+					VER_NBR,
+					OBJ_ID
+					)
+					VALUES(
+					li_sap_budget_feed_details_id,
+					li_sap_budget_feed_batch_id,
+					as_batch_id,
+					replace(r_cs_award.award_number,'-'),					
+					r_cs_award.award_number,
+					r_cs_award.sequence_number,
+					'P',
+					lower(as_update_user),
+					sysdate,
+					1,
+					sys_guid()
+					);		
+										
+					INSERT INTO SAP_BUDGET_FEED(
+								SAP_BUDGET_FEED_ID,
+								SAP_BUDGET_FEED_DETAILS_ID,
+								SAP_BUDGET_FEED_BATCH_ID,
+								BATCH_ID,
+								FISCAL_YEAR,
+								ACCOUNT_NUMBER,
+								COST_ELEMENT,
+								AMOUNT,
+								VER_NBR,
+								OBJ_ID
+								)
+					VALUES(  SEQ_SAP_BUDGET_FEED_ID.NEXTVAL,
+							 li_sap_budget_feed_details_id,
+							 li_sap_budget_feed_batch_id,
+							 as_batch_id,
+							 ls_sap_feed_fiscal_year,
+							 ls_mit_account_number,
+							 '400000',						 
+							 ls_amount,
+							 1,
+							 sys_guid() );
 								  
-			li_no_of_records := li_no_of_records + 1; 
-		end if;	
+					li_no_of_records := li_no_of_records + 1; 
+				
+				end loop;
+				close c_cs_award;
 	
-		--- cost sharing in the budget feed START
+				
+		end if;		
+	--- E N D S   cost sharing in the budget feed 
 		
 		UPDATE 	AWARD_BUDGET_EXT SET AWARD_BUDGET_STATUS_CODE = 9 --Posted
 		WHERE budget_id IN ( SELECT budget_id FROM SAP_BUDGET_FEED_DETAILS WHERE BATCH_ID = as_batch_id);
