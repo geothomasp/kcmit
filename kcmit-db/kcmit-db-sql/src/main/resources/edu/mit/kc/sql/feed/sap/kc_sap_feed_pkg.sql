@@ -886,7 +886,7 @@ IF gs_parent_award_number <> '000000-00000' THEN
    WHERE ( AWARD.AWARD_NUMBER = gs_parent_award_number ) AND
          ( AWARD.SEQUENCE_NUMBER = (SELECT MAX(AWARD2.SEQUENCE_NUMBER)
 													FROM AWARD AWARD2		 WHERE
-													AWARD2.AWARD_NUMBER =AWARD.AWARD_NUMBER AND AWARD_SEQUENCE_STATUS <> 'CANCELLED'));
+													AWARD2.AWARD_NUMBER =AWARD.AWARD_NUMBER AND AWARD_SEQUENCE_STATUS = 'ACTIVE'));
 ELSE
 
 /**********************************************************************************************
