@@ -19,6 +19,7 @@
 package org.kuali.coeus.common.budget.impl.calculator;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.api.rate.RateClassType;
 import org.kuali.coeus.common.budget.framework.calculator.*;
 import org.kuali.coeus.common.budget.framework.query.*;
@@ -45,8 +46,11 @@ import org.kuali.coeus.common.budget.framework.nonpersonnel.BudgetLineItemCalcul
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelCalculatedAmount;
 import org.kuali.coeus.common.budget.framework.personnel.BudgetPersonnelDetails;
 import org.kuali.coeus.propdev.impl.core.DevelopmentProposal;
+import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
 import java.sql.Date;
@@ -58,8 +62,9 @@ import java.util.*;
  * Base class for <code>LineItemCalculator<code> and <code>PersonnelLineItemCalculator</code>.
  */
 public abstract class AbstractBudgetCalculator {
-    private static final String UNDER_REECOVERY_RATE_TYPE_CODE = "1";
-    private BusinessObjectService businessObjectService;
+	private static final String PERSONNEL_UNDERRECOVERY_RATE_TYPE_CODE = "1";
+	public static final String NON_PERSONNEL_UNDERRECOVERY_RATE_TYPE_CODE = "2";
+	private BusinessObjectService businessObjectService;
     private DateTimeService dateTimeService;
     protected Budget budget;
     protected BudgetLineItemBase budgetLineItem;
@@ -69,7 +74,7 @@ public abstract class AbstractBudgetCalculator {
     private QueryList<ValidCeRateType> infltionValidCalcCeRates;
     private QueryList<BudgetRate> underrecoveryRates;
     private QueryList<BudgetRate> inflationRates;
-    private BudgetCalculationService budgetCalcultionService;
+    private BudgetCalculationService budgetCalculationService;
 
     /**
      * 
@@ -82,7 +87,7 @@ public abstract class AbstractBudgetCalculator {
         this.budgetLineItem = budgetLineItem;
         businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
         dateTimeService = CoreApiServiceLocator.getDateTimeService();
-        budgetCalcultionService = KcServiceLocator.getService(BudgetCalculationService.class);
+        budgetCalculationService = KcServiceLocator.getService(BudgetCalculationService.class);
         breakupIntervals = new ArrayList<BreakUpInterval>();
     }
     /**
@@ -165,7 +170,7 @@ public abstract class AbstractBudgetCalculator {
             // Add underrecovery rates
             if(!isUndercoveryMatchesOverhead()){
                 Equals equalsRC = new Equals("rateClassCode", budget.getUrRateClassCode());
-                Equals equalsRT = new Equals("rateTypeCode", UNDER_REECOVERY_RATE_TYPE_CODE);
+                Equals equalsRT = new Equals("rateTypeCode", getUnderRecoveryRateTypeCode());
                 Equals equalsOnOff = new Equals("onOffCampusFlag", budgetLineItem.getOnOffCampusFlag());
                 And RCandRT = new And(equalsRC, equalsRT);
                 And RCRTandOnOff = new And(RCandRT, equalsOnOff);
@@ -546,10 +551,11 @@ public abstract class AbstractBudgetCalculator {
                     breakUpInterval.setBudgetProposalLaRates(qlBreakupPropLARates);
                     breakupIntervals.add(breakUpInterval);
                 }
+                String underRecoveryRateTypeCode = getUnderRecoveryRateTypeCode();
                 // Set the URRates if required
-                if (!isUndercoveryMatchesOverhead() && hasValidUnderRecoveryRate()) {
+                if (!isUndercoveryMatchesOverhead() && hasValidUnderRecoveryRate(underRecoveryRateTypeCode)) {
                     Equals equalsRC = new Equals("rateClassCode", budget.getUrRateClassCode());
-                    Equals equalsRT = new Equals("rateTypeCode", UNDER_REECOVERY_RATE_TYPE_CODE);
+                    Equals equalsRT = new Equals("rateTypeCode", underRecoveryRateTypeCode);
                     Equals equalsOnOff = new Equals("onOffCampusFlag", budgetLineItem.getOnOffCampusFlag());
                     And RCandRT = new And(equalsRC, equalsRT);
                     And RCRTandOnOff = new And(RCandRT, equalsOnOff);
@@ -572,9 +578,16 @@ public abstract class AbstractBudgetCalculator {
         }
     }
 
-    private boolean hasValidUnderRecoveryRate() {
+    private String getUnderRecoveryRateTypeCode() {
+        return StringUtils.equalsIgnoreCase(getPersonnelBudgetCategoryTypeCode(), budgetLineItem.getCostElementBO().getBudgetCategory().getBudgetCategoryTypeCode()) ?
+                PERSONNEL_UNDERRECOVERY_RATE_TYPE_CODE : NON_PERSONNEL_UNDERRECOVERY_RATE_TYPE_CODE;
+    }
+
+    private boolean hasValidUnderRecoveryRate(String underRecoveryRateTypeCode) {
         Equals equalsRC = new Equals("rateClassCode", budget.getUrRateClassCode());
-        Equals equalsRT = new Equals("rateTypeCode", UNDER_REECOVERY_RATE_TYPE_CODE);
+
+
+        Equals equalsRT = new Equals("rateTypeCode", underRecoveryRateTypeCode);
         Equals equalsRCT = new Equals("rateClassType", RateClassType.OVERHEAD.getRateClassType());
         And RCandRT = new And(equalsRC, equalsRT);
         And RCRTandRCT = new And(RCandRT, equalsRCT);
@@ -951,10 +964,16 @@ public abstract class AbstractBudgetCalculator {
     public void setQlLineItemPropRates(QueryList<BudgetRate> qlLineItemPropRates) {
         this.lineItemPropRates = qlLineItemPropRates;
     }
-    
+    public String getPersonnelBudgetCategoryTypeCode() {
+        return getParameterService().getParameterValueAsString(Constants.MODULE_NAMESPACE_BUDGET, ParameterConstants.DOCUMENT_COMPONENT,Constants.BUDGET_CATEGORY_TYPE_PERSONNEL);
+    }
+
     protected BudgetRatesService getBudgetRateService() {
         return KcServiceLocator.getService(BudgetRatesService.class);
     }
 
 
+    public ParameterService getParameterService() {
+        return KcServiceLocator.getService(ParameterService.class);
+    }
 }
