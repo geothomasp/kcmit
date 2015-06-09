@@ -23,8 +23,7 @@
     <li><portal:portalLink displayTitle="true" title="Module Names" url="${ConfigProperties.application.url}/kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.coeus.common.framework.module.CoeusModule&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 
     <li><portal:portalLink displayTitle="true" title="Research Areas" url="${ConfigProperties.application.url}/researchAreas.do" /></li>
-     <li><portal:portalLink displayTitle="true" title="Pi Appointment Type" url="${ConfigProperties.krad.url}/lookup?methodToCall=start&dataObjectClassName=edu.mit.kc.bo.PiAppointmentType&showMaintenanceLinks=true&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true"/></li>
-	 
+	<li><a class="portal_link" href="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&amp;viewId=PiAppointmentType-LookupViewId">PI Appointment Type</a></li>
 	
 	<li>Rule Functions</li>
     <li>Rule Functions Argument</li>

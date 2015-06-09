@@ -21,9 +21,10 @@
 	<documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
 		<documentType>
 			<name>PiAppointmentTypeMaintenanceDocument</name>
-			<description>Create/Edit Pi Appointment Type</description>
-			<label>Pi Appointment Type</label>
-			<parent>KcMaintenanceDocument</parent>
-		</documentType>
+			<description>Document used to create or update PI Appointment Type</description>
+			<label>PI Appointment Type</label>
+			<parent>KcSharedMaintenanceDocument</parent>
+		<docHandler>${kr.krad.url}/maintenance?methodToCall=docHandler</docHandler>
+	     </documentType>
 	</documentTypes>	
 </data>

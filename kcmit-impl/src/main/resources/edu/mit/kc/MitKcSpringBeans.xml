@@ -204,6 +204,7 @@
 				<value>classpath:edu/mit/kc/datadictionary/KrmsFunctionsParams.xml</value> 
 				<value>classpath:edu/mit/kc/datadictionary/KrmsFunctions.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/PiAppointmentType.xml</value>
+				<value>classpath:edu/mit/kc/datadictionary/PiAppointmentTypeMaintenanceDocument.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/KcResultSetLimit.xml</value>
 				<value>classpath:edu/mit/kc/datadictionary/KcMandatoryValidation.xml</value>
 				<!-- <value>classpath:edu/mit/kc/datadictionary/CustomAttributeDocument.xml</value> -->
