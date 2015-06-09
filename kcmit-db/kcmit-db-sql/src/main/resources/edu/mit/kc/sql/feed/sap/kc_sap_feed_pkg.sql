@@ -884,10 +884,9 @@ IF gs_parent_award_number <> '000000-00000' THEN
     INTO gs_parent_account_number
     FROM AWARD
    WHERE ( AWARD.AWARD_NUMBER = gs_parent_award_number ) AND
-		   AWARD.AWARD_SEQUENCE_STATUS <> 'CANCELED' AND
          ( AWARD.SEQUENCE_NUMBER = (SELECT MAX(AWARD2.SEQUENCE_NUMBER)
 													FROM AWARD AWARD2		 WHERE
-													AWARD2.AWARD_NUMBER =AWARD.AWARD_NUMBER));
+													AWARD2.AWARD_NUMBER =AWARD.AWARD_NUMBER AND AWARD_SEQUENCE_STATUS <> 'CANCELLED'));
 ELSE
 
 /**********************************************************************************************
