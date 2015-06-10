@@ -1,0 +1,173 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+      <groupId>edu.mit.kc</groupId>
+      <artifactId>kcmit</artifactId>
+      <version>6.0.2.1</version>
+  </parent>
+
+  <artifactId>kcmit-webapp</artifactId>
+  
+  <packaging>war</packaging>
+  <name>MIT KC Webapp</name>
+  <description>MIT KC Webapp project</description>
+  <build>
+    <resources>
+        <resource>
+            <filtering>true</filtering>
+            <directory>src/main/resources</directory>
+        </resource>
+	</resources>  
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+                <overlays>
+                    <overlay>
+		            	<groupId>org.kuali.coeus</groupId>
+		                <artifactId>coeus-webapp</artifactId>
+		                <excludes>
+                          <exclude>WEB-INF/lib/coeus-impl-*.jar</exclude>
+                        </excludes> 
+                    </overlay>
+                </overlays>
+            </configuration>
+        </plugin>
+		<plugin>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-maven-plugin</artifactId>
+			<version>8.1.13.v20130916</version>
+			<dependencies>
+				<dependency>
+					<groupId>com.oracle</groupId>
+					<artifactId>ojdbc6</artifactId>
+					<version>10.2.0.3.0</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+			<configuration>
+				<webAppConfig>
+					<contextPath>/kc-dev</contextPath>
+					<!-- <descriptor>${project.build.directory}/web.xml</descriptor> -->
+				</webAppConfig>
+				<connectors>
+					<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+						<port>8080</port>
+						<maxIdleTime>60000</maxIdleTime>
+					</connector>
+				</connectors>
+				<contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-web.xml</contextXml>
+				<systemProperties>
+					<systemProperty>
+						<name>metadata-complete</name>
+						<value>true</value>
+					</systemProperty>
+				</systemProperties>
+			</configuration>
+	     </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>default-testCompile</id>
+                    <phase>test-compile</phase>
+                    <goals>
+                        <goal>testCompile</goal>
+                    </goals>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+        <groupId>org.kuali.coeus</groupId>
+	    <artifactId>coeus-webapp</artifactId>
+        <version>1504.10</version>
+        <type>war</type>
+         <exclusions>
+            <exclusion>
+            	<groupId>org.kuali.coeus</groupId>
+                <artifactId>coeus-impl</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>edu.mit.kc</groupId>
+	    <artifactId>kcmit-impl</artifactId>
+        <version>6.0.2.1</version>
+    </dependency>
+    <dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.servlet</artifactId>
+     </dependency>
+     <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+      </dependency>
+         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-deploy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-junit4</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit-dep</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <scope>test</scope>
+        </dependency>
+  </dependencies>
+  <properties>
+	<timestamp>${maven.build.timestamp}</timestamp>
+  	<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
+  </properties>  
+    
+</project>

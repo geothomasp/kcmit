@@ -1,0 +1,156 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+      <groupId>edu.mit.kc</groupId>
+      <artifactId>kcmit</artifactId>
+      <version>6.0.2.1</version>
+  </parent>
+  <artifactId>kcmit-impl</artifactId>
+  <name>KC MIT Impl </name>
+  <description>KC MIT Implementation project shaded from kcmit-impl</description>
+  
+  <build>
+    <resources>
+        <resource>
+            <filtering>true</filtering>
+            <directory>src/main/resources</directory>
+        </resource>
+	</resources>  
+    <plugins> 
+    
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.7</version>
+          <dependencies>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-filtering</artifactId>
+                <version>1.3</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>org.kuali.coeus:coeus-impl:*</include>
+								</includes>
+							</artifactSet>
+ 							<createSourcesJar>true</createSourcesJar>
+ 							<shadeSourcesContent>true</shadeSourcesContent>
+							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			  <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <executions>
+                       <execution>
+                        <id>role-integration-service</id>
+                        <phase>generate-sources</phase>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <disableDirectoryScan>true</disableDirectoryScan>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <noAddressBinding>true</noAddressBinding>
+                                    <wsdl>${gg.wsdl.location}/roles.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-verbose</extraarg>
+                                        <extraarg>-validate</extraarg>
+                                        <extraarg>-wsdlLocation</extraarg>
+                                        <extraarg>${role.wsdl.packaged.location}</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                  </executions>
+               <dependencies>
+                <!--      need to add this to get around the following error
+                     org.apache.xerces.impl.dv.DVFactoryException: DTD factory
+                     class org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend
+                     from DTDDVFactory.    -->
+                    <dependency>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                        <version>${xercesImpl.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin> 
+        </plugins>
+    </build>
+
+       <dependencies>
+         <dependency>
+            <groupId>org.kuali.coeus</groupId>
+            <artifactId>coeus-impl</artifactId>
+            <version>1504.10</version>
+        </dependency>
+       
+         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.oracle</artifactId>
+			<version>${org.eclipse.persistence.oracle.version}</version>
+	              <exclusions>
+	                  <exclusion>
+	                      <groupId>org.eclipse.persistence</groupId>
+	                      <artifactId>javax.persistence</artifactId>
+	                  </exclusion>
+	                  <exclusion>
+	                      <groupId>org.eclipse.persistence</groupId>
+	                      <artifactId>org.eclipse.persistence.asm</artifactId>
+	                  </exclusion>
+	                  <exclusion>
+	                      <groupId>org.eclipse.persistence</groupId>
+	                      <artifactId>org.eclipse.persistence.core</artifactId>
+	                  </exclusion>
+	              </exclusions>
+		</dependency>
+        
+     </dependencies>
+  <properties>
+        <!-- WSDL config -->
+        <gg.wsdl.location>${basedir}/src/main/resources/wsdl</gg.wsdl.location>
+        <account.wsdl.packaged.location>wsdl/AccountCreationService.wsdl</account.wsdl.packaged.location>
+        <budget.wsdl.packaged.location>wsdl/BudgetAdjustmentService.wsdl</budget.wsdl.packaged.location>
+		<role.wsdl.packaged.location>wsdl/roles.wsdl</role.wsdl.packaged.location>
+        <printing.schema.dir>src/main/resources/org/kuali/kra/printing/schema</printing.schema.dir>
+        <printing.config.dir>src/main/config/org/kuali/kra/printing/schema</printing.config.dir>
+
+        <printing.xmlbeans.gen.src>${project.build.directory}/generated-sources/xmlbeans-printing</printing.xmlbeans.gen.src>
+        <!--
+         Maven does not support the concept of "generated-classes" therefore setting the generated classes directory
+         to the generated-sources directory that way these classes will be placed in the target/classes directory.
+         -->
+        <printing.xmlbeans.gen.cls.base>${printing.xmlbeans.gen.src}</printing.xmlbeans.gen.cls.base>
+        <printing.xmlbeans.gen.mrk.base>${project.build.directory}/xmlbeans-markers/xmlbeans-printing</printing.xmlbeans.gen.mrk.base>
+  	<javax.servlet.version>3.0.0.v201112011016</javax.servlet.version>
+  	<jmock.version>2.6.0</jmock.version>
+  	<junit.version>4.12</junit.version>
+  	<timestamp>${maven.build.timestamp}</timestamp>
+  	<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
+  </properties>  
+  
+</project>

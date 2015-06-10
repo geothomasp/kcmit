@@ -15,3 +15,4 @@ target
 coeus.iml
 **/bin
 coeus-webapp/src/main/resources/META-INF/kc-alt-config.xml
+**/META-INF/kcmit-config.xml

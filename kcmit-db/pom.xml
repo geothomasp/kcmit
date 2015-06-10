@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+       <groupId>edu.mit.kc</groupId>
+       <artifactId>kcmit</artifactId>
+       <version>6.0.2.1</version>
+  </parent>
+  <artifactId>kcmit-db</artifactId>
+  <packaging>pom</packaging>
+  <name>MIT KC Database parent</name>
+  <description>MIT KC Database parent project</description>
+  <prerequisites>
+      <maven>${require.maven.version}</maven>
+  </prerequisites>
+
+  <modules>
+      <module>kcmit-db-sql</module>
+      <module>kcmit-db-xml</module>
+  </modules>
+
+  <properties>
+      <copy.javaagent.off>true</copy.javaagent.off>
+  </properties>
+</project>
