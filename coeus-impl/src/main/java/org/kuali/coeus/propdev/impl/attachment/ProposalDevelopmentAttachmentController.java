@@ -21,12 +21,14 @@ package org.kuali.coeus.propdev.impl.attachment;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.propdev.impl.abstrct.ProposalAbstract;
 import org.kuali.coeus.propdev.impl.core.*;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.propdev.impl.person.attachment.AddPersonnelAttachmentEvent;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -94,6 +96,13 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
         }
     }
 
+    @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-AttachmentsPage"})
+    public ModelAndView navigateToAttachment(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        ModelAndView modelView = super.navigate(form,result,request,response);
+		getSharedDocumentService().processDevelopmentProposalAttachments(form.getDevelopmentProposal());
+       return modelView;
+     }
+    
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteFileUploadLine")
     public ModelAndView deleteFileUploadLine(@ModelAttribute("KualiForm") final UifFormBase uifForm,
                                              BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -213,7 +222,8 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
         Narrative narrative = form.getProposalDevelopmentAttachmentHelper().getNarrative();
         initializeNarrative(narrative, form);
         if ( getKualiRuleService().applyRules(new AddNarrativeEvent(ProposalDevelopmentConstants.KradConstants.PROPOSAL_DEVELOPMENT_ATTACHMENT_HELPER_NARRATIVE,form.getProposalDevelopmentDocument(),form.getProposalDevelopmentAttachmentHelper().getNarrative()))) {
-            form.getDevelopmentProposal().getNarratives().add(0,narrative);
+            narrative.setViewAttachment(true);
+        	form.getDevelopmentProposal().getNarratives().add(0,narrative);
             form.getProposalDevelopmentAttachmentHelper().reset();
         } else {
             form.setUpdateComponentId(ProposalDevelopmentConstants.KradConstants.PROP_DEV_ATTACHMENTS_PAGE_PROPOSAL_DETAILS);
@@ -225,7 +235,7 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=checkForExistingNarratives")
     public ModelAndView checkForExistingNarratives(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form,
-                                                   @RequestParam String currentValue,@RequestParam(required = false) String previousValue,@RequestParam String propertyPath) throws Exception {
+    		 @RequestParam String currentValue,@RequestParam(required = false) String previousValue,@RequestParam String propertyPath) throws Exception {
         if (form.getDevelopmentProposal().isChild()) {
             NarrativeType narrativeType = getDataObjectService().find(NarrativeType.class, currentValue);
             DevelopmentProposal parentProposal = getDataObjectService().find(DevelopmentProposal.class,form.getDevelopmentProposal().getHierarchyParentProposalNumber());
@@ -333,6 +343,7 @@ public class ProposalDevelopmentAttachmentController extends ProposalDevelopment
                 getKcNotificationService().sendNotification(context);
             }
         }
+        narrative.setViewAttachment(true);
         return super.save(form);
     }
 

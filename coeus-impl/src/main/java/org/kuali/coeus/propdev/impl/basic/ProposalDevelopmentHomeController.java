@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.sponsor.Sponsor;
 import org.kuali.coeus.common.framework.compliance.core.SaveDocumentSpecialReviewEvent;
 import org.kuali.coeus.propdev.impl.copy.ProposalCopyCriteria;
@@ -58,8 +60,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 @Controller
 public class ProposalDevelopmentHomeController extends ProposalDevelopmentControllerBase {
+    private static Log LOG = LogFactory.getLog(ProposalDevelopmentHomeController.class);
 
     @Autowired
     @Qualifier("dataDictionaryService")
@@ -72,6 +77,10 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
     @Autowired
     @Qualifier("kcEntityManager")
     private EntityManager entityManager;
+
+    @Autowired
+    @Qualifier("proposalQuestionnaireValidationService")
+    private ProposalQuestionnaireValidationService proposalQuestionnaireValidationService;
 
    @MethodAccessible
    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=createProposal")
@@ -106,12 +115,22 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
         boolean isDeleted = false;
         // String UserIdInv=form.getProposalPersonQuestionnaireHelper().getProposalPerson().getPerson().getUserName(); 
          String principalName=getGlobalVariableService().getUserSession().getPrincipalName();
+         String viewId = form.getViewId();
         if (!ObjectUtils.isNull(form.getDocId())) {
-            document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
-            if(document==null) throw new RuntimeException("Proposal document might have been revalidated. " +
-            						"Please contact support team :kc-help@mit.edu: to send a new certification link");
-            isDeleted = document.isProposalDeleted();
+        	// this fix is for the revalidation.
+        	try { 
+        		document = (ProposalDevelopmentDocument) getDocumentService().getByDocumentHeaderId(form.getDocId());
+        	}catch (Exception ex) {
+        		LOG.error("Invalid document - this document was reprocessed. Document number " + form.getDocId());
+        	}
+            if(document==null && viewId!=null && viewId.equals("PropDev-CertificationView")) {
+                Properties props = new Properties();
+                props.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, KRADConstants.START_METHOD);
+                props.put(UifConstants.UrlParams.VIEW_ID, "PropDev-ReprocessedView");
+                return getModelAndViewService().performRedirect(form, "proposalDevelopment", props);
+            }
         }
+        isDeleted = document.isProposalDeleted();
 
         if (isDeleted) {
             Properties props = new Properties();
@@ -125,20 +144,27 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
             form.setDocTypeName(workflowDocument.getDocumentTypeName());
             form.setProposalCopyCriteria(new ProposalCopyCriteria(document));
             ((ProposalDevelopmentViewHelperServiceImpl)form.getView().getViewHelperService()).populateQuestionnaires(form);
-
-            if (!this.getDocumentDictionaryService().getDocumentAuthorizer(document).canOpen(document,
-                    getGlobalVariableService().getUserSession().getPerson())) {
-                throw new DocumentAuthorizationException(getGlobalVariableService().getUserSession().getPerson().getPrincipalName(),
-                                "open", document.getDocumentNumber());
+            if(viewId!=null && !viewId.equals("PropDev-CertificationView")){
+	            if (!this.getDocumentDictionaryService().getDocumentAuthorizer(document).canOpen(document,
+	                    getGlobalVariableService().getUserSession().getPerson())) {
+	                throw new DocumentAuthorizationException(getGlobalVariableService().getUserSession().getPerson().getPrincipalName(),
+	                                "open", document.getDocumentNumber());
+	            }
             }
 
             if (StringUtils.isNotEmpty(userName)) {
                 for (ProposalPerson person : form.getDevelopmentProposal().getProposalPersons()) {
                     if (StringUtils.equals(person.getUserName(),userName)) {               
                         form.setProposalPersonQuestionnaireHelper(person.getQuestionnaireHelper());
+                        if(person.getQuestionnaireHelper()!=null && person.getQuestionnaireHelper().getAnswerHeaders()!=null
+                        		&& !person.getQuestionnaireHelper().getAnswerHeaders().isEmpty()){
+                        	if(person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted()){
+                        		getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-CertificationView", KcMitConstants.CERTIFICATION_COMPLETED,"");
+                        	}
+                        }
                        if(userName.equalsIgnoreCase(principalName)){
                     	   form.getProposalPersonQuestionnaireHelper().setValidCertUser(true);
-                    	   break;
+                        break;
                         }else{                        	
                         	 form.getProposalPersonQuestionnaireHelper().setValidCertUser(false);
                         	 break;
@@ -294,6 +320,7 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
            if (propDevForm.getDocument().getDocumentHeader().getWorkflowDocument().isEnroute()) {
                ((ProposalDevelopmentViewHelperServiceImpl) form.getViewHelperService()).prepareSummaryPage(propDevForm);
                propDevForm.getView().setEntryPageId(ProposalDevelopmentConstants.KradConstants.SUBMIT_PAGE);
+               getProposalQuestionnaireValidationService().executeProposalQuestionnaireValidation(propDevForm.getDevelopmentProposal());
            }
 
            if (StringUtils.isNotBlank(navigateToPageId)) {
@@ -360,4 +387,13 @@ public class ProposalDevelopmentHomeController extends ProposalDevelopmentContro
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
+
+	public ProposalQuestionnaireValidationService getProposalQuestionnaireValidationService() {
+		return proposalQuestionnaireValidationService;
+	}
+
+	public void setProposalQuestionnaireValidationService(
+			ProposalQuestionnaireValidationService proposalQuestionnaireValidationService) {
+		this.proposalQuestionnaireValidationService = proposalQuestionnaireValidationService;
+	}
 }

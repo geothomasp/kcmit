@@ -19,12 +19,15 @@
 package org.kuali.coeus.propdev.impl.core;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.kuali.coeus.common.framework.compliance.exemption.ExemptionType;
 import org.kuali.coeus.common.framework.keyword.ScienceKeyword;
 import org.kuali.coeus.common.notification.impl.bo.KcNotification;
 import org.kuali.coeus.common.notification.impl.bo.NotificationTypeRecipient;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
 import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
+import org.kuali.coeus.common.questionnaire.framework.answer.Answer;
 import org.kuali.coeus.common.questionnaire.framework.answer.AnswerHeader;
 import org.kuali.coeus.common.framework.compliance.core.SaveDocumentSpecialReviewEvent;
 import org.kuali.coeus.propdev.impl.datavalidation.ProposalDevelopmentDataValidationConstants;
@@ -34,7 +37,9 @@ import org.kuali.coeus.propdev.impl.keyword.PropScienceKeyword;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationContext;
 import org.kuali.coeus.propdev.impl.notification.ProposalDevelopmentNotificationRenderer;
 import org.kuali.coeus.propdev.impl.person.ProposalPerson;
+import org.kuali.coeus.propdev.impl.person.ProposalPersonCoiIntegrationService;
 import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiography;
 import org.kuali.coeus.propdev.impl.person.attachment.ProposalPersonBiographyService;
 import org.kuali.coeus.propdev.impl.specialreview.ProposalSpecialReview;
@@ -50,13 +55,16 @@ import org.kuali.coeus.sys.impl.validation.DataValidationItem;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.kra.infrastructure.RoleConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.exception.RiceRuntimeException;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.data.DataObjectService;
+import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.document.DocumentBase;
 import org.kuali.rice.krad.document.TransactionalDocumentControllerService;
 import org.kuali.rice.krad.exception.ValidationException;
@@ -69,6 +77,7 @@ import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.web.form.DialogResponse;
 import org.kuali.rice.krad.web.form.DocumentFormBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.rice.krad.web.service.*;
@@ -79,10 +88,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import edu.mit.kc.coi.KcCoiLinkService;
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,6 +106,7 @@ import java.util.List;
 public abstract class ProposalDevelopmentControllerBase {
 
     protected static final String PROPDEV_DEFAULT_VIEW_ID = "PropDev-DefaultView";
+    private static final String CONFIRM_MY_COI_DIALOG_ID = "PropDev-Personal-CoiQuestionDialog";
 
     @Autowired
     @Qualifier("uifExportControllerService")
@@ -185,10 +201,23 @@ public abstract class ProposalDevelopmentControllerBase {
     private ParameterService parameterService;
     
     @Autowired
+    @Qualifier("kualiConfigurationService")
+    private ConfigurationService kualiConfigurationService;
+
+    
+    @Autowired
+    @Qualifier("proposalPersonCoiIntegrationService")
+    private ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService;
+    
+    @Autowired
     @Qualifier("proposalTypeService")
     private ProposalTypeService proposalTypeService;
+   
+	
+	private transient boolean updatedToCoi = false;
+  
 
-    protected DocumentFormBase createInitialForm(HttpServletRequest request) {
+	protected DocumentFormBase createInitialForm(HttpServletRequest request) {
         return new ProposalDevelopmentDocumentForm();
     }
     
@@ -197,6 +226,23 @@ public abstract class ProposalDevelopmentControllerBase {
         UifFormBase form =  getKcCommonControllerService().initForm(this.createInitialForm(request), request, response);
         return form;
     }
+    private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
+   
+    
+    public KcCoiLinkService kcCoiLinkService;
+    
+	public KcCoiLinkService getKcCoiLinkService() {
+		if (kcCoiLinkService == null) {
+			kcCoiLinkService = KcServiceLocator.getService(KcCoiLinkService.class);
+		}
+		
+		return kcCoiLinkService;
+	}
+
+
+	public void setKcCoiLinkService(KcCoiLinkService kcCoiLinkService) {
+		this.kcCoiLinkService = kcCoiLinkService;
+	}
      
     /**
      * Create the original set of Proposal Users for a new Proposal Development Document.
@@ -238,10 +284,35 @@ public abstract class ProposalDevelopmentControllerBase {
          if (StringUtils.equalsIgnoreCase(form.getPageId(), Constants.PROP_DEV_PERMISSIONS_PAGE)) {
              saveDocumentPermissions(form);
          }
-
-         if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID)) {
-             ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateAttachmentReferences(form.getDevelopmentProposal());
+         DialogResponse dialogResponse = form.getDialogResponse(CONFIRM_MY_COI_DIALOG_ID);
+         if (StringUtils.equalsIgnoreCase(form.getPageId(), Constants.KEY_PERSONNEL_PAGE) ||
+        		 StringUtils.equalsIgnoreCase(form.getPageId(),"PropDev-CertificationView-Page")){
+        	 String coiApplicationUrl =  getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, "LINK_TO_COI");
+        	 String proposalNumber = proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber();
+				StringBuilder proposalPrefix = new StringBuilder();
+				for(int count=0;count<=8; count++){
+					if(proposalNumber.length()-1 <= count){
+						proposalPrefix.append("0");
+					}
+					count ++;
+				}
+			form.setCoiUrl(coiApplicationUrl+"&proposalNumber="+proposalPrefix+proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber());
+        	 String pageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
+             if (StringUtils.isBlank(pageId)){
+            	 if(dialogResponse!=null){
+            		 boolean confirmResetDefault = dialogResponse.getResponseAsBoolean();
+            		 if(confirmResetDefault){
+            			 if(coiApplicationUrl!=null){
+            				 return getModelAndViewService().getModelAndView(form, pageId);
+            			 }
+            		 }else{
+            			 return getModelAndViewService().getModelAndView(form, pageId);
+            		 }
+            	 }
+             }
          }
+
+        
 
          if (getGlobalVariableService().getMessageMap().getErrorCount() == 0 && form.getEditableCollectionLines() != null) {
             form.getEditableCollectionLines().clear();
@@ -266,6 +337,12 @@ public abstract class ProposalDevelopmentControllerBase {
          saveAnswerHeaders(form, form.getPageId());
 
          getTransactionalDocumentControllerService().save(form);
+         
+         if (StringUtils.equalsIgnoreCase(form.getPageId(), ProposalDevelopmentDataValidationConstants.ATTACHMENT_PAGE_ID)) {
+             ((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateAttachmentReferences(form.getDevelopmentProposal());
+     		 getSharedDocumentService().processDevelopmentProposalAttachments(form.getDevelopmentProposal());
+         }
+         
          if (form.isAuditActivated()){
              getAuditHelper().auditConditionally(form);
          }
@@ -296,6 +373,11 @@ public abstract class ProposalDevelopmentControllerBase {
                      form.getSpecialReviewHelper().prepareProtocolLinkViewFields(specialReview);
                  }
              }
+         }
+
+         if(StringUtils.isBlank(pageId) && dialogResponse == null && isUpdatedToCoi()){
+        	 form.setCoiIntegrationMessage(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.COI_QUESTION_ANSWERED));
+        	 view =  getModelAndViewService().showDialog("PropDev-Personal-CoiQuestionDialog", true, form);
          }
          
          return view;
@@ -464,28 +546,34 @@ public abstract class ProposalDevelopmentControllerBase {
 	public void saveAnswerHeaders(ProposalDevelopmentDocumentForm pdForm,String pageId) {
         boolean allCertificationsWereComplete = true;
         boolean allCertificationAreNowComplete = true;
-       
+        Person loggedinUser = getGlobalVariableService().getUserSession().getPerson();
+        setUpdatedToCoi(false);
         if (StringUtils.equalsIgnoreCase(pageId, Constants.KEY_PERSONNEL_PAGE) ||
                 StringUtils.equalsIgnoreCase(pageId,"PropDev-CertificationView-Page")) {
-        	 List<ProposalPerson> proposalPersons = new ArrayList();
-        	 for (ProposalPerson person : pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
-        		 if (person.getDevelopmentProposal()!=null){
-        			 proposalPersons.add(person);
-        		 }
-        	 }
-        	 pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().setProposalPersons(proposalPersons);
+	         List<ProposalPerson> proposalPersons = new ArrayList();
+	       	 for (ProposalPerson person : pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
+	       		 if (person.getDevelopmentProposal()!=null){
+	       			 proposalPersons.add(person);
+	       		 }
+	       	 }
+	       	pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().setProposalPersons(proposalPersons);
             for (ProposalPerson person : pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalPersons()) {
-            	
                 if (person.getDevelopmentProposal()!=null && person.getQuestionnaireHelper() != null && person.getQuestionnaireHelper().getAnswerHeaders() != null
                         && !person.getQuestionnaireHelper().getAnswerHeaders().isEmpty()) {
                     for (AnswerHeader answerHeader : person.getQuestionnaireHelper().getAnswerHeaders()) {
                         boolean wasComplete = answerHeader.isCompleted();
-                        allCertificationsWereComplete &= wasComplete;
+                        boolean hasCertficationPermission = getProposalDevelopmentPermissionsService().hasCertificationPermissions(pdForm.getProposalDevelopmentDocument(), loggedinUser, person);
+                        if(hasCertficationPermission){
+                        	allCertificationsWereComplete &= wasComplete;
+                        }
                         getLegacyDataAdapter().save(answerHeader);
                         person.getQuestionnaireHelper().populateAnswers();
                         boolean isComplete = person.getQuestionnaireHelper().getAnswerHeaders().get(0).isCompleted();
-                        allCertificationAreNowComplete &= isComplete;
+                        if(hasCertficationPermission){
+                        	allCertificationAreNowComplete &= isComplete;
+                        }
                         if(isComplete && !wasComplete){
+                        	getGlobalVariableService().getMessageMap().putInfoForSectionId("PropDev-CertificationView", KcMitConstants.CERTIFICATION_COMPLETED,"");
                         	person.setCertifiedBy(getGlobalVariableService().getUserSession().getPrincipalName());
                             person.setCertifiedTime(((DateTimeService) KcServiceLocator.getService(Constants.DATE_TIME_SERVICE_NAME)).getCurrentTimestamp());
 
@@ -493,7 +581,12 @@ public abstract class ProposalDevelopmentControllerBase {
                         	person.setCertifiedBy(null);
                         	person.setCertifiedTime(null);
                         }
-                        checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete);
+                        if(!isUpdatedToCoi()){
+                        	setUpdatedToCoi(updateCOIOnPDCerificationComplete(pdForm,person,isComplete || wasComplete,answerHeader));
+                        }else{
+                        	updateCOIOnPDCerificationComplete(pdForm,person,isComplete || wasComplete,answerHeader);
+                        }
+                        checkForCertifiedByProxy(pdForm.getDevelopmentProposal(),person,isComplete && !wasComplete,wasComplete);
                     }
                 }
             }
@@ -514,13 +607,61 @@ public abstract class ProposalDevelopmentControllerBase {
         }
 	}
 
-    public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted) {
+	public boolean updateCOIOnPDCerificationComplete(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person, boolean completed,AnswerHeader answerHeader) {
+			boolean coiQuestionsAnswered = false;
+			if(person.getPersonId()!=null && checkForCOIquestions(answerHeader) && completed){
+				 updateToCOI(pdForm,person);
+			}
+			String loggedInUser = getGlobalVariableService().getUserSession().getPrincipalId();
+
+			if(person.getPersonId()!=null && person.getPersonId().equals(loggedInUser)){
+				coiQuestionsAnswered = getProposalPersonCoiIntegrationService().isCoiQuestionsAnswered(person);
+			}
+            return coiQuestionsAnswered;
+    }
+	
+	private void updateToCOI(ProposalDevelopmentDocumentForm pdForm, ProposalPerson person){
+		String userName = getGlobalVariableService().getUserSession().getPrincipalName();
+		try {
+			getKcCoiLinkService().updateCOIOnPDCerificationComplete(pdForm.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalNumber(), person.getPersonId(), userName);
+		} catch (SQLException e) {
+			LOGGER.info(Level.ALL, e);
+			LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
+		}
+		
+	}
+	
+	private boolean checkForCOIquestions(AnswerHeader answerHeader ){
+
+		boolean hasCOIquestions = false;
+		String coiCertificationQuestionIds = getParameterService().getParameterValueAsString("KC-GEN", "All", "PROP_PERSON_COI_CERTIFY_QID");
+		List<String> coiCertificationQuestionIdList = new ArrayList<String>();
+		if(coiCertificationQuestionIds!=null){
+			String[] questionIds = coiCertificationQuestionIds.split(",");
+			for (String questionid : questionIds){
+				coiCertificationQuestionIdList.add(questionid);
+			}
+		}
+		for(Answer answer :answerHeader.getAnswers()){
+			for(String coiCertificationQuestionId : coiCertificationQuestionIdList){
+				if(coiCertificationQuestionId.equals(answer.getQuestionSeqId().toString())){
+					hasCOIquestions = true;
+					break;
+				}
+
+			}
+		}
+		return hasCOIquestions;
+	}
+
+    public void checkForCertifiedByProxy(DevelopmentProposal developmentProposal, ProposalPerson person, boolean recentlyCompleted,boolean wasComplete) {
         boolean selfCertifyOnly = getParameterService().getParameterValueAsBoolean(Constants.MODULE_NAMESPACE_PROPOSAL_DEVELOPMENT,Constants.PARAMETER_COMPONENT_DOCUMENT,ProposalDevelopmentConstants.Parameters.KEY_PERSON_CERTIFICATION_SELF_CERTIFY_ONLY);
         if (selfCertifyOnly) {
             String proxyId = getGlobalVariableService().getUserSession().getPrincipalId();
             if (!StringUtils.equals(person.getPersonId(), proxyId) && recentlyCompleted) {
                 ProposalDevelopmentNotificationContext context = new ProposalDevelopmentNotificationContext(developmentProposal,"106","Proposal Person Certification Completed");
                 ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setDevelopmentProposal(developmentProposal);
+                ((ProposalDevelopmentNotificationRenderer) context.getRenderer()).setProposalPerson(person);
                 KcNotification notification = getKcNotificationService().createNotificationObject(context);
                 NotificationTypeRecipient recipient = new NotificationTypeRecipient();
                 recipient.setPersonId(person.getPersonId());
@@ -844,7 +985,37 @@ public abstract class ProposalDevelopmentControllerBase {
         this.pessimisticLockService = pessimisticLockService;
     }
     
-    public ProposalTypeService getProposalTypeService() {
+    public boolean isUpdatedToCoi() {
+		return updatedToCoi;
+	}
+
+	public void setUpdatedToCoi(boolean updatedToCoi) {
+		this.updatedToCoi = updatedToCoi;
+	}
+	
+	public ConfigurationService getKualiConfigurationService() {
+		return kualiConfigurationService;
+	}
+
+	public void setKualiConfigurationService(
+			ConfigurationService kualiConfigurationService) {
+		this.kualiConfigurationService = kualiConfigurationService;
+	}
+	
+	public ProposalPersonCoiIntegrationService getProposalPersonCoiIntegrationService() {
+		return proposalPersonCoiIntegrationService;
+	}
+
+	public void setProposalPersonCoiIntegrationService(
+			ProposalPersonCoiIntegrationService proposalPersonCoiIntegrationService) {
+		this.proposalPersonCoiIntegrationService = proposalPersonCoiIntegrationService;
+	}
+	
+	public ProposalTypeService getProposalTypeService() {
 		return proposalTypeService;
+	}
+
+	public SharedDocumentService getSharedDocumentService() {
+	      return KcServiceLocator.getService(SharedDocumentService.class);
 	}
 }
