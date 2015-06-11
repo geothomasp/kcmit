@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -65,7 +66,7 @@ public class ReportTrackingNotificationJobDetail extends QuartzJobBean {
             UserSession userSession = new UserSession(user);
             GlobalVariables.setUserSession(userSession);        
             try {
-                List<ReportTrackingNotificationDetails> results = reportTrackingNotificationService.runReportTrackingNotifications();
+                List<ReportTrackingNotificationDetails> results = getReportTrackingNotificationService().runReportTrackingNotifications();
                 buildMessage(builder, results);
             } catch (Exception e) {
                 LOG.error("Error running report tracking notification service.", e);
@@ -149,7 +150,10 @@ public class ReportTrackingNotificationJobDetail extends QuartzJobBean {
     }
 
     protected ReportTrackingNotificationService getReportTrackingNotificationService() {
-        return reportTrackingNotificationService;
+    	if(reportTrackingNotificationService == null){
+    		KcServiceLocator.getService(ReportTrackingNotificationService.class);
+    	}
+    	return reportTrackingNotificationService;
     }
 
     public void setReportTrackingNotificationService(ReportTrackingNotificationService reportTrackingNotificationService) {
