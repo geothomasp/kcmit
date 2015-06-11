@@ -21,6 +21,7 @@ package org.kuali.kra.award.home;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.bo.CommentType;
 import org.kuali.kra.infrastructure.Constants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
 import java.util.Collection;
@@ -54,7 +55,10 @@ public class AwardCommentFactory {
      * @return
      */
     public AwardComment createPreAwardSponsorAuthorizationComment() {
-        return createAwardComment(Constants.PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE, Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST);
+    	String preAwardSponsorCommentTypeCode = KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, Constants.PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE);
+
+        return createAwardComment(preAwardSponsorCommentTypeCode, Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST);
     }
     
     /**
@@ -63,7 +67,9 @@ public class AwardCommentFactory {
      * @return
      */
     public AwardComment createPreAwardInstitutionalAuthorizationComment() {
-        return createAwardComment(Constants.PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE, Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST);
+    	String preAwardInstitutionalCommentTypeCode = KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, Constants.PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE);
+         return createAwardComment(preAwardInstitutionalCommentTypeCode, Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST);
     }
     
     /**

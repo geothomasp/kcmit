@@ -472,8 +472,8 @@ public interface Constants {
     public static final String COST_SHARE_COMMENT_TYPE_CODE = "9";
     public static final String FANDA_RATE_COMMENT_TYPE_CODE = "8";
     public static final String PAYMENT_AND_INVOICES_COMMENT_TYPE_CODE = "1";
-    public static final String PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE = "18";
-    public static final String PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE = "19";
+    public static final String PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE = "PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE";
+    public static final String PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE = "PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE";
     public static final String BENEFITS_RATES_COMMENT_TYPE_CODE = "20";
     public static final String GENERAL_COMMENT_TYPE_CODE = "2";
     public static final String FISCAL_REPORT_COMMENT_TYPE_CODE = "3";

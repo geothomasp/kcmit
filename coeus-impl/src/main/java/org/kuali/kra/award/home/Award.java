@@ -87,6 +87,7 @@ import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyHistoryService;
 import org.kuali.kra.timeandmoney.transactions.AwardTransactionType;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.role.Role;
@@ -1401,7 +1402,10 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     * Get the award PreAward Sponsor Authorizations comments.  If the comment has not been set...... initialize and return new Comment.
      */
     public AwardComment getawardPreAwardSponsorAuthorizationComment() {
-        return getAwardCommentByType( Constants.PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE,Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST, true );
+    	
+    	String preAwardSponsorCommentTypeCode = KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, Constants.PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE);
+        return getAwardCommentByType( preAwardSponsorCommentTypeCode,Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST, true );
     }
 
     /**
@@ -1409,7 +1413,9 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     * Get the award PreAward Institutional Authorizations comments.  If the comment has not been set...... initialize and return new Comment.
      */
     public AwardComment getawardPreAwardInstitutionalAuthorizationComment() {
-        return getAwardCommentByType( Constants.PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE,Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST, true );
+    	String preAwardInstitutionalCommentTypeCode = KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, Constants.PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE);
+        return getAwardCommentByType( preAwardInstitutionalCommentTypeCode,Constants.AWARD_COMMENT_EXCLUDE_FROM_CHECKLIST, true );
     }
 
     /**

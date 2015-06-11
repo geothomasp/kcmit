@@ -20,6 +20,7 @@ package org.kuali.kra.award.rule;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.sys.framework.rule.KcTransactionalDocumentRuleBase;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.util.CollectionUtils;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
@@ -29,6 +30,7 @@ import org.kuali.kra.award.home.ValidBasisMethodPayment;
 import org.kuali.kra.award.rule.event.AwardCommentsRuleEvent;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import java.util.Collection;
 
@@ -42,10 +44,13 @@ public class AwardCommentsRuleImpl extends KcTransactionalDocumentRuleBase imple
    
     public boolean processAwardCommentsBusinessRules(AwardCommentsRuleEvent awardCommentsRuleEvent) {
         boolean valid = true;
-
+    	String preAwardSponsorCommentTypeCode = KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+				Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, Constants.PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE);
+		String preAwardInstitutionalCommentTypeCode = KcServiceLocator.getService(ParameterService.class).getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
+		Constants.KC_ALL_PARAMETER_DETAIL_TYPE_CODE, Constants.PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE);
         // Out of the comment types defined in Constants, these are the ones we actually use
-        valid &= checkAwardComment(awardCommentsRuleEvent, Constants.PREAWARD_SPONSOR_AUTHORIZATION_COMMENT_TYPE_CODE, "awardPreAwardSponsorAuthorizationComment.comments");
-        valid &= checkAwardComment(awardCommentsRuleEvent, Constants.PREAWARD_INSTITUTIONAL_AUTHORIZATION_COMMENT_TYPE_CODE, "awardPreAwardInstitutionalAuthorizationComment.comments");
+        valid &= checkAwardComment(awardCommentsRuleEvent, preAwardSponsorCommentTypeCode, "awardPreAwardSponsorAuthorizationComment.comments");
+        valid &= checkAwardComment(awardCommentsRuleEvent, preAwardInstitutionalCommentTypeCode, "awardPreAwardInstitutionalAuthorizationComment.comments");
         valid &= checkAwardComment(awardCommentsRuleEvent, Constants.COST_SHARE_COMMENT_TYPE_CODE, "awardCostShareComment.comments");
         valid &= checkAwardComment(awardCommentsRuleEvent, Constants.FANDA_RATE_COMMENT_TYPE_CODE, "awardFandaRateComment.comments");
         valid &= checkAwardComment(awardCommentsRuleEvent, Constants.BENEFITS_RATES_COMMENT_TYPE_CODE, "awardBenefitsRateComment.comments");
