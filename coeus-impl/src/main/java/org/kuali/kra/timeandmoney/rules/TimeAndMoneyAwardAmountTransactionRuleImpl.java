@@ -91,10 +91,6 @@ public class TimeAndMoneyAwardAmountTransactionRuleImpl extends KcTransactionalD
                     }
                     MessageMap errorMap = GlobalVariables.getMessageMap();
                     errorMap.clearErrorPath();
-                    if (obligatedTotal.isGreaterThan(anticipatedTotal)) {
-                        valid = false;
-                        reportError(AMOUNTS_INVALID_FROM_TRANSACTIONS, KeyConstants.ERROR_ANTICIPATED_AMOUNT_FROM_TRANSACTIONS, award.getAwardNumber());
-                    }
                     if (anticipatedTotal.isNegative()) {
                         valid = false;
                         reportError(AMOUNTS_INVALID_FROM_TRANSACTIONS, KeyConstants.ERROR_AWARD_ANTICIPATED_NEGATIVE_FROM_TRANSACTIONS, award.getAwardNumber());
