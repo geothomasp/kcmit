@@ -151,7 +151,7 @@ public class ReportTrackingNotificationJobDetail extends QuartzJobBean {
 
     protected ReportTrackingNotificationService getReportTrackingNotificationService() {
     	if(reportTrackingNotificationService == null){
-    		KcServiceLocator.getService(ReportTrackingNotificationService.class);
+    		reportTrackingNotificationService = KcServiceLocator.getService(ReportTrackingNotificationService.class);
     	}
     	return reportTrackingNotificationService;
     }
