@@ -377,7 +377,7 @@ public class AwardDeltaXmlStream extends AwardBaseStream {
 		List<OtherData> otherDatas = new ArrayList<OtherData>();
 		OtherData otherData = null;
 		int count =0;
-        for (AwardCustomData awardCustomData : awardCustomDataList) {
+		for (AwardCustomData awardCustomData : awardCustomDataList) {
 			otherData = OtherData.Factory.newInstance();
 			String columnValue = awardCustomData.getValue();
 			if (awardCustomData.getCustomAttribute() != null
@@ -386,13 +386,17 @@ public class AwardDeltaXmlStream extends AwardBaseStream {
 						.getName());
 			}
 			if (columnValue != null) {
-				if (prevAward != null && !prevAward.getAwardCustomDataList().isEmpty()) {
-					String prevColumValue = prevAward.getAwardCustomDataList().get(count).getValue();
-					columnValue = getModColumValue(columnValue,
-							prevColumValue);
+				if (prevAward != null && !prevAward.getAwardCustomDataList().isEmpty() &&prevAward.getAwardCustomDataList().size() > count -1 ) {
+					for(AwardCustomData preAwardCustomData : prevAward.getAwardCustomDataList()){
+						if(awardCustomData.getCustomAttributeId().equals(preAwardCustomData.getCustomAttributeId())){
+							String prevColumValue = preAwardCustomData.getValue();
+							columnValue = getModColumValue(columnValue,
+									prevColumValue);
+						}
+					}
 				} 
 			otherData.setColumnValue(columnValue);
-			}
+		 }
 			otherDatas.add(otherData);
 			count++;
 		}
