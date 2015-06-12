@@ -206,6 +206,7 @@ public abstract class ProposalBudgetControllerBase {
     
     protected void saveBudget(ProposalBudgetForm form) {
     	if(getKcBusinessRulesEngine().applyRules(new BudgetSaveEvent(form.getBudget()))) {
+    		refreshBudgetLineItemCostElement(form);
             budgetService.calculateBudgetOnSave(form.getBudget());
             form.setBudget(getDataObjectService().save(form.getBudget()));
             getBudgetCalculationService().populateBudgetSummaryTotals(form.getBudget());
@@ -215,7 +216,28 @@ public abstract class ProposalBudgetControllerBase {
             validateBudgetExpenses(form);
     	}
     }
+    
+    public void refreshBudgetLineItemCostElement(ProposalBudgetForm form) {
+		Budget budget = form.getBudget();
+		for(BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
+	    	for(BudgetLineItem budgetLineItem : budgetPeriod.getBudgetLineItems()) {
+	    		if (costElementChanged(budgetLineItem)) {
+	    			refreshCostElement(budgetLineItem);
+	    		}
+	    	}
+		}
+    }
 
+	protected boolean costElementChanged(BudgetLineItem budgetLineItem) {
+		return !budgetLineItem.getCostElement().equals(budgetLineItem.getCostElementBO().getCostElement());
+	}
+    
+	protected void refreshCostElement(BudgetLineItem budgetLineItem) {
+		getDataObjectService().wrap(budgetLineItem).fetchRelationship("costElementBO");
+		budgetLineItem.setBudgetCategoryCode(budgetLineItem.getCostElementBO().getBudgetCategoryCode());
+		budgetLineItem.setBudgetCategory(budgetLineItem.getCostElementBO().getBudgetCategory());
+	}
+	
     public BudgetLineItem populateNewBudgetLineItem(BudgetLineItem newBudgetLineItem, BudgetPeriod budgetPeriod) {
  	   Budget budget = budgetPeriod.getBudget();
  	   if(newBudgetLineItem.getBudgetPeriod()==null){

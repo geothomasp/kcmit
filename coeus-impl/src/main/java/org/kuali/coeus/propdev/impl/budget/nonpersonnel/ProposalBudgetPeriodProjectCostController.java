@@ -406,16 +406,6 @@ public class ProposalBudgetPeriodProjectCostController extends ProposalBudgetCon
 		//if both changed then one has to win because the category code is in multiple places
 	}
 
-	protected void refreshCostElement(BudgetLineItem budgetLineItem) {
-		getDataObjectService().wrap(budgetLineItem).fetchRelationship("costElementBO");
-		budgetLineItem.setBudgetCategoryCode(budgetLineItem.getCostElementBO().getBudgetCategoryCode());
-		budgetLineItem.setBudgetCategory(budgetLineItem.getCostElementBO().getBudgetCategory());
-	}
-	
-	protected boolean costElementChanged(BudgetLineItem budgetLineItem) {
-		return !budgetLineItem.getCostElement().equals(budgetLineItem.getCostElementBO().getCostElement());
-	}
-
 	protected boolean budgetCategoryChanged(BudgetLineItem budgetLineItem) {
 		return !budgetLineItem.getBudgetCategoryCode().equals(budgetLineItem.getBudgetCategory().getCode());
 	}

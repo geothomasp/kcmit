@@ -276,13 +276,13 @@
 		<property name="items">
 			<list>
 				<bean parent="Uif-InputField" p:propertyName="personSequenceNumber"
-					p:optionsFinder="#{#getService('budgetPersonValuesFinder')}" p:order="10" p:required="true"
+					p:optionsFinder="#{#getService('budgetPersonValuesFinder')}" p:order="5" p:required="true"
 					p:enableAutoQuickfinder="false"/>
 				<bean parent="Uif-DataField" p:propertyName="budgetPerson.role"
 					p:label="Role" p:order="10"/>
- 				<bean parent="Uif-MessageField" p:messageText="@{addProjectPersonnelHelper.budgetPersonnelDetail.budgetPerson?.appointmentType?.description}"
+ 				<bean parent="Uif-MessageField" p:messageText="@{addProjectPersonnelHelper.editBudgetPersonnelDetail.budgetPerson?.appointmentType?.description}"
 					p:order="20" p:label="Appointment Type"/>
- 				<bean parent="Uif-MessageField" p:messageText="@{addProjectPersonnelHelper.budgetPersonnelDetail.budgetPerson?.effectiveDate}"
+ 				<bean parent="Uif-MessageField" p:messageText="@{addProjectPersonnelHelper.editBudgetPersonnelDetail.budgetPerson?.effectiveDate}"
 					p:order="30" p:label="Salary Effective Date"/>
 				<bean parent="Uif-InputField" p:propertyName="periodTypeCode" p:order="40" p:enableAutoQuickfinder="false"
 					p:readOnly="@{#parent.readOnly or #fp.personSequenceNumber == #{T(org.kuali.coeus.common.budget.framework.core.BudgetConstants.BudgetPerson).SUMMARYPERSON.personId}}"
