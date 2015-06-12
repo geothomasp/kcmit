@@ -41,6 +41,7 @@ import org.kuali.kra.timeandmoney.TimeAndMoneyForm;
 import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
 import org.kuali.kra.timeandmoney.history.TransactionDetail;
 import org.kuali.kra.timeandmoney.history.TransactionDetailType;
+import org.kuali.kra.timeandmoney.rules.TimeAndMoneyAwardDateSaveRuleImpl;
 import org.kuali.kra.timeandmoney.service.ActivePendingTransactionsService;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyActionSummaryService;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyHistoryService;
@@ -62,7 +63,7 @@ import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.SequenceAccessorService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
-
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
@@ -71,19 +72,21 @@ import java.sql.Date;
 import java.util.*;
 import java.util.Map.Entry;
 
+
 public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
 
+    private static final String DATE_CHANGED_COMMENT = "Date Changed";
     private static final String OBLIGATED_START_COMMENT = "Obligated Start";
     private static final String OBLIGATED_END_COMMENT = "Obligated End";
     private static final String PROJECT_END_COMMENT = "Project End";
-    private static final Integer TEN = 10;
+    private static final Integer TRANSACTION_TYPE_CODE_NO_COST_EXTNSN = 5;
     public static final String AWARD_NUMBER = "awardNumber";
     public static final String TIME_AND_MONEY_DOCUMENT = "TimeAndMoneyDocument";
     public static final String DIRECT_INDIRECT_ENABLED = "1";
     public static final String AWARD_AMOUNT_INFOS = "awardAmountInfos";
     public static final String SINGLE_NODE_MONEY_TRANSACTION_COMMENT = "Single Node Money Transaction";
     public static final String TRANSACTION_SEQUENCE = "SEQ_TRANSACTION_ID";
-
+    private SapFeedService sapFeedService;
     private AwardVersionService awardVersionService;
     private TransactionRuleImpl transactionRuleImpl;
     private ActivePendingTransactionsService activePendingTransactionsService;
@@ -103,6 +106,20 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         return super.save(mapping, form, request, response);
     }
     
+    protected void captureSapFeedForPendingTransactions(TimeAndMoneyDocument timeAndMoneyDocument) {
+    	Set<String> pendingAwards = new HashSet<String>();
+        for(PendingTransaction pendingTran : timeAndMoneyDocument.getPendingTransactions()) {
+            Award sourceAward = getAwardVersionService().getWorkingAwardVersion(pendingTran.getSourceAwardNumber());
+            Award destAward = getAwardVersionService().getWorkingAwardVersion(pendingTran.getDestinationAwardNumber());
+            if(sourceAward != null && pendingAwards.add(sourceAward.getAwardNumber())) {
+                getSapFeedService().updateSapFeedDetails(sourceAward.getAwardNumber(), sourceAward.getSequenceNumber());
+            }
+            if(destAward != null && pendingAwards.add(destAward.getAwardNumber())) {
+        		getSapFeedService().updateSapFeedDetails(destAward.getAwardNumber(), destAward.getSequenceNumber());
+            }
+        }
+    }
+    		
     private void captureSingleNodeMoneyTransactions(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
             HttpServletResponse response) throws Exception {
         TimeAndMoneyForm timeAndMoneyForm = (TimeAndMoneyForm) form;
@@ -146,6 +163,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         ScaleTwoDecimal currentObligatedIndirect = aai.getObligatedTotalIndirect();
         ScaleTwoDecimal currentAnticipatedDirect = aai.getAnticipatedTotalDirect();
         ScaleTwoDecimal currentAnticipatedIndirect = aai.getAnticipatedTotalIndirect();
+        boolean amountChanged = false;
         for(PendingTransaction penTran : timeAndMoneyDocument.getPendingTransactions()) {
             // if incoming transaction
             if (StringUtils.equalsIgnoreCase(penTran.getSourceAwardNumber(),Constants.AWARD_HIERARCHY_DEFAULT_PARENT_OF_ROOT)){
@@ -159,6 +177,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 currentAnticipatedDirect = currentAnticipatedDirect.subtract(penTran.getAnticipatedDirectAmount());
                 currentAnticipatedIndirect = currentAnticipatedIndirect.subtract(penTran.getAnticipatedIndirectAmount());
             }
+            amountChanged = true;
         }
         if(timeAndMoneyForm.getTimeAndMoneyDocument().getPendingTransactions().size() == 0 && (!awardHierarchyNode.getObligatedTotalDirect().equals(currentObligatedDirect)||
                 !awardHierarchyNode.getObligatedTotalIndirect().equals(currentObligatedIndirect) ||
@@ -168,6 +187,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
             ScaleTwoDecimal obligatedChangeIndirect = awardHierarchyNode.getObligatedTotalIndirect().subtract(currentObligatedIndirect);
             ScaleTwoDecimal anticipatedChangeDirect = awardHierarchyNode.getAnticipatedTotalDirect().subtract(currentAnticipatedDirect);
             ScaleTwoDecimal anticipatedChangeIndirect = awardHierarchyNode.getAnticipatedTotalIndirect().subtract(currentAnticipatedIndirect);
+            amountChanged = true;
             if(transactionRuleImpl.processParameterEnabledRules(awardHierarchyNode, aai, timeAndMoneyDocument)){
                 if (obligatedChangeDirect.isGreaterThan(ScaleTwoDecimal.ZERO)) {
                     pendingTransaction.setSourceAwardNumber(Constants.AWARD_HIERARCHY_DEFAULT_PARENT_OF_ROOT);
@@ -225,6 +245,10 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 ahn.setAntDistributableAmount(awardHierarchyNode.getAntDistributableAmount());
             }
         }
+    	if(amountChanged && !getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+    		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+    	}
+        
         return result;
     }
     
@@ -239,6 +263,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         // total up "current values" from transactions against current values
         ScaleTwoDecimal currentObligated = aai.getAmountObligatedToDate();
         ScaleTwoDecimal currentAnticipated = aai.getAnticipatedTotalAmount();
+        boolean amountChanged = false;
         for(PendingTransaction penTran : timeAndMoneyDocument.getPendingTransactions()) {
             // if incoming transaction
             if (StringUtils.equalsIgnoreCase(penTran.getSourceAwardNumber(),Constants.AWARD_HIERARCHY_DEFAULT_PARENT_OF_ROOT)){
@@ -248,6 +273,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 currentObligated = currentObligated.subtract(penTran.getObligatedAmount());
                 currentAnticipated = currentAnticipated.subtract(penTran.getAnticipatedAmount());
             }
+            amountChanged = true;
         }
 
         /*
@@ -259,6 +285,7 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 || !awardHierarchyNode.getAnticipatedTotalAmount().equals(currentAnticipated))) {
             ScaleTwoDecimal obligatedChange = awardHierarchyNode.getAmountObligatedToDate().subtract(currentObligated);
             ScaleTwoDecimal anticipatedChange = awardHierarchyNode.getAnticipatedTotalAmount().subtract(currentAnticipated);
+            amountChanged = true;
 
             if(transactionRuleImpl.processParameterDisabledRules(awardHierarchyNode, aai, timeAndMoneyDocument)){
                 if (obligatedChange.isGreaterThan(ScaleTwoDecimal.ZERO)) {
@@ -293,6 +320,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 ahn.setAntDistributableAmount(awardHierarchyNode.getAntDistributableAmount());
             }
         }
+    	if(amountChanged && !getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+    		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+    	}
         return result;
     }
     
@@ -305,12 +335,15 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         if (timeAndMoneyDocument.getAwardAmountTransactions().get(0).getTransactionTypeCode() == null) {
             isNoCostExtension = false;
         }else {
-            isNoCostExtension = timeAndMoneyDocument.getAwardAmountTransactions().get(0).getTransactionTypeCode().equals(TEN);//Transaction type code for No Cost Extension
+            isNoCostExtension = timeAndMoneyDocument.getAwardAmountTransactions().get(0).getTransactionTypeCode().equals(TRANSACTION_TYPE_CODE_NO_COST_EXTNSN);//Transaction type code for No Cost Extension
         }       
         //if Dates have changed in a node in hierarchy view and the Transaction Type is a No Cost Extension,
         //we need to record this as a transaction in history.
         //build the transaction and add to this list for persistence later.
         List<TransactionDetail> dateChangeTransactionDetailItems = new ArrayList<>();
+        boolean needToSaveTransaction = false;
+        
+        List<Award> awardsToSave = new ArrayList<Award>();
         
         updateDocumentFromSession(timeAndMoneyDocument);//not sure if I need to do this.
         updateAwardAmountTransactions(timeAndMoneyDocument);
@@ -319,11 +352,32 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
             int index = findAwardHierarchyNodeIndex(awardHierarchyNode);
             AwardAmountInfo aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());
             boolean needToSaveAward = false;
-            needToSaveAward |= inspectAndCaptureCurrentFundEffectiveDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
-            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
-            needToSaveAward |= inspectAndCaptureObligationExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
-            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
-            needToSaveAward |= inspectAndCaptureFinalExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+            
+            
+//            needToSaveAward |= inspectAndCaptureCurrentFundEffectiveDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+//            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
+//            needToSaveAward |= inspectAndCaptureObligationExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+//            aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());//get new award amount info if date change transactions have been created.
+//            needToSaveAward |= inspectAndCaptureFinalExpirationDateChanges(timeAndMoneyForm, isNoCostExtension, aai, index, award, timeAndMoneyDocument, awardHierarchyNode, dateChangeTransactionDetailItems);
+
+            String dateChangedComment = null;
+            AwardHierarchyNode currentAwardHierarchyNode = timeAndMoneyForm.getAwardHierarchyNodeItems().get(index);
+            if(isFundEffectiveDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) | 
+            		isObligationExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai) | 
+            		isFinalExpirationDateChanged(currentAwardHierarchyNode, awardHierarchyNode, aai)) {
+            	dateChangedComment = DATE_CHANGED_COMMENT;
+            }
+            
+            if(dateChangedComment != null) {
+                Date currentFundEffectiveDate = currentAwardHierarchyNode.getCurrentFundEffectiveDate();
+                Date currentObligationExpirationDate = currentAwardHierarchyNode.getObligationExpirationDate();
+                Date finalExpirationDate = currentAwardHierarchyNode.getFinalExpirationDate();
+            	createDateChangeTransaction(timeAndMoneyDocument, award, aai, awardHierarchyNode, dateChangeTransactionDetailItems, 
+            			currentFundEffectiveDate, currentObligationExpirationDate, finalExpirationDate, dateChangedComment);
+            	needToSaveTransaction = true;
+                needToSaveAward = true;
+            }
+            
             //capture any changes of DirectFandADistributions, and add them to the Award working version for persistence.
             if(award.getAwardNumber().equals(timeAndMoneyDocument.getAward().getAwardNumber())) {
                 //must use documentService to save the award document. businessObjectService.save() builds deletion award list on T&M doc and we
@@ -332,21 +386,99 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 if (mustSetFandADistributions(awardDocument.getAward().getAwardDirectFandADistributions(),timeAndMoneyDocument.getAward().getAwardDirectFandADistributions())) {
                     awardDocument.getAward().setAwardDirectFandADistributions(timeAndMoneyDocument.getAward().getAwardDirectFandADistributions());
                     getDocumentService().saveDocument(awardDocument);
+                	needToSaveTransaction = true;
                     needToSaveAward = true;
                 }
             }
+            
             if (needToSaveAward) {
             	award.setAllowUpdateTimestampToBeReset(false);
-                getBusinessObjectService().save(award);
+                //getBusinessObjectService().save(award);
+            	awardsToSave.add(award);
             }
         }
-        //we want to apply save rules to doc before we save any captured changes.
-        getBusinessObjectService().save(timeAndMoneyDocument.getAwardAmountTransactions());
-        //save all transaction details from No Cost extension date changes.
-        getBusinessObjectService().save(dateChangeTransactionDetailItems);
-        timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);//don't think I need to do this.
-    }
         
+        if(needToSaveTransaction && new TimeAndMoneyAwardDateSaveRuleImpl().validateObligatedDates(timeAndMoneyDocument)) {
+            getBusinessObjectService().save(awardsToSave);
+            updateSapFeedDetails(awardsToSave);
+            //we want to apply save rules to doc before we save any captured changes.
+            getBusinessObjectService().save(timeAndMoneyDocument.getAwardAmountTransactions());
+            //save all transaction details from No Cost extension date changes.
+            getBusinessObjectService().save(dateChangeTransactionDetailItems);
+            timeAndMoneyDocument.getAward().refreshReferenceObject(AWARD_AMOUNT_INFOS);//don't think I need to do this.
+        }
+    }
+    
+    protected void updateSapFeedDetails(List<Award> awardsToSave) {
+    	for(Award award : awardsToSave) {
+        	if(!getSapFeedService().isAwardSapFeedExists(award.getAwardNumber(), award.getSequenceNumber())) {
+        		getSapFeedService().setSapDetailsToWorkInProgress(award.getAwardNumber(), award.getSequenceNumber());
+        	}
+    	}
+    }
+
+    protected boolean isFundEffectiveDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
+        Date currentEffectiveDate = awardHierarchyNode.getCurrentFundEffectiveDate();
+        Date previousEffectiveDate = awardAmountInfo.getCurrentFundEffectiveDate();
+        boolean isDateChanged = false;
+        if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentEffectiveDate, previousEffectiveDate)) {
+        	isDateChanged = true;
+        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
+        } else if (awardHierarchyNode.isPopulatedFromClient() && currentEffectiveDate == null) {
+        	docAwardHierarchyNode.getValue().setCurrentFundEffectiveDate(null);
+        }
+        return isDateChanged;
+    }
+    
+    protected boolean isObligationExpirationDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
+        Date previousObligationExpirationDate = awardAmountInfo.getObligationExpirationDate();
+        Date currentObligationExpirationDate = awardHierarchyNode.getObligationExpirationDate();
+        boolean isDateChanged = false;
+        if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentObligationExpirationDate, previousObligationExpirationDate)) {
+        	isDateChanged = true;
+        	docAwardHierarchyNode.getValue().setObligationExpirationDate(currentObligationExpirationDate);
+        } else if (awardHierarchyNode.isPopulatedFromClient() && currentObligationExpirationDate == null) {
+        	docAwardHierarchyNode.getValue().setObligationExpirationDate(null);
+        }
+        return isDateChanged;
+    }
+    
+    protected boolean isFinalExpirationDateChanged(AwardHierarchyNode awardHierarchyNode, Entry<String, AwardHierarchyNode> docAwardHierarchyNode, AwardAmountInfo awardAmountInfo) {
+        Date previousFinalExpirationDate = awardAmountInfo.getFinalExpirationDate();
+        Date currentFinalExpirationDate = awardHierarchyNode.getFinalExpirationDate();
+        boolean isDateChanged = false;
+        if(awardHierarchyNode.isPopulatedFromClient() && isTimeAndMoneyDateChanged(currentFinalExpirationDate, previousFinalExpirationDate)) {
+        	isDateChanged = true;
+      	  	docAwardHierarchyNode.getValue().setFinalExpirationDate(currentFinalExpirationDate);
+        } else if (awardHierarchyNode.isPopulatedFromClient() && currentFinalExpirationDate == null) {
+        	docAwardHierarchyNode.getValue().setFinalExpirationDate(null);
+        }
+        return isDateChanged;
+     }
+    
+    protected boolean isTimeAndMoneyDateChanged(Date currentDate, Date previousDate) {
+        if(currentDate != null && previousDate != null && (currentDate.before(previousDate) || 
+        		currentDate.after(previousDate))){
+        	return true;
+        }
+        return false;
+    }
+    
+    protected void createDateChangeTransaction(TimeAndMoneyDocument timeAndMoneyDocument, Award award, AwardAmountInfo awardAmountInfo, Entry<String, 
+    		AwardHierarchyNode> awardHierarchyNode, List<TransactionDetail> dateChangeTransactionDetailItems, Date currentFundEffectiveDate, 
+    		Date currentObligationExpirationDate, Date finalExpirationDate, String dateChangeComment) {
+        AwardAmountInfo tempAai = getNewAwardAmountInfoForDateChangeTransaction(awardAmountInfo, award, timeAndMoneyDocument.getDocumentNumber());
+        awardAmountInfo = tempAai;
+        awardAmountInfo.setCurrentFundEffectiveDate(currentFundEffectiveDate);
+        awardAmountInfo.setObligationExpirationDate(currentObligationExpirationDate);
+        awardAmountInfo.setFinalExpirationDate(finalExpirationDate);
+        award.getAwardAmountInfos().add(awardAmountInfo);
+        TransactionDetail transactionDetail = createTransDetailForDateChanges(awardAmountInfo.getAwardNumber(), awardAmountInfo.getAwardNumber(), 
+        		awardAmountInfo.getSequenceNumber(), timeAndMoneyDocument.getAwardNumber(), timeAndMoneyDocument.getDocumentNumber(), OBLIGATED_START_COMMENT);
+        awardAmountInfo.setTransactionId(transactionDetail.getTransactionId());
+        dateChangeTransactionDetailItems.add(transactionDetail);
+    }
+    
     /**
      * Date changes in hierarchy view are captured here.  If the transaction is a No Cost Extension, we report the transaction
      * details for display in history tab.
@@ -363,7 +495,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
          
             //aai.getCurrentFundEffectiveDate == null and this throws a stack trace only when doign a before
             // if current transaction currentFEDate is < previosu trans currentFEDate
-            if (isNoCostExtension &&  previousEffectiveDate != null && currentEffectiveDate.before(previousEffectiveDate) ) {
+//            if (isNoCostExtension &&  previousEffectiveDate != null && currentEffectiveDate.before(previousEffectiveDate) ) {
+            if(previousEffectiveDate != null && (currentEffectiveDate.before(previousEffectiveDate) || 
+            		currentEffectiveDate.after(previousEffectiveDate))){
                         AwardAmountInfo tempAai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
                         needToSave = true;
                         aai = tempAai;
@@ -374,14 +508,15 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                         timeAndMoneyDocument.getDocumentNumber(), OBLIGATED_START_COMMENT);
                 aai.setTransactionId(transactionDetail.getTransactionId());
                 dateChangeTransactionDetailItems.add(transactionDetail);
-            } else {
-                    AwardAmountInfo tempAai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
-                    needToSave = true;
-                    aai = tempAai;
-                    aai.setCurrentFundEffectiveDate(currentEffectiveDate);
-                    awardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
-                    award.getAwardAmountInfos().add(aai);
-            }
+            } 
+//            else {
+//                    AwardAmountInfo tempAai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
+//                    needToSave = true;
+//                    aai = tempAai;
+//                    aai.setCurrentFundEffectiveDate(currentEffectiveDate);
+//                    awardHierarchyNode.getValue().setCurrentFundEffectiveDate(currentEffectiveDate);
+//                    award.getAwardAmountInfos().add(aai);
+//            }
         } else if (timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).isPopulatedFromClient() && currentEffectiveDate == null) {
           //FYI, this will show an erorr to the user, we are doing this such they can see the error, and that they had put in a null value
             awardHierarchyNode.getValue().setCurrentFundEffectiveDate(null);
@@ -413,8 +548,12 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                 && currentObligationExpirationDate !=null 
                 && !currentObligationExpirationDate.equals(previousObligationExpirationDate)){
             // previousObligationExpirationDate is null
-            if (isNoCostExtension && (previousObligationExpirationDate == null || 
-                    currentObligationExpirationDate.after(previousObligationExpirationDate))) {
+//            if (isNoCostExtension && (previousObligationExpirationDate == null || 
+//                    currentObligationExpirationDate.after(previousObligationExpirationDate))) {
+            if (previousObligationExpirationDate == null || 
+                        (currentObligationExpirationDate.after(previousObligationExpirationDate) ||
+                        		currentObligationExpirationDate.before(previousObligationExpirationDate))) {
+
                         aai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
                         aai.setObligationExpirationDate(currentObligationExpirationDate);
                         awardHierarchyNode.getValue().setObligationExpirationDate(currentObligationExpirationDate);
@@ -423,12 +562,13 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                         timeAndMoneyDocument.getDocumentNumber(), OBLIGATED_END_COMMENT);
                 aai.setTransactionId(transactionDetail.getTransactionId());
                 dateChangeTransactionDetailItems.add(transactionDetail);
-            }else {
-                    aai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
-                    aai.setObligationExpirationDate(currentObligationExpirationDate);
-                    awardHierarchyNode.getValue().setObligationExpirationDate(currentObligationExpirationDate);
-                    award.getAwardAmountInfos().add(aai);
             }
+//            else {
+//                    aai = getNewAwardAmountInfoForDateChangeTransaction(aai, award, timeAndMoneyDocument.getDocumentNumber());
+//                    aai.setObligationExpirationDate(currentObligationExpirationDate);
+//                    awardHierarchyNode.getValue().setObligationExpirationDate(currentObligationExpirationDate);
+//                    award.getAwardAmountInfos().add(aai);
+//            }
             needToSave = true;
         } else if (timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).isPopulatedFromClient()
                 && currentObligationExpirationDate == null) {
@@ -460,8 +600,10 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         if(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).isPopulatedFromClient()
                 && timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate()!=null 
                 && !timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().equals(awardAmountInfo.getFinalExpirationDate())){
-          if (isNoCostExtension && 
-                  timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().after(awardAmountInfo.getFinalExpirationDate())) {
+//          if (isNoCostExtension && 
+//                  timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().after(awardAmountInfo.getFinalExpirationDate())) {
+          if (timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().after(awardAmountInfo.getFinalExpirationDate()) ||
+        		  timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate().before(awardAmountInfo.getFinalExpirationDate())) {
                     awardAmountInfo = getNewAwardAmountInfoForDateChangeTransaction(awardAmountInfo, award, timeAndMoneyDocument.getDocumentNumber());
                       awardAmountInfo.setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
               awardHierarchyNode.getValue().setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
@@ -470,12 +612,13 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
                       timeAndMoneyDocument.getDocumentNumber(), PROJECT_END_COMMENT);
               awardAmountInfo.setTransactionId(transactionDetail.getTransactionId());
               dateChangeTransactionDetailItems.add(transactionDetail);
-          }else {
-              awardAmountInfo = getNewAwardAmountInfoForDateChangeTransaction(awardAmountInfo, award, timeAndMoneyDocument.getDocumentNumber());
-                  awardAmountInfo.setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
-                  awardHierarchyNode.getValue().setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
-                  award.getAwardAmountInfos().add(awardAmountInfo);
           }
+//          else {
+//              awardAmountInfo = getNewAwardAmountInfoForDateChangeTransaction(awardAmountInfo, award, timeAndMoneyDocument.getDocumentNumber());
+//                  awardAmountInfo.setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
+//                  awardHierarchyNode.getValue().setFinalExpirationDate(timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate());
+//                  award.getAwardAmountInfos().add(awardAmountInfo);
+//          }
           needToSave = true;
       } else if (timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).isPopulatedFromClient()
               && timeAndMoneyForm.getAwardHierarchyNodeItems().get(index).getFinalExpirationDate() == null) {
@@ -595,6 +738,9 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         save(mapping, form, request, response);
         TimeAndMoneyForm timeAndMoneyForm = (TimeAndMoneyForm) form;
         actionForward = super.route(mapping, form, request, response);  
+        TimeAndMoneyDocument timeAndMoneyDocument = timeAndMoneyForm.getTimeAndMoneyDocument();
+        captureSapFeedForPendingTransactions(timeAndMoneyForm.getTimeAndMoneyDocument());
+        getSapFeedService().setAllWorkInProgressSapFeedDetailsToPending(timeAndMoneyDocument.getAwardHierarchyNodes());
         // save report tracking items
         saveReportTrackingItems(timeAndMoneyForm);
         
@@ -1094,5 +1240,16 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         }
         return timeAndMoneyActionSummaryService;
     }
+    
+    public SapFeedService getSapFeedService() {
+   	 if (sapFeedService == null) {
+   		 sapFeedService = KcServiceLocator.getService(SapFeedService.class);
+        }
+		return sapFeedService;
+	}
+
+	public void setSapFeedService(SapFeedService sapFeedService) {
+		this.sapFeedService = sapFeedService;
+	}
 }
 

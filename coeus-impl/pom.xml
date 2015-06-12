@@ -195,6 +195,29 @@
                             <goal>wsdl2java</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>role-integration-service</id>
+                        <phase>generate-sources</phase>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <disableDirectoryScan>true</disableDirectoryScan>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <noAddressBinding>true</noAddressBinding>
+                                    <wsdl>${gg.wsdl.location}/roles.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-verbose</extraarg>
+                                        <extraarg>-validate</extraarg>
+                                        <extraarg>-wsdlLocation</extraarg>
+                                        <extraarg>${role.wsdl.packaged.location}</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <dependencies>
                     <!-- need to add this to get around the following error
