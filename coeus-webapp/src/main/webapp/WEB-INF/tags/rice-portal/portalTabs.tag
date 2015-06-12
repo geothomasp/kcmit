@@ -28,7 +28,6 @@
         <a class="brand" href="${ConfigProperties.application.url}/portal.do">Kuali Coeus</a>
 
     <%-- Maintenance --%>
-    <c:if test="${prtlfunc:showByAffiliateType('GRD_STDNT_STAFF,MED_STAFF,OTH_ACADMC_GRP,STAFF,SUPPRT_STAFF') || ! prtlfunc:hasAffiliation()}">
     <c:if test='${selectedTab == "portalMaintenanceBody"}'>
         <li class="active"><a href="portal.do?selectedTab=portalMaintenanceBody" title="Maintenance">Maintenance</a></li>
     </c:if> 
@@ -36,11 +35,9 @@
         <li><a href="portal.do?selectedTab=portalMaintenanceBody" title="Maintenance">Maintenance</a></li>
     </c:if>
        
-    </c:if>
 
     
     <%-- System Admin --%>
-    <c:if test="${prtlfunc:showByAffiliateType('GRD_STDNT_STAFF,MED_STAFF,OTH_ACADMC_GRP,STAFF,SUPPRT_STAFF') || ! prtlfunc:hasAffiliation()}">
         <c:if test='${selectedTab == "portalSystemAdminBody"}'>
             <li class="active"><a href="portal.do?selectedTab=portalSystemAdminBody" title="System Admin">System Admin</a></li>
         </c:if>
@@ -48,9 +45,8 @@
             <li><a href="portal.do?selectedTab=portalSystemAdminBody" title="System Admin">System Admin</a></li>
         </c:if>
 
-    </c:if>
 
-          <li><a href="${ConfigProperties.application.url}" title="Kuali Coeus Home">HOME</a></li>
+          <li><a href="${ConfigProperties.application.url}" title="HOME">HOME</a></li>
 
           <li class="feedback right-nav">
           <a class="portal_link" href="${ConfigProperties.feedback.link.url}" target="_blank" title="${ConfigProperties.feedback.link.text}">${ConfigProperties.feedback.link.text}</a>
@@ -92,8 +88,7 @@
                   </html:form>
                 </c:when>
                 <c:otherwise>
-                  <c:set var="backboorEnabled" value="<%=org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(org.kuali.rice.kew.api.KewApiConstants.KEW_NAMESPACE, org.kuali.rice.krad.util.KRADConstants.DetailTypes.BACKDOOR_DETAIL_TYPE, org.kuali.rice.kew.api.KewApiConstants.SHOW_BACK_DOOR_LOGIN_IND)%>"/>
-                  <c:if test="${backboorEnabled}">
+                  <c:if test="${sessionScope.backboorEnabled && sessionScope.hasBackdoorloginPermission}">
                     <html:form action="/backdoorlogin.do" method="post" style="margin:0; display:inline">
                       <input name="backdoorId" type="text" class="searchbox" size="10" title="Enter your backdoor ID here.">
                       <button type="submit" value="Login" class="btn btn-mini" title="Click to login.">Login</button>

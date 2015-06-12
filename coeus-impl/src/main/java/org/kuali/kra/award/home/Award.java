@@ -1,24 +1,23 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.home;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.common.framework.keyword.KeywordsManager;
 import org.kuali.coeus.common.framework.keyword.ScienceKeyword;
 import org.kuali.coeus.common.framework.person.KcPerson;
@@ -36,6 +35,7 @@ import org.kuali.coeus.common.framework.version.history.VersionHistorySearchBo;
 import org.kuali.coeus.common.permissions.impl.PermissionableKeys;
 import org.kuali.coeus.common.framework.auth.SystemAuthorizationService;
 import org.kuali.coeus.common.framework.auth.perm.Permissionable;
+import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardAmountInfoService;
@@ -87,16 +87,23 @@ import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyHistoryService;
 import org.kuali.kra.timeandmoney.transactions.AwardTransactionType;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.role.Role;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.AutoPopulatingList;
 
+import edu.mit.kc.coi.KcCoiLinkService;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -124,7 +131,6 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     public static final String NOTIFICATION_IACUC_SPECIAL_REVIEW_LINK_DELETED = "555";
     
     private static final long serialVersionUID = 3797220122448310165L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Award.class);
     private Long awardId;
     private AwardDocument awardDocument;
     private String awardNumber;
@@ -247,7 +253,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     private Unit leadUnit;
     private String unitNumber;
     
-    //To provide lookup tool for investigator
+  //To provide lookup tool for investigator
     private KcPerson investigator;
 
     private KcPerson ospAdministrator;
@@ -268,6 +274,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 
     // transient for award header label
     private transient String docIdStatus;
+    private transient String awardIdAccount;
 
     private transient String lookupOspAdministratorName;
     transient AwardAmountInfoService awardAmountInfoService;
@@ -281,9 +288,40 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     
     private VersionHistorySearchBo versionHistory;
     private transient KcPersonService kcPersonService;
-
+    private transient boolean editAward = false;
     private List<AwardCgb> awardCgbList;
+        
+    protected final Log LOG = LogFactory.getLog(Award.class);
+	Logger LOGGER;
 
+    @Qualifier("globalVariableService")
+    private transient GlobalVariableService globalVariableService;
+    public GlobalVariableService getGlobalVariableService() {
+       
+        if (globalVariableService == null) {
+        	globalVariableService = KcServiceLocator.getService(GlobalVariableService.class);
+   		}
+        return globalVariableService;
+      }
+    public void setGlobalVariableService(GlobalVariableService globalVariableService) {
+        this.globalVariableService = globalVariableService;
+    }
+    
+
+    private transient KcCoiLinkService kcCoiLinkService;
+    
+   	public KcCoiLinkService getKcCoiLinkService() {
+   		if (kcCoiLinkService == null) {
+   			kcCoiLinkService = KcServiceLocator.getService(KcCoiLinkService.class);
+   		}
+   		
+   		return kcCoiLinkService;
+   	}
+
+   	public void setKcCoiLinkService(KcCoiLinkService kcCoiLinkService) {
+   		this.kcCoiLinkService = kcCoiLinkService;
+   	}
+	
     /**
      * 
      * Constructs an Award BO.
@@ -349,13 +387,10 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         this.financialChartOfAccountsCode = financialChartOfAccountsCode;
     }
 
-
-    
     public KcPerson getInvestigator() {
 		return investigator;
 	}
 
-	
     public Long getAwardId() {
         return awardId;
     }
@@ -546,8 +581,6 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         return accountNumber;
     }
 
-    
-    
     /**
      * 
      * @param accountNumber
@@ -1654,6 +1687,8 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     }
 
     public List<AwardFandaRate> getAwardFandaRate() {
+    	
+    	Collections.sort(awardFandaRate,new AwardFandaRateComparator());
         return awardFandaRate;
     }
 
@@ -1895,6 +1930,8 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         syncStatuses = new ArrayList<AwardSyncStatus>();
         subAwardList = new ArrayList<SubAward>();
         currentVersionBudgets = new ArrayList<AwardBudgetExt>();
+        budgets = new ArrayList<AwardBudgetExt>();
+        awardCgbList = new ArrayList<AwardCgb>();
     }
 
     public void initializeAwardAmountInfoObjects() {
@@ -2371,13 +2408,13 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     }
 
     public AwardAmountInfo getAwardAmountInfo() {
-        return awardAmountInfos.get(0);
+        return awardAmountInfos.get(getIndexOfLastAwardAmountInfo());
     }
-
+    
     public AwardAmountInfo getLatestAwardAmountInfo() {
         return getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(awardAmountInfos);
     }
-
+    
     /**
      * Find the lead unit for the award
      * @return
@@ -2980,11 +3017,14 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
     }
 
     public String getAwardIdAccount() {
+        if (awardIdAccount == null) {
             if (StringUtils.isNotBlank(getAccountNumber())) {
-                return getAwardNumber() + ":" + getAccountNumber();
+                awardIdAccount = getAwardNumber() + ":" + getAccountNumber();
             } else {
-                return getAwardNumber() + ":";
+                awardIdAccount = getAwardNumber() + ":";
             }
+        }
+        return awardIdAccount;
     }
 
     public void setLookupOspAdministratorName(String lookupOspAdministratorName) {
@@ -3390,7 +3430,7 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
         String createDateStr = null;
         String updateUser = null;
         if (getUpdateTimestamp() != null) {
-            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(getUpdateTimestamp(), "hh:mm a MM/dd/yyyy");
+            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(getUpdateTimestamp(), "hh:mm:ss a MM/dd/yyyy");
             updateUser = getUpdateUser().length() > 30 ? getUpdateUser().substring(0, 30) : getUpdateUser(); 
         }
         return createDateStr + ", by " + updateUser;
@@ -3449,8 +3489,19 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 	public Budget getNewBudget() {
 		return new AwardBudgetExt();
 	}
-    private List<AwardBudgetExt> currentVersionBudgets;
+	private List<AwardBudgetExt> currentVersionBudgets;
     private List<AwardBudgetExt> budgets;
+    
+    private List<AwardBudgetExt> allAwardBudgets;
+
+    public List<AwardBudgetExt> getBudgetVersionOverviews() {
+		return budgets;
+	}
+
+	public void setBudgetVersionOverviews(
+			List<AwardBudgetExt> budgetVersionOverviews) {
+		this.budgets = budgetVersionOverviews;
+	}
 
 	@Override
 	public Integer getNextBudgetVersionNumber() {
@@ -3475,43 +3526,66 @@ public class Award extends KcPersistableBusinessObjectBase implements KeywordsMa
 	public void setCurrentVersionBudgets(List<AwardBudgetExt> budgets) {
 		this.currentVersionBudgets = budgets;
 	}
+	/*
+	 * This method will return true when the Active award is editing
+	 */
+	    public boolean isEditAward() {
+	        return editAward;
+	    }
 
-    public AwardComment getAdditionalFormsDescriptionComment() {
-        return getAwardCommentByType("CG2", false, true);
-    }
+	    public void setEditAward(boolean editAward) {
+	        this.editAward = editAward;
+	    }
+	    public AwardComment getAdditionalFormsDescriptionComment() {
+	        return getAwardCommentByType("CG2", false, true);
+	    }
 
-    public AwardComment getStopWorkReasonComment() {
-        return getAwardCommentByType("CG1", false, true);
-    }
+	    public AwardComment getStopWorkReasonComment() {
+	        return getAwardCommentByType("CG1", false, true);
+	    }
 
-    public AwardComment getSuspendInvoicingComment() {
-        return getAwardCommentByType("CG3", false, true);
-    }
+	    public AwardComment getSuspendInvoicingComment() {
+	        return getAwardCommentByType("CG3", false, true);
+	    }
 
-    public AwardCgb getAwardCgb() {
-        if (awardCgbList.isEmpty()) {
-            awardCgbList.add(new AwardCgb(this));
-        }
-        return awardCgbList.get(0);
-    }
+	    public AwardCgb getAwardCgb() {
+	        if (awardCgbList.isEmpty()) {
+	            awardCgbList.add(new AwardCgb(this));
+	        }
+	        return awardCgbList.get(0);
+	    }
 
-    public void setAwardCgb(AwardCgb awardCgb) {
-        awardCgbList.set(0, awardCgb);
-    }
+	    public void setAwardCgb(AwardCgb awardCgb) {
+	        awardCgbList.set(0, awardCgb);
+	    }
 
-    public List<AwardCgb> getAwardCgbList() {
-        return awardCgbList;
-    }
+	    public List<AwardCgb> getAwardCgbList() {
+	        return awardCgbList;
+	    }
 
-    public void setAwardCgbList(List<AwardCgb> awardCgbList) {
-        this.awardCgbList = awardCgbList;
-    }
+	    public void setAwardCgbList(List<AwardCgb> awardCgbList) {
+	        this.awardCgbList = awardCgbList;
+	    }
+	    
+	    public class AwardFandaRateComparator implements Comparator<AwardFandaRate> {
+	        public int compare(AwardFandaRate o1, AwardFandaRate o2) {
+	            int value1 = o1.getFiscalYear().compareTo(o2.getFiscalYear());
+	            if (value1 == 0) {
+	                int value2 = o1.getOnCampusFlag().compareTo(o2.getOnCampusFlag());
+	                if (value2 == 0) {
+	                    return o1.getSourceAccount().compareTo(o2.getSourceAccount());
+	                } else {
+	                    return value2;
+	            }}
+	            return value1;
+	        }
+	    }
+	    
+		public List<AwardFundingProposal> getAllFundingProposals() {
+			return allFundingProposals;
+		}
 
-	public List<AwardFundingProposal> getAllFundingProposals() {
-		return allFundingProposals;
-	}
-
-	public void setAllFundingProposals(List<AwardFundingProposal> allFundingProposals) {
-		this.allFundingProposals = allFundingProposals;
-	}
+		public void setAllFundingProposals(List<AwardFundingProposal> allFundingProposals) {
+			this.allFundingProposals = allFundingProposals;
+		}
 }

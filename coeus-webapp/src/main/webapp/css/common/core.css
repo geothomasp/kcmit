@@ -17,13 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* These override styles exist to get the new look. Eventually these rules will be
-   placed in a more appropriate place. */
-.logoBrand .actionImage {
-	width: 195px;
-	padding-left: 9px;
-}
-
 #DummyLoginView #u1rttg5q > div:first-child {
 	height: 200px;
 	width: 371px;
@@ -32,7 +25,6 @@
 	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.08) inset;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.08) inset;
 	float: inherit !important;
-	background-image: url('../images/KualiCo.png');
 	background-size: 32px;
 	background-repeat: no-repeat;
 	background-position: 50px 30px;
@@ -153,114 +145,6 @@
 	position: absolute;
 }
 
-#u1nruckb {
-	float: inherit;
-	text-align: center;
-	width: 100%;
-	right: inherit;
-	margin-top: 20px;
-}
-
-#u1nruckb > p {
-	float: inherit;
-}
-
-body#Uif-Application {
-	background-color: white;
-}
-
-#Uif-Navigation ul.nav.nav-list>.active>a,
-#Uif-Navigation ul.nav.nav-list > li > a:hover, 
-#Uif-Navigation ul.nav > li > a:focus,
-#Uif-Navigation ul.nav.nav-list>li>a:hover,
-.nav .open > a, 
-.nav .open > a:hover, 
-.nav .open > a:focus {
-	background: none repeat scroll 0 0 #0A7194 !important;
-}
-
-.nav-list > li ul.submenu > li.active > a {
-	background-color: #DCF6FF !important;
-}
-
-#Uif-GlobalApplicationHeader, 
-#Uif-GlobalApplicationHeader nav.navbar,
-#Uif-GlobalApplicationHeader .navbar a:hover,
-#Uif-GlobalApplicationHeader .navbar a:focus {
-	background-color: #2587a9 !important;
-}
-
-#Uif-GlobalApplicationHeader .navbar .nav .open > a:focus,
-#Uif-GlobalApplicationHeader .navbar .nav .open > a:active,
-#Uif-GlobalApplicationHeader .navbar .nav .open > a:hover,
-#Uif-GlobalApplicationHeader .navbar .nav .open > a {
-	background-color: #1f708c !important;
-}
-
-#Uif-GlobalApplicationHeader .navbar .nav a.dropdown-toggle {
-	color: #eee;
-}
-
-#Uif-GlobalApplicationHeader .navbar .nav a:hover {
-	color: white;
-}
-
-#Uif-GlobalApplicationHeader .app-header-version {
-	display: none;
-}
-
-.toolbar .uif-listLayout .pull-right {
-	float: initial !important;
-	display: inline-block;
-}
-
-.toolbar .uif-listLayout .pull-right:first-child {
-	position: absolute;
-	right: 0;
-	top: -39px;
-	z-index: 999;
-	text-transform: uppercase;
-}
-
-.toolbar .uif-listLayout .pull-right:first-child a {
-	font-size: 13px;
-	border-right: 0;
-}
-
-.toolbar .uif-listLayout .pull-right:first-child a:hover {
-	background-color: transparent;
-}
-
-.toolbar .uif-listLayout .pull-right > a {
-	color: white;
-	font-size: 14px;
-	font-family: 'Open Sans', sans-serif;
-	border-left: 0;
-	border-right: 1px solid #8e9d31;
-	box-shadow: none;
-	padding-right: 9px;
-}
-
-.toolbar .uif-listLayout .pull-right > a:hover,
-.toolbar .uif-listLayout .pull-right > a:focus {
-	background-color: #8e9d31;
-}
-
-#Uif-GlobalApplicationHeader div:first-child .nav.navbar-nav {
-	float: left !important;
-	margin-left: 200px;
-}
-
-#Uif-GlobalApplicationHeader #upils8b {
-	background-color: #b1c04b;
-	background-image: linear-gradient(to bottom, #bccb59, #a0b037);
-	border: 1px solid #768128;
-}
-
-#Uif-GlobalApplicationHeader > .container-fluid:first-child {
-	border-bottom: 1px solid #154e62;
-}
-/* End new styles */
 
 .input-range-msg {
     width: 1%;
@@ -471,12 +355,8 @@ input[type="checkbox"] {
     .kc-navMenuDropdown .dropdown-menu {
         min-width: 65em !important;
     }
-    
-    .kc-reportsDropdown .dropdown-menu {
-    	min-width: 25em !important;
-	}
 
-    .kc-researcherDropdown .dropdown-menu, .kc-unitDropdown .dropdown-menu, .kc-centralAdminDropdown .dropdown-menu, .kc-reportsDropdown .dropdown-menu {
+    .kc-researcherDropdown .dropdown-menu, .kc-unitDropdown .dropdown-menu, .kc-centralAdminDropdown .dropdown-menu {
         left: 0;
         right: inherit;
     }
@@ -486,18 +366,16 @@ input[type="checkbox"] {
     .kc-navMenuDropdown .dropdown-menu {
         min-width: 70em !important;
     }
-    
-    .kc-reportsDropdown .dropdown-menu {
-    	min-width: 25em !important;
-	}
 
-    .kc-centralAdminDropdown .dropdown-menu, .kc-reportsDropDown .dropdown-menu {
+    .kc-centralAdminDropdown .dropdown-menu {
+        left: inherit;
         right: 0;
     }
 }
 
 @media (min-width: 1200px) {
     .kc-researcherDropdown .dropdown-menu, .kc-unitDropdown .dropdown-menu {
+        left: inherit;
         right: 0;
     }
 }
@@ -602,16 +480,17 @@ section.medusa div.btn a:hover{
 }
 
 .kc-applicationFooter {
-    background-color: #2587a9;
+    background-color: #aa003e;
     color: #FFF;
-    bottom: 0px;
     width: 100%;
     text-align: center;
-    padding-top: 20px;
-    padding-bottom: 12px;
     background-repeat: no-repeat;
     background-position: right 5px;
-    height: 80px;
+    bottom: 0;
+
+    font-size: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .kc-applicationFooter a {
@@ -619,13 +498,9 @@ section.medusa div.btn a:hover{
     text-decoration: underline;
 }
 
-.kc-applicationFooter-version {
-    font-size: 10px;
-}
-
-.kc-applicationFooter .kc-footer-img {
-	height : 50px;
-	width : 50px;
+.header-logoGroup > a {
+    height: 50px;
+    margin-right: 0;
 }
 
  .alert-priority1 {
@@ -653,4 +528,3 @@ section.medusa div.btn a:hover{
 .icon-warning-sign:before {
   content: "\e89a";
 }
-

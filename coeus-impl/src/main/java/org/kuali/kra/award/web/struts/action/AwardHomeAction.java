@@ -1,24 +1,23 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.web.struts.action;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -27,11 +26,13 @@ import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.compliance.core.SaveSpecialReviewLinkEvent;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewService;
+import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
+import org.kuali.kra.award.home.fundingproposal.AwardFundingProposal;
 import org.kuali.kra.award.home.keywords.AwardScienceKeyword;
 import org.kuali.kra.award.specialreview.AwardSpecialReview;
 import org.kuali.kra.bo.FundingSourceType;
@@ -48,10 +49,13 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
+import edu.mit.kc.coi.KcCoiLinkService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +71,7 @@ public class AwardHomeAction extends AwardAction {
     private static final String DOC_HANDLER_URL_PATTERN = "%s/DocHandler.do?command=displayDocSearchView&docId=%s";
     private ApprovedSubawardActionHelper approvedSubawardActionHelper;
     private ParameterService parameterService;
-    
+    private static final Log LOG = LogFactory.getLog( AwardHomeAction.class );
     public AwardHomeAction(){
         approvedSubawardActionHelper = new ApprovedSubawardActionHelper();
     }
@@ -238,24 +242,32 @@ public class AwardHomeAction extends AwardAction {
             }
             Award oldAward = getAwardVersionService().getActiveAwardVersion(awardDocument.getAward().getAwardNumber());
             AwardAmountInfo aaiNew = awardDocument.getAward().getLastAwardAmountInfo();
-            if (oldAward != null && oldAward.getLastAwardAmountInfo() != null) {
-                AwardAmountInfo aaiOld = oldAward.getLastAwardAmountInfo();
-                try {
-                aaiNew.setObligatedChange(aaiNew.getAmountObligatedToDate().subtract(aaiOld.getAmountObligatedToDate()));
-                aaiNew.setObligatedChangeDirect(aaiNew.getObligatedTotalDirect().subtract(aaiOld.getObligatedTotalDirect()));
-                aaiNew.setObligatedChangeIndirect(aaiNew.getObligatedTotalIndirect().subtract(aaiOld.getObligatedTotalIndirect()));
-                aaiNew.setAnticipatedChange(aaiNew.getAnticipatedTotalAmount().subtract(aaiOld.getAnticipatedTotalAmount()));
-                aaiNew.setAnticipatedChangeDirect(aaiNew.getAnticipatedTotalDirect().subtract(aaiOld.getAnticipatedTotalDirect()));
-                aaiNew.setAnticipatedChangeIndirect(aaiNew.getAnticipatedTotalIndirect().subtract(aaiOld.getAnticipatedTotalIndirect()));
-                aaiNew.setObliDistributableAmount(aaiNew.getObliDistributableAmount().add(aaiNew.getObligatedChange()));
-                aaiNew.setAntDistributableAmount(aaiNew.getAntDistributableAmount().add(aaiNew.getAnticipatedChange()));
-                } catch (NullPointerException e) {
-                  aaiNew.resetChangeValues();
-                }
+            if (oldAward != null) {
+            	AwardAmountInfo aaiOld = oldAward.getLastAwardAmountInfo();
+            	if(aaiNew.getAmountObligatedToDate()!=null && aaiOld.getAmountObligatedToDate()!=null){
+            		aaiNew.setObligatedChange(aaiNew.getAmountObligatedToDate().subtract(aaiOld.getAmountObligatedToDate()));
+            	}
+            	if(aaiNew.getObligatedTotalDirect()!=null && aaiOld.getObligatedTotalDirect()!=null){
+            		aaiNew.setObligatedChangeDirect(aaiNew.getObligatedTotalDirect().subtract(aaiOld.getObligatedTotalDirect()));
+            	}
+            	if(aaiNew.getObligatedTotalIndirect()!=null && aaiOld.getObligatedTotalIndirect()!=null){
+            		aaiNew.setObligatedChangeIndirect(aaiNew.getObligatedTotalIndirect().subtract(aaiOld.getObligatedTotalIndirect()));
+            	}
+            	if(aaiNew.getAnticipatedTotalAmount()!=null && aaiOld.getAnticipatedTotalAmount()!=null){
+            		aaiNew.setAnticipatedChange(aaiNew.getAnticipatedTotalAmount().subtract(aaiOld.getAnticipatedTotalAmount()));
+            	}
+            	if(aaiNew.getAnticipatedTotalDirect()!=null && aaiOld.getAnticipatedTotalDirect()!=null){
+            		aaiNew.setAnticipatedChangeDirect(aaiNew.getAnticipatedTotalDirect().subtract(aaiOld.getAnticipatedTotalDirect()));
+            	}
+            	if(aaiNew.getAnticipatedTotalIndirect()!=null && aaiOld.getAnticipatedTotalIndirect()!=null){
+            		aaiNew.setAnticipatedChangeIndirect(aaiNew.getAnticipatedTotalIndirect().subtract(aaiOld.getAnticipatedTotalIndirect()));
+            	}
             } else {
                 aaiNew.resetChangeValues();
             }
         }
+        
+        List<AwardFundingProposal> awardFundingProposals = getFundingProposalForCOIUpadate(awardDocument.getAward());
         
         /**
          * the following two null overrides are per KCAWD-1001
@@ -285,12 +297,40 @@ public class AwardHomeAction extends AwardAction {
             
             persistSpecialReviewProtocolFundingSourceLink(award, isAwardProtocolLinkingEnabled);
         }
+        
+        updateCOIOnLinkIPToAward(awardFundingProposals,awardDocument.getAward());
 
         return forward;
     }
+    
+    private List<AwardFundingProposal> getFundingProposalForCOIUpadate(Award award){
+    	List<AwardFundingProposal> awardFundingProposals = new ArrayList();
+    	for(AwardFundingProposal awardFundingProposal : award.getFundingProposals()){
+    		if(!awardFundingProposal.isPersisted()){
+    			awardFundingProposals.add(awardFundingProposal);
+    		}
+    	}
+    	return awardFundingProposals;
+    }
+    
+    private void updateCOIOnLinkIPToAward(List<AwardFundingProposal> awardFundingProposals,Award award){
+    	String loggedInUser = KcServiceLocator.getService(GlobalVariableService.class).getUserSession().getPrincipalName();
+    	for(AwardFundingProposal awardFundingProposal:awardFundingProposals){
+    		try {
+    			KcServiceLocator.getService(KcCoiLinkService.class).updateCOIOnLinkIPToAward(award.getAwardNumber(),awardFundingProposal.getProposal().getInstitutionalProposal().getInstProposalNumber(),loggedInUser);
+    		} catch(NullPointerException e){
+    			LOG.error("Input parameters return null");
+    		}catch (SQLException e) {
+    			LOG.error(e.getMessage(), e);
+    			LOG.error("DBLINK is not accessible or the parameter value returning null");
+    		}
 
-    protected void setTotalsOnAward(final Award award) {
-        final AwardAmountInfo aai = award.getLastAwardAmountInfo();
+    	}
+    }
+    private void setTotalsOnAward(Award award) {
+        AwardAmountInfo aai = award.getLastAwardAmountInfo();
+        aai.setAmountObligatedToDate(aai.getObligatedTotalDirect().add(aai.getObligatedTotalIndirect()));
+        aai.setAnticipatedTotalAmount(aai.getAnticipatedTotalDirect().add(aai.getAnticipatedTotalIndirect()));
         if (aai == null) {
             return;
         }
@@ -302,6 +342,7 @@ public class AwardHomeAction extends AwardAction {
 
         aai.setAmountObligatedToDate(obligatedDirectTotal.add(obligatedIndirectTotal));
         aai.setAnticipatedTotalAmount(anticipatedDirectTotal.add(anticipatedIndirectTotal));
+        
     }
     
     private void persistSpecialReviewProtocolFundingSourceLink(Award award, boolean isAwardProtocolLinkingEnabled) {
@@ -438,7 +479,7 @@ public class AwardHomeAction extends AwardAction {
         
         AwardForm awardForm = ((AwardForm)form);
         AwardDocument awardDocument = awardForm.getAwardDocument();
-        Award award = awardDocument.getAward(); 
+        Award award = awardDocument.getAward();
         ActionForward forward;
         
         AwardDocument parentSyncAward = getAwardSyncService().getAwardLockingHierarchyForSync(awardDocument, GlobalVariables.getUserSession().getPrincipalId()); 
@@ -450,11 +491,10 @@ public class AwardHomeAction extends AwardAction {
         if(getTimeAndMoneyExistenceService().validateTimeAndMoneyRule(award, awardForm.getAwardHierarchyBean().getRootNode().getAwardNumber())) {
             VersionHistory foundPending = findPendingVersion(award);
             cleanUpUserSession();
-            if(foundPending != null) {            	
+            if(foundPending != null) {
                 Object question = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
                 forward = question == null ? showPromptForEditingPendingVersion(mapping, form, request, response) :
                                              processPromptForEditingPendingVersionResponse(mapping, request, response, awardForm, foundPending);
-               
             } else {
                 forward = createAndSaveNewAwardVersion(response, awardForm, awardDocument, award);
             }    

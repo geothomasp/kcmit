@@ -1,20 +1,17 @@
 <%--
-   - Kuali Coeus, a comprehensive research administration system for higher education.
-   - 
-   - Copyright 2005-2015 Kuali, Inc.
-   - 
-   - This program is free software: you can redistribute it and/or modify
-   - it under the terms of the GNU Affero General Public License as
-   - published by the Free Software Foundation, either version 3 of the
-   - License, or (at your option) any later version.
-   - 
-   - This program is distributed in the hope that it will be useful,
-   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   - GNU Affero General Public License for more details.
-   - 
-   - You should have received a copy of the GNU Affero General Public License
-   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ Copyright 2005-2014 The Kuali Foundation
+ 
+ Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.osedu.org/licenses/ECL-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 --%>
 <%-- member of AwardContacts.jsp --%>
 
@@ -99,11 +96,13 @@
 	        	<td id="org.emailAddress" class="infoline">
 	        		<c:out value="${KualiForm.sponsorContactsBean.newAwardContact.contact.emailAddress}" />&nbsp;
 	        	</td>
+	        	<c:if test="${!readOnly}">
 	        	<td class="infoline">
 	        		<div align="center">	        			
 			        	<html:image property="methodToCall.addSponsorContact" src="${ConfigProperties.kr.externalizable.images.url}tinybutton-add1.gif" title="Add Contact" alt="Add Contact" styleClass="tinybutton addButton" />
 			        </div>
 	        	</td>
+	        	</c:if>
 			</tr>
 			</tbody>
 				
@@ -112,6 +111,7 @@
 					<th class="infoline" scope="row">
 						<c:out value="${awardContactRowStatus.index + 1}" />
 					</th>
+					
 	                <td valign="middle">
 	                	<div align="center">
 	                		<input type="hidden" name="sponsor_contact.identifier_${awardContactRowStatus.index}" value="${awardContact.contact.identifier}" />
@@ -120,14 +120,27 @@
 	                		       ${awardContact.contactOrganizationName}&nbsp;
 	                		    </c:when>
 	                		    <c:otherwise>
-	                	           ${awardContact.fullName}&nbsp;
+	                		    <kul:htmlControlAttribute property="sponsorContactsBean.sponsorContacts[${awardContactRowStatus.index}].fullName" 
+      								attributeEntry="${awardContactAttributes.fullName}" readOnly="true"
+      								 onblur="loadRolodexInfo('sponsorContactsBean.newAwardContact.rolodex.fullName',
+	                               							'org.fullName.div',
+	                	        				  			'org.phoneNumber',
+           	        							  			'org.emailAddress',
+           	        							  			'rolodexId');"
+           	        							  			/> 
+           	        		<c:if test="${!readOnly}">					  			 
+      					   <kul:lookup boClassName="org.kuali.coeus.common.framework.rolodex.Rolodex" anchor="${tabKey}" fieldConversions="rolodexId:sponsorContactsBean.sponsorContacts[${awardContactRowStatus.index}].rolodexId"
+        	  	 				    lookupParameters="sponsorContactsBean.rolodexId:rolodexId" />  
+	                	          <%--  ${awardContact.fullName}&nbsp; --%>
+	                	         </c:if>  
 	                		    </c:otherwise>
 	                		</c:choose>
 	                		
-	                		<kul:directInquiry boClassName="org.kuali.coeus.common.framework.rolodex.NonOrganizationalRolodex" inquiryParameters="sponsor_contact.identifier_${awardContactRowStatus.index}:rolodexId" anchor="${tabKey}" />
+	                		<kul:directInquiry boClassName="org.kuali.coeus.common.framework.rolodex.NonOrganizationalRolodex" inquiryParameters="sponsor_contact.identifier_${awardContactRowStatus.index}:rolodexId" anchor="${tabKey}" />		                	
 						</div>
-					</td>
-	                <td valign="middle">
+					</td> 
+					
+					<td valign="middle">
 	                	<div align="center">
 	                		<kul:htmlControlAttribute property="sponsorContactsBean.sponsorContacts[${awardContactRowStatus.index}].contactRoleCode" 
 	                									attributeEntry="${awardSponsorContactAttributes.contactRoleCode}" 

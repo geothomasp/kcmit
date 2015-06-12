@@ -1,20 +1,17 @@
 <%--
-   - Kuali Coeus, a comprehensive research administration system for higher education.
-   - 
-   - Copyright 2005-2015 Kuali, Inc.
-   - 
-   - This program is free software: you can redistribute it and/or modify
-   - it under the terms of the GNU Affero General Public License as
-   - published by the Free Software Foundation, either version 3 of the
-   - License, or (at your option) any later version.
-   - 
-   - This program is distributed in the hope that it will be useful,
-   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   - GNU Affero General Public License for more details.
-   - 
-   - You should have received a copy of the GNU Affero General Public License
-   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ Copyright 2005-2014 The Kuali Foundation
+ 
+ Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.osedu.org/licenses/ECL-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 --%>
 <%-- member of AwardHome.jsp --%>
 
@@ -25,7 +22,7 @@
 <c:set var="awardCurrentActionCommentAttributes" value="${DataDictionary.AwardComment.attributes}" />
 <kul:tab tabTitle="Details & Dates" defaultOpen="true" 
 	tabErrorKey="document.awardList[0].awardTransactionTypeCode,document.award.version, document.awardList[0].statusCode,document.awardList[0].activityTypeCode,document.awardList[0].awardTypeCode,document.awardList[0].financialChartOfAccountsCode,document.awardList[0].title,document.awardList[0].beginDate,document.awardList[0].awardExecutionDate,document.awardList[0].sponsorCode,document.awardList[0].unitNumber, detailsAndDatesFormHelper*,document.awardList[0].awardAmountInfos[${KualiForm.document.award.indexOfLastAwardAmountInfo}].*, document.awardList[0].modificationNumber,document.awardList[0].cfdaNumber,document.awardList[0].primeSponsorCode"
-	tabAuditKey="document.awardList[0].awardEffectiveDate"
+	tabAuditKey="document.awardList[0].awardEffectiveDate,document.awardList[0].statusCode"
 	auditCluster="homePageAuditWarnings,homePageAuditErrors" useRiceAuditMode="true">
 
 <!-- Institution -->
@@ -308,6 +305,7 @@
 	               		</c:when>
 	                  	<c:otherwise>
 							<c:out value="${KualiForm.detailsAndDatesFormHelper.sponsorToBecomeAwardTransferringSponsor.sponsorName}" />
+							
 						</c:otherwise>
 					</c:choose>
             	</c:if>
@@ -329,6 +327,7 @@
 			</th>
 	       	<td>
 				${awardTransferringSponsor.sponsorCode} : ${awardTransferringSponsor.sponsor.sponsorName}
+				<kul:directInquiry boClassName="org.kuali.coeus.common.framework.sponsor.Sponsor" inquiryParameters="detailsAndDatesFormHelper.sponsorToBecomeAwardTransferringSponsor.sponsorCode:sponsorCode" anchor="${tabKey}" />
 			</td>
 			<td width="10%">
 				<div align="center">&nbsp;

@@ -1,20 +1,17 @@
 <%--
-   - Kuali Coeus, a comprehensive research administration system for higher education.
-   - 
-   - Copyright 2005-2015 Kuali, Inc.
-   - 
-   - This program is free software: you can redistribute it and/or modify
-   - it under the terms of the GNU Affero General Public License as
-   - published by the Free Software Foundation, either version 3 of the
-   - License, or (at your option) any later version.
-   - 
-   - This program is distributed in the hope that it will be useful,
-   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   - GNU Affero General Public License for more details.
-   - 
-   - You should have received a copy of the GNU Affero General Public License
-   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ Copyright 2005-2014 The Kuali Foundation
+ 
+ Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.osedu.org/licenses/ECL-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 --%>
 <%-- member of AwardContacts.jsp --%>
 <script type='text/javascript' src='dwr/interface/KraPersonService.js'></script>
@@ -30,7 +27,7 @@
 <c:set var="awardPersonAttributes" value="${DataDictionary.AwardPerson.attributes}" />
 <c:set var="keyPersonRoleConstant" value="<%=org.kuali.kra.infrastructure.Constants.KEY_PERSON_ROLE%>" />
 <c:set var="coiRoleConstant" value="<%=org.kuali.kra.infrastructure.Constants.CO_INVESTIGATOR_ROLE%>" />
-
+<%-- <c:set var="kpMaintenance"	value="${KualiForm.kpMaintenanceRole}" /> --%>
 <%-- kra:section permission="modifyAward" --%>
 				
 <kul:tab tabTitle="Key Personnel and Credit Split" tabItemCount="${KualiForm.projectPersonnelBean.projectPersonnelCount}" defaultOpen="false" 
@@ -49,10 +46,12 @@
     				<th scope="row" width="5%">&nbsp;</th>
     				<th width="15%">*Person</th>
     				<th width="15%">Unit</th>
-    				<th width="20%">*Project Role</th>
-    				<th width="15%">Office Phone</th>
+    				<th width="15%">*Project Role</th>
+    				<th width="12%">Office Phone</th>
     				<th width="15%">Email</th>
-    				<th width="15%"><div align="center">Actions</div></th>
+    				<th width="10%">Confirm Timestamp</th>
+    				<th width="23%"><div align="center">Actions</div></th>
+    			
     			</tr>
     			
     			<c:if test="${!readOnly}">
@@ -114,7 +113,7 @@
            	        							  			'key.rolodexId');"
            	        							 readOnly="${readOnly}"/>
  					<c:if test="${!readOnly}">
-  					<kul:lookup boClassName="org.kuali.coeus.common.framework.rolodex.NonOrganizationalRolodex" fieldConversions="rolodexId:projectPersonnelBean.rolodexId"
+  					<kul:lookup boClassName="org.kuali.coeus.common.framework.rolodex.NonOrganizationalRolodex" fieldConversions="rolodexId:projectPersonnelBean.rolodexId" 
           			anchor="${tabKey}"
           			lookupParameters="projectPersonnelBean.rolodexId:rolodexId,projectPersonnelBean.newProjectPerson.rolodex.fullName:lastName"/>																	
   					</c:if>
@@ -191,6 +190,9 @@
     	        			<c:out value="${KualiForm.projectPersonnelBean.newAwardContact.contact.emailAddress}" />&nbsp;
     	        		</div>
     	        	</td>
+    	        	<td>
+    	        	&nbsp;
+    	        	</td> 
     	        	<td class="infoline">
     	        		<div align="center">
     	        			<html:image property="methodToCall.addProjectPerson" src="${ConfigProperties.kr.externalizable.images.url}tinybutton-add1.gif" title="Add Contact" alt="Add Contact" styleClass="tinybutton addButton" />
@@ -259,34 +261,50 @@
     							${awardContact.emailAddress}&nbsp;
     						</div> 
     					</td>
-    	                
+    	              <td valign="middle">
+    	                	<div align="center">                	
+    							<c:if test='${awardContact.roleCode == "KP"}'>           	
+    							<c:if test='${awardContact.confirmed == true}'> 
+   									${awardContact.updateConfirmTimestamp} &nbsp;
+   								</c:if>
+   								</c:if>
+    						</div> 
+    					</td> 
     					<td>
     						<div align="center">
     						  <c:if test="${!readOnly}">
+
     							<html:image property="methodToCall.deleteProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
     							src='${ConfigProperties.kra.externalizable.images.url}tinybutton-delete1.gif' styleClass="tinybutton"/>
+
+
+
     							<c:if test="${KualiForm.syncMode}">
 	    							<html:image property="methodToCall.syncProjectPerson.line${awardContactRowStatus.index}.anchor${currentTabIndex}"
 	    								src='${ConfigProperties.kra.externalizable.images.url}tinybutton-sync.gif' alt="sync" styleClass="tinybutton" disabled="${readOnly}"/>
     							</c:if>
     						  </c:if>
+
     						  <c:if test="${readOnly}">&nbsp;</c:if>
     						</div>
     	                </td>
+    	              
     	            </tr>
     	            
     	            <tr>
-    	            	<td colspan="6">
+    	            	<td colspan="7">
     	            		<kra-a:awardProjectPersonnelPersonDetails awardContact="${awardContact}" awardContactRowStatusIndex="${awardContactRowStatus.index}" />
     	            	</td>
     	            </tr>
     	            <tr>
-    	            	<td colspan="6">
+    	            	<td colspan="7">
     	            		<kra-a:awardProjectPersonnelUnits awardContact="${awardContact}" awardPersonIndex="${awardContactRowStatus.index}" />
     	            	</td>
     	            </tr>
     	            <tr>
-    					<td colspan="6">&nbsp;</td>
+    					<td colspan="7">
+    					&nbsp;
+    					</td>
     				</tr>	                     
     	    	</c:forEach>	    	
     	    </table>
@@ -294,6 +312,10 @@
     	    
 	    <c:if test="${KualiForm.awardCreditSplitBean.awardCreditsLimitApplicable && KualiForm.document.awardList[0].totalUnitCount > 0}" > 
 	    	<kra-a:creditSplit/>
-	    </c:if>	    
+	    </c:if>	 
+	     
+	<kra-a:awardProjectPersonHistory/> 
+
+	        
     </div>    
 </kul:tab>

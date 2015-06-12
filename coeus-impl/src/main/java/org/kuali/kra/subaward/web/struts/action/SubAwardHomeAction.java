@@ -70,6 +70,9 @@ private static final String SUBAWARD_VERSION_EDITPENDING_PROMPT_KEY = "message.s
         }
         }
         subAwardForm.getSubAward().setSubAwardForms(subAwardList);
+        if(subAwardForm.getSubAwardDocument().getSubAwardList() != null) {
+        	getOrganizationRiskPriority(subAwardForm.getSubAwardDocument().getSubAwardList());
+        }
         return actionForward;
     }
 

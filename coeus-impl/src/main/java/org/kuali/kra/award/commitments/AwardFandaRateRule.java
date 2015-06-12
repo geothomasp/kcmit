@@ -1,38 +1,38 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.osedu.org/licenses/ECL-2.0
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.commitments;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.coeus.sys.framework.rule.KcTransactionalDocumentRuleBase;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.award.home.ValidRates;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
+import org.kuali.coeus.sys.framework.rule.KcTransactionalDocumentRuleBase;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +47,7 @@ public class AwardFandaRateRule  extends KcTransactionalDocumentRuleBase impleme
     private static final String FISCAL_YEAR_STRING = ".fiscalYear";
     private static final String NEW_AWARD_FANDA_RATE = "newAwardFandaRate";
     private static final String AWARD_FANDA_RATES_ARRAY = "document.awardList[0].awardFandaRate";
-    private static final ScaleTwoDecimal ScaleTwoDecimal_THOUSAND = new ScaleTwoDecimal(1000);
+    private static final ScaleTwoDecimal KualiDecimal_THOUSAND = new ScaleTwoDecimal(1000);
     private static final String FANDA_RATES = "awardFandaRate";
     private static final String ON_CAMPUS= "On";
     private static final String OFF_CAMPUS = "Off";
@@ -76,7 +76,10 @@ public class AwardFandaRateRule  extends KcTransactionalDocumentRuleBase impleme
         rulePassed &= evaluateRuleForFiscalYear(awardFandaRate, NEW_AWARD_FANDA_RATE);
         rulePassed &= evaluateRuleForStartAndEndDates(awardFandaRate, NEW_AWARD_FANDA_RATE);
         rulePassed &= checkValidFandARate(awardFandaRate,NEW_AWARD_FANDA_RATE);
-
+        rulePassed &= validateDestination(awardFandaRate,NEW_AWARD_FANDA_RATE);
+        rulePassed &= validateSource(awardFandaRate,NEW_AWARD_FANDA_RATE);
+        rulePassed &= validateDestinationLimit(awardFandaRate,NEW_AWARD_FANDA_RATE);
+        rulePassed &= validateSourceLimit(awardFandaRate,NEW_AWARD_FANDA_RATE);
         return rulePassed;
     }
     
@@ -127,7 +130,7 @@ public class AwardFandaRateRule  extends KcTransactionalDocumentRuleBase impleme
             brokenRule =  KeyConstants.ERROR_REQUIRED_APPLICABLE_INDIRECT_COST_RATE;
         } else if (awardFandaRate.getApplicableFandaRate().isLessThan(ScaleTwoDecimal.ZERO)) {
             brokenRule = KeyConstants.ERROR_APPLICABLE_INDIRECT_COST_RATE_CAN_NOT_BE_NEGATIVE;
-        } else if (awardFandaRate.getApplicableFandaRate().isGreaterEqual(ScaleTwoDecimal_THOUSAND)) {
+        } else if (awardFandaRate.getApplicableFandaRate().isGreaterEqual(KualiDecimal_THOUSAND)) {
             brokenRule = KeyConstants.ERROR_APPLICABLE_INDIRECT_COST_RATE_OUT_OF_RANGE;
         }
             
@@ -257,6 +260,64 @@ public class AwardFandaRateRule  extends KcTransactionalDocumentRuleBase impleme
         }
     
     /**
+     * 
+     * This method checks whether FandaRates destinationAccount fields are entered or not
+     * @param awardFandaRate
+     * @param propertyPrefix
+     * @return
+     */
+	    private boolean validateDestination(AwardFandaRate awardFandaRate,String propertyPrefix){
+	    	  boolean valid = true;
+	    	  if(awardFandaRate.getDestinationAccount()==null){
+	    		  valid= false;
+	    		  this.reportError(propertyPrefix+".destinationAccount", KcMitConstants.ERROR_AWARD_FANDA_RATES_DESTINATION);
+	    	  }
+	    	  return valid;
+	    }
+	    /**
+	     * 
+	     * This method checks whether FandaRates sourceAccount fields are entered or not
+	     * @param awardFandaRate
+	     * @param propertyPrefix
+	     * @return
+	     */
+	    private boolean validateSource(AwardFandaRate awardFandaRate,String propertyPrefix){
+	  	  boolean valid = true;
+	  	  if(awardFandaRate.getSourceAccount()==null){
+	  		  valid= false;
+	  		  this.reportError(propertyPrefix+".sourceAccount", KcMitConstants.ERROR_AWARD_FANDA_RATES_SOURCE);
+	  	  }
+	  	  return valid;
+	    }
+    
+	    /**
+	     * This method checks while adding/saving the document whether the destination account exceeded the limit.
+	     * @param awardFandaRates
+	     * @return
+	     */
+	        private boolean validateDestinationLimit(AwardFandaRate awardFandaRate,String propertyPrefix) {
+	          boolean isValid = true;
+	          	 if (awardFandaRate.getDestinationAccount() != null && awardFandaRate.getDestinationAccount().toString().length()>7) {
+	          		 isValid = false;
+	          		 this.reportError(propertyPrefix+".destinationAccount", KcMitConstants.ERROR_AWARD_FANDA_RATES_DESTINATION_LIMIT);	                   
+	               } 	
+	          return isValid;
+	      }
+	      
+	        /**
+	         * This method checks while adding/saving the document whether the source account exceeded the limit.
+	         * @param awardFandaRates
+	         * @return
+	         */
+	        private boolean validateSourceLimit(AwardFandaRate awardFandaRate,String propertyPrefix) {
+	            boolean isValid = true;
+	            	 if (awardFandaRate.getSourceAccount() != null  && awardFandaRate.getSourceAccount().toString().length()>7) {
+	                     isValid = false;
+	                     this.reportError(propertyPrefix+".sourceAccount", KcMitConstants.ERROR_AWARD_FANDA_RATES_SOURCE_LIMIT);        
+	                 } 	
+	            return isValid;
+	        }
+    /**
      * This method returns the valid rates from valid rates table that match the rates attached to the award.
      * @return
      */
@@ -282,7 +343,7 @@ public class AwardFandaRateRule  extends KcTransactionalDocumentRuleBase impleme
     }
     protected ParameterService getParameterService() {
         if (this.parameterService == null) {
-            this.parameterService = KcServiceLocator.getService(ParameterService.class);
+            this.parameterService = KcServiceLocator.getService(ParameterService.class);        
         }
         return this.parameterService;
     }
@@ -300,38 +361,69 @@ protected boolean isFandaRateInputInPairs(List<AwardFandaRate> awardFandaRateLis
     
     HashMap<String,String> a1 = new HashMap<String,String>();
     HashMap<String,String> b1 = new HashMap<String,String>();
-    
+    List<AwardFandaRate> awardFandaRates = new ArrayList<AwardFandaRate>();
     DateFormat dateFormat = new SimpleDateFormat(Constants.DEFAULT_DATE_FORMAT_PATTERN);
     createHashMapsForRuleEvaluation(awardFandaRateList,a1,b1);
-    boolean valid = evaluateRule(awardFandaRateList,a1,b1);
-    if(!valid) {
-        GlobalVariables.getMessageMap().putError(FANDA_RATES
-                , KeyConstants.INDIRECT_COST_RATE_NOT_IN_PAIR);
-    }
+    boolean valid = checkValidPair(awardFandaRateList);
     isPairChecked = true;
     if(valid){
-        int i = 0;
-        for(AwardFandaRate awardFandaRate1 :awardFandaRateList){
-            if(StringUtils.equalsIgnoreCase(awardFandaRate1.getOnCampusFlag(),"N")){
-                int j= 0;
-                if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRate1.getApplicableFandaRate()).size() > 0){
-                    for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
-                        if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
-                                awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
-                                if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0){
-                                    valid=false;
-                                    reportError(AWARD_FANDA_RATES_ARRAY+"[" + j + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
-                                }
-                        }
-                        j++;
-                    }
-                }else{
-                    valid = false;
-                    reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate1.getFandaRateTypeCode()),awardFandaRate1.getFiscalYear(),dateFormat.format(awardFandaRate1.getStartDate()));
-                }
-            }
-            i++;
-        }
+       int i = 0;
+       for(AwardFandaRate awardFandaRate1 :awardFandaRateList){
+    	   if(StringUtils.equalsIgnoreCase(awardFandaRate1.getOnCampusFlag(),"N")){
+    		   int j= 0;
+    		   if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRate1.getApplicableFandaRate()).size() > 0){
+    			   for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
+    				   if(!awardFandaRates.contains(awardFandaRate2)){
+    					   if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
+    							   awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
+    						   if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 
+    								   || !awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear()) || awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
+
+    							   valid=false;
+
+    						   }else{
+    							   valid=true;
+    							   awardFandaRates.add(awardFandaRate2);
+        						   break;
+    						   }
+    					   }
+    				   }
+
+    			   }
+    			   if(!valid){
+    				   for(AwardFandaRate awardFandaRate2 :awardFandaRateList){
+    					   if(!awardFandaRates.contains(awardFandaRate2)){
+    						   if(StringUtils.equalsIgnoreCase(awardFandaRate2.getOnCampusFlag(),"F") &&
+    								   awardFandaRate1.getFandaRateTypeCode().equals(awardFandaRate2.getFandaRateTypeCode())){
+    							   if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 
+    									   || !awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear()) || awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
+
+    								   if(getValidRates(awardFandaRate1.getApplicableFandaRate(), awardFandaRate2.getApplicableFandaRate()).size() == 0 ){
+    									   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    									   break;
+
+    								   }else if(!awardFandaRate1.getFiscalYear().equals(awardFandaRate2.getFiscalYear())){
+    									   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].fiscalYear", KcMitConstants.ERROR_AWARD_FANDA_INVALID_RATE_PAIR,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    									   break;
+
+    								   }else if(awardFandaRate1.getStartDate().compareTo(awardFandaRate2.getStartDate())!= 0){
+    									   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].startDate", KcMitConstants.ERROR_AWARD_FANDA_INVALID_RATE_PAIR,getFandACodeTypeDescription(awardFandaRate2.getFandaRateTypeCode()),awardFandaRate2.getFiscalYear(),dateFormat.format(awardFandaRate2.getStartDate()));
+    									   break;
+
+    								   }
+    							   }
+    						   }
+    					   }
+    					   j++;
+    				   }
+    			   }
+    		   }else{
+    			   valid = false;
+    			   reportError(AWARD_FANDA_RATES_ARRAY+"[" + i + "].applicableFandaRate", KeyConstants.ERROR_AWARD_FANDA_INVALID_RTAES,getFandACodeTypeDescription(awardFandaRate1.getFandaRateTypeCode()),awardFandaRate1.getFiscalYear(),dateFormat.format(awardFandaRate1.getStartDate()));
+    		   }
+    	   }
+    	   i++;
+       }
     }
     return valid;
 }
@@ -403,5 +495,41 @@ Collection<ValidRates> getValidRates(ScaleTwoDecimal specialEbRateOnCampus, Scal
     rateValues.put(RATE_CLASS_TYPE, FANDA_RATE_CLASS_TYPE);
     return (Collection<ValidRates>) 
             getKraBusinessObjectService().findMatching(ValidRates.class, rateValues);
+}
+
+private boolean checkValidPair(List<AwardFandaRate> awardFandaRateList){
+    boolean valid = true;
+    List<Integer> awardFandaRateListOff = new ArrayList<Integer>();
+    List<Integer> awardFandaRateListOn = new ArrayList<Integer>();
+    int rowCountOn = 0;
+	for(AwardFandaRate awardFandaRateOn :awardFandaRateList){
+		if(StringUtils.equalsIgnoreCase(awardFandaRateOn.getOnCampusFlag(),"N")){
+
+			if(getValidRatesForFandA(ON_CAMPUS_RATE, awardFandaRateOn.getApplicableFandaRate()).size() > 0){
+				 int rowCountOff = 0;
+				for(AwardFandaRate awardFandaRateOff :awardFandaRateList){
+					if(StringUtils.equalsIgnoreCase(awardFandaRateOff.getOnCampusFlag(),"F") &&
+						awardFandaRateOn.getFandaRateTypeCode().equals(awardFandaRateOff.getFandaRateTypeCode()) && !awardFandaRateListOff.contains(rowCountOff) ){
+						awardFandaRateListOff.add(rowCountOff);
+						awardFandaRateListOn.add(rowCountOn);
+						break;
+					}
+					rowCountOff ++;
+				}
+			}
+
+		}
+		rowCountOn ++;
+	}
+	
+	int row = 0;
+	for(AwardFandaRate awardFandaRate :awardFandaRateList){
+		if(!awardFandaRateListOn.contains(row) && !awardFandaRateListOff.contains(row)){
+			valid = false;
+			reportError(AWARD_FANDA_RATES_ARRAY+"[" + row + "].applicableFandaRate",  KeyConstants.INDIRECT_COST_RATE_NOT_IN_PAIR);
+		}
+		row ++;
+	}
+	return valid;
 }
 }

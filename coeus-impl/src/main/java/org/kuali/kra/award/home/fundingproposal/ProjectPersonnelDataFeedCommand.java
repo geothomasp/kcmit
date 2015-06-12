@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.home.fundingproposal;
 
@@ -30,13 +27,18 @@ import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalPersonC
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalPersonUnit;
 import org.kuali.kra.institutionalproposal.contacts.InstitutionalProposalPersonUnitCreditSplit;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
-
+import org.kuali.kra.award.document.AwardDocument;
+import org.kuali.kra.infrastructure.Constants;
+import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 /**
  * Handles key personnel data feed from Institutional Proposal to Award.
  */
 class ProjectPersonnelDataFeedCommand extends ProposalDataFeedCommandBase {
     
     private boolean identicalCreditSplit;
+    private static final String AWARD_CREDIT_SPLIT_PARM_NAME = "award.creditsplit.enabled";
+    private static final String YES = "Y";
     
     /**
      * Constructs a ProjectPersonnelDataFeedCommand.java.
@@ -60,7 +62,7 @@ class ProjectPersonnelDataFeedCommand extends ProposalDataFeedCommandBase {
                 AwardPerson existingAwardPerson = findExistingAwardPerson(proposalPerson);
                 if (existingAwardPerson != null) {
                     reconcileUnits(proposalPerson, existingAwardPerson);
-                    if (mergeType == FundingProposalMergeType.MERGE && !identicalCreditSplit) {
+                    if (mergeType == FundingProposalMergeType.MERGE && !identicalCreditSplit && isAwardCreditsLimitApplicable())  {
                         mergeCreditSplit(existingAwardPerson, proposalPerson);
                     }
                 } else {
@@ -86,7 +88,7 @@ class ProjectPersonnelDataFeedCommand extends ProposalDataFeedCommandBase {
             if (awardUnit == null) {
                 awardPerson.add(createAwardPersonUnit(awardPerson, ipPersonUnit));
             } else {
-                if (mergeType == FundingProposalMergeType.MERGE && !identicalCreditSplit) {
+            	 if (mergeType == FundingProposalMergeType.MERGE && !identicalCreditSplit && isAwardCreditsLimitApplicable())  {
                     mergeUnitCreditSplit(awardUnit, ipPersonUnit);
                 }
             }
@@ -119,9 +121,10 @@ class ProjectPersonnelDataFeedCommand extends ProposalDataFeedCommandBase {
         awardPerson.setPhoneNumber(proposalPerson.getPhoneNumber());
         awardPerson.setSummerEffort(proposalPerson.getSummerEffort());
         awardPerson.setTotalEffort(proposalPerson.getTotalEffort());
-        
-        for (InstitutionalProposalPersonCreditSplit ipPersonCreditSplit : proposalPerson.getCreditSplits()) {
-            awardPerson.add(createAwardPersonCreditSplit(ipPersonCreditSplit));
+        if(isAwardCreditsLimitApplicable()){
+        	for (InstitutionalProposalPersonCreditSplit ipPersonCreditSplit : proposalPerson.getCreditSplits()) {
+        		awardPerson.add(createAwardPersonCreditSplit(ipPersonCreditSplit));
+        	}
         }
         
         for (InstitutionalProposalPersonUnit ipPersonUnit : proposalPerson.getUnits()) {
@@ -162,11 +165,13 @@ class ProjectPersonnelDataFeedCommand extends ProposalDataFeedCommandBase {
         } else {
             awardPersonUnit.setLeadUnit(false);
         }
-        for (InstitutionalProposalPersonUnitCreditSplit ipPersonUnitCreditSplit : ipPersonUnit.getCreditSplits()) {
-            AwardPersonUnitCreditSplit awardPersonUnitCreditSplit = new AwardPersonUnitCreditSplit();
-            awardPersonUnitCreditSplit.setCredit(ipPersonUnitCreditSplit.getCredit());
-            awardPersonUnitCreditSplit.setInvCreditTypeCode(ipPersonUnitCreditSplit.getInvCreditTypeCode());
-            awardPersonUnit.add(awardPersonUnitCreditSplit);
+        if(isAwardCreditsLimitApplicable()){
+        	for (InstitutionalProposalPersonUnitCreditSplit ipPersonUnitCreditSplit : ipPersonUnit.getCreditSplits()) {
+        		AwardPersonUnitCreditSplit awardPersonUnitCreditSplit = new AwardPersonUnitCreditSplit();
+        		awardPersonUnitCreditSplit.setCredit(ipPersonUnitCreditSplit.getCredit());
+        		awardPersonUnitCreditSplit.setInvCreditTypeCode(ipPersonUnitCreditSplit.getInvCreditTypeCode());
+        		awardPersonUnit.add(awardPersonUnitCreditSplit);
+        	}
         }
         return awardPersonUnit;
     }
@@ -257,6 +262,28 @@ class ProjectPersonnelDataFeedCommand extends ProposalDataFeedCommandBase {
             }
         }
         return null;
+    }
+    /**
+     * Determines whether credit limits are applicable
+     * @return
+     */
+    public boolean isAwardCreditsLimitApplicable() {
+        try {
+            String parmValue = fetchParameterValue(AWARD_CREDIT_SPLIT_PARM_NAME);
+            return parmValue.equalsIgnoreCase(YES);
+        } catch(IllegalArgumentException e) {
+            return false;
+        }
+    }
+    
+    /**
+     * This method fetches the Award Credit Splits enabled system parm
+     * @param parmName
+     * @return
+     */
+    protected String fetchParameterValue(String parmName) {
+        ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
+        return parameterService.getParameterValueAsString(AwardDocument.class, parmName);
     }
     
 }

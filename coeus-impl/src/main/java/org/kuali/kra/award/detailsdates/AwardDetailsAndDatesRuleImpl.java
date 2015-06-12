@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.detailsdates;
 
@@ -47,8 +44,6 @@ public class AwardDetailsAndDatesRuleImpl extends KcTransactionalDocumentRuleBas
     private static final String SPONSOR_CODE_PROPERTY_NAME = "detailsAndDatesFormHelper.newAwardTransferringSponsor.sponsorCode";
     private static final String ANTICIPATED_AMOUNT_PROPERTY_NAME = "awardAmountInfos[0].anticipatedTotalAmount";
     private static final String OBLIGATED_AMOUNT_PROPERTY_NAME = "awardAmountInfos[0].amountObligatedToDate";
-    private static final String AWARD_EFFECTIVE_DATE_PROPERTY_NAME = "awardAmountInfos[0].currentFundEffectiveDate";
-    private static final String OBLIGATION_EXPIRATION_DATE_PROPERTY_NAME = "awardAmountInfos[0].obligationExpirationDate";
     private static final String AWARD_ACCOUNT_NUMBER_PROPERTY_NAME = "accountNumber";
     private static final String AWARD_FIN_CHART_OF_ACCOUNTS_CODE_PROPERTY_NAME = "financialChartOfAccountsCode";
     private ParameterService parameterService;
@@ -105,27 +100,7 @@ public class AwardDetailsAndDatesRuleImpl extends KcTransactionalDocumentRuleBas
         if (award.getAnticipatedTotal().isLessThan(ScaleTwoDecimal.ZERO)) {
             valid = false;
             reportError(ANTICIPATED_AMOUNT_PROPERTY_NAME, KeyConstants.ERROR_ANTICIPATED_AMOUNT_NEGATIVE);
-        }
-        if(award.getObligatedTotal().isGreaterThan(new ScaleTwoDecimal(0)) &&
-                //award.getAwardEffectiveDate() == null) {
-                award.getAwardAmountInfos().get(award.getAwardAmountInfos().size() - 1).getCurrentFundEffectiveDate() == null) {
-            valid = false;
-            if ("1".equals(getParameterService().getParameterValueAsString(Constants.PARAMETER_MODULE_AWARD, Constants.PARAMETER_COMPONENT_DOCUMENT, "ENABLE_AWD_ANT_OBL_DIRECT_INDIRECT_COST"))) {
-                reportError(AWARD_EFFECTIVE_DATE_PROPERTY_NAME, KeyConstants.ERROR_AWARD_EFFECTIVE_DATE_TOTAL);
-            } else {
-                reportError(AWARD_EFFECTIVE_DATE_PROPERTY_NAME, KeyConstants.ERROR_AWARD_EFFECTIVE_DATE);
-            }
-        }
-        if(award.getObligatedTotal().isGreaterThan(new ScaleTwoDecimal(0)) &&
-                //award.getObligationExpirationDate() == null) {
-                award.getAwardAmountInfos().get(award.getAwardAmountInfos().size() - 1).getObligationExpirationDate() == null) {
-            valid = false;
-            if ("1".equals(getParameterService().getParameterValueAsString(Constants.PARAMETER_MODULE_AWARD, Constants.PARAMETER_COMPONENT_DOCUMENT, "ENABLE_AWD_ANT_OBL_DIRECT_INDIRECT_COST"))) {
-                reportError(OBLIGATION_EXPIRATION_DATE_PROPERTY_NAME, KeyConstants.ERROR_OBLIGATION_EXPIRATION_DATE_TOTAL);
-            } else {
-                reportError(OBLIGATION_EXPIRATION_DATE_PROPERTY_NAME, KeyConstants.ERROR_OBLIGATION_EXPIRATION_DATE);
-            }
-        }
+        }      
         if (!isValidAccountNumber((AwardDocument) awardDetailsAndDatesSaveEvent.getDocument())) {
             valid &= false;
         }

@@ -1,42 +1,48 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.contacts;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.framework.person.PropAwardPersonRole;
 import org.kuali.coeus.common.framework.unit.Unit;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.ContactRole;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.mit.kc.award.contacts.AwardPersonConfirm;
+import edu.mit.kc.award.contacts.AwardPersonRemove;
 
 /**
  * This class provides support for the Award Contacts Project Personnel panel
  */
 public class AwardProjectPersonnelBean extends AwardContactsBean {
     private static final long serialVersionUID = -8213637358006756203L;
-
+    private transient Collection<AwardPersonConfirm> awardPersonConfirmPrimary;
     private AwardPersonUnit[] newAwardPersonUnits;
-
+    boolean projectPersonEntryFlag=false;
     private transient String selectedLeadUnit;
 
     public AwardProjectPersonnelBean(AwardForm awardForm) {
@@ -59,6 +65,77 @@ public class AwardProjectPersonnelBean extends AwardContactsBean {
         return newUnit;
     }
 
+    
+public Collection<AwardPersonConfirm> getAwardPersonConfirmPrimary() {
+		return awardPersonConfirmPrimary;
+	}
+
+	public void setAwardPersonConfirmPrimary(
+			Collection<AwardPersonConfirm> awardPersonConfirmPrimary) {
+		this.awardPersonConfirmPrimary = awardPersonConfirmPrimary;
+	}
+
+	//  pass award id and person id and get primary key
+	protected Collection<AwardPersonConfirm> AwardPersonConfirmPrimary(
+			String awardId, String awardNumber, String personId) {
+		Map<String, String> queryMap = new HashMap<String, String>();
+
+		queryMap.put("awardId", awardId);
+		queryMap.put("awardNumber", awardNumber);
+		queryMap.put("personId", personId);
+		return (Collection<AwardPersonConfirm>) getBusinessObjectService()
+				.findMatching(AwardPersonConfirm.class, queryMap);
+
+	}
+    //use this for history population removal bo refer
+  @SuppressWarnings("unchecked")
+public
+    Collection<AwardPersonRemove> getAwardPersonRemoval(String awardNumber) {
+	  Collection<AwardPersonRemove> awardPersons =  new ArrayList<AwardPersonRemove>();
+	  Map<String, String> queryMap = new HashMap<String, String>();
+		queryMap.put("awardNumber", awardNumber);		
+		awardPersons = this.getBusinessObjectService().findMatching(AwardPersonRemove.class,queryMap);
+		queryMap.clear();
+	  
+	return awardPersons;
+	  
+       
+    }
+    /**
+     * This method is for adding a project person
+     */
+    public void confirmProjectPeersonEntry(int lineToEdit) {
+     List<AwardPerson> projectPersons = getProjectPersonnel(); 
+		if (projectPersons.size() > lineToEdit) {
+			AwardPersonConfirm awardPersonConfirm = new AwardPersonConfirm();
+			if (projectPersons.get(lineToEdit).getAward().getAwardId() != null
+					&& !(projectPersons.get(lineToEdit).getAwardNumber().isEmpty())
+					&& projectPersons.get(lineToEdit).getAwardContactId() != null
+					&& !(projectPersons.get(lineToEdit).getPersonId().isEmpty())
+					&& projectPersons.get(lineToEdit).getSequenceNumber() != null) {
+				awardPersonConfirm.setAwardId(projectPersons.get(lineToEdit).getAward().getAwardId());
+				awardPersonConfirm.setAwardNumber(projectPersons.get(lineToEdit).getAwardNumber());
+				awardPersonConfirm.setAwardPersonId(projectPersons.get(lineToEdit).getAwardContactId());
+				awardPersonConfirm.setPersonId(projectPersons.get(lineToEdit).getPersonId());
+				awardPersonConfirm.setUpdateTimestamp(projectPersons.get(lineToEdit).getUpdateTimestamp());
+				awardPersonConfirm.setUpdateUser(projectPersons.get(lineToEdit).getUpdateUser());
+				awardPersonConfirm.setConfirmFlag(true);
+				awardPersonConfirm.setSequenceNumber(projectPersons.get(lineToEdit).getSequenceNumber());
+				this.awardForm.setAlertMessage(false);
+				getBusinessObjectService().save(awardPersonConfirm);
+			}else{this.awardForm.setAlertMessage(true);
+			
+			}
+		}
+       
+      
+    }
+    public BusinessObjectService getBusinessObjectService(){
+        BusinessObjectService businessObjectService =  (BusinessObjectService) KcServiceLocator.getService(BusinessObjectService.class);
+        return businessObjectService;
+    }
+    
+    
     /**
      * This method is for adding a project person
      */
@@ -103,10 +180,54 @@ public class AwardProjectPersonnelBean extends AwardContactsBean {
     public void deleteProjectPerson(int lineToDelete) {
         List<AwardPerson> projectPersons = getProjectPersonnel(); 
         if(projectPersons.size() > lineToDelete) {
+        	removeConfirmationEntries(lineToDelete,projectPersons);
             projectPersons.remove(lineToDelete);
         }        
     }
-
+   
+    public void removeConfirmationEntries(int lineToDelete,List<AwardPerson> projectPersons){
+        if(projectPersons.size() > lineToDelete) {
+            List<AwardPersonConfirm> deleteCollection = new ArrayList<AwardPersonConfirm>();
+            deleteCollection=(List<AwardPersonConfirm>) AwardPersonConfirmPrimary(projectPersons.get(lineToDelete).getAward().getAwardId().toString(),projectPersons.get(lineToDelete).getAwardNumber().toString(),projectPersons.get(lineToDelete).getPersonId());
+            
+            this.getBusinessObjectService().delete(deleteCollection);
+           if (deleteCollection.isEmpty()) {
+        	   AwardPersonRemove awardPersonRemove = new AwardPersonRemove();
+        	   awardPersonRemove.setAwardId(projectPersons.get(lineToDelete).getAward().getAwardId());
+               awardPersonRemove.setAwardNumber(projectPersons.get(lineToDelete).getAwardNumber().toString());
+               awardPersonRemove.setAwardPersonId(projectPersons.get(lineToDelete).getAwardContactId());
+               awardPersonRemove.setPersonId(projectPersons.get(lineToDelete).getPersonId());
+                awardPersonRemove.setConfirmFlag(false); 
+               awardPersonRemove.setUpdateUser(projectPersons.get(lineToDelete).getUpdateUser()) ;
+               awardPersonRemove.setSequenceNumber(projectPersons.get(lineToDelete).getSequenceNumber());
+               awardPersonRemove.setUpdateTimestamp(new Timestamp(new java.util.Date().getTime()));
+               this.getBusinessObjectService().save(awardPersonRemove);               
+               
+           }else{
+        	   for(AwardPersonConfirm deleteColl : deleteCollection){
+               	deleteColl.getAwardId();
+               AwardPersonRemove awardPersonRemove = new AwardPersonRemove();
+               awardPersonRemove.setAwardId(deleteColl.getAwardId());
+               awardPersonRemove.setAwardNumber(deleteColl.getAwardNumber());
+               awardPersonRemove.setAwardPersonId(deleteColl.getAwardPersonId());
+               awardPersonRemove.setPersonId(deleteColl.getPersonId());
+               awardPersonRemove.setUpdateTimestampConfirm(deleteColl.getUpdateTimestamp());
+               awardPersonRemove.setUpdateUserConfirm(deleteColl.getUpdateUser());
+               awardPersonRemove.setConfirmFlag(deleteColl.isConfirmFlag()); 
+               awardPersonRemove.setUpdateUser(GlobalVariables.getUserSession().getPrincipalId()) ;
+               awardPersonRemove.setSequenceNumber(deleteColl.getSequenceNumber());
+               awardPersonRemove.setUpdateTimestamp(new Timestamp(new java.util.Date().getTime()));
+               this.getBusinessObjectService().save(awardPersonRemove);
+               }
+               deleteCollection.clear();  
+           }
+            
+            
+           
+           
+        }  
+    }
+    
     /**
      * This method deletes a ProjectPersonUnit from the list 
      * @param projectPersonIndex
@@ -222,7 +343,7 @@ public class AwardProjectPersonnelBean extends AwardContactsBean {
     private AwardPerson findPrincipalInvestigator() {
         AwardPerson awardPerson = null;
         for(AwardContact person: getAward().getProjectPersons()) {
-            if(ContactRole.PI_CODE.equals(person.getContactRole().getRoleCode())) {
+            if(ContactRole.PI_CODE.equals(person.getRoleCode())) {
                 awardPerson = (AwardPerson) person;
                 break;
             }

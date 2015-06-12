@@ -465,11 +465,13 @@
 														</fo:block>
 													</fo:inline-container>
 													<xsl:if test="contact">
-														<fo:table table-layout="fixed" width="100%" border-spacing="2pt">
-															<fo:table-column column-width="22%"/>
-															<fo:table-column column-width="53%"/>
-															<fo:table-column column-width="25%"/>
+														 <fo:table table-layout="fixed" width="100%" border-spacing="2pt">
+															<fo:table-column column-width="20%"/>
+															<fo:table-column column-width="50%"/>
+															<fo:table-column column-width="15%"/>
+															<fo:table-column column-width="15%"/>
 															<fo:table-header start-indent="0pt">
+															
 																<fo:table-row>
 																	<fo:table-cell border-width="0" font-family="Arial" margin="0" padding="0" height="1" text-align="right" display-align="before">
 																		<fo:block/>
