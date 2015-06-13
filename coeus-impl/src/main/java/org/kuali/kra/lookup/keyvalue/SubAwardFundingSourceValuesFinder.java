@@ -18,11 +18,7 @@
  */
 package org.kuali.kra.lookup.keyvalue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.kuali.coeus.sys.framework.keyvalue.FormViewAwareUifKeyValuesFinderBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
@@ -33,17 +29,16 @@ import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
 public class SubAwardFundingSourceValuesFinder extends FormViewAwareUifKeyValuesFinderBase {
-    
+
+    private transient BusinessObjectService businessObjectService;
+
     @Override
     public List<KeyValue> getKeyValues() {
-        SubAwardDocument doc = (SubAwardDocument)getDocument();
-        StringBuffer fundingValues = new StringBuffer();
-        Long subawardID = doc.getSubAward().getSubAwardId();
-        List<KeyValue> keyValues = new ArrayList<KeyValue>();
-        Map<String, Long> fieldValues = new HashMap<String, Long>();
-        fieldValues.put("subAwardId", subawardID);
-        Collection<SubAwardFundingSource> fundingSource = (Collection<SubAwardFundingSource>) KcServiceLocator
-                .getService(BusinessObjectService.class).findMatching(SubAwardFundingSource.class,fieldValues);
+        final SubAwardDocument doc = (SubAwardDocument) getDocument();
+        final StringBuilder fundingValues = new StringBuilder();
+        final Long subawardID = doc.getSubAward().getSubAwardId();
+        final List<KeyValue> keyValues = new ArrayList<>();
+        final Collection<SubAwardFundingSource> fundingSource = getBusinessObjectService().findMatching(SubAwardFundingSource.class, Collections.singletonMap("subAwardId", subawardID));
         
         for (SubAwardFundingSource subAwardFunding : fundingSource) {
                 fundingValues.append(subAwardFunding.getAward().getAwardNumber());
@@ -55,4 +50,16 @@ public class SubAwardFundingSourceValuesFinder extends FormViewAwareUifKeyValues
         return keyValues;
     }
 
+
+    public BusinessObjectService getBusinessObjectService() {
+        if (businessObjectService == null) {
+            businessObjectService = KcServiceLocator.getService(BusinessObjectService.class);
+        }
+
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
 }

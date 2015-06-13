@@ -1,3 +1,4 @@
+
 /*
  * Kuali Coeus, a comprehensive research administration system for higher education.
  * 
@@ -18,9 +19,7 @@
  */
 package org.kuali.coeus.propdev.impl.core;
 
-import java.sql.SQLException;
 import java.util.*;
-import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -236,9 +235,9 @@ public class ProposalDevelopmentSubmitController extends
        populateAdHocRecipients(form.getProposalDevelopmentDocument());
        AuditHelper.ValidationState severityLevel = getValidationState(form);
  	   if(severityLevel.equals(AuditHelper.ValidationState.ERROR)) {
-           return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+           return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
 	   } else if (severityLevel.equals(AuditHelper.ValidationState.WARNING)) {
-           return getModelAndViewService().showDialog("PropDev-DataValidationSection-WithSubmit", true, form);
+           return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_SECTION_WITH_SUBMIT, true, form);
 	   } else {
            return internalSubmit(form);
        }
@@ -259,11 +258,7 @@ public class ProposalDevelopmentSubmitController extends
         }
         form.setEvaluateFlagsAndModes(true);
         getTransactionalDocumentControllerService().route(form);
-        for (PessimisticLock lock : form.getProposalDevelopmentDocument().getPessimisticLocks()){
-            getDataObjectService().delete(lock);
-        }
-        form.getProposalDevelopmentDocument().refreshPessimisticLocks();
-
+        getPessimisticLockService().releaseWorkflowPessimisticLocking(form.getProposalDevelopmentDocument());
         return updateProposalState(form);
     }
 
@@ -291,7 +286,7 @@ public class ProposalDevelopmentSubmitController extends
             form.setEvaluateFlagsAndModes(true);
             return getTransactionalDocumentControllerService().blanketApprove(form);
         }
-        return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+        return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
     }
    
    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=recall")
@@ -307,7 +302,7 @@ public class ProposalDevelopmentSubmitController extends
            getGlobalVariableService().getMessageMap().putInfo(KRADConstants.GLOBAL_MESSAGES, successMessageKey);
        }
        form.setEvaluateFlagsAndModes(true);
-	   return getModelAndViewService().getModelAndView(form);
+       return getModelAndViewService().getModelAndView(form);
   } 
   
    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=disapproveProposal")
@@ -369,6 +364,7 @@ public class ProposalDevelopmentSubmitController extends
 	    form.setShowSubmissionDetails(true);
         form.setDirtyForm(false);
 
+        if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
     			setProposalTypeCodeChangedAndCorrected(form);
     			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
@@ -378,8 +374,11 @@ public class ProposalDevelopmentSubmitController extends
                 handleSubmissionToS2S(form);
                 return getModelAndViewService().getModelAndView(form,"PropDev-OpportunityPage");
             } else {
-    			return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+    			return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
     		}
+        } else {
+        	return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
+        }
     }
 
     protected void handleSubmissionToS2S(ProposalDevelopmentDocumentForm form) throws Exception {
@@ -399,6 +398,7 @@ public class ProposalDevelopmentSubmitController extends
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=submitToSponsor")
     public  ModelAndView submitToSponsor(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
 
+    	if (!requiresResubmissionPrompt(form)) {
     		if(validToSubmitToSponsor(form) ) {
     			setProposalTypeCodeChangedAndCorrected(form);
                 submitApplication(form);
@@ -406,8 +406,12 @@ public class ProposalDevelopmentSubmitController extends
                 form.setDeferredMessages(getGlobalVariableService().getMessageMap());
                 return sendSubmitToSponsorNotification(form);
     		} else {
-                return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+                form.setDataValidationItems(((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateDataValidation());
+                return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
     		}
+    	} else {
+            return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
+    	}
     }
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteLineNotificationRecipient")
     public ModelAndView deleteLine(@ModelAttribute("KualiForm") DocumentFormBase form, @RequestParam("actionParameters[" + UifParameters.SELECTED_COLLECTION_PATH + "]") String selectedCollectionPath) {
@@ -677,6 +681,7 @@ public class ProposalDevelopmentSubmitController extends
         }
 
         getTransactionalDocumentControllerService().performWorkflowAction(form, UifConstants.WorkflowAction.APPROVE);
+        getPessimisticLockService().releaseWorkflowPessimisticLocking(form.getProposalDevelopmentDocument());
         if (form.getActionFlags().containsKey("submitToS2s") && form.getActionFlags().containsKey("submitToSponsor")
                 && getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, "autoSubmitToSponsorOnFinalApproval")
                 && getKcWorkflowService().isFinalApproval(workflowDoc)) {

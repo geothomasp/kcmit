@@ -105,6 +105,7 @@
         </property>
         <property name="items">
             <list>
+<<<<<<< HEAD
            
             <bean parent="Uif-ActionLink" p:actionLabel="HOME" p:order="10">
 					<property name="actionUrl">
@@ -127,6 +128,44 @@
 
 				 <bean parent="Uif-Link" p:href="../portal.do"
                     p:render="@{T(edu.mit.kc.header.MitHeaderHelper).renderSysAdminHeaderLink()}"
+=======
+                <bean parent="Kc-Header-ResearcherMenu" p:order="10">
+                    <property name="wrapperCssClasses">
+                        <list merge="true">
+                            <value>kc-researcherDropdown</value>
+                            <value>kc-listIconDropdown</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-DefaultMenu" p:toggleText="UNIT"
+                      p:order="20">
+                    <property name="wrapperCssClasses">
+                        <list merge="true">
+                            <value>kc-unitDropdown</value>
+                            <value>kc-listIconDropdown</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-DefaultMenu" p:toggleText="CENTRAL ADMIN"
+                      p:order="30">
+                    <property name="wrapperCssClasses">
+                        <list merge="true">
+                            <value>kc-centralAdminDropdown</value>
+                            <value>kc-listIconDropdown</value>
+                        </list>
+                    </property>
+                </bean>
+				<bean parent="Kc-Header-ReportsMenu" p:toggleText="REPORTS"
+                      p:order="40" p:render="@{#getParamAsBoolean('KC-GEN','All','JASPER_REPORTS_ENABLED')}">
+                    <property name="wrapperCssClasses">
+                        <list merge="true">
+                            <value>kc-reportsDropdown</value>
+                            <value>kc-listIconDropdown</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Link" p:href="@{#ConfigProperties['application.url']}/portal.do"
+>>>>>>> coeus-1505.70
                     p:wrapperCssClasses="pull-right" p:target="_new"
                     p:linkText="SYSTEM ADMIN PORTAL" p:order="30"/>
             </list>
@@ -186,12 +225,1121 @@
          parent="Kc-Header-IframeView" p:location.baseUrl="@{#ConfigProperties['rice.server.url']}" p:location.controllerMapping="/kew/DocumentSearch.do"/>
     <bean id="Kc-Header-ApplicationLogo" parent="Kc-Header-ApplicationLogo-parentBean"/>
     <bean id="Kc-Header-ApplicationLogo-parentBean" parent="Uif-Image"
+<<<<<<< HEAD
           abstract="true" p:source="../static/images/logo-mit1.png"/>
     <bean id="Kc-Header-ApplicationLogo2" parent="Kc-Header-ApplicationLogo2-parentBean"/>
     <bean id="Kc-Header-ApplicationLogo2-parentBean" parent="Uif-Image"
           abstract="true" p:source="../static/images/logo-mit2.png"/>
+=======
+          abstract="true" p:source="../static/images/KualiCo.png"/>
+
+    <bean id="Kc-Header-ResearcherMenu" parent="Kc-Header-ResearcherMenu-parentBean"/>
+    <bean id="Kc-Header-ResearcherMenu-parentBean" abstract="true"
+          parent="Kc-Header-DefaultMenu" p:toggleText="RESEARCHER">
+        <property name="menuGroup">
+            <bean parent="Uif-AppMenuGroup">
+                <property name="layoutManager.defaultItemSizes.smSize" value="4"/>
+                <property name="layoutManager.defaultItemSizes.mdSize" value="3"/>
+                <property name="items">
+                    <list>
+                        <bean parent="Kc-Header-Researcher-Group1" p:order="10"/>
+                        <bean parent="Kc-Header-Researcher-Group2" p:order="20"/>
+                        <bean parent="Kc-Header-Researcher-Group3" p:order="30"/>
+                        <bean parent="Kc-Header-Researcher-Group4" p:order="40"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-Group1" parent="Kc-Header-Researcher-Group1-parentBean"/>
+    <bean id="Kc-Header-Researcher-Group1-parentBean" abstract="true"
+          parent="Uif-SimpleGroup">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-Researcher-ProposalGroup" p:order="10"/>
+                <bean parent="Kc-Header-Researcher-AwardGroup" p:order="20"/>
+                <bean parent="Kc-Header-Researcher-NegotiationGroup" p:order="30"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-Group2" parent="Kc-Header-Researcher-Group2-parentBean"/>
+    <bean id="Kc-Header-Researcher-Group2-parentBean" abstract="true"
+          parent="Uif-SimpleGroup">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-Researcher-IRBGroup" p:order="10"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-Group3" parent="Kc-Header-Researcher-Group3-parentBean"/>
+    <bean id="Kc-Header-Researcher-Group3-parentBean" abstract="true"
+          parent="Uif-SimpleGroup">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-Researcher-COIGroup" p:order="10"/>
+                <bean parent="Kc-Header-Researcher-IacucGroup" p:order="20"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-Group4" parent="Kc-Header-Researcher-Group4-parentBean"/>
+    <bean id="Kc-Header-Researcher-Group4-parentBean" abstract="true"
+          parent="Uif-SimpleGroup">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-Researcher-QuicklinksGroup" p:order="10"/>
+                <bean parent="Kc-Header-Researcher-PersonnelGroup" p:order="20"/>
+                <bean parent="Kc-Header-Researcher-WorkflowGroup" p:order="30"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-ProposalGroup" parent="Kc-Header-Researcher-ProposalGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-ProposalGroup-parentBean" abstract="true"
+          parent="Uif-MenuList" p:headerText="Proposals">
+        <property name="items">
+            <list>
+                <bean parent="Uif-MenuAction" p:actionLabel="Create Proposal"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kc-pd-krad"
+                      p:actionUrl.viewId="PropDev-InitiateView"
+                      p:actionUrl.controllerMapping="/proposalDevelopment"
+                      p:actionUrl.methodToCall="docHandler"
+                      p:actionUrl.requestParameters="command:initiate" p:order="10" />
+                <bean parent="Uif-MenuAction" p:actionLabel="Proposals Enroute"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                      p:actionUrl.viewId="EnrouteDevelopmentProposals-LookupViewId"
+                      p:actionUrl.controllerMapping="/lookup"
+                      p:order="20" />
+                <bean parent="Uif-MenuAction" p:actionLabel="All My Proposals"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                      p:actionUrl.viewId="AllDevelopmentProposals-LookupViewId"
+                      p:actionUrl.methodToCall="search"
+                      p:actionParameters="viewName:AllLookupableDevelopmentProposals-LookupViewName,investigator=@{#userSession == null ? '' : #userSession.getPerson().getFirstName()+'*'+#userSession.getPerson().getLastName()}"
+                      p:actionUrl.controllerMapping="/lookup" p:order="30"   />
+                <bean parent="Uif-MenuAction" p:actionLabel="Create Proposal For S2S Opportunity"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                      p:actionUrl.viewId="S2sOpportunity-CreateProposalLookupView"
+                      p:actionUrl.methodToCall="search"
+                      p:actionUrl.controllerMapping="/lookup" p:order="40"   />
+
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Lists"
+                      p:order="50"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Search Proposals"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                      p:actionUrl.viewId="DevelopmentProposals-LookupViewId"
+                      p:actionParameters="viewName:DevelopmentProposals-LookupViewName"
+                      p:actionUrl.controllerMapping="/lookup"
+                      p:order="60" />
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Search Proposal Log" p:order="70" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.institutionalproposal.proposallog.ProposalLog&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Search Institutional Proposals" p:order="80" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.institutionalproposal.home.InstitutionalProposal&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-AwardGroup" parent="Kc-Header-Researcher-AwardGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-AwardGroup-parentBean" abstract="true"
+          parent="Uif-MenuList" p:headerText="Awards">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All my Awards" p:order="10" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                         <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.award.home.Award&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;projectPersons.fullName=@{#userSession == null ? '' : #userSession.getPerson().getFirstName()+'*'+#userSession.getPerson().getLastName()}"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<bean id="Kc-Header-Researcher-NegotiationGroup" parent="Kc-Header-Researcher-NegotiationGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-NegotiationGroup-parentBean"
+          abstract="true" parent="Uif-MenuList" p:headerText="Negotiations">
+        <property name="items">
+            <list>
+              <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Negotiations" p:order="10" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"																														
+                           value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.negotiations.bo.Negotiation&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;hideReturnLink=true&amp;associatedNegotiable.piName=@{#userSession == null ? '' : #userSession.getPerson().getFirstName()+'*'+#userSession.getPerson().getLastName()}&amp;searchCriteriaEnabled=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+>>>>>>> coeus-1505.70
 
    
+    <bean id="Kc-Header-Actionlist" parent="Kc-Header-Actionlist-parentBean"/>
+    <bean id="Kc-Header-Actionlist-parentBean" abstract="true"
+          parent="Uif-DropdownToggleMenu">
+        <property name="menuItems">
+            <list>
+<<<<<<< HEAD
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Approve: Doc #5547"/>
+                <bean parent="Uif-MenuDivider"/>
+                <bean parent="Uif-MenuAction" p:actionLabel="Full Action List"/>
+=======
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Actions"
+                      p:order="10"/>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Create IRB Protocol" p:order="20"  >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/protocolProtocol.do?methodToCall=docHandler&amp;command=initiate&amp;docFormKey=88888888&amp;docTypeName=ProtocolDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Amend or Renew IRB Protocol" p:order="30" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupActionAmendRenewProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Notify IRB on a Protocol" p:order="40" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupActionNotifyIRBProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Request a Status Change on a IRB Protocol" p:order="50" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupActionRequestProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Lists"
+                      p:order="60"/>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Pending Protocols" p:order="70" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupPendingProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Protocols Pending PI Action"
+                      p:order="80" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupPendingProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Protocols Pending Committee Action" p:order="90" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupPendingProtocol=true&amp;protocolStatusCode=100"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Protocols Under Development"
+                      p:order="100" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupPendingProtocol=true&amp;protocolStatusCode=101"/>
+
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Protocols"
+                      p:order="110" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;investigator=@{#userSession == null ? '' : #userSession.getPerson().getFirstName()+'*'+#userSession.getPerson().getLastName()}"/>
+
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Search Protocols"
+                      p:order="120" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Reviews"
+                      p:order="130" >
+                    <property name="actionUrl.requestParameters">
+
+                        <map>
+                            <entry key="href"
+                                value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.iacuc.onlinereview.IacucProtocolOnlineReview&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupReviewerPersonId=@{#userSession == null ? '' : #userSession.getPerson().getPrincipalId()}"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Schedules"
+                      p:order="140" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.committee.bo.CommitteeSchedule&amp;showMaintenanceLinks=true&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;committee.committeeMemberships.personId=@{#userSession == null ? '' : #userSession.getPerson().getPrincipalId()}"/>
+                        </map>
+                    </property>
+                </bean>
+>>>>>>> coeus-1505.70
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-User" parent="Kc-Header-User-parentBean"/>
+    <bean id="Kc-Header-User-parentBean" abstract="true"
+          parent="Uif-DropdownToggleMenu">
+        <property name="menuItems">
+            <list>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionLabel="Preferences" p:actionUrl.viewId="Kc-Header-IframeView">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href" value="@{#ConfigProperties['rice.server.url']}/kew/Preferences.do?returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Uif-MenuAction" p:actionLabel="Logout" p:actionUrl.viewId="DummyLoginView"
+                      p:actionUrl.controllerMapping="/login" p:actionUrl.methodToCall="logout"/>
+            </list>
+        </property>
+    </bean>
+
+<<<<<<< HEAD
+=======
+    <bean id="Kc-Header-Researcher-IacucGroup" parent="Kc-Header-Researcher-IacucGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-IacucGroup-parentBean" abstract="true" parent="Uif-MenuList"
+          p:headerText="IACUC Protocols">
+        <property name="items">
+            <list>
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Actions"
+                      p:order="10"/>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Create IACUC Protocol" p:order="20" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/iacucProtocolProtocol.do?methodToCall=docHandler&amp;command=initiate&amp;docFormKey=88888888&amp;docTypeName=IacucProtocolDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Lists"
+                      p:order="30"/>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Protocols"
+                      p:order="40" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.iacuc.IacucProtocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupPendingProtocol=true&amp;lookupProtocolPersonId=@{#userSession == null ? '' : #userSession.getPerson().getPrincipalId()}&amp;investigator=@{#userSession == null ? '' : #userSession.getPerson().getFirstName()+'*'+#userSession.getPerson().getLastName()}"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Search Protocols" p:order="50" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.iacuc.IacucProtocol&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupPendingProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Reviews" p:order="60" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.iacuc.onlinereview.IacucProtocolOnlineReview&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupReviewerPersonId=@{#userSession == null ? '' : #userSession.getPerson().getPrincipalId()}"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Schedules" p:order="70" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.iacuc.committee.bo.IacucCommitteeSchedule&amp;docFormKey=88888888&amp;showMaintenanceLinks=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;committee.committeeMemberships.personId=@{#userSession == null ? '' : #userSession.getPerson().getPrincipalId()}"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-QuicklinksGroup" parent="Kc-Header-Researcher-QuicklinksGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-QuicklinksGroup-parentBean"
+          abstract="true" parent="Uif-MenuList" p:headerText="Quicklinks">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Pessimistic Lock"
+                      p:order="10" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.krad.document.authorization.PessimisticLock&amp;showMaintenanceLinks=true&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-MenuAction" p:actionLabel="Grants.gov Opportunity Lookup"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                      p:actionUrl.viewId="S2sOpportunity-LookupView"
+                      p:actionUrl.methodToCall="search"
+                      p:actionUrl.controllerMapping="/lookup" p:order="20"   />
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Reporting" p:order="30" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+
+                                   value="@{#ConfigProperties['application.url']}/reporting.do?methodToCall=getReportParametersFromDesign&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-PersonnelGroup" parent="Kc-Header-Researcher-PersonnelGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-PersonnelGroup-parentBean"
+          abstract="true" parent="Uif-MenuList" p:headerText="Personnel">
+        <property name="items">
+            <list>
+               
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Current &amp; Pending Support" p:order="10" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/currentOrPendingReport.do?returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+                
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Researcher-WorkflowGroup" parent="Kc-Header-Researcher-WorkflowGroup-parentBean"/>
+    <bean id="Kc-Header-Researcher-WorkflowGroup-parentBean" abstract="true"
+          parent="Uif-MenuList" p:headerText="Workflow">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Preferences" p:order="10" >
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href" value="@{#ConfigProperties['rice.server.url']}/kew/Preferences.do?&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-DefaultMenu" parent="Kc-Header-DefaultMenu-parentBean"/>
+    <bean id="Kc-Header-DefaultMenu-parentBean" abstract="true"
+          parent="Uif-DropdownToggleMenu" p:toggleCaretClass="">
+        <property name="wrapperCssClasses">
+            <list merge="true">
+                <value>kc-navMenuDropdown</value>
+            </list>
+        </property>
+        <property name="menuGroup">
+            <bean parent="Uif-AppMenuGroup">
+                <property name="layoutManager.defaultItemSizes.smSize" value="4"/>
+                <property name="layoutManager.defaultItemSizes.mdSize" value="3"/>
+                <property name="items">
+                    <list>
+                        <bean parent="Kc-Header-Unit-Group1" p:order="10"/>
+                        <bean parent="Kc-Header-Unit-Group2" p:order="20"/>
+                        <bean parent="Kc-Header-Unit-Group3" p:order="30"/>
+                        <bean parent="Kc-Header-Unit-Group4" p:order="40"/>
+                        <bean parent="Kc-Header-Unit-Group5" p:order="50"/>
+                        <bean parent="Kc-Header-Unit-Group6" p:order="60"/>
+                        <bean parent="Kc-Header-Unit-Group7" p:order="70"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Unit-Group1" parent="Kc-Header-Unit-Group1-parentBean"/>
+    <bean id="Kc-Header-Unit-Group1-parentBean" abstract="true" parent="Uif-MenuList" p:headerText="Pre-Award">
+        <property name="items">
+            <list>
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="10">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Proposal Development" p:order="10" />
+                            <bean parent="Uif-MenuAction" p:iconClass="icon-plus"
+                                  p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kc-pd-krad"
+                                  p:actionUrl.viewId="PropDev-InitiateView"
+                                  p:actionUrl.controllerMapping="/proposalDevelopment"
+                                  p:actionUrl.methodToCall="docHandler"
+                                  p:actionUrl.requestParameters="command:initiate" p:order="20"/>
+                            <bean parent="Uif-MenuAction" p:iconClass="icon-search"
+                                  p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                                  p:actionUrl.viewId="AllDevelopmentProposals-LookupViewId"
+                                  p:actionParameters="viewName:AllLookupableDevelopmentProposals-LookupViewName"
+                                  p:actionUrl.controllerMapping="/lookup" p:order="30"/>
+
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-HorizontalBoxSection" p:order="20">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Proposal Log" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/maintenance.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.institutionalproposal.proposallog.ProposalLog"/>
+                                    </map>
+                                </property>
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.institutionalproposal.proposallog.ProposalLog&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="30">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Institutional Proposal" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                                value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.institutionalproposal.proposallog.ProposalLog&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;showMaintenanceLinks=true&amp;hideReturnLink=true&amp;forInstitutionalProposal=true&amp;refreshCaller=cancel"/>
+                                    </map>
+                                </property> 
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.institutionalproposal.home.InstitutionalProposal&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                
+                <bean parent="Uif-HorizontalBoxSection" p:order="40">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Negotiations" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/negotiationNegotiation.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=NegotiationDocument"/>
+                                    </map>
+                                </property>
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.negotiations.bo.Negotiation&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="All My Negotiations" p:order="50">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                        <entry key="href" value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.negotiations.bo.Negotiation&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;negotiatorName=@{#userSession == null ? '' : #userSession.getPerson().getFirstName()+'*'+#userSession.getPerson().getLastName()}&amp;lookupProtocolPersonId=@{#userSession == null ? '' : #userSession.getPerson().getPrincipalId()}&amp;searchCriteriaEnabled=true"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+
+    </bean>
+
+    <bean id="Kc-Header-Unit-Group2" parent="Kc-Header-Unit-Group2-parentBean"/>
+    <bean id="Kc-Header-Unit-Group2-parentBean" abstract="true" parent="Uif-MenuList" p:headerText="Post-Award">
+        <property name="items">
+            <list>
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="10">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Award" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView" p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/awardHome.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=AwardDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                                    </map>
+                                </property>
+                            </bean>
+
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView" p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.award.home.Award&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Award Report Tracking" p:order="20">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/reportTrackingLookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.award.paymentreports.awardreports.reporting.ReportTracking&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="30">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Subaward" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView" p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/subAwardHome.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=SubAwardDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                                    </map>
+                                </property>
+                            </bean>
+
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView" p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.subaward.bo.SubAward&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+
+    </bean>
+
+    <bean id="Kc-Header-Unit-Group3" parent="Kc-Header-Unit-Group3-parentBean"/>
+    <bean id="Kc-Header-Unit-Group3-parentBean" abstract="true" parent="Uif-MenuList"
+          p:headerText="Pre-Submission Compliance">
+        <property name="items">
+            <list>
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Conflict of Interest"
+                      p:order="5"/>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Disclosure"
+                      p:order="10">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.coi.CoiDisclosure&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Event Disclosures"
+                      p:order="20">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.coi.CoiEventDisclosure&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Non Project Event Disclosures"
+                      p:order="30">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.coi.CoiNonProjectEventDisclosure&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Submitted Disclosures"
+                      p:order="40">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.coi.CoiSubmittedDisclosure&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Annual Event Disclosures"
+                      p:order="50">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.coi.CoiAnnualEventDisclosure&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Undisclosed Events"
+                      p:order="60">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=search&amp;businessObjectClassName=org.kuali.kra.coi.CoiDisclosureUndisclosedEvents&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+              
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Person Search"
+                      p:order="70">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.coeus.common.framework.person.KcPerson&amp;docFormKey=88888888&amp;includeCustomActionUrls=false&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=false&amp;showMaintenanceLinks=false&amp;refreshCaller=CoiDisclosurePersonSearch"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Uif-SimpleHeaderFour" p:headerText="Protocols" p:order="80"/>
+
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="90">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Animals" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20" >
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/iacucProtocolProtocol.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=IacucProtocolDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                                    </map>
+                                </property>
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30" >
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.iacuc.IacucProtocol&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="100">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Human Participants" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/protocolProtocol.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=ProtocolDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                                    </map>
+                                </property>
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.irb.Protocol&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+    <bean id="Kc-Header-Unit-Group4" parent="Kc-Header-Unit-Group4-parentBean"/>
+    <bean id="Kc-Header-Unit-Group4-parentBean" abstract="true" parent="Uif-MenuList"
+          p:headerText="Post-Submission Compliance">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HorizontalBoxSection" p:order="10">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="IRB Committee" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/committeeCommittee.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=CommitteeDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                                    </map>
+                                </property>
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.committee.bo.Committee&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-HorizontalBoxSection" p:order="20">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="IACUC Committee" p:order="10" />
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-plus" p:order="20">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/iacucCommitteeCommittee.do?methodToCall=docHandler&amp;command=initiate&amp;docTypeName=CommonCommitteeDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                                    </map>
+                                </property>
+                            </bean>
+                            <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                                  p:iconClass="icon-search" p:order="30">
+                                <property name="actionUrl.requestParameters">
+                                    <map>
+                                        <entry key="href"
+                                               value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.iacuc.committee.bo.IacucCommittee&amp;docFormKey=88888888&amp;includeCustomActionUrls=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Protocol Submissions"
+                      p:order="30">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.irb.actions.submit.ProtocolSubmission&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="IACUC Submissions"
+                      p:order="40">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.iacuc.actions.submit.IacucProtocolSubmission&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="IRB Schedules"
+                      p:order="50">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.committee.bo.CommitteeSchedule&amp;docFormKey=88888888&amp;showMaintenanceLinks=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="IACUC Schedules"
+                      p:order="60">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.kra.iacuc.committee.bo.IacucCommitteeSchedule&amp;docFormKey=88888888&amp;showMaintenanceLinks=true&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="Kc-Header-Unit-Group5" parent="Kc-Header-Unit-Group5-parentBean"/>
+    <bean id="Kc-Header-Unit-Group5-parentBean" abstract="true" parent="Uif-MenuList" p:headerText="Quicklinks">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Pessimistic Lock"
+                      p:order="10">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.krad.document.authorization.PessimisticLock&amp;showMaintenanceLinks=true&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-MenuAction" p:actionLabel="Grants.gov Opportunity Lookup"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['application.url']}/kr-krad"
+                      p:actionUrl.viewId="S2sOpportunity-LookupView"
+                      p:actionUrl.methodToCall="search"
+                      p:actionUrl.controllerMapping="/lookup" p:order="20"   />
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Address Book"
+                      p:order="30">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+      value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.coeus.common.framework.rolodex.Rolodex&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;docFormKey=88888888"/>
+
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Sponsor Lookup"
+                      p:order="40">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.coeus.common.framework.sponsor.Sponsor&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Keyword Lookup"
+                      p:order="50">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.coeus.common.framework.keyword.ScienceKeyword"/>
+                        </map>
+                    </property>
+                </bean>
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Current &amp; Pending Support" p:order="60">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/currentOrPendingReport.do?returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Perform Person Mass Change" p:order="70">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/personMassChangeHome.do?methodToCall=docHandler&amp;command=initiate&amp;docFormKey=88888888&amp;docTypeName=PersonMassChangeDocument&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="ISR/SSR Reporting" p:order="80">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/isrSsrReporting.do??methodToCall=docHandler&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Award Subcontracting Goals and Expenditures" p:order="90">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/awardSubcontractingGoalsExpenditures.do?methodToCall=start&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Subcontracting Expenditures Data Generation" p:order="100">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['application.url']}/subcontractingExpendituresDataGeneration.do?methodToCall=start&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+                
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Unit-Group6" parent="Kc-Header-Unit-Group6-parentBean"/>
+    <bean id="Kc-Header-Unit-Group6-parentBean" abstract="true" parent="Uif-MenuList" p:headerText="Workflow">
+        <property name="items">
+            <list>
+                <bean parent="Uif-MenuAction" p:actionLabel="People Flow"
+                      p:actionUrl.baseUrl="@{#ConfigProperties['rice.server.url']}/kr-krad"
+                      p:actionUrl.methodToCall="start"
+                      p:actionUrl.viewId="PeopleFlow-LookupView"
+                      p:actionUrl.controllerMapping="/lookup"
+                      p:order="10">
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction" p:actionUrl.viewId="Kc-Header-IframeView"
+                      p:actionLabel="Preferences" p:order="20">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href" value="@{#ConfigProperties['rice.server.url']}/kew/Preferences.do?returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Routing Report"
+                      p:order="30">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href" value="@{#ConfigProperties['rice.server.url']}/kew/RoutingReport.do?returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Rules"
+                      p:order="40">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href"
+                                   value="@{#ConfigProperties['rice.server.url']}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.kew.rule.RuleBaseValues&amp;docFormKey=88888888&amp;returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView&amp;hideReturnLink=true&amp;lookupActionNotifyIRBProtocol=true"/>
+                        </map>
+                    </property>
+                </bean>
+
+                <bean parent="Kc-Header-IframeMenuAction"
+                      p:actionUrl.viewId="Kc-Header-IframeView" p:actionLabel="Rule QuickLinks"
+                      p:order="50">
+                    <property name="actionUrl.requestParameters">
+                        <map>
+                            <entry key="href" value="@{#ConfigProperties['rice.server.url']}/kew/RuleQuickLinks.do?returnLocation=@{#ConfigProperties['application.url']}%2Fkc-krad%2FlandingPage%3FviewId%3DKc-LandingPage-RedirectView"/>
+                        </map>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Kc-BusinessRules-MenuAction" parent="Kc-BusinessRules-MenuAction-parentBean"/>
+    <bean id="Kc-BusinessRules-MenuAction-parentBean" abstract="true" parent="Uif-MenuAction"
+          p:actionUrl.baseUrl="@{#ConfigProperties['rice.server.url']}/kr-krad"
+          p:actionUrl.methodToCall="start" p:actionUrl.controllerMapping="/lookup"/>
+
+    <bean id="Kc-Header-Unit-Group7" parent="Kc-Header-Unit-Group7-parentBean"/>
+    <bean id="Kc-Header-Unit-Group7-parentBean" abstract="true" parent="Uif-MenuList" p:headerText="Business Rules">
+        <property name="items">
+            <list>
+                <bean parent="Kc-BusinessRules-MenuAction" p:actionLabel="Agenda"
+                      p:actionUrl.viewId="AgendaBo-LookupView" p:order="10"/>
+                <bean parent="Kc-BusinessRules-MenuAction" p:actionLabel="Context"
+                      p:actionUrl.viewId="ContextBo-LookupView" p:order="20"/>
+                <bean parent="Kc-BusinessRules-MenuAction" p:actionLabel="Attribute Definition"
+                      p:actionUrl.viewId="KrmsAttributeDefinitionBo-LookupView" p:order="30"/>
+                <bean parent="Kc-BusinessRules-MenuAction" p:actionLabel="Term"
+                      p:actionUrl.viewId="TermBo-LookupView" p:order="40"/>
+                <bean parent="Kc-BusinessRules-MenuAction" p:actionLabel="Term Specification"
+                      p:actionUrl.viewId="TermSpecificationBo-LookupView" p:order="50"/>
+                <bean parent="Kc-BusinessRules-MenuAction" p:actionLabel="Category"
+                      p:actionUrl.viewId="CategoryBo-LookupView" p:order="60"/>
+            </list>
+        </property>
+    </bean>
+
     <bean id="Kc-Header-Actionlist" parent="Kc-Header-Actionlist-parentBean"/>
     <bean id="Kc-Header-Actionlist-parentBean" abstract="true"
           parent="Uif-DropdownToggleMenu">
@@ -233,4 +1381,100 @@
         </property>
     </bean>
 
+    <bean id="Kc-Header-ReportsMenu" parent="Kc-Header-ReportsMenu-parentBean"/>
+    <bean id="Kc-Header-ReportsMenu-parentBean" abstract="true"
+          parent="Kc-Header-DefaultMenu" p:toggleText="Reports">
+        <property name="menuGroup">
+            <bean parent="Uif-AppMenuGroup">
+                <property name="layoutManager.defaultItemSizes.smSize" value="12"/>
+                <property name="layoutManager.defaultItemSizes.mdSize" value="12"/>
+                <property name="items">
+                    <list>
+                        <bean parent="Kc-Header-Reports-Group" p:order="10"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="Kc-Header-Reports-Group" parent="Kc-Header-Reports-Group-parentBean"/>
+    <bean id="Kc-Header-Reports-Group-parentBean" abstract="true"
+          parent="Uif-SimpleGroup">
+        <property name="items">
+            <list>
+                <bean parent="Kc-Header-Reports-AwardReports" p:order="10"/>
+                <bean parent="Kc-Header-Reports-ProposalReports" p:order="20"/>
+                <bean parent="Kc-Header-Reports-AdHoc" p:order="30"/>
+            </list>
+        </property>
+    </bean>
+
+	<bean id="Kc-Header-Reports-AwardReports" parent="Kc-Header-Reports-AwardReports-parentBean" />
+	<bean id="Kc-Header-Reports-AwardReports-parentBean" abstract="true"
+		parent="Uif-MenuList" p:headerText="Award Reports">
+		<property name="items">
+			<list>
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=Active_Awards"
+					p:target="reportWindow" p:linkText="Active Awards" p:order="10" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=AwardsByPI"
+					p:target="reportWindow" p:linkText="Awards by PI" p:order="20" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=AwardsBySponsor"
+					p:target="reportWindow" p:linkText="Awards by Sponsor" p:order="30" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=Awards_By_Sponsor_Type"
+					p:target="reportWindow" p:linkText="Awards by Sponsor Type"
+					p:order="40" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=AwardsByAwardType"
+					p:target="reportWindow" p:linkText="Awards by Award Type" p:order="50" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=AWARDS_BY_START_DATE"
+					p:target="reportWindow" p:linkText="Awards by Notice Date" p:order="60" />
+
+			</list>
+		</property>
+	</bean>
+	<bean id="Kc-Header-Reports-ProposalReports" parent="Kc-Header-Reports-ProposalReports-parentBean" />
+	<bean id="Kc-Header-Reports-ProposalReports-parentBean" abstract="true"
+		parent="Uif-MenuList" p:headerText="Proposal Reports">
+		<property name="items">
+			<list>
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=ProposalsBySponsor"
+					p:target="reportWindow" p:linkText="Institutional Proposals by Sponsor"
+					p:order="10" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=ProposalbyProposaType"
+					p:target="reportWindow" p:linkText="Institutional Proposals by Proposal Type"
+					p:order="20" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=InvestigatorHistory"
+					p:target="reportWindow" p:linkText="Investigator Proposal History"
+					p:order="30" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=FundingStatus"
+					p:target="reportWindow" p:linkText="Funding Status" p:order="40" />
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do?reportId=PendingProposals"
+					p:target="reportWindow" p:linkText="Institutional Proposals By Lead Unit"
+					p:order="50" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="Kc-Header-Reports-AdHoc" parent="Kc-Header-Reports-AdHoc-parentBean" />
+	<bean id="Kc-Header-Reports-AdHoc-parentBean" abstract="true"
+		parent="Uif-MenuList" p:headerText="Ad Hoc Reports">
+		<property name="items">
+			<list>
+				<bean parent="Uif-Link"
+					p:href="@{#ConfigProperties['application.url']}/displayExternalReport.do"
+					p:target="reportWindow" p:linkText="Ad Hoc Report List" p:order="10" />
+			</list>
+		</property>
+	</bean>
+>>>>>>> coeus-1505.70
 </beans>

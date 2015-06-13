@@ -24,11 +24,7 @@ import org.kuali.rice.krad.util.GlobalVariables;
 public class AwardSponsorContactAddRuleImpl extends BaseAwardContactAddRule {
     public static final String AWARD_SPONSOR_CONTACT_LIST_ERROR_KEY = "sponsorContactsBean.newAwardContact";
     public static final String ERROR_AWARD_SPONSOR_CONTACT_EXISTS = "error.awardSponsorContact.person.exists";
-    
-    /**
-     * @param event
-     * @return
-     */
+
     public boolean processAddAwardSponsorContactBusinessRules(Award award, AwardSponsorContact newContact) {
         return checkForSelectedContactAndRole(newContact, AWARD_SPONSOR_CONTACT_LIST_ERROR_KEY);// && checkForDuplicatePerson(award, newContact);
     }

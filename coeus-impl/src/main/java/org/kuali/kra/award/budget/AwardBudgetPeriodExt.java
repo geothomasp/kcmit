@@ -87,7 +87,7 @@ public class AwardBudgetPeriodExt extends BudgetPeriod {
         return fringeForCostElements;
     }
     public ScaleTwoDecimal getPrevTotalFringeAmount() {
-		return prevTotalFringeAmount==null?ScaleTwoDecimal.ZERO:prevTotalFringeAmount;
+		return ScaleTwoDecimal.returnZeroIfNull(prevTotalFringeAmount);
 	}
 	public void setPrevTotalFringeAmount(ScaleTwoDecimal prevTotalFringeAmount) {
 		this.prevTotalFringeAmount=prevTotalFringeAmount;

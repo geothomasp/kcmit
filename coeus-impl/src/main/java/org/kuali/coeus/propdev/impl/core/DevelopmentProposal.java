@@ -1143,6 +1143,7 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     public List<ProposalSite> getOtherOrganizations() {
 		List<ProposalSite> otherOrganizations = getProposalSitesForType(ProposalSite.PROPOSAL_SITE_OTHER_ORGANIZATION);
 		for (ProposalSite proposalSite : otherOrganizations) {
+<<<<<<< HEAD
 			if(proposalSite.getOrganization().getCongressionalDistrict() != null)
 			proposalSite.initializeDefaultCongressionalDistrict();
 			List<OrganizationYnq> organizationYnqs=getOrganisationRiskPriority(proposalSite);
@@ -1173,6 +1174,13 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
                     organizationYnqMap);
         }
         return organizationYnqs;
+=======
+			if(proposalSite.getOrganization().getCongressionalDistrict() != null) {
+                proposalSite.initializeDefaultCongressionalDistrict();
+            }
+		}
+		return otherOrganizations;
+>>>>>>> coeus-1505.70
     }
     
 
@@ -2128,7 +2136,8 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
 
     public Integer getParentInvestigatorFlag(String personId, Integer flag) {
         for (ProposalPerson pPerson : this.getProposalPersons()) {
-            if (pPerson.getPersonId() != null && pPerson.getPersonId().equals(personId) || pPerson.getRolodexId() != null && pPerson.getRolodexId().equals(Integer.valueOf(personId))) {
+            if (pPerson.getPersonId() != null && pPerson.getPersonId().equals(personId) ||
+                pPerson.getRolodexId() != null && String.valueOf(pPerson.getRolodexId()).equalsIgnoreCase(personId)) {
                 flag = 2;
                 if (pPerson.getProposalPersonRoleId().equals("PI")) {
                     flag = 1;
@@ -2422,7 +2431,7 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
     public ProposalDevelopmentBudgetExt getFinalBudget() {
     	return finalBudget;
     }
-    
+
 
 	public void setFinalBudget(ProposalDevelopmentBudgetExt finalBudget) {
 		this.finalBudget = finalBudget;

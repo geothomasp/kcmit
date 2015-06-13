@@ -51,6 +51,8 @@ import org.kuali.rice.krad.util.KRADConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,6 +67,7 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
 
     private static final String CONFIRM_SYNCH_BUDGET_RATE = "confirmSynchBudgetRate";
     private static final String NO_SYNCH_BUDGET_RATE = "noSynchBudgetRate";
+    public static final String DEFAULT_BUDGET_ACTIVITY_TYPE_CODE = "x";
 
     /**
      * Main execute method that is run. Populates A map of rate types in the {@link HttpServletRequest} instance to be used
@@ -201,10 +204,11 @@ public class AwardBudgetsAction extends AwardAction implements AuditModeAction {
             AwardBudgetDocument budgetDocument = (AwardBudgetDocument) documentService.getByDocumentHeaderId(budgetToOpen.getDocumentNumber());
             String routeHeaderId = budgetDocument.getDocumentHeader().getWorkflowDocument().getDocumentId();
             Budget budget = budgetDocument.getBudget();
-            String forward = buildForwardUrl(routeHeaderId);
-            if (budget.getActivityTypeCode().equals("x")) {
-                budget.setActivityTypeCode(KcServiceLocator.getService(BudgetService.class).getActivityTypeForBudget(budget));
+            if (budget.getActivityTypeCode().equals(DEFAULT_BUDGET_ACTIVITY_TYPE_CODE)) {
+                budget.setActivityTypeCode(getBudgetService().getActivityTypeForBudget(budget));
             }
+            String backUrl = URLEncoder.encode(buildActionUrl(awardDocument.getDocumentNumber(), Constants.MAPPING_AWARD_BUDGET_VERSIONS_PAGE, "AwardDocument"), StandardCharsets.UTF_8.name());
+            String forward = buildForwardUrl(routeHeaderId) + "&backLocation=" + backUrl;
             if (!budget.getActivityTypeCode().equals(newestAward.getActivityTypeCode()) || budget.isRateClassTypesReloaded()) {
                 budget.setActivityTypeCode(newestAward.getActivityTypeCode());
                 forward = forward.replace("awardBudgetParameters.do?", "awardBudgetParameters.do?syncBudgetRate=Y&");

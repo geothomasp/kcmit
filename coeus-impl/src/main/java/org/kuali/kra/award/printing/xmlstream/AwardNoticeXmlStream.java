@@ -287,7 +287,7 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	}
 
 	private void setAwardHierarchy(AwardHierarchy awardHierarchy, ChildAwardDetails childAwardDetails) {
-        if(awardHierarchy!=null){
+        if(awardHierarchy!=null) {
             ChildAwardType childAwardType = childAwardDetails.addNewChildAward();
             AwardHierarchyType hierarchyType = childAwardType.addNewAwardHierarchy();
             hierarchyType.setAwardNumber(awardHierarchy.getAwardNumber());

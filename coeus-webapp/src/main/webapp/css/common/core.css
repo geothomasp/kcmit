@@ -528,3 +528,9 @@ section.medusa div.btn a:hover{
 .icon-warning-sign:before {
   content: "\e89a";
 }
+
+.fluidInputField {
+	min-width: 100px;
+	width: 100%;
+}
+

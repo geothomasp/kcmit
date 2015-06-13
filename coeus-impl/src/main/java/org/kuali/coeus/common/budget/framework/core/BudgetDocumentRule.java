@@ -77,8 +77,6 @@ public class BudgetDocumentRule extends CostShareRuleResearchDocumentBase implem
     *
     * Validate budget project income. 
     * costshare percentage must be between 0 and 999.99
-    * @param budgetDocument
-    * @return
     */
     @KcEventMethod
     public boolean processBudgetProjectIncomeBusinessRule(BudgetSaveEvent event) {
@@ -155,8 +153,6 @@ public class BudgetDocumentRule extends CostShareRuleResearchDocumentBase implem
     *
     * Validate budget rates. 
     * Applicable rates are mandatory
-    * @param budgetDocument
-    * @return
     */
     @KcEventMethod
     public boolean processBudgetRatesBusinessRule(BudgetSaveEvent event) {
@@ -248,9 +244,6 @@ public class BudgetDocumentRule extends CostShareRuleResearchDocumentBase implem
     
     /**
      * This method checks business rules related to Budget Expenses functionality
-     * 
-     * @param budgetDocument
-     * @return
      */
     @KcEventMethod
     public boolean processBudgetExpenseBusinessRules(BudgetSaveEvent event) {

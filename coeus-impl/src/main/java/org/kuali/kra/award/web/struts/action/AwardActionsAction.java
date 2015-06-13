@@ -117,36 +117,8 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
         return forward;
     }
     
-    /**
-     * 
-     * This method is for the 'open window' button. It will be forwarded AwardHierarchyFullView.jsp
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
-     */
-//    public ActionForward openWindow(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-//            HttpServletResponse response) throws Exception {
-//        String documentNumber = request.getParameter("awardDocumentNumber");
-//        String awardNumber = request.getParameter("awardNumber");
-//        Award award = getActiveAwardVersion(awardNumber);
-//        AwardForm awardForm = (AwardForm)form;
-//        awardForm.setCurrentAwardNumber(awardNumber);
-//        awardForm.setCurrentSeqNumber(award.getSequenceNumber().toString());
-//        DocumentService documentService = KcServiceLocator.getService(DocumentService.class);
-//        AwardDocument awardDocument = (AwardDocument)documentService.getByDocumentHeaderId(documentNumber);
-//        awardDocument.setAward(award);
-//        awardForm.setDocument(awardDocument);
-//        super.populateAwardHierarchy(awardForm);
-//        return mapping.findForward("basic");
-//    }  
-    
     private ActionForward redirectAwardHierarchyFullViewForPopup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response, String awardDocumentNumber, String awardNumber) throws Exception {
-        //super.populateAwardHierarchy(form);
         AwardForm awardForm = (AwardForm)form;
         response.sendRedirect("awardHierarchyFullView.do?methodToCall=openWindow&awardDocumentNumber=" + awardDocumentNumber + "&awardNumber=" + awardNumber + "&docTypeName=" + awardForm.getDocTypeName());
       
@@ -181,13 +153,7 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     /**
      * 
      * This method corresponds copy award action on Award Hierarchy UI. Depending on various options selected appropriate helper methods get called.
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
+     *
      */
     public ActionForward copyAward(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         
@@ -238,13 +204,7 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
      * 
      * This method corresponds to the Create New Child behavior on Award Hierarchy JQuery UI. It calls various helper methods based on the options 
      * selected in the UI.
-     *  
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
+     *
      */
     public ActionForward create(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm)form;
@@ -279,16 +239,7 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
         return forward;
         
     }
-    
-    /**
-     *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
-     */
+
     public ActionForward createANewChildAward(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm) form;
         AwardHierarchy targetNode = findTargetNode(request, awardForm);
@@ -296,15 +247,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
         return prepareToForwardToNewChildAward(mapping, awardForm, targetNode, newChildNode);
     }
 
-    /**
-     *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
-     */
     public ActionForward createANewChildAwardBasedOnParent(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm) form;
         AwardHierarchy targetNode = findTargetNode(request, awardForm);
@@ -487,8 +429,7 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
                 .getFlowThru());
         reportParameters.put(AwardPrintParameters.PROPOSAL_DUE
                 .getAwardPrintParameter(), false);
-        //awardForm.getAwardPrintNotice().getProposalsDue());
-        
+
         reportParameters.put(AwardPrintParameters.SIGNATURE_REQUIRED
                 .getAwardPrintParameter(), awardForm.getAwardPrintNotice()
                 .getRequireSignature());
@@ -520,7 +461,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
                 awardForm.getAwardDocument().getAward(), AwardPrintType.AWARD_DELTA_REPORT,
                 reportParameters);
         streamToResponse(dataStream, response);
-        //return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
         return null;
     }
 
@@ -542,16 +482,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     }
 
     public ActionForward printBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AwardForm awardForm = (AwardForm) form;
-//        Map<String, Object> reportParameters = new HashMap<String, Object>();
-//        AwardPrintingService awardPrintService = KcServiceLocator
-//                .getService(AwardPrintingService.class);
-//        AttachmentDataSource dataStream = awardPrintService.printAwardReport(
-//                awardForm.getAwardDocument(), AwardPrintType.AWARD_TEMPLATE
-//                        .getAwardPrintType(), reportParameters);
-//        streamToResponse(dataStream, response);
-//        return null;
-        //TODO: Add printing service call here
         return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
     }
 
@@ -717,9 +647,8 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Since a child award will always be part of a multiple award hierarchy, we need to set the boolean to true so that the anticipated
-     * and obligated totals on Details & Dates tab will be uneditable on initial creation.  After the initial save of document
+     * and obligated totals on Details &amp; Dates tab will be uneditable on initial creation.  After the initial save of document
      * this is handled in the docHandler and home methods of AwardAction.
-     * @param awardForm
      */
     private void setMultipleNodeHierarchyOnAwardFormTrue(Award award) {
          award.setAwardInMultipleNodeHierarchy(true);
@@ -732,13 +661,7 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
    
     /**
      * This method is used to create a financial document using the financial
-     * account creation web service. 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
+     * account creation web service.
      */
     public ActionForward createAccount(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ActionForward forward = new ActionForward();
@@ -834,18 +757,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
             getBusinessObjectService().save(hierarchy);
         }
         getDocumentService().cancelDocument(kualiDocumentFormBase.getDocument(), kualiDocumentFormBase.getAnnotation());
-        
-        //add all award amount info objects to previous award version and save.
-//        AwardForm awardForm = (AwardForm) form;
-//        AwardDocument awardDocument = (AwardDocument) awardForm.getDocument();
-//        Award award  = awardDocument.getAward();
-//        Award activeAward = getActiveAwardVersion(award.getAwardNumber());
-//        activeAward.setAwardAmountInfos(award.getAwardAmountInfos());
-//        //reinitialize the collection so the cancelled doc can be viewed.
-//        award.initializeAwardAmountInfoObjects();
-//        
-//        getBusinessObjectService().save(award);
-//        getBusinessObjectService().save(activeAward);
 
         return returnToSender(request, mapping, kualiDocumentFormBase);
     }
@@ -876,12 +787,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Called when the sync sponsor button is pressed.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward syncSponsor(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -893,12 +798,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Called when the sync award status button is pressed.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward syncStatusCode(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -910,12 +809,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Called to delete award sync changes.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward deleteChanges(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -934,12 +827,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Turns on sync mode.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward activateSyncMode(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -950,12 +837,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Turn off sync mode.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward deactivateSyncMode(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -966,12 +847,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Clears all sync type selections.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward clearSyncSelections(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -986,12 +861,6 @@ public class AwardActionsAction extends AwardAction implements AuditModeAction {
     
     /**
      * Routes document back to previous route node that will re-run validation.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward rerunValidation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws Exception {

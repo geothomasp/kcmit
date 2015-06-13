@@ -336,20 +336,16 @@ public class AwardHierarchyUIServiceImpl implements AwardHierarchyUIService {
     }
     
     protected AwardHierarchyNode getAwardHierarchyNode(String awardNumber, String currentAwardNumber, String currentSequenceNumber,AwardHierarchy hierarchy) {
-        AwardHierarchyNode returnVal = null;
-
-      //  AwardHierarchy hierarchy = awardHierarchyService.loadAwardHierarchy(awardNumber);
-        if(canUseExistingTMSessionObject(awardNumber)){ 
+        final AwardHierarchyNode returnVal;
+        if(canUseExistingTMSessionObject(awardNumber)){
             awardHierarchyNodes = ((TimeAndMoneyDocument)GlobalVariables.getUserSession().retrieveObject(
                     GlobalVariables.getUserSession().getKualiSessionId() + Constants.TIME_AND_MONEY_DOCUMENT_STRING_FOR_SESSION)).getAwardHierarchyNodes();   
             returnVal = awardHierarchyNodes.get(awardNumber);
         }else{ 
             returnVal = awardHierarchyService.createAwardHierarchyNode(hierarchy, currentAwardNumber, currentSequenceNumber);
         }
-            return returnVal;
+        return returnVal;
     }
-    
-    
     protected Map<String, AwardHierarchyNode> getAwardHierarchyNodes(String awardNumber, String currentAwardNumber, String currentSequenceNumber){
         if(awardHierarchyNodes==null || awardHierarchyNodes.size()==0 || StringUtils.endsWithIgnoreCase(LAST_5_CHARS_OF_ROOT, awardNumber.substring(8))){            
             if(canUseExistingTMSessionObject(awardNumber)){ 
@@ -363,42 +359,22 @@ public class AwardHierarchyUIServiceImpl implements AwardHierarchyUIService {
         return awardHierarchyNodes;
     }    
 
-    /**
-     * Gets the businessObjectService attribute. 
-     * @return Returns the businessObjectService.
-     */
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
     }
 
-    /**
-     * Sets the businessObjectService attribute value.
-     * @param businessObjectService The businessObjectService to set.
-     */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    /**
-     * Sets the awardHierarchyNodes attribute value.
-     * @param awardHierarchyNodes The awardHierarchyNodes to set.
-     */
     public void setAwardHierarchyNodes(Map<String, AwardHierarchyNode> awardHierarchyNodes) {
         this.awardHierarchyNodes = awardHierarchyNodes;
     }
 
-    /**
-     * Gets the awardHierarchyService attribute. 
-     * @return Returns the awardHierarchyService.
-     */
     public AwardHierarchyService getAwardHierarchyService() {
         return awardHierarchyService;
     }
 
-    /**
-     * Sets the awardHierarchyService attribute value.
-     * @param awardHierarchyService The awardHierarchyService to set.
-     */
     public void setAwardHierarchyService(AwardHierarchyService awardHierarchyService) {
         this.awardHierarchyService = awardHierarchyService;
     }

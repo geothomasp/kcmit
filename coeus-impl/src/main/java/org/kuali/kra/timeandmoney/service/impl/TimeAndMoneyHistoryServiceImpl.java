@@ -22,7 +22,10 @@ import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.sys.framework.controller.DocHandlerService;
+import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
+import org.kuali.coeus.sys.framework.model.KcTransactionalDocumentBase;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
 import org.kuali.kra.award.version.service.AwardVersionService;
@@ -35,20 +38,17 @@ import org.kuali.kra.timeandmoney.history.TransactionDetailType;
 import org.kuali.kra.timeandmoney.history.TransactionType;
 import org.kuali.kra.timeandmoney.service.TimeAndMoneyHistoryService;
 import org.kuali.kra.timeandmoney.transactions.AwardAmountTransaction;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.ken.util.NotificationConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
 
 import java.util.*;
 
 public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryService {
 
-	private static final String DATE_CHANGE_TRANSACTION_ID = "-1";
 	private static final String TIME_AND_MONEY_DOCUMENT_NUMBER = "timeAndMoneyDocumentNumber";
 	private static final String ROOT_AWARD_NUMBER = "rootAwardNumber";
 	private static final String SOURCE_AWARD_NUMBER = "sourceAwardNumber";
@@ -60,38 +60,47 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	private static final String DASH = "-";
 	private static final String DEFAULT_TAB = "Versions";
 	private static final String ALTERNATE_OPEN_TAB = "Parameters";
-    public static final String SEQUENCE_NUMBER = "sequenceNumber";
-	public static final String DOCUMENT_NUMBER = "documentNumber";
-	public static final String NONE = "None";
-	public static final String AWARD_NUMBER = "awardNumber";
-	public static final String ROOT_AWARD_NUMBER_VAL = "00001";
-	private DocHandlerService docHandlerService;
-	private DateTimeService dateTimeService;
-	private GlobalVariableService globalVariableService;
+	private static final String SEQUENCE_NUMBER = "sequenceNumber";
+	private static final String DOCUMENT_NUMBER = "documentNumber";
+	private static final String NONE = "None";
+	private static final String AWARD_NUMBER = "awardNumber";
+	private static final String ROOT_AWARD_NUMBER_VAL = "00001";
+	private static final String MM_DD_YY_FORMAT = "MM/dd/yy";
 
 	private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
 	private AwardVersionService awardVersionService;
+	private DocHandlerService docHandlerService;
+	private DateTimeService dateTimeService;
+	private GlobalVariableService globalVariableService;
 
-	@SuppressWarnings("unchecked")
-	public void buildTimeAndMoneyHistoryObjects(String awardNumber, List<AwardVersionHistory> awardVersionHistoryCollection) throws WorkflowException {
+	@Override
+	public List<AwardVersionHistory> buildTimeAndMoneyHistoryObjects(String awardNumber) throws WorkflowException {
 		List<Award> awardVersionList = (List<Award>) businessObjectService.findMatchingOrderBy(Award.class, getHashMapToFindActiveAward(awardNumber), SEQUENCE_NUMBER, true);
 		// we want the list in reverse chronological order.
 		Collections.reverse(awardVersionList);
+
 		Map<String, Object> fieldValues1 = new HashMap<>();
 		// get the root award number.
 		fieldValues1.put(ROOT_AWARD_NUMBER, getRootAwardNumberForDocumentSearch(awardVersionList.get(0).getAwardNumber()));
 		List<TimeAndMoneyDocument> docs = (List<TimeAndMoneyDocument>) businessObjectService.findMatchingOrderBy(TimeAndMoneyDocument.class, fieldValues1, DOCUMENT_NUMBER, true);
 		// we don't want canceled docs to show in history.
 		removeCanceledDocs(docs);
-		for (Award award : awardVersionList) {
-			AwardVersionHistory awardVersionHistory = new AwardVersionHistory(award);
-			awardVersionHistory.setDocumentUrl(buildForwardUrl(award.getAwardDocument().getDocumentNumber()));
-			awardVersionHistory.setAwardDescriptionLine(buildNewAwardDescriptionLine(award));
-			awardVersionHistory.setTimeAndMoneyDocumentHistoryList(getDocHistoryAndValidInfosAssociatedWithAwardVersion(docs, award.getAwardAmountInfos(), award));
+		return buildAwardVersionHistoryList(awardVersionList, docs);
+	}
 
-			awardVersionHistoryCollection.add(awardVersionHistory);
+	List<AwardVersionHistory> buildAwardVersionHistoryList(List<Award> awardVersionList, List<TimeAndMoneyDocument> docs) throws WorkflowException {
+		List<AwardVersionHistory> awardVersionHistoryCollection = new ArrayList<>();
+		for (Award award : awardVersionList) {
+            if (!award.getAwardSequenceStatus().equalsIgnoreCase(VersionStatus.CANCELED.toString())) {
+                AwardVersionHistory awardVersionHistory = new AwardVersionHistory(award);
+                awardVersionHistory.setDocumentUrl(buildForwardUrl(award.getAwardDocument().getDocumentNumber()));
+                awardVersionHistory.setAwardDescriptionLine(award.getAwardDescriptionLine());
+                awardVersionHistory.setTimeAndMoneyDocumentHistoryList(getDocHistoryAndValidInfosAssociatedWithAwardVersion(docs, award.getAwardAmountInfos(), award));
+                awardVersionHistoryCollection.add(awardVersionHistory);
+            }
 		}
+		return awardVersionHistoryCollection;
 	}
 
 	public List<TimeAndMoneyDocumentHistory> getDocHistoryAndValidInfosAssociatedWithAwardVersion(List<TimeAndMoneyDocument> docs, List<AwardAmountInfo> awardAmountInfos, Award award)
@@ -173,13 +182,19 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 		return ((List<TransactionDetail>) businessObjectService.findMatchingOrderBy(TransactionDetail.class, values, TRANSACTION_DETAIL_ID, true));
 	}
 
+//	protected List<TransactionDetail> getTransactions(Long transactionId) {
+//		Map<String, Object> values = new HashMap<>();
+//		values.put(TRANSACTION_ID, transactionId);
+//		return ((List<TransactionDetail>) businessObjectService.findMatchingOrderBy(TransactionDetail.class, values, TRANSACTION_DETAIL_ID, true));
+//	}
+//
+
 	protected List<AwardAmountInfoHistory> captureDateInfos(TimeAndMoneyDocument doc, List<AwardAmountInfo> validInfos) {
 		List<AwardAmountInfoHistory> dateInfoHistoryList = new ArrayList<>();
 		Map<String, Object> fieldValues = new HashMap<>();
 		for (AwardAmountInfo awardAmountInfo : validInfos) {
 			if (!(awardAmountInfo.getTimeAndMoneyDocumentNumber() == null)) {
 				if (StringUtils.equalsIgnoreCase(doc.getDocumentNumber(), awardAmountInfo.getTimeAndMoneyDocumentNumber())) {
-
 					fieldValues.put(SOURCE_AWARD_NUMBER, awardAmountInfo.getAwardNumber());
 					fieldValues.put(TRANSACTION_DETAIL_TYPE, TransactionDetailType.DATE.toString());
 					fieldValues.put(TIME_AND_MONEY_DOCUMENT_NUMBER, awardAmountInfo.getTimeAndMoneyDocumentNumber());
@@ -281,16 +296,18 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	protected void removeCanceledDocs(List<TimeAndMoneyDocument> docs) {
 		List<TimeAndMoneyDocument> tempCanceledDocs = new ArrayList<>();
 		for (TimeAndMoneyDocument doc : docs) {
-			if (doc.getDocumentHeader().hasWorkflowDocument()) {
-				if (doc.getDocumentHeader().getWorkflowDocument().isCanceled()) {
-					tempCanceledDocs.add(doc);
-				}
-			}
-		}
+            if (isDocCancelled(doc)) {
+                tempCanceledDocs.add(doc);
+            }
+        }
 		docs.removeAll(tempCanceledDocs);
 	}
 
-	public List<TimeAndMoneyDocument> buildTimeAndMoneyListForAwardDisplay(Award award) throws WorkflowException {
+    protected boolean isDocCancelled(KcTransactionalDocumentBase doc) {
+        return doc.getDocumentHeader().hasWorkflowDocument() && doc.getDocumentHeader().getWorkflowDocument().isCanceled();
+    }
+
+    public List<TimeAndMoneyDocument> buildTimeAndMoneyListForAwardDisplay(Award award) throws WorkflowException {
 		Map<String, Object> fieldValues1 = new HashMap<>();
 		// get the award number.
 		fieldValues1.put(ROOT_AWARD_NUMBER, award.getAwardNumber());
@@ -299,8 +316,6 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 		removeCanceledDocs(docs);
 		return docs;
 	}
-
-	
 
 	protected Map<String, String> getHashMapToFindActiveAward(String goToAwardNumber) {
 		Map<String, String> map = new HashMap<>();
@@ -312,9 +327,6 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	
 	/**
 	 * This method searches generates the next Award Node Number in Sequence.
-	 * 
-	 * @param awardNumber
-	 * @return
 	 */
 	public String getRootAwardNumberForDocumentSearch(String awardNumber) {
 		String[] splitAwardNumber = awardNumber.split(DASH);
@@ -325,97 +337,66 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 		return returnString.toString();
 	}
 
-	
-	protected String buildNewAwardDescriptionLine(Award award) {
-		String noticeDate;
-		String transactionTypeDescription;
-		String versionNumber;
-
-		versionNumber = award.getSequenceNumber().toString();
-
-		if (!(award.getNoticeDate() == null)) {
-			noticeDate = award.getNoticeDate().toString();
-		} else {
-			noticeDate = NONE;
-		}
-		if (!(award.getAwardTransactionType() == null)) {
-			transactionTypeDescription = award.getAwardTransactionType().getDescription();
-		} else {
-			transactionTypeDescription = NONE;
-		}
-		return "Award Version " + versionNumber + ", " + transactionTypeDescription + ", notice date: " + noticeDate + ", updated " + getUpdateTimeAndUser(award) + ". Comments:"
-		+ (award.getAwardCurrentActionComments().getComments() == null ? NONE + "." : award.getAwardCurrentActionComments().getComments());
-	}
-
-	protected String getUpdateTimeAndUser(Award award) {
-		return award.getUpdateTimeAndUser();
-	}
 
 	protected String getUpdateTimeAndUser(TimeAndMoneyDocument doc) {
 		String createDateStr = null;
 		String updateUser = null;
 		if (doc.getUpdateTimestamp() != null) {
-			createDateStr = getDateTimeService().toString(doc.getUpdateTimestamp(), "MM/dd/yy");
+			createDateStr = getDateTimeService().toString(doc.getUpdateTimestamp(), MM_DD_YY_FORMAT);
 			updateUser = doc.getUpdateUser().length() > NUMBER_30 ? doc.getUpdateUser().substring(0, NUMBER_30) : doc.getUpdateUser();
 		}
 		return createDateStr + " by " + updateUser;
 	}
 
-		/* Takes a routeHeaderId for a particular document and constructs the URL to
-		 * forward to that document
-		 *
-		 * @return String
-	 	 */
+	/**
+	 * Takes a routeHeaderId for a particular document and constructs the URL to
+	 * forward to that document
+	 *
+	 * @return String
+	 */
 	protected String buildForwardUrl(String documentNumber) {
-		String forward = getDocHandlerService().getDocHandlerUrl(documentNumber);
+		String forward = getDocHandlerUrl(documentNumber);
 		forward = forward.replaceFirst(DEFAULT_TAB, ALTERNATE_OPEN_TAB);
-		if (forward.indexOf("?") == -1) {
+		if (forward.contains("?")) {
 			forward += "?";
 		} else {
 			forward += "&";
 		}
 		forward += KewApiConstants.DOCUMENT_ID_PARAMETER + "=" + documentNumber;
 		forward += "&" + KewApiConstants.COMMAND_PARAMETER + "=" + NotificationConstants.NOTIFICATION_DETAIL_VIEWS.DOC_SEARCH_VIEW;
-		if (globalVariableService.getUserSession().isBackdoorInUse()) {
+		if (isBackdoorUserInUse()) {
 			forward += "&" + KewApiConstants.BACKDOOR_ID_PARAMETER + "=" + globalVariableService.getUserSession().getPrincipalName();
 		}
 
 		return "<a href=\"" + forward + "\"target=\"_blank\">" + documentNumber + "</a>";
 	}
+
+	boolean isBackdoorUserInUse() {
+		return globalVariableService.getUserSession().isBackdoorInUse();
+	}
+
 	/**
 	 * Gets the documentService attribute.
 	 * 
 	 * @return Returns the documentService.
 	 */
+	String getDocHandlerUrl(String documentNumber) {
+		String forward = getDocHandlerService().getDocHandlerUrl(documentNumber);
+		return forward;
+	}
+
 	public DocumentService getDocumentService() {
 		return documentService;
 	}
 
-	/**
-	 * Sets the documentService attribute value.
-	 * 
-	 * @param documentService
-	 *            The documentService to set.
-	 */
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;
 	}
 
-	/**
-	 * Gets the businessObjectService attribute.
-	 * 
-	 * @return Returns the businessObjectService.
-	 */
 	public BusinessObjectService getBusinessObjectService() {
 		return businessObjectService;
 	}
 
-	/**
-	 * Sets the businessObjectService attribute value.
-	 * 
-	 * @param businessObjectService
-	 *            The businessObjectService to set.
-	 */
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
 	}
@@ -427,9 +408,11 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	public void setAwardVersionService(AwardVersionService awardVersionService) {
 		this.awardVersionService = awardVersionService;
 	}
+
 	public DocHandlerService getDocHandlerService() {
 		return docHandlerService;
 	}
+
 	public void setDocHandlerService(DocHandlerService docHandlerService) {
 		this.docHandlerService = docHandlerService;
 	}
@@ -437,15 +420,16 @@ public class TimeAndMoneyHistoryServiceImpl implements TimeAndMoneyHistoryServic
 	public GlobalVariableService getGlobalVariableService() {
 		return globalVariableService;
 	}
+
 	public void setGlobalVariableService(GlobalVariableService globalVariableService) {
 		this.globalVariableService = globalVariableService;
 	}
+
 	public DateTimeService getDateTimeService() {
-				return dateTimeService;
+		return dateTimeService;
 	}
 
 	public void setDateTimeService(DateTimeService dateTimeService) {
-				this.dateTimeService = dateTimeService;
+		this.dateTimeService = dateTimeService;
 	}
-	
 }

@@ -152,7 +152,11 @@
     <bean id="PropDev-DetailsPage-SponsorField" parent="PropDev-DetailsPage-SponsorField-parentBean" />
     <bean id="PropDev-DetailsPage-SponsorField-parentBean" abstract="true"
           parent="PropDev-DetailsPage-SponsorField-Defaults" p:propertyName="sponsorCode"
+<<<<<<< HEAD
           p:readOnlyDisplayReplacement="@{document.developmentProposal.sponsorCode} &amp;nbsp; @{document.developmentProposal.sponsor?.sponsorName?:'&amp;nbsp;'}"
+=======
+          p:readOnlyDisplayReplacement="@{document.developmentProposal.sponsorCode} &amp;nbsp;-&amp;nbsp; @{document.developmentProposal.sponsor?.sponsorName?:'&amp;nbsp;'}"
+>>>>>>> coeus-1505.70
           p:instructionalMessage.messageText="@{document.developmentProposal.sponsor?.sponsorName?:'&amp;nbsp;'}">
         <property name="quickfinder">
             <bean parent="PropDev-DetailsPage-SponsorQuickFinder"

@@ -826,7 +826,8 @@ public class TimeAndMoneyAction extends KcTransactionalDocumentActionBase {
         timeAndMoneyDocument.setAward(award);
 
         timeAndMoneyDocument.getAwardVersionHistoryList().clear();
-        getTimeAndMoneyHistoryService().buildTimeAndMoneyHistoryObjects(award.getAwardNumber(), timeAndMoneyDocument.getAwardVersionHistoryList());
+//        getTimeAndMoneyHistoryService().buildTimeAndMoneyHistoryObjects(award.getAwardNumber(), timeAndMoneyDocument.getAwardVersionHistoryList());
+        timeAndMoneyDocument.setAwardVersionHistoryList(getTimeAndMoneyHistoryService().buildTimeAndMoneyHistoryObjects(award.getAwardNumber()));
         timeAndMoneyDocument.getTimeAndMoneyActionSummaryItems().clear();
         getTimeAndMoneyActionSummaryService().populateActionSummary(timeAndMoneyDocument.getTimeAndMoneyActionSummaryItems(), goToAwardNumber);
         
