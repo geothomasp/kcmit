@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
- * 
- * Copyright 2005-2015 Kuali, Inc.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright 2005-2014 The Kuali Foundation
+ *
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award;
 
@@ -22,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.framework.custom.KcDocumentBaseAuditRule;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
+import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.permissions.impl.bo.PermissionsUser;
 import org.kuali.coeus.common.permissions.impl.bo.PermissionsUserEditRoles;
 import org.kuali.coeus.common.permissions.impl.rule.PermissionsRule;
@@ -71,7 +69,6 @@ import org.kuali.kra.award.rule.event.AddAwardAttachmentEvent;
 import org.kuali.kra.award.rule.event.AwardCommentsRuleEvent;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
-import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
 import org.kuali.kra.timeandmoney.TimeAndMoneyForm;
 import org.kuali.kra.timeandmoney.rule.event.TimeAndMoneyAwardDateSaveEvent;
 import org.kuali.kra.timeandmoney.rules.TimeAndMoneyAwardDateSaveRuleImpl;
@@ -79,12 +76,14 @@ import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.rules.rule.DocumentAuditRule;
 import org.kuali.rice.krad.util.AuditCluster;
 import org.kuali.rice.krad.util.AuditError;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.rules.rule.DocumentAuditRule;
 import org.kuali.rice.krad.util.MessageMap;
+
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -120,6 +119,9 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
     public static final String DOCUMENT_ERROR_PATH = "document";
     public static final String AWARD_ERROR_PATH = "awardList[0]";
     private static final String AWARD_ERROR_PATH_PREFIX = "document.awardList[0].";
+    public static final String OBLIGATION_START_DATE = "Obligation Start Date";
+    public static final String PROJECT_START_DATE = "Project Start Date";
+    
     
     private static final org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(AwardDocumentRule.class);
     
@@ -337,39 +339,39 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
     }
     
     private boolean processAwardAttachmentBusinessRule(AwardDocument awardDocument) {
-       boolean valid=true;
-       List<AwardAttachment> awardAttachments= awardDocument.getAwardList().get(0).getAwardAttachments();
-       for ( AwardAttachment awardAttachment : awardAttachments ) {
-           if (awardAttachment.getTypeCode() == null) {
-                   valid = false;
-           }
-      }
-       if(valid) {
-    	   List <AwardAttachment> awardattachmentList = awardDocument.getAwardList().get(0).getAwardAttachments();
-           for (AwardAttachment awardattachment : awardattachmentList) {
-        	   awardattachment.setModifyAttachment(false); 
-           }
+        boolean valid=true;
+        List<AwardAttachment> awardAttachments= awardDocument.getAwardList().get(0).getAwardAttachments();
+        for ( AwardAttachment awardAttachment : awardAttachments ) {
+            if (awardAttachment.getTypeCode() == null) {
+                    valid = false;
+            }
        }
-        return valid;
-    }
+        if(valid) {
+     	   List <AwardAttachment> awardattachmentList = awardDocument.getAwardList().get(0).getAwardAttachments();
+            for (AwardAttachment awardattachment : awardattachmentList) {
+         	   awardattachment.setModifyAttachment(false); 
+            }
+        }
+         return valid;
+     }
     
     private boolean processKeywordBusinessRule(AwardDocument awardDocument) {
         
-        List<AwardScienceKeyword> keywords= awardDocument.getAward().getKeywords();
-         
-        for ( AwardScienceKeyword keyword : keywords ) {
-             for ( AwardScienceKeyword keyword2 : keywords ) {
-                 if ( keyword == keyword2 ) {
-                     continue;
-                 } else if ( StringUtils.equalsIgnoreCase(keyword.getScienceKeywordCode(), keyword2.getScienceKeywordCode()) ) {
-                     GlobalVariables.getMessageMap().putError("document.awardList[0].keywords", "error.proposalKeywords.duplicate");
-                    
-                     return false;
-                 }
-             }
-         }
-         return true;
-     }
+       List<AwardScienceKeyword> keywords= awardDocument.getAward().getKeywords();
+        
+       for ( AwardScienceKeyword keyword : keywords ) {
+            for ( AwardScienceKeyword keyword2 : keywords ) {
+                if ( keyword == keyword2 ) {
+                    continue;
+                } else if ( StringUtils.equalsIgnoreCase(keyword.getScienceKeywordCode(), keyword2.getScienceKeywordCode()) ) {
+                    GlobalVariables.getMessageMap().putError("document.awardList[0].keywords", "error.proposalKeywords.duplicate");
+                   
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
     private boolean processAddPaymentScheduleBusinessRules(MessageMap errorMap, AddAwardPaymentScheduleRuleEvent event) {
         boolean success = new AwardPaymentScheduleRuleImpl().processAddAwardPaymentScheduleBusinessRules(event);
@@ -510,20 +512,24 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
      */
     public boolean processRunAuditBusinessRules(Document document){
         boolean retval = true;
-        
-        retval &= new KcDocumentBaseAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardReportAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardTermsAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardPaymentAndInvoicesAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardCostShareAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardFandARateAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardProjectPersonsAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardPersonCreditSplitAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardSubawardAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardSyncAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardSponsorContactAuditRule().processRunAuditBusinessRules(document);
-        retval &= new AwardBudgetLimitsAuditRule().processRunAuditBusinessRules(document);
-        retval &= processDateBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        AwardDocument awardDocument = (AwardDocument)document;
+        if(!awardDocument.getAward().getAwardSequenceStatus().equals(VersionStatus.ACTIVE.name())){
+        	retval &= new KcDocumentBaseAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardReportAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardTermsAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardPaymentAndInvoicesAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardCostShareAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardFandARateAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardProjectPersonsAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardPersonCreditSplitAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardSubawardAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardSyncAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardSponsorContactAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardBudgetLimitsAuditRule().processRunAuditBusinessRules(document);
+        	retval &= new AwardCommonValidationAuditRule().processRunAuditBusinessRules(document);
+        	retval &= processDateBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        	retval &=processTransactionBusinessRule(GlobalVariables.getMessageMap(), (AwardDocument)document);
+        }
         reportAndCreateAuditCluster();
         return retval;
         
@@ -689,7 +695,20 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
         
         return success;
     }
-    
+    private boolean processTransactionBusinessRule(MessageMap errorMap, AwardDocument awardDocument) {
+    	boolean success = true;
+    	 Award award = awardDocument.getAward();
+    	 if(award!=null){    		
+    		 if (award.getAwardTransactionTypeCode() == null) {  
+    			 success = false;
+                 String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+                 String messageKey = KcMitConstants.ERROR_AWARD_TRANSACTION_TYPE;
+                 String errorKey = "document.awardList[0].awardTransactionTypeCode"; 
+                 auditErrors.add(new AuditError(errorKey, messageKey, link));
+              } 
+    	 }
+    	 return success;
+    }
     private boolean processSaveAwardProjectPersonsBusinessRules(MessageMap errorMap, AwardDocument document) {
         errorMap.addToErrorPath(DOCUMENT_ERROR_PATH);
         errorMap.addToErrorPath(AWARD_ERROR_PATH);
@@ -755,7 +774,12 @@ public class AwardDocumentRule extends KcTransactionalDocumentRuleBase implement
             //String fieldStarter = "awardHierarchyNodeItems["+(lastIndex-1);
             success = AwardDateRulesHelper.validateProjectStartBeforeProjectEnd(errorMap, effStartDate, effEndDate, fieldStarter+"].finalExpirationDate", awardId) && success;
             success = AwardDateRulesHelper.validateObligationStartBeforeObligationEnd(errorMap, oblStartDate, oblEndDate, fieldStarter+"].currentFundEffectiveDate", awardId) && success;
-            success = AwardDateRulesHelper.validateProjectStartBeforeObligationStart(errorMap, effStartDate, oblStartDate, fieldStarter+"].currentFundEffectiveDate", awardId) && success;
+           if(!AwardDateRulesHelper.validateProjectStartBeforeObligationStart(errorMap, effStartDate, oblStartDate, fieldStarter+"].currentFundEffectiveDate", awardId)){
+          	  String link = Constants.MAPPING_AWARD_HOME_PAGE + "." + Constants.MAPPING_AWARD_HOME_DETAILS_AND_DATES_PAGE_ANCHOR;
+                String messageKey = KeyConstants.ERROR_START_DATE_ON_OR_BEFORE;
+                String errorKey = "document.awardList[0].awardEffectiveDate";
+                auditWarnings.add(new AuditError(errorKey, messageKey, link,new String[] {PROJECT_START_DATE, OBLIGATION_START_DATE, awardId}));
+          }
             success = AwardDateRulesHelper.validateProjectStartBeforeObligationEnd(errorMap, effStartDate, oblEndDate, fieldStarter+"].obligationExpirationDate", awardId) && success;
             success = AwardDateRulesHelper.validateObligationStartBeforeProjectEnd(errorMap, oblStartDate, effEndDate, fieldStarter+"].currentFundEffectiveDate", awardId) && success;
             success = AwardDateRulesHelper.validateObligationEndBeforeProjectEnd(errorMap, oblEndDate, effEndDate, fieldStarter+"].obligationExpirationDate", awardId) && success;
