@@ -844,7 +844,7 @@
                 <artifactId>${db.artifactId}</artifactId>
                 <version>${db.version}</version>
                 <scope>test</scope>
-            </dependency>
+             </dependency>
 
             <!-- Required for jdk7 -->
             <dependency>

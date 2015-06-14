@@ -66,7 +66,7 @@
             <groupId>${db.groupId}</groupId>
             <artifactId>${db.artifactId}</artifactId>
             <version>${db.version}</version>
-            <scope>runtime</scope>
+            <!-- <scope>runtime</scope> -->
         </dependency>
     </dependencies>
 </project>
