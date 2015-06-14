@@ -266,11 +266,6 @@
                 <bean parent="Uif-InputField" p:propertyName="documentTypeCode"
                       p:readOnlyDisplayReplacementPropertyName="propPerDocType.description"
                       p:fieldLabel.labelText="Type" p:order="60"
-<<<<<<< HEAD
-                      p:enableAutoQuickfinder="false" p:readOnly="@{#parent.readOnly or !#ViewHelper.renderPersonnelEditForHierarchyProposal(#line.personId, document.developmentProposal)}"
-                      />
-                <bean parent="Uif-InputField" p:propertyName="description" p:order="70"/>
-=======
                       p:enableAutoQuickfinder="false" p:readOnly="@{#parent.readOnly or !#ViewHelper.renderPersonnelEditForHierarchyProposal(#line.personId, document.developmentProposal)}">
                     <property name="control">
                         <bean parent="Uif-DropdownControl" p:cssClasses="fluidInputField"/>
@@ -281,7 +276,6 @@
                         <bean parent="Uif-TextAreaControl" p:cssClasses="fluidInputField"/>
                     </property>
                 </bean>
->>>>>>> coeus-1505.70
                 <bean parent="Uif-MessageField" p:messageText="@{#ViewHelper.displayFullName(#line.#line.uploadUserDisplay)}" p:fieldLabel.labelText="Uploaded By" p:width="20%" p:order="80" />
                 <bean parent="Uif-InputField" p:propertyName="timestampDisplay"
                       p:fieldLabel.labelText="Posted Timestamp"
@@ -476,15 +470,11 @@
 				<bean parent="PropDev-AttachmentPage-ModuleStatus" p:order="35"
                       p:readOnly="@{(#parent.readOnly and !#editModes['replaceNarratives']) or pageId ne 'PropDev-AttachmentsPage'}"/>
                 <bean parent="Uif-InputField" p:propertyName="moduleTitle"
-<<<<<<< HEAD
-                      p:order="40" />
-=======
                       p:order="40">
                     <property name="control">
                         <bean parent="Uif-TextAreaControl" p:cssClasses="fluidInputField"/>
                     </property>
                 </bean>
->>>>>>> coeus-1505.70
                 <bean parent="Uif-MessageField" p:messageText="@{#ViewHelper.displayFullName(#line.uploadUserDisplay)}" p:fieldLabel.labelText="Uploaded By" p:width="20%" p:order="50" />
                 <bean parent="Uif-InputField" p:propertyName="timestampDisplay"
                       p:fieldLabel.labelText="Posted Timestamp"
