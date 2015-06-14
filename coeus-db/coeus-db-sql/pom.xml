@@ -44,12 +44,12 @@
     </properties>
 
     <dependencies>
-        <dependency>
+<!--         <dependency>
             <groupId>org.kuali.coeus</groupId>
             <artifactId>coeus-db-data-conv</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+ -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
