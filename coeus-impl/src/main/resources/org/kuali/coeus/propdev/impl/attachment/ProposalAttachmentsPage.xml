@@ -152,7 +152,7 @@
                                           p:order="10"/>
                                 </list>
                             </property>
-                        </bean>
+		                </bean>
                     </property>
                 </bean>
             </list>
