@@ -139,7 +139,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-MessageField" p:messageText="@{#ViewHelper.displayFullName(#line.uploadUserDisplay)}" p:fieldLabel.labelText="Uploaded By" p:width="20%" p:order="50" 
-                p:render="@{#line.viewAttachment}/>
+                p:render="@{#line.viewAttachment}"/>
                 <bean parent="Uif-InputField" p:propertyName="timestampDisplay"
                       p:fieldLabel.labelText="Posted Timestamp"
                       p:readOnly="true" p:width="20%" p:order="60" p:render="@{#line.viewAttachment}"/>
