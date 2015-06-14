@@ -1143,11 +1143,11 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     public List<ProposalSite> getOtherOrganizations() {
 		List<ProposalSite> otherOrganizations = getProposalSitesForType(ProposalSite.PROPOSAL_SITE_OTHER_ORGANIZATION);
 		for (ProposalSite proposalSite : otherOrganizations) {
-<<<<<<< HEAD
-			if(proposalSite.getOrganization().getCongressionalDistrict() != null)
-			proposalSite.initializeDefaultCongressionalDistrict();
+			if(proposalSite.getOrganization().getCongressionalDistrict() != null){
+				proposalSite.initializeDefaultCongressionalDistrict();
+			}
 			List<OrganizationYnq> organizationYnqs=getOrganisationRiskPriority(proposalSite);
-			if(organizationYnqs != null || !organizationYnqs.isEmpty()) {
+			if(organizationYnqs != null && !organizationYnqs.isEmpty()) {
 	            for(OrganizationYnq organizationYnq:organizationYnqs) {
 	        		if(organizationYnq.getAnswer().equals(Constants.TRUE_FLAG)) {
 	        			proposalSite.setOrganizationRisk(Constants.LOW_RISK);
@@ -1174,13 +1174,6 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
                     organizationYnqMap);
         }
         return organizationYnqs;
-=======
-			if(proposalSite.getOrganization().getCongressionalDistrict() != null) {
-                proposalSite.initializeDefaultCongressionalDistrict();
-            }
-		}
-		return otherOrganizations;
->>>>>>> coeus-1505.70
     }
     
 
