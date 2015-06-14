@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - Kuali Coeus, a comprehensive research administration system for higher education.
+   - 
+   - Copyright 2005-2015 Kuali, Inc.
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0"
@@ -15,9 +33,10 @@
     <!-- Change this if you want to use a different Spring file -->
     <context-param>
         <param-name>web.bootstrap.spring.file</param-name>
-        <param-value>classpath:KcMitBootstrapSpringBeans.xml</param-value>
+        <param-value>classpath:KcBootstrapSpringBeans.xml</param-value>
     </context-param>
 
+    <!-- Change this if you want to use a different config file, can be overridden with a system property-->
     <context-param>
         <param-name>web.bootstrap.config.file</param-name>
         <param-value>classpath:META-INF/kc-config.xml</param-value>
@@ -75,21 +94,13 @@
         <filter-name>DummyLoginFilter</filter-name>
         <filter-class>org.kuali.rice.krad.web.filter.DummyLoginFilter</filter-class>
     </filter>
-	<filter>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>forceEncoding</param-name>
-            <param-value>TRUE</param-value>
-        </init-param>
+    
+    <filter>
+    <filter-name>MitKcFilter</filter-name>
+    <filter-class>edu.mit.kc.web.filter.MitKcFilter</filter-class>
     </filter>
-
     <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-name>MitKcFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
@@ -220,6 +231,10 @@
     <filter>
         <filter-name>PerformanceLoggingFilter</filter-name>
         <filter-class>org.kuali.coeus.sys.framework.controller.interceptor.PerformanceLoggingFilter</filter-class>
+        <init-param>
+        	<param-name>ignored.urls</param-name>
+        	<param-value>.*/healthCheck.*</param-value>
+        </init-param>
     </filter>
 
     <filter-mapping>
@@ -228,16 +243,6 @@
     </filter-mapping>
 
     <!-- ******************* End Logging Filters ********************* -->
-
-  <filter>
-    <filter-name>MitKcFilter</filter-name>
-    <filter-class>edu.mit.kc.web.filter.MitKcFilter</filter-class>
-  </filter>
-    <filter-mapping>
-        <filter-name>MitKcFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
 
     <listener>
         <listener-class>org.kuali.coeus.sys.framework.service.KcServiceLocatorListener</listener-class>
@@ -345,7 +350,6 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
-
 
     <!--
 
@@ -477,6 +481,7 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>
+        <welcome-file>default.htm</welcome-file>
     </welcome-file-list>
 
     <!-- only need to include this for the kuali tlds
