@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.negotiations.rules;
 
@@ -65,11 +62,6 @@ public class NegotiationActivityRuleImpl implements NegotiationActivityAddRule {
      */
     public boolean validateNegotiationActivity(NegotiationActivity activity, Negotiation negotiation) {
         boolean result = true;
-        activity.refreshReferenceObject("activityType");
-        if (activity.getActivityType() == null) {
-            result = false;
-            errorReporter.reportError("activityTypeId", KeyConstants.ERROR_REQUIRED, "Activity Type (Activity Type)");
-        }
         activity.refreshReferenceObject("location");
         if (activity.getLocation() == null) {
             result = false;
@@ -78,15 +70,6 @@ public class NegotiationActivityRuleImpl implements NegotiationActivityAddRule {
         if (activity.getStartDate() == null) {
             result = false;
             errorReporter.reportError(START_DATE_PROPERTY, KeyConstants.ERROR_REQUIRED, "Activity Start Date (Activity Start Date)");
-        }
-        if (StringUtils.isBlank(activity.getDescription())) {
-            result = false;
-            errorReporter.reportError("description", KeyConstants.ERROR_REQUIRED, "Activity Description (Activity Description)");
-        }
-        if (activity.getStartDate() != null && negotiation.getNegotiationStartDate() != null 
-                && activity.getStartDate().compareTo(negotiation.getNegotiationStartDate()) < 0) {
-            result = false;
-            errorReporter.reportError(START_DATE_PROPERTY, KeyConstants.NEGOTIATION_ACTIVITY_START_BEFORE_NEGOTIATION);
         }
         if (activity.getStartDate() != null && activity.getEndDate() != null
                 && activity.getStartDate().compareTo(activity.getEndDate()) > 0) {

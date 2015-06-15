@@ -26,6 +26,7 @@
 <td class="content" valign="top">
       <channel:maintenanceProposals />
       <channel:maintenanceAwards />
+      <channel:maintenanceSap />
       <channel:maintenanceNegotiations />
       <channel:maintenanceSubAwards />
 </td>

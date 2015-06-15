@@ -20,7 +20,7 @@
 <c:set var="syncPropertyName" value="awardSponsorTerms" />
 <c:set var="action" value="awardTemplateSync" />
 
-<kul:tab tabTitle="Terms" defaultOpen="false" tabErrorKey="document.awardList[0].awardSponsorTerms*,document.award.awardTemplate.TERMS_TAB" auditCluster="termsAuditErrors" tabAuditKey="document.termsAuditRules*" useRiceAuditMode="true">
+<kul:tab tabTitle="Terms" defaultOpen="false" tabErrorKey="document.awardList[0].awardSponsorTerms*,document.award.awardTemplate.TERMS_TAB" auditCluster="termsAuditWarnings,termsAuditErrors" tabAuditKey="document.termsAuditRules*" useRiceAuditMode="true">
 	<div class="tab-container" align="center">
 	    <h3>
             <span class="subhead-left">Terms</span>

@@ -20,7 +20,7 @@ package org.kuali.coeus.common.committee.impl.bo;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.drools.core.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.committee.impl.meeting.*;
 import org.kuali.coeus.common.committee.impl.web.struts.form.schedule.DayOfWeek;
 import org.kuali.coeus.common.committee.impl.web.struts.form.schedule.Time12HrFmt;
@@ -44,11 +44,12 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
                                               PS extends ProtocolSubmissionBase,
                                               CSM extends CommitteeScheduleMinuteBase<CSM, CS>>
 
-                                              extends CommitteeAssociateBase implements Comparable<CS>, Permissionable{ 
-    
+                                              extends CommitteeAssociateBase implements Comparable<CS>, Permissionable{
+
     private static final long serialVersionUID = -360139608123017188L;
     public static final Long DEFAULT_SCHEDULE_ID = 9999999999L;
-    
+    public static final String DISAPPROVED = "Disapproved";
+
     private Time12HrFmt viewTime;
     
     private boolean filter = true;
@@ -317,22 +318,9 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
 
 
     public abstract CMT getParentCommittee();
-    
-//    public CMT getCommittee() {
-//        if (committee == null && getCommitteeIdFk() == null) {
-//            committee = getNewCommitteeInstanceHook();
-//        }
-//        return committee;
-//	}
-
-//	protected abstract CMT getNewCommitteeInstanceHook();
 
 	
 	public abstract void setCommittee(CMT committee);
-	
-//    public void setCommittee(CMT committee) {
-//		this.committee = committee;
-//	}
 
     public ScheduleStatus getScheduleStatus() {
         return scheduleStatus;
@@ -497,11 +485,12 @@ public abstract class CommitteeScheduleBase<CS extends CommitteeScheduleBase<CS,
         for (PS submission : protocolSubmissions) {
             // gonna do something a little hacktacular here... in some cases, protocol and/or protocol number might not be set.
             // in that case, go ahead and pass submissions on to caller
-            if (submission.getProtocol() == null || StringUtils.isEmpty(submission.getProtocol().getProtocolNumber())) {
+            if (submission.getProtocol() == null || StringUtils.isBlank(submission.getProtocol().getProtocolNumber())) {
                 returnList.add(submission);
             } else {
                 String key = submission.getProtocol().getProtocolNumber();
-                if (submission.getProtocol().isActive()) {
+                if (submission.getProtocol().isActive() ||
+                        StringUtils.equals(submission.getProtocol().getProtocolStatus().getDescription(), DISAPPROVED)) {
                     PS existingSubmission = latestSubmissions.get(key);
                     if (existingSubmission == null) {
                     //  latestSubmissions.put(key, submission);

@@ -530,7 +530,7 @@ public class BudgetPersonnelRule {
     
     protected void verifyJobCode(BudgetSaveProjectPersonnelEvent event, KcEventResult result) {
     	List<BudgetLineItem> budgetLineItems = getBudgetLineItems(event);
-    	BudgetPerson budgetPerson = event.getBudgetPerson();
+    	BudgetPerson budgetPerson = event.getBudgetPerson(); 
     	if(isJobCodeChanged(budgetPerson) && isNewJobCodeValid(budgetPerson, result)) {
             if (isBudgetPersonExistsInPersonnelDetails(budgetLineItems, budgetPerson)) {
             	if(isJobCodeValid(budgetPerson)) {
@@ -552,11 +552,15 @@ public class BudgetPersonnelRule {
     
     protected boolean isNewJobCodeValid(BudgetPerson budgetPerson, KcEventResult result) {
     	JobCode jobCode = getJobCodeService().findJobCodeRef(budgetPerson.getJobCode());
-    	if(jobCode == null) {
+    	 String jobCodeValidationEnabledInd = this.paramService.getParameterValueAsString(Budget.class, Constants.BUDGET_JOBCODE_VALIDATION_ENABLED);
+    	if(jobCodeValidationEnabledInd.equals("Y")){
+    	 if(jobCode == null) {
             result.getMessageMap().putError("jobCode", KeyConstants.ERROR_PERSON_INVALID_JOBCODE_VALUE);
     		result.setSuccess(false);
     		return false;
     	}else {
+    		return true;
+    	}}else{
     		return true;
     	}
     }

@@ -18,11 +18,13 @@
  */
 package co.kuali.coeus.sys.impl.persistence;
 
+import net.sourceforge.schemaspy.Config;
+import net.sourceforge.schemaspy.SchemaAnalyzer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.coeus.sys.framework.gv.GlobalVariableService;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.coeus.sys.framework.util.HttpUtils;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.permission.PermissionService;
@@ -30,14 +32,14 @@ import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.util.KRADConstants;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,15 +49,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This filter generates html pages using schemaspy.  It only supports mysql.
+ * This filter generates html pages using schemaspy.  It only supports mysql and oracle.
  */
 public class SchemaSpyFilter implements Filter {
 
     private static final Log LOG = LogFactory.getLog(SchemaSpyFilter.class);
 
     private static final Pattern MYSQL_DB_URL_PATTERN = Pattern.compile("(jdbc:mysql://)(.*)(:)(\\d*)(/)(.*)");
+    private static final Pattern ORACLE_DB_URL_PATTERN = Pattern.compile("(jdbc:oracle.thin:@)(.*)(:)(\\d*)(:)(.*)");
     private static final String DB_TYPE_FLAG = "-t";
     private static final String MYSQL_DB_TYPE = "mysql";
+    private static final String ORACLE_DB_TYPE = "ora";
+    private static final String ORACLE_THIN_DB_TYPE = "orathin";
     private static final String DB_HOST_FLAG = "-host";
     private static final String DB_PORT_FLAG = "-port";
     private static final String DP_DRIVER_LOCATION_FLAG = "-dp";
@@ -65,6 +70,7 @@ public class SchemaSpyFilter implements Filter {
     private static final String OUTPUT_DIR_FLAG = "-o";
     private static final String SCHEMASPY_DIR_NAME = "schemaspy";
     private static final String MYSQL_DRIVER_CONFIG_PARAM = "datasource.driver.name.MySQL";
+    private static final String ORACLE_DRIVER_CONFIG_PARAM = "datasource.driver.name.Oracle";
     private static final String KIM_SCHEMA_SPY_VIEW_ID = "schemaspy";
     private static final String LOGLEVEL_FLAG = "-loglevel";
     private static final String FINEST_LEVEL = "finest";
@@ -75,18 +81,22 @@ public class SchemaSpyFilter implements Filter {
     private static final String REFRESH_PARAM = "refresh";
     private static final String REFRESH_TRUE = "true";
     private static final String LOW_QUALITY_FLAG = "-lq";
-    private static final String NO_ADS_FLAG = "-noads";
     private static final String FORMAT_FLAG = "-format";
     private static final String SVG_FORMAT = "svg";
     private static final String RENDERER_FLAG = "-renderer";
     private static final String NO_RENDERER = "";
     private static final String SCHEMA_SPY_CONFIG_PARAM = "kc.schemaspy.enabled";
+    private static final String MYSQL_PLATFORM_NAME = "MySQL";
+    private static final String ORACLE_PLATFORM_NAME = "Oracle";
+    private static final String ORACLE_9I_PLATFORM_NAME = "Oracle9i";
+    private static final String DATASOURCE_PLATFORM_PARAM = "datasource.ojb.platform";
+    private static final String ORACLE_THIN_CON_STR_FRAGMENT = "oracle:thin";
 
     private FilterConfig filterConfig;
     private ConfigurationService configurationService;
     private PermissionService permissionService;
     private GlobalVariableService globalVariableService;
-    private Object schemaAnalyzer;
+    private SchemaAnalyzer schemaAnalyzer;
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private final Runnable refreshSchemaSpy = new Runnable() {
@@ -99,15 +109,10 @@ public class SchemaSpyFilter implements Filter {
 
                 deleteSchemaSpyContent();
                 final String[] args = createArgs().toArray(new String[]{});
+                final Config config = new Config(args);
                 try {
-                    final Class<?> configClass = Class.forName("net.sourceforge.schemaspy.Config");
-                    final Constructor configCtor = configClass.getConstructor(String[].class);
-                    //this Object cast forces it to pass the array as a single argument rather
-                    //than the multi-arg, var-args version
-                    final Object config = configCtor.newInstance((Object) args);
-                    final Method analyze = getSchemaAnalyzer().getClass().getMethod("analyze", configClass);
-                    analyze.invoke(getSchemaAnalyzer(), config);
-                } catch (Exception e) {
+                    getSchemaAnalyzer().analyze(config);
+                } catch (SQLException|IOException e) {
                     throw new RuntimeException(e);
                 }
                 initialized.set(true);
@@ -126,18 +131,20 @@ public class SchemaSpyFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        final UserSession session = getGlobalVariableService().getUserSession();
-        if (session != null && !getPermissionService().isAuthorizedByTemplate(getGlobalVariableService().getUserSession().getPrincipalId(),
+        final UserSession session = getGlobalVariableService().getUserSession() != null ?
+                getGlobalVariableService().getUserSession() : (UserSession) ((HttpServletRequest) request).getSession().getAttribute(KRADConstants.USER_SESSION_KEY);
+        if (session == null || !getPermissionService().isAuthorizedByTemplate(session.getPrincipalId(),
                 KRADConstants.KRAD_NAMESPACE,
                 KimConstants.PermissionTemplateNames.OPEN_VIEW,
                 Collections.singletonMap(KimConstants.AttributeConstants.VIEW_ID, KIM_SCHEMA_SPY_VIEW_ID),
                 Collections.<String, String>emptyMap())) {
+            HttpUtils.disableCache((HttpServletResponse) response);
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
         if (!getConfigurationService().getPropertyValueAsBoolean(SCHEMA_SPY_CONFIG_PARAM)) {
-            disableCache((HttpServletResponse) response);
+            HttpUtils.disableCache((HttpServletResponse) response);
             response.getWriter().write("SchemaSpy has been disabled.");
             return;
         }
@@ -148,7 +155,7 @@ public class SchemaSpyFilter implements Filter {
             }
 
             if (!initialized.get()) {
-                disableCache((HttpServletResponse) response);
+                HttpUtils.disableCache((HttpServletResponse) response);
                 response.getWriter().write("Please wait. SchemaSpy is still processing.");
                 return;
             }
@@ -157,30 +164,19 @@ public class SchemaSpyFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    private void disableCache(HttpServletResponse response) {
-        response.setHeader("Expires", "-1");
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-        response.setHeader("Pragma", "no-cache");
-    }
-
     private List<String> createArgs() {
         final List<String> args = new ArrayList<>();
 
         final String dbUrl = getConfigurationService().getPropertyValueAsString(org.kuali.rice.core.api.config.property.Config.DATASOURCE_URL);
 
         args.add(DB_TYPE_FLAG);
-        args.add(MYSQL_DB_TYPE);
+        args.add(getDbType(dbUrl));
         args.add(DB_HOST_FLAG);
         args.add(parseHost(dbUrl));
         args.add(DB_PORT_FLAG);
         args.add(parsePort(dbUrl));
         args.add(DP_DRIVER_LOCATION_FLAG);
-        try {
-            args.add(Class.forName(getConfigurationService().getPropertyValueAsString(MYSQL_DRIVER_CONFIG_PARAM)).getProtectionDomain().getCodeSource().getLocation().getPath());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        args.add(getDriverLocation());
         args.add(DB_NAME_FLAG);
         args.add(parseDatabase(dbUrl));
         args.add(DB_USER_FLAG);
@@ -203,7 +199,6 @@ public class SchemaSpyFilter implements Filter {
         }
         //high quality images take a long time to generate
         args.add(LOW_QUALITY_FLAG);
-        args.add(NO_ADS_FLAG);
 
         //due to our large schema, dot never completes using png format
         //http://sourceforge.net/p/schemaspy/bugs/174/
@@ -214,24 +209,62 @@ public class SchemaSpyFilter implements Filter {
         return args;
     }
 
+    private boolean isMySql() {
+        return MYSQL_PLATFORM_NAME.equals(getConfigurationService().getPropertyValueAsString(DATASOURCE_PLATFORM_PARAM));
+    }
+
+    private boolean isOracle(String url) {
+        return ORACLE_PLATFORM_NAME.equals(getConfigurationService().getPropertyValueAsString(DATASOURCE_PLATFORM_PARAM)) ||
+                ORACLE_9I_PLATFORM_NAME.equals(getConfigurationService().getPropertyValueAsString(DATASOURCE_PLATFORM_PARAM)) && !url.contains(ORACLE_THIN_CON_STR_FRAGMENT);
+    }
+
+    private boolean isOracleThin(String url) {
+        return ORACLE_PLATFORM_NAME.equals(getConfigurationService().getPropertyValueAsString(DATASOURCE_PLATFORM_PARAM)) ||
+                ORACLE_9I_PLATFORM_NAME.equals(getConfigurationService().getPropertyValueAsString(DATASOURCE_PLATFORM_PARAM)) && url.contains(ORACLE_THIN_CON_STR_FRAGMENT);
+    }
+
+    private String getDbType(String url) {
+        if (isMySql()) {
+            return MYSQL_DB_TYPE;
+        } else if (isOracleThin(url)) {
+            return ORACLE_THIN_DB_TYPE;
+        } else if (isOracle(url)) {
+            return ORACLE_DB_TYPE;
+        } else {
+            throw new RuntimeException("unknown db type");
+        }
+    }
+
+    private String getDriverLocation() {
+        try {
+            return Class.forName(getConfigurationService().getPropertyValueAsString(isMySql() ? MYSQL_DRIVER_CONFIG_PARAM : ORACLE_DRIVER_CONFIG_PARAM)).getProtectionDomain().getCodeSource().getLocation().getPath();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Pattern getUrlPattern() {
+        return isMySql() ? MYSQL_DB_URL_PATTERN : ORACLE_DB_URL_PATTERN;
+    }
+
     private String parseHost(String url) {
-        Matcher m = MYSQL_DB_URL_PATTERN.matcher(url);
+        Matcher m = getUrlPattern().matcher(url);
         if (m.matches()) {
             return m.group(2);
         }
         return null;
     }
 
-    private static String parsePort(String url) {
-        Matcher m = MYSQL_DB_URL_PATTERN.matcher(url);
+    private String parsePort(String url) {
+        Matcher m = getUrlPattern().matcher(url);
         if (m.matches()) {
             return m.group(4);
         }
         return null;
     }
 
-    private static String parseDatabase(String url) {
-        Matcher m = MYSQL_DB_URL_PATTERN.matcher(url);
+    private String parseDatabase(String url) {
+        Matcher m = getUrlPattern().matcher(url);
         if (m.matches()) {
             return m.group(6);
         }
@@ -259,34 +292,34 @@ public class SchemaSpyFilter implements Filter {
     }
 
     public ConfigurationService getConfigurationService() {
-        if (configurationService == null) {
-            configurationService = KcServiceLocator.getService(ConfigurationService.class);
-        }
-
         return configurationService;
     }
 
-    public Object getSchemaAnalyzer() {
-        if (schemaAnalyzer == null) {
-            schemaAnalyzer = KcServiceLocator.getService("schemaAnalyzer");
-        }
-
+    public SchemaAnalyzer getSchemaAnalyzer() {
         return schemaAnalyzer;
     }
 
     public PermissionService getPermissionService() {
-        if (permissionService == null) {
-            permissionService = KcServiceLocator.getService(PermissionService.class);
-        }
-
         return permissionService;
     }
 
     public GlobalVariableService getGlobalVariableService() {
-        if (globalVariableService == null) {
-            globalVariableService = KcServiceLocator.getService(GlobalVariableService.class);
-        }
-
         return globalVariableService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
+
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
+
+    public void setGlobalVariableService(GlobalVariableService globalVariableService) {
+        this.globalVariableService = globalVariableService;
+    }
+
+    public void setSchemaAnalyzer(SchemaAnalyzer schemaAnalyzer) {
+        this.schemaAnalyzer = schemaAnalyzer;
     }
 }

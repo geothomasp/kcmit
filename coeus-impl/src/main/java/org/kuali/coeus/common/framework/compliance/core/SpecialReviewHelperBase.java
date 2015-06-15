@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.coeus.common.framework.compliance.core;
 
@@ -22,14 +19,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.framework.compliance.exemption.SpecialReviewExemption;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.iacuc.specialreview.IacucProtocolSpecialReviewService;
+import org.kuali.kra.irb.Protocol;
 import org.kuali.kra.irb.ProtocolFinderDao;
 import org.kuali.kra.irb.specialreview.ProtocolSpecialReviewService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Defines the base class of all Special Review Helpers.
@@ -63,7 +64,7 @@ public abstract class SpecialReviewHelperBase<T extends SpecialReview<? extends 
     private boolean canModifySpecialReview;
     private boolean isIrbProtocolLinkingEnabled;
     private boolean isIacucProtocolLinkingEnabled;
-    
+    private boolean isIrbProtocolvalid;
     private transient ParameterService parameterService;
     private transient ProtocolFinderDao protocolFinderDao;
     private transient SpecialReviewService specialReviewService;
@@ -94,6 +95,21 @@ public abstract class SpecialReviewHelperBase<T extends SpecialReview<? extends 
     }
     public boolean getIsIacucProtocolLinkingEnabled() {
         return isIacucProtocolLinkingEnabled;
+    }
+    
+    public boolean getIsIrbProtocolValid() {  
+        for(T specialReview : getSpecialReviews()){
+            String protocolNumberSpecial=specialReview.getProtocolNumber();
+            Map fieldValues = new HashMap();
+            fieldValues.put("protocolNumber", protocolNumberSpecial);
+            int protocolExists = KcServiceLocator.getService(BusinessObjectService.class).countMatching(Protocol.class, fieldValues);
+           if(protocolExists > 0){
+               isIrbProtocolvalid = true;
+           }else{
+               isIrbProtocolvalid = false;  
+           }
+        }
+        return isIrbProtocolvalid;
     }
     
     /**
@@ -201,7 +217,7 @@ public abstract class SpecialReviewHelperBase<T extends SpecialReview<? extends 
      */
     private void initializePermissions() {
         canModifySpecialReview = hasModifySpecialReviewPermission(getUserIdentifier());
-        isIrbProtocolLinkingEnabled = isIrbProtocolLinkingEnabledForModule();
+        isIrbProtocolLinkingEnabled = isIrbProtocolLinkingEnabledForModule()  && getIsIrbProtocolValid();;
         isIacucProtocolLinkingEnabled = isIacucProtocolLinkingEnabledForModule();
     }
     

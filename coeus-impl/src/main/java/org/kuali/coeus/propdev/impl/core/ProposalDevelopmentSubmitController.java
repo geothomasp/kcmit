@@ -1,3 +1,4 @@
+
 /*
  * Kuali Coeus, a comprehensive research administration system for higher education.
  * 
@@ -18,7 +19,9 @@
  */
 package org.kuali.coeus.propdev.impl.core;
 
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +51,6 @@ import org.kuali.coeus.s2sgen.api.generate.FormGeneratorService;
 import org.kuali.coeus.common.framework.compliance.core.SaveSpecialReviewLinkEvent;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewService;
 import org.kuali.coeus.common.framework.compliance.core.SpecialReviewType;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.workflow.KcWorkflowService;
 import org.kuali.kra.bo.FundingSourceType;
@@ -92,7 +94,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.coeus.sys.impl.validation.DataValidationItem;
 
+import edu.mit.kc.coi.KcCoiLinkService;
 import edu.mit.kc.workloadbalancing.bo.WLCurrentLoad;
 
 @Controller
@@ -178,13 +183,31 @@ public class ProposalDevelopmentSubmitController extends
     @Autowired
     @Qualifier("kcWorkflowService")
     private KcWorkflowService kcWorkflowService;
+
+    @Autowired
+    @Qualifier("proposalQuestionnaireValidationService")
+    private ProposalQuestionnaireValidationService proposalQuestionnaireValidationService;
     
     @Autowired
     @Qualifier("proposalTypeService")
     private ProposalTypeService proposalTypeService;
 
+    
     private final Logger LOGGER = Logger.getLogger(ProposalDevelopmentSubmitController.class);
 
+    public KcCoiLinkService kcCoiLinkService;
+    
+	public KcCoiLinkService getKcCoiLinkService() {
+		if (kcCoiLinkService == null) {
+			kcCoiLinkService = KcServiceLocator.getService(KcCoiLinkService.class);
+		}
+		
+		return kcCoiLinkService;
+	}
+
+	public void setKcCoiLinkService(KcCoiLinkService kcCoiLinkService) {
+		this.kcCoiLinkService = kcCoiLinkService;
+	}
     
     @Transactional @RequestMapping(value = "/proposalDevelopment", params = "methodToCall=populateAdHocs")
     public ModelAndView populateAdHocs(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
@@ -214,9 +237,9 @@ public class ProposalDevelopmentSubmitController extends
        populateAdHocRecipients(form.getProposalDevelopmentDocument());
        AuditHelper.ValidationState severityLevel = getValidationState(form);
  	   if(severityLevel.equals(AuditHelper.ValidationState.ERROR)) {
-           return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+           return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
 	   } else if (severityLevel.equals(AuditHelper.ValidationState.WARNING)) {
-           return getModelAndViewService().showDialog("PropDev-DataValidationSection-WithSubmit", true, form);
+           return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_SECTION_WITH_SUBMIT, true, form);
 	   } else {
            return internalSubmit(form);
        }
@@ -237,11 +260,7 @@ public class ProposalDevelopmentSubmitController extends
         }
         form.setEvaluateFlagsAndModes(true);
         getTransactionalDocumentControllerService().route(form);
-        for (PessimisticLock lock : form.getProposalDevelopmentDocument().getPessimisticLocks()){
-            getDataObjectService().delete(lock);
-        }
-        form.getProposalDevelopmentDocument().refreshPessimisticLocks();
-
+        getPessimisticLockService().releaseWorkflowPessimisticLocking(form.getProposalDevelopmentDocument());
         return updateProposalState(form);
     }
 
@@ -256,8 +275,11 @@ public class ProposalDevelopmentSubmitController extends
     @Transactional @RequestMapping(value = "/proposalDevelopment", params={"methodToCall=navigate", "actionParameters[navigateToPageId]=PropDev-SubmitPage"})
     public ModelAndView navigateToSubmit(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception{
         ((ProposalDevelopmentViewHelperServiceImpl) form.getViewHelperService()).prepareSummaryPage(form);
-        return super.navigate(form,result,request,response);
-    }
+        ModelAndView modelView = super.navigate(form,result,request,response);
+        getProposalQuestionnaireValidationService().executeProposalQuestionnaireValidation(form.getDevelopmentProposal());
+        getSharedDocumentService().processDevelopmentProposalAttachments(form.getDevelopmentProposal());
+       return modelView;
+     }
 
 
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=blanketApprove")
@@ -266,7 +288,7 @@ public class ProposalDevelopmentSubmitController extends
             form.setEvaluateFlagsAndModes(true);
             return getTransactionalDocumentControllerService().blanketApprove(form);
         }
-        return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+        return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
     }
    
    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=recall")
@@ -346,6 +368,7 @@ public class ProposalDevelopmentSubmitController extends
 
         if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
+    			setProposalTypeCodeChangedAndCorrected(form);
     			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
     			if(autogenerateInstitutionalProposal() && ! hasInstitutionalProposal(form.getProposalDevelopmentDocument().getDevelopmentProposal().getProposalNumber())) {
     				submitApplication(form);
@@ -353,7 +376,7 @@ public class ProposalDevelopmentSubmitController extends
                 handleSubmissionToS2S(form);
                 return getModelAndViewService().getModelAndView(form,"PropDev-OpportunityPage");
             } else {
-    			return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+    			return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
     		}
         } else {
         	return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
@@ -379,21 +402,27 @@ public class ProposalDevelopmentSubmitController extends
 
     	if (!requiresResubmissionPrompt(form)) {
     		if(validToSubmitToSponsor(form) ) {
-    			setProposalTypeCodeNewChangedAndCorrected( form);
-    			submitApplication(form);
+    			setProposalTypeCodeChangedAndCorrected(form);
+                submitApplication(form);
                 handleSubmissionNotification(form);
                 form.setDeferredMessages(getGlobalVariableService().getMessageMap());
                 return sendSubmitToSponsorNotification(form);
     		} else {
-                return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
+                form.setDataValidationItems(((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateDataValidation());
+                return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
     		}
-    	} else if(sequenceIPToSubmitToSponsor(form)) {
-            return getModelAndViewService().showDialog("PropDev-ResumbitSequence-OptionsSection", true, form);
-    	}else {
+    	} else {
             return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
     	}
     }
+    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteLineNotificationRecipient")
+    public ModelAndView deleteLine(@ModelAttribute("KualiForm") DocumentFormBase form, @RequestParam("actionParameters[" + UifParameters.SELECTED_COLLECTION_PATH + "]") String selectedCollectionPath) {
+        getCollectionControllerService().deleteLine(form);
 
+        final Collection<Object> collection = ObjectPropertyUtils.getPropertyValue(form, selectedCollectionPath);
+        form.getActionParameters().put("Kc-SendNotification-Wizard.step", collection.isEmpty() ? ProposalDevelopmentConstants.NotificationConstants.NOTIFICATION_STEP_0 : ProposalDevelopmentConstants.NotificationConstants.NOTIFICATION_STEP_2);
+        return getModelAndViewService().showDialog("Kc-SendNotification-Wizard", true, form);
+    }
     protected ModelAndView sendSubmitToSponsorNotification(ProposalDevelopmentDocumentForm proposalDevelopmentDocumentForm) {
         ProposalDevelopmentDocument proposalDevelopmentDocument = proposalDevelopmentDocumentForm.getProposalDevelopmentDocument();
         ProposalDevelopmentNotificationContext context = new ProposalDevelopmentNotificationContext(proposalDevelopmentDocument.getDevelopmentProposal(), "101", "Proposal Submitted");
@@ -405,15 +434,6 @@ public class ProposalDevelopmentSubmitController extends
             getKcNotificationService().sendNotification(context);
         }
         return getModelAndViewService().getModelAndView(proposalDevelopmentDocumentForm);
-    }
-
-    @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteLineNotificationRecipient")
-    public ModelAndView deleteLine(@ModelAttribute("KualiForm") DocumentFormBase form, @RequestParam("actionParameters[" + UifParameters.SELECTED_COLLECTION_PATH + "]") String selectedCollectionPath) {
-        getCollectionControllerService().deleteLine(form);
-
-        final Collection<Object> collection = ObjectPropertyUtils.getPropertyValue(form, selectedCollectionPath);
-        form.getActionParameters().put("Kc-SendNotification-Wizard.step", collection.isEmpty() ? ProposalDevelopmentConstants.NotificationConstants.NOTIFICATION_STEP_0 : ProposalDevelopmentConstants.NotificationConstants.NOTIFICATION_STEP_2);
-        return getModelAndViewService().showDialog("Kc-SendNotification-Wizard", true, form);
     }
 
     protected void handleSubmissionNotification(ProposalDevelopmentDocumentForm form) {
@@ -455,18 +475,24 @@ public class ProposalDevelopmentSubmitController extends
     	return isValid;
     }
     
-    protected void setProposalTypeCodeNewChangedAndCorrected(ProposalDevelopmentDocumentForm form) {
+    protected void setProposalTypeCodeChangedAndCorrected(ProposalDevelopmentDocumentForm form) {
     	ProposalDevelopmentDocument proposalDevelopmentDocument = form.getProposalDevelopmentDocument();
     	DevelopmentProposal developmentProposal= proposalDevelopmentDocument.getDevelopmentProposal();
-    	if( StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
-    			&& developmentProposal.getContinuedFrom() != null) {
+    	if( (StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getNewChangedOrCorrectedProposalTypeCode())
+    			||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getResubmissionChangedOrCorrectedProposalTypeCode())
+    					||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getBudgetSowUpdateProposalTypeCode())
+    					        ||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getRenewalChangedOrCorrectedProposalTypeCode())
+    							        ||StringUtils.equals(developmentProposal.getProposalTypeCode(),getProposalTypeService().getSupplementChangedOrCorrectedProposalTypeCode()))
+    					&& developmentProposal.getContinuedFrom() != null) {
     	form.setResubmissionOption(ProposalDevelopmentConstants.ResubmissionOptions.GENERATE_NEW_VERSION_OF_ORIGINAL_IP);
     	}
     }
+
     
     protected List<String> getUnitRulesMessages(ProposalDevelopmentDocument pdDoc) {
         return getKrmsRulesExecutionService().processUnitValidations(pdDoc.getLeadUnitNumber(), pdDoc);
     }
+    
     
     public void submitApplication(ProposalDevelopmentDocumentForm proposalDevelopmentForm)throws Exception {
         ProposalDevelopmentDocument proposalDevelopmentDocument = proposalDevelopmentForm.getProposalDevelopmentDocument();
@@ -492,10 +518,16 @@ public class ProposalDevelopmentSubmitController extends
                 proposalDevelopmentDocument.getDevelopmentProposal().refresh();
                 getDataObjectService().save(proposalDevelopmentDocument.getDevelopmentProposal());
             }
-    
             if (autogenerateInstitutionalProposal()) {
                 generateInstitutionalProposal(proposalDevelopmentForm, isIPProtocolLinkingEnabled);
             }
+            try {
+               	getKcCoiLinkService().updateCOIOnNewIP(proposalDevelopmentForm.getDevelopmentProposal().getProposalNumber(),proposalDevelopmentForm.getProposalDevelopmentDocument().getInstitutionalProposalNumber());
+               	
+   			} catch (SQLException e) {
+   				LOGGER.info(Level.ALL, e);
+   				LOGGER.warn("DBLINK is not accessible or the parameter value returning null");
+   			}
         }
         
     }
@@ -553,9 +585,10 @@ public class ProposalDevelopmentSubmitController extends
                 proposalDevelopmentDocument.getDevelopmentProposal(),
                 proposalDevelopmentDocument.getDevelopmentProposal().getFinalBudget());
 
-        getGlobalVariableService().getMessageMap().putInfo(KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_VERSIONED, versionNumber, proposalDevelopmentForm.getInstitutionalProposalToVersion());
+        getGlobalVariableService().getMessageMap().putInfo(Constants.NO_FIELD,KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_VERSIONED, versionNumber, proposalDevelopmentForm.getInstitutionalProposalToVersion());
 
         Long institutionalProposalId = getActiveProposalId(proposalDevelopmentForm.getInstitutionalProposalToVersion());
+        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(proposalDevelopmentForm.getInstitutionalProposalToVersion());
         persistProposalAdminDetails(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber(), institutionalProposalId);
         persistSpecialReviewProtocolFundingSourceLink(institutionalProposalId, isIPProtocolLinkingEnabled);
     }
@@ -567,6 +600,7 @@ public class ProposalDevelopmentSubmitController extends
         getGlobalVariableService().getMessageMap().putInfo(Constants.NO_FIELD,KeyConstants.MESSAGE_INSTITUTIONAL_PROPOSAL_CREATED, proposalNumber);
 
         Long institutionalProposalId = getActiveProposalId(proposalNumber);
+        proposalDevelopmentForm.getProposalDevelopmentDocument().setInstitutionalProposalNumber(proposalNumber);
         persistProposalAdminDetails(proposalDevelopmentDocument.getDevelopmentProposal().getProposalNumber(), institutionalProposalId);
         persistSpecialReviewProtocolFundingSourceLink(institutionalProposalId, isIPProtocolLinkingEnabled);
     }
@@ -649,7 +683,12 @@ public class ProposalDevelopmentSubmitController extends
         }
 
         getTransactionalDocumentControllerService().performWorkflowAction(form, UifConstants.WorkflowAction.APPROVE);
-        if (form.getActionFlags().containsKey("submitToSponsor")
+        getPessimisticLockService().releaseWorkflowPessimisticLocking(form.getProposalDevelopmentDocument());
+        if (form.getActionFlags().containsKey("submitToS2s") && form.getActionFlags().containsKey("submitToSponsor")
+                && getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, "autoSubmitToSponsorOnFinalApproval")
+                && getKcWorkflowService().isFinalApproval(workflowDoc)) {
+            return submitToS2s(form);
+        }else if (form.getActionFlags().containsKey("submitToSponsor")
                 && getParameterService().getParameterValueAsBoolean(ProposalDevelopmentDocument.class, "autoSubmitToSponsorOnFinalApproval")
                 && getKcWorkflowService().isFinalApproval(workflowDoc)) {
             return submitToSponsor(form);
@@ -657,7 +696,6 @@ public class ProposalDevelopmentSubmitController extends
 
         form.setEvaluateFlagsAndModes(true);
         updateWlcurrentLoad(form.getDevelopmentProposal().getProposalNumber());
-
         return updateProposalState(form);
     }
 
@@ -744,55 +782,54 @@ public class ProposalDevelopmentSubmitController extends
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=reject")
     public ModelAndView reject(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
 
-    ProposalDevelopmentRejectionBean bean = form.getProposalDevelopmentRejectionBean();
-    if (new ProposalDevelopmentRejectionRule().proccessProposalDevelopmentRejection(bean)){
-        getProposalHierarchyService().rejectProposalDevelopmentDocument(form.getDevelopmentProposal().getProposalNumber(), bean.getRejectReason(),
-                getGlobalVariableService().getUserSession().getPrincipalId(),bean.getRejectFile());
-    }
+    	ProposalDevelopmentRejectionBean bean = form.getProposalDevelopmentRejectionBean();
+    	if (new ProposalDevelopmentRejectionRule().proccessProposalDevelopmentRejection(bean)){
+    		getProposalHierarchyService().rejectProposalDevelopmentDocument(form.getDevelopmentProposal().getProposalNumber(), bean.getRejectReason(),
+    				getGlobalVariableService().getUserSession().getPrincipalId(),bean.getRejectFile());
+    	}
 
-    form.setEvaluateFlagsAndModes(true);
-    updateWlcurrentLoad(form.getDevelopmentProposal().getProposalNumber());
-    return getTransactionalDocumentControllerService().reload(form);
-    }
+    	form.setEvaluateFlagsAndModes(true);
+        updateWlcurrentLoad(form.getDevelopmentProposal().getProposalNumber());
 
+    	return getTransactionalDocumentControllerService().reload(form);
+    }
+    
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=cancelReject")
     public ModelAndView cancelReject(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception{
         form.setProposalDevelopmentRejectionBean(new ProposalDevelopmentRejectionBean());
         return getModelAndViewService().getModelAndView(form);
     }
 
-
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=sendAdHocRequests")
     public ModelAndView sendAdHocRequests(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) {
         form.setEvaluateFlagsAndModes(true);
         return getTransactionalDocumentControllerService().sendAdHocRequests(form);
     }
-
+    
     private void updateWlcurrentLoad(String proposalNumber){
-    	List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
-    			(PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
-    	if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
-    		List<WLCurrentLoad> workLoadLatestList = new ArrayList<WLCurrentLoad>();
-    		for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
-    			if(workLoadLatestList.isEmpty()){
-    				workLoadLatestList.add(0,wLCurrentLoad);
-    			}else{
-    				WLCurrentLoad wLCurrentLoadlatest = workLoadLatestList.get(0);
-    				if(Integer.parseInt(wLCurrentLoadlatest.getRoutingNumber()) < Integer.parseInt(wLCurrentLoad.getRoutingNumber())){
-    					workLoadLatestList.remove(0);
-    					workLoadLatestList.add(0,wLCurrentLoad);
-    				}
-    			}
-    		}
-    		//	 getDateTimeService().getCurrentTimestamp()
-    		WLCurrentLoad currentWorkLoad = workLoadLatestList.get(0);
-    		currentWorkLoad.setActiveFlag("N");
-    		currentWorkLoad.setInactiveDate(KcServiceLocator.getService(DateTimeService.class).getCurrentTimestamp());
-    		getDataObjectService().save(currentWorkLoad);
-    	}
-    }
-    
-    
+  	  List<WLCurrentLoad> wLCurrentLoadList = getDataObjectService().findMatching(WLCurrentLoad.class, QueryByCriteria.Builder.fromPredicates
+  				 (PredicateFactory.equal("proposalNumber", proposalNumber))).getResults();
+  	  if(wLCurrentLoadList!=null && !wLCurrentLoadList.isEmpty()){
+				 List<WLCurrentLoad> workLoadLatestList = new ArrayList<WLCurrentLoad>();
+				 for(WLCurrentLoad wLCurrentLoad : wLCurrentLoadList){
+					 if(workLoadLatestList.isEmpty()){
+						 workLoadLatestList.add(0,wLCurrentLoad);
+					 }else{
+						 WLCurrentLoad wLCurrentLoadlatest = workLoadLatestList.get(0);
+						 if(Integer.parseInt(wLCurrentLoadlatest.getRoutingNumber()) < Integer.parseInt(wLCurrentLoad.getRoutingNumber())){
+							 workLoadLatestList.remove(0);
+							 workLoadLatestList.add(0,wLCurrentLoad);
+						 }
+					 }
+				 }
+			//	 getDateTimeService().getCurrentTimestamp()
+				 WLCurrentLoad currentWorkLoad = workLoadLatestList.get(0);
+				 currentWorkLoad.setActiveFlag("N");
+				 currentWorkLoad.setInactiveDate(KcServiceLocator.getService(DateTimeService.class).getCurrentTimestamp());
+				 getDataObjectService().save(currentWorkLoad);
+  	  }
+  }
+
     public GlobalVariableService getGlobalVariableService() {
       return globalVariableService;
     }
@@ -941,8 +978,17 @@ public class ProposalDevelopmentSubmitController extends
     public void setKcWorkflowService(KcWorkflowService kcWorkflowService) {
         this.kcWorkflowService = kcWorkflowService;
     }
-    
-    public ProposalTypeService getProposalTypeService() {
+
+	public ProposalQuestionnaireValidationService getProposalQuestionnaireValidationService() {
+		return proposalQuestionnaireValidationService;
+	}
+
+	public void setProposalQuestionnaireValidationService(
+			ProposalQuestionnaireValidationService proposalQuestionnaireValidationService) {
+		this.proposalQuestionnaireValidationService = proposalQuestionnaireValidationService;
+	}
+	public ProposalTypeService getProposalTypeService() {
 		return proposalTypeService;
 	}
+
 }

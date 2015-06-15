@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.coeus.common.impl.medusa;
 
@@ -333,7 +330,9 @@ public class MedusaServiceImpl implements MedusaService {
             } else if (StringUtils.equals(fundingSource.getFundingSourceTypeCode(), FundingSourceType.INSTITUTIONAL_PROPOSAL)) {
                 addToGraph(graph, getInstitutionalProposal(fundingSource.getFundingSourceNumber()), protocol);
             } else if (StringUtils.equals(fundingSource.getFundingSourceTypeCode(), FundingSourceType.PROPOSAL_DEVELOPMENT)) {
+            	if(getDevelopmentProposal(fundingSource.getFundingSourceNumber()) != null) {
                 addToGraph(graph, getDevelopmentProposal(fundingSource.getFundingSourceNumber()), protocol);
+            	}
             }
         }       
     }    
@@ -345,18 +344,17 @@ public class MedusaServiceImpl implements MedusaService {
                     && specialReviewLinking.get(SpecialReviewType.HUMAN_SUBJECTS)
                     && !StringUtils.equals(specialReview.getApprovalTypeCode(), SpecialReviewApprovalType.NOT_YET_APPLIED)) {
                 Protocol protocol = getProtocol(specialReview.getProtocolNumber());
-                if (protocol != null) {
-                    addToGraph(graph, protocol, existingBo);
+                if(protocol != null) {
+                addToGraph(graph, protocol, existingBo);
                 }
             } else if (StringUtils.equals(specialReview.getSpecialReviewTypeCode(), SpecialReviewType.ANIMAL_USAGE)
                     && specialReviewLinking.get(SpecialReviewType.ANIMAL_USAGE)
                     && !StringUtils.equals(specialReview.getApprovalTypeCode(), SpecialReviewApprovalType.NOT_YET_APPLIED)) {
                 IacucProtocol protocol = getIacuc(specialReview.getProtocolNumber());
-                if (protocol != null) {
-                    addToGraph(graph, protocol, existingBo);
+                if(protocol != null) {
+                addToGraph(graph, protocol, existingBo);
                 }
             }
-
         }
     }
     

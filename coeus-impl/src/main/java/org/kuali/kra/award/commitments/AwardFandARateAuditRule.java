@@ -1,36 +1,35 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.commitments;
 
-import org.apache.commons.lang3.StringUtils;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kra.award.document.AwardDocument;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.krad.util.AuditCluster;
-import org.kuali.rice.krad.util.AuditError;
-import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.kuali.rice.krad.keyvalues.PersistableBusinessObjectValuesFinder;
 import org.kuali.rice.krad.rules.rule.DocumentAuditRule;
+import org.kuali.rice.krad.util.AuditCluster;
+import org.kuali.rice.krad.util.AuditError;
+import org.kuali.rice.krad.util.GlobalVariables;
+
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,14 +41,14 @@ public class AwardFandARateAuditRule implements DocumentAuditRule {
     private List<AuditError> auditErrors;
     private KeyValuesFinder finder;
     private ParameterService parameterService;
-    
+    private String fieldStarter = "";   
     /**
      * Looks up and returns the ParameterService.
      * @return the parameter service. 
      */
     protected ParameterService getParameterService() {
         if (this.parameterService == null) {
-            this.parameterService = KcServiceLocator.getService(ParameterService.class);
+            this.parameterService = KcServiceLocator.getService(ParameterService.class);        
         }
         return this.parameterService;
     }
@@ -57,15 +56,100 @@ public class AwardFandARateAuditRule implements DocumentAuditRule {
     public boolean processRunAuditBusinessRules(Document document) {
         boolean retval = true;
         AwardDocument awardDocument = (AwardDocument) document;
+        retval &= validateDestination(awardDocument.getAward().getAwardFandaRate());
+        retval &= validateSource(awardDocument.getAward().getAwardFandaRate());
+        retval &= validateDestinationLimit(awardDocument.getAward().getAwardFandaRate());
+        retval &= validateSourceLimit(awardDocument.getAward().getAwardFandaRate());
         if(StringUtils.equalsIgnoreCase(
                 this.getParameterService().getParameterValueAsString(AwardDocument.class,
                         KeyConstants.ENABLE_AWARD_FNA_VALIDATION),
                         KeyConstants.ENABLED_PARAMETER_VALUE_ONE)){
-            retval = isFandaRateInputInPairs(awardDocument.getAward().getAwardFandaRate());
+            retval &= isFandaRateInputInPairs(awardDocument.getAward().getAwardFandaRate());
         }        
+        if (!retval) {
+            reportAndCreateAuditCluster();            
+        }
         return retval;
     }
     
+    /**
+     * 
+     * This method checks whether FandaRates destinationAccount fields are entered or not
+     * @param awardFandaRate
+     * @param propertyPrefix
+     * @return
+     */     
+      private boolean validateDestination(List<AwardFandaRate> awardFandaRates) {
+        boolean isValid = true;
+        for(AwardFandaRate awardFandaRate:awardFandaRates){
+        	 if (awardFandaRate.getDestinationAccount() == null) {
+                 isValid = false;
+                 addAuditError(new AuditError("document.awardList[0].awardFandaRate["+awardFandaRates.indexOf(awardFandaRate)+"].destinationAccount", 
+                		 KcMitConstants.ERROR_AWARD_FANDA_RATES_DESTINATION,
+                		 Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.FANDA_RATES_PANEL_ANCHOR));
+             } 	
+        }
+       
+       
+        return isValid;
+    }
+      /**
+	     * 
+	     * This method checks whether FandaRates sourceAccount fields are entered or not
+	     * @param awardFandaRate
+	     * @param propertyPrefix
+	     * @return
+	     */
+      private boolean validateSource(List<AwardFandaRate> awardFandaRates) {
+          boolean isValid = true;
+          for(AwardFandaRate awardFandaRate:awardFandaRates){
+          	 if (awardFandaRate.getSourceAccount() == null) {
+                   isValid = false;
+                   addAuditError(new AuditError("document.awardList[0].awardFandaRate["+awardFandaRates.indexOf(awardFandaRate)+"].sourceAccount", 
+                  		 KcMitConstants.ERROR_AWARD_FANDA_RATES_SOURCE,
+                  		 Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.FANDA_RATES_PANEL_ANCHOR));
+               } 	
+          }
+         
+         
+          return isValid;
+      }
+    
+    /**
+     * This method checks whether the destination account exceeded the limit.
+     * @param awardFandaRates
+     * @return
+     */
+        private boolean validateDestinationLimit(List<AwardFandaRate> awardFandaRates) {
+          boolean isValid = true;
+          for(AwardFandaRate awardFandaRate:awardFandaRates){
+          	 if (awardFandaRate.getDestinationAccount() != null && awardFandaRate.getDestinationAccount().toString().length()>7) {
+          		 isValid = false;
+                   addAuditError(new AuditError("document.awardList[0].awardFandaRate["+awardFandaRates.indexOf(awardFandaRate)+"].destinationAccount", 
+                  		 KcMitConstants.ERROR_AWARD_FANDA_RATES_DESTINATION_LIMIT,
+                  		 Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.FANDA_RATES_PANEL_ANCHOR));
+               } 	
+          }
+          return isValid;
+      }
+      
+        /**
+         * This method checks whether the source account exceeded the limit.
+         * @param awardFandaRates
+         * @return
+         */
+        private boolean validateSourceLimit(List<AwardFandaRate> awardFandaRates) {
+            boolean isValid = true;
+            for(AwardFandaRate awardFandaRate:awardFandaRates){
+            	 if (awardFandaRate.getSourceAccount() != null  && awardFandaRate.getSourceAccount().toString().length()>7) {
+                     isValid = false;
+                     addAuditError(new AuditError("document.awardList[0].awardFandaRate["+awardFandaRates.indexOf(awardFandaRate)+"].sourceAccount", 
+                    		 KcMitConstants.ERROR_AWARD_FANDA_RATES_SOURCE_LIMIT,
+                    		 Constants.MAPPING_AWARD_COMMITMENTS_PAGE+"."+Constants.FANDA_RATES_PANEL_ANCHOR));
+                 } 	
+            }
+            return isValid;
+        }
     /**
      * 
      * This method takes as the input a list of <code>AwardFandaRate</code>,

@@ -22,11 +22,11 @@
     <parent>
         <groupId>org.kuali.coeus</groupId>
         <artifactId>coeus-db</artifactId>
-        <version>1504.10</version>
+        <version>1505.70</version>
     </parent>
 
     <artifactId>coeus-db-data-conv</artifactId>
-    <version>1504.10</version>
+    <version>1505.70</version>
     <packaging>jar</packaging>
     <name>Kuali Coeus Database Conversion</name>
     <description>
@@ -66,7 +66,7 @@
             <groupId>${db.groupId}</groupId>
             <artifactId>${db.artifactId}</artifactId>
             <version>${db.version}</version>
-            <scope>runtime</scope>
+            <!-- <scope>runtime</scope> -->
         </dependency>
     </dependencies>
 </project>

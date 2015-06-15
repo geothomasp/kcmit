@@ -20,6 +20,7 @@ package org.kuali.kra.award.printing.xmlstream;
 
 import org.apache.xmlbeans.XmlObject;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttribute;
+import org.kuali.coeus.common.framework.person.attr.PersonTraining;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
 import org.kuali.coeus.sys.framework.model.KcPersistableBusinessObjectBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
@@ -27,6 +28,7 @@ import org.kuali.kra.award.awardhierarchy.AwardHierarchy;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchyService;
 import org.kuali.kra.award.budget.AwardBudgetExt;
 import org.kuali.kra.award.budget.document.AwardBudgetDocument;
+import org.kuali.kra.award.contacts.AwardPerson;
 import org.kuali.kra.award.customdata.AwardCustomData;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
@@ -42,6 +44,13 @@ import org.kuali.kra.printing.schema.AwardType.AwardBudgetDetails.BudgetDetails;
 import org.kuali.kra.printing.schema.AwardType.AwardOtherDatas.OtherData;
 import org.kuali.kra.printing.schema.AwardType.AwardPaymentSchedules.PaymentSchedule;
 import org.kuali.kra.printing.schema.AwardType.AwardTransferringSponsors.TransferringSponsor;
+import org.kuali.rice.core.api.CoreApiServiceLocator;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.krad.util.GlobalVariables;
+
+import edu.mit.kc.award.service.AwardCommonValidationService;
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 import java.util.*;
 
@@ -73,6 +82,10 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	private static final String CLOSEOUT = "closeout";
 	private static final String ADDRESS_LIST = "addressList";
 	private VersionHistoryService versionHistoryService;
+	
+	 private ConfigurationService kualiConfigurationService;
+
+	
 
 	/**
 	 * This method generates XML for Award Notice Report. It uses data passed in
@@ -108,7 +121,7 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 		this.award = award;
 		List<AwardAmountInfo> awardAmountInfos = award.getAwardAmountInfos();
 		if (awardAmountInfos != null && !awardAmountInfos.isEmpty()) {
-			awardAmountInfo = awardAmountInfos.get(0);
+			awardAmountInfo = awardAmountInfos.get(awardAmountInfos.size() - 1);
 		}
 	}
 
@@ -253,6 +266,7 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 		awardBudgetDetails.setBudgetDetailsArray(budgetDetailsList.toArray(new BudgetDetails[0]));
 		return awardBudgetDetails;
 	}
+
 	private AwardBudgetExt getBudget() {
 		return award.getCurrentVersionBudgets().isEmpty()?null:award.getCurrentVersionBudgets().get(0);
 	}
@@ -273,7 +287,7 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 	}
 
 	private void setAwardHierarchy(AwardHierarchy awardHierarchy, ChildAwardDetails childAwardDetails) {
-        if(awardHierarchy!=null){
+        if(awardHierarchy!=null) {
             ChildAwardType childAwardType = childAwardDetails.addNewChildAward();
             AwardHierarchyType hierarchyType = childAwardType.addNewAwardHierarchy();
             hierarchyType.setAwardNumber(awardHierarchy.getAwardNumber());
@@ -417,4 +431,220 @@ public class AwardNoticeXmlStream extends AwardBaseStream {
 			VersionHistoryService versionHistoryService) {
 		this.versionHistoryService = versionHistoryService;
 	}
+	
+	protected AwardDisclosureType getAwardDisclosureType() {
+		AwardDisclosureType awardDisclosureType = AwardDisclosureType.Factory
+				.newInstance();
+		AwardHeaderType awardHeaderType = getAwardHeaderType();
+		awardDisclosureType.setAwardHeader(awardHeaderType);
+		DisclosureItemType[] disclosureItemTypes = getDisclosureItems(awardDisclosureType);
+		awardDisclosureType.setDisclosureItemArray(disclosureItemTypes);
+		awardDisclosureType.setAwardValidationArray(getAwardValidation());
+		
+		return awardDisclosureType;
+	}
+
+	
+	/*
+	 * This method will set the values to disclosure items and finally return
+	 * disclosure XmlObject array
+	 * 
+	 */
+	private DisclosureItemType[] getDisclosureItems(AwardDisclosureType awardDisclosureType) {
+		List<DisclosureItemType> disclosureItems = new ArrayList<DisclosureItemType>();
+		boolean isHoldPrompt = true;
+		boolean isTrainingRequired = false;
+		
+		isHoldPrompt = KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardOnCOI(award);
+		isTrainingRequired = isTrainingRequired(award);
+		if(!isHoldPrompt || isTrainingRequired){
+			for (AwardPerson awardPerson : award.getProjectPersons()) {
+				List<AwardPerson> awardPersons = KcServiceLocator.getService(AwardCommonValidationService.class).getCOIHoldPromptDisclousureItems(award, awardPerson);
+				if(awardPersons!=null && !awardPersons.isEmpty()){
+					for(AwardPerson person : awardPersons){
+						DisclosureItemType disclosureItemType = DisclosureItemType.Factory
+								.newInstance();
+						disclosureItemType.setPersonName(person.getPerson().getFullName());
+						disclosureItemType.setDisclosureNumber(person.getRole().getRoleDescription());
+						if(person.isDisclosuerNotRequired()){
+							disclosureItemType.setDisclosureTypeDesc("Disclosure Not Required");
+						}else{
+							String disclosureStatusDesc = KcServiceLocator.getService(AwardCommonValidationService.class).getAwardDisclousureStatusForPerson(award, person.getPerson().getPersonId());
+							disclosureItemType.setDisclosureTypeDesc(disclosureStatusDesc);
+						}
+						if(person.isTrainingRequired()){
+							disclosureItemType.setDisclosureStatusDesc(getTrainingStatus(person));
+						}else{
+							disclosureItemType.setDisclosureStatusDesc("Training Not Required");
+						}
+						disclosureItems.add(disclosureItemType);
+						awardDisclosureType.setDisclosureValidation("1");
+					}
+				}
+			}
+		}
+		return disclosureItems.toArray(new DisclosureItemType[0]);
+	}
+	
+	private boolean isTrainingRequired(Award award){
+		boolean trainingRequired =	KcServiceLocator.getService(AwardCommonValidationService.class).getTrainingRequired(award);
+		if(trainingRequired){
+			for(AwardPerson awardPerson : award.getProjectPersons()){
+				if(awardPerson.getPersonId()!=null){
+					if(!getTrainingStatus(awardPerson).equalsIgnoreCase("Training Completed")){
+						trainingRequired = true;
+						return trainingRequired;
+					}else{
+						trainingRequired = false;
+					}
+				}
+			}
+		}
+		return trainingRequired;
+	}
+	
+	private String getTrainingStatus(AwardPerson person){
+		String training = "Training Required";
+		Map<String, String> queryMap = new HashMap<String, String>();
+		queryMap.put("trainingCode", "54");
+		queryMap.put("personId",person.getPersonId());
+		List <PersonTraining> personTrainingList = (List<PersonTraining>) getBusinessObjectService().findMatching(PersonTraining.class, queryMap);
+		if(personTrainingList!=null && !personTrainingList.isEmpty()){
+			PersonTraining personTraining = personTrainingList.get(0);
+			if(personTraining.getFollowupDate()!=null && personTraining.getFollowupDate().after(KcServiceLocator.getService(DateTimeService.class).getCurrentDate())){
+				training = "Training Completed";
+			}
+			else{
+				training = "Training Required";
+			}
+		}
+		return training;
+	}
+	
+	private AwardValidationType[] getAwardValidation(){
+		List<AwardValidationType> awardValidationTypes = new ArrayList<AwardValidationType>();
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateSpecialReviews(award);
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateReports(award);
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardTerm(award);
+		KcServiceLocator.getService(AwardCommonValidationService.class).validateAwardOnCOI(award);
+
+
+		
+		 
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_HUMAN_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_HUMAN_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ANIMAL_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_DNA_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_DNA_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+					
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_ISOTOP_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_ISOTOP_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+					   
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_BIO_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_BIO_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_INTER_REVIEW));
+
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_MULTIPLE_INTER_REVIEW));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_SPECIAL_REVIEW));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 
+		 
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_SPONSOR_CODE));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_INV));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_NO_DISC_KP));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_KP_NOT_CONFIRMED));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		 if(GlobalVariables.getMessageMap().getWarningMessagesForProperty(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW)!=null){
+			 AwardValidationType awardValidationType = AwardValidationType.Factory.newInstance();
+			 awardValidationType.setValidationDetails(getKualiConfigurationService().getPropertyValueAsString(KcMitConstants.ERROR_AWARD_HOLD_PROMPT_NO_TERM_SPREVIEW));
+			 awardValidationTypes.add(awardValidationType);
+		 }
+		return awardValidationTypes.toArray(new AwardValidationType[0]);
+	}
+	
+	public ConfigurationService getKualiConfigurationService() {
+		if(kualiConfigurationService==null){
+			kualiConfigurationService =  CoreApiServiceLocator.getKualiConfigurationService();
+		}
+		return kualiConfigurationService;
+	}
+
+	public void setKualiConfigurationService(
+			ConfigurationService kualiConfigurationService) {
+		this.kualiConfigurationService = kualiConfigurationService;
+	}
+	
 }

@@ -1,22 +1,31 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.web.struts.action;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.substringBetween;
+import static org.kuali.rice.krad.util.KRADConstants.METHOD_TO_CALL_ATTRIBUTE;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -25,20 +34,19 @@ import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.kra.award.AwardForm;
 import org.kuali.kra.award.awardhierarchy.sync.AwardSyncType;
-import org.kuali.kra.award.contacts.*;
+import org.kuali.kra.award.contacts.AwardCreditSplitBean;
+import org.kuali.kra.award.contacts.AwardPerson;
+import org.kuali.kra.award.contacts.AwardPersonUnit;
+import org.kuali.kra.award.contacts.AwardProjectPersonnelBean;
+import org.kuali.kra.award.contacts.AwardSponsorContact;
+import org.kuali.kra.award.contacts.AwardSponsorContactsBean;
+import org.kuali.kra.award.contacts.AwardUnitContactsBean;
 import org.kuali.kra.award.home.Award;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.substringBetween;
-import static org.kuali.rice.krad.util.KRADConstants.METHOD_TO_CALL_ATTRIBUTE;
+import edu.mit.kc.award.contacts.AwardPersonRemove;
 
 /**
  * 
@@ -273,6 +281,7 @@ public class AwardContactsAction extends AwardAction {
                                                                                                                         throws Exception {
         AwardPerson awardPerson = getProjectPersonnelBean(form).getProjectPersonnel().get(getLineToDelete(request));
         getProjectPersonnelBean(form).deleteProjectPerson(getLineToDelete(request));
+        getProjectPersonRemovalHistory(form);
         return this.confirmSyncAction(mapping, form, request, response, AwardSyncType.DELETE_SYNC, awardPerson, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));
     }
 
@@ -468,5 +477,28 @@ public class AwardContactsAction extends AwardAction {
         awardForm.getProjectPersonnelBean().removeUnitDetails(person);
         return mapping.findForward(Constants.MAPPING_AWARD_BASIC);
     }
-    
+    //For Project Person Confirm Entry
+    public ActionForward confirmProjectPerson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {          
+            AwardPerson awardPerson = getProjectPersonnelBean(form).getProjectPersonnel().get(getLineToEdit(request));
+            getProjectPersonnelBean(form).confirmProjectPeersonEntry(getLineToEdit(request));
+            return this.confirmSyncAction(mapping, form, request, response, AwardSyncType.ADD_SYNC, awardPerson, "projectPersons", null, mapping.findForward(Constants.MAPPING_AWARD_BASIC));
+       
+        }
+
+      
+    public Collection<AwardPersonRemove> getProjectPersonRemovalHistory(ActionForm form)
+            throws Exception {   
+    	Collection<AwardPersonRemove> awardPersonRemoves =  new ArrayList<AwardPersonRemove>();
+    	AwardForm awardForm = (AwardForm)form;
+    	if (awardForm.getAwardDocument().getAward().getAwardNumber() != null) {
+    		awardPersonRemoves =  getProjectPersonnelBean(form).getAwardPersonRemoval(//awardForm.getAwardDocument().getAward().getAwardId().toString(),
+    				awardForm.getAwardDocument().getAward().getAwardNumber());
+    	}
+    	if (!awardPersonRemoves.isEmpty()) {
+    		awardForm.setAwardPersonRemovalHistory(awardPersonRemoves);
+    		return awardPersonRemoves;   
+    	}    	
+    	return new ArrayList<AwardPersonRemove>();
+        }
 }

@@ -465,7 +465,12 @@ public interface Constants {
     public static final String MAPPING_INSTITUTIONAL_PROPOSAL_ACTIONS_PAGE = "institutionalProposalActions";
     public static final String MAPPING_INSTITUTIONAL_PROPOSAL_ATTACHMENTS_PAGE = "attachments";
     public static final String MAPPING_INSTITUTIONAL_PROPOSAL_MEDUSA_PAGE = "medusa";
-    
+
+    public static final String INSTITUTIONAL_PROPOSAL_IP_PANEL_ANCHOR = "institutionalProposal";
+
+
+    public static final String PARAMETER_IP_REVIEW_TAB_ENABLED = "IP_INTELLECTUAL_PROPERTY_REVIEW_TAB_ENABLED";
+
     public static final String INSTITUTIONAL_PROPSAL_PROPSAL_NUMBER_SEQUENCE = "SEQ_PROPOSAL_PROPOSAL_ID";
     public static final String IP_NUMBER_SEQUENCE_FY_BASED = "SEQ_INST_PROPOSAL_NUMBER";
     public static final String FISCAL_YEAR_BASED_IP = "GENERATE_IP_BASED_ON_FY";
@@ -689,6 +694,7 @@ public interface Constants {
     public static final long QUESTION_RESPONSE_TYPE_DATE = 4L;
     public static final long QUESTION_RESPONSE_TYPE_TEXT = 5L;
     public static final long QUESTION_RESPONSE_TYPE_LOOKUP = 6L;
+    public static final long QUESTION_RESPONSE_TYPE_MULTIPLE_CHOICE = 100L;
     
     public static final String QUESTION_DOCUMENT_FIELD_QUESTION_TYPE_ID = "document.newMaintainableObject.businessObject.questionTypeId";
     public static final String QUESTION_DOCUMENT_FIELD_STATUS = "document.newMaintainableObject.businessObject.status";
@@ -890,6 +896,7 @@ public interface Constants {
 
     //Prop Dev Parameter
     public static final String SPONSOR_HIERACHY_REQ_DIV_PROG_CODES = "SPONSOR_HIERACHY_REQ_DIV_PROG_CODES";
+//<<<<<<< HEAD
     public static final String MAPPING_TEMPLATE_PAGE ="templateInformation";
     public static final String NEW_PERSON_LOOKUP_FLAG = "newPersonLookupFlag";
     public static final String RESEARCH_GOV_SERVICE_HOST = "research.gov.s2s.host";
@@ -906,6 +913,10 @@ public interface Constants {
     public static final String PD_INITIATED_ROUTE_NODE_NAME = "Initiated";
     public static final String DEFAULT_ACTIVITY_TYPE = "DEFAULT_ACTIVITY_TYPE";
     public static final String DEFAULT_S2S_SUBMISSION_TYPE = "DEFAULT_S2S_SUBMISSION_TYPE";
+//=======
+
+    public static final String MM_DD_YYYY_HH_MM_A_DATE_FORMAT = "MM/dd/yyyy hh:mm a";
+//>>>>>>> coeus-1505.70
 
         
 }

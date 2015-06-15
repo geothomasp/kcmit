@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.kuali.coeus</groupId>
         <artifactId>coeus</artifactId>
-        <version>1504.10</version>
+        <version>1505.70</version>
     </parent>
     <artifactId>coeus-impl</artifactId>
     <packaging>jar</packaging>
@@ -195,6 +195,29 @@
                             <goal>wsdl2java</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>role-integration-service</id>
+                        <phase>generate-sources</phase>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <disableDirectoryScan>true</disableDirectoryScan>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <noAddressBinding>true</noAddressBinding>
+                                    <wsdl>${gg.wsdl.location}/roles.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-verbose</extraarg>
+                                        <extraarg>-validate</extraarg>
+                                        <extraarg>-wsdlLocation</extraarg>
+                                        <extraarg>${role.wsdl.packaged.location}</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <dependencies>
                     <!-- need to add this to get around the following error
@@ -240,7 +263,17 @@
 
         <dependency>
             <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
+            <artifactId>cglib</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>co.kuali.schemaspy</groupId>
+            <artifactId>schemaspy</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.codiform</groupId>
+            <artifactId>moo-mvel</artifactId>
         </dependency>
 
         <dependency>
@@ -356,6 +389,11 @@
         <dependency>
             <groupId>logkit</groupId>
             <artifactId>logkit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
         </dependency>
 
         <dependency>
@@ -596,6 +634,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
         </dependency>
@@ -704,26 +747,18 @@
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
-        <dependency>
-		    <groupId>com.codiform</groupId>
-	    	<artifactId>moo-mvel</artifactId>
-		</dependency>
-       	<dependency>
-      		<groupId>org.mvel</groupId>
-      		<artifactId>mvel2</artifactId>
-      	</dependency>
 	  
     </dependencies>
 
     <profiles>
         <profile>
             <id>grm</id>
-            <!-- comment out activation section to turn this profile off permanently
+            <!-- comment out activation section to turn this profile off permanently-->
             <activation>
                 <property>
                     <name>!grm.off</name>
                 </property>
-            </activation>-->
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>co.kuali</groupId>
@@ -738,11 +773,6 @@
                 <dependency>
                     <groupId>com.rsmart.kuali</groupId>
                     <artifactId>kc_hr_rest</artifactId>
-                </dependency>
-
-                <dependency>
-                    <groupId>co.kuali.schemaspy</groupId>
-                    <artifactId>schemaspy</artifactId>
                 </dependency>
             </dependencies>
         </profile>

@@ -29,9 +29,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.coeus.common.framework.org.OrganizationYnq;
 import org.kuali.coeus.common.framework.print.AttachmentDataSource;
 import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.validation.AuditHelper.ValidationState;
@@ -112,7 +114,7 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
 
         if(subAwardForm.getSubAwardDocument().getSubAwardList() != null) {
             for(SubAward subAwardList:subAwardForm.getSubAwardDocument().getSubAwardList()) {
-                List<SubAwardAttachments> subAwardAttachmentsList = subAwardList.getSubAwardAttachments();//new ArrayList<SubAwardAttachments>();
+                List<SubAwardAttachments> subAwardAttachmentsList = subAwardList.getSubAwardAttachments();
                 if(subAwardAttachmentsList != null && !subAwardAttachmentsList.isEmpty()) {
                      for(SubAwardAttachments subAwardAttachments:subAwardAttachmentsList) {
                             if(subAwardAttachments.getFileName() != null) {
@@ -160,23 +162,54 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
                 SubAwardService.class).getAmountInfo(subAwardDocument.getSubAward());
         subAwardForm.getSubAwardDocument().setSubAward(subAward);
         handleAttachmentsDocument(form);
+        if(subAwardForm.getSubAwardDocument().getSubAwardList() != null) {
+        	getOrganizationRiskPriority(subAwardForm.getSubAwardDocument().getSubAwardList());
+        }
         
         return forward;
+    }
+    
+    
+    public void getOrganizationRiskPriority(List<SubAward> subAwardList) {
+    	List<OrganizationYnq> organizationYnqs = null;
+    	for(SubAward subAward:subAwardList) {
+	    	String organizationId=subAward.getOrganizationId();
+	    	String questionId=getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, ParameterConstants.ALL_COMPONENT,Constants.ORGANIZATION_RISK_CATEGORY_CODE);
+	        if(questionId != null && organizationId != null) {
+	        	Map<String, String> organizationYnqMap = new HashMap<String, String>();
+	            organizationYnqMap.put("QUESTION_ID",questionId);
+	            organizationYnqMap.put("ORGANIZATION_ID",organizationId);
+	            organizationYnqs = (List<OrganizationYnq>) getBusinessObjectService().findMatching(OrganizationYnq.class,
+	                    organizationYnqMap);
+	        }
+	        if(organizationYnqs != null) {
+	            for(OrganizationYnq organizationYnq:organizationYnqs) {
+	        		if(organizationYnq.getAnswer().equals(Constants.TRUE_FLAG)) {
+	        			subAward.setOrganizationRisk(Constants.LOW_RISK);
+	        		} else if(organizationYnq.getAnswer().equals(Constants.FALSE_FLAG)) {
+	        			subAward.setOrganizationRisk(Constants.HIGH_RISK);
+	        	    } 
+	        	}
+	    	}
+    	}
     }
     
     protected void handleAttachmentsDocument(ActionForm form) {
 
 
         String currentUser = GlobalVariables.getUserSession().getPrincipalId();
+        SubAwardForm subAwardForm = (SubAwardForm)form;
+		getSharedDocumentService().processSubAwardAttachments(subAwardForm.getSubAwardDocument().getSubAward());
                
-               if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS") || 
-               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SHARED_SUBAWARD_DOC") ||
-               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
-               	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
-           		if(subAwardAttachmentform != null) {
-           			subAwardAttachmentform.setCanViewAttachment(true);
-           		}
-               }
+//               if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SUBAWARD_DOCUMENTS") || 
+//               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "VIEW_SHARED_SUBAWARD_DOC") ||
+//               		getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
+//               	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
+//           		if(subAwardAttachmentform != null) {
+//           			subAwardAttachmentform.setCanViewAttachment(true);
+//           		}
+//               }
+//               
                if(getPermissionService().hasPermission(currentUser, "KC-SUBAWARD", "MODIFY SUBAWARD")) {
                	SubAwardAttachmentFormBean subAwardAttachmentform = ((SubAwardForm) form).getSubAwardAttachmentFormBean();
            		if(subAwardAttachmentform != null) {
@@ -215,6 +248,9 @@ public class SubAwardAction extends KcTransactionalDocumentActionBase {
         } else if (Constants.MAPPING_SUBAWARD_ACTION_PAGE.equals(command)) {
             loadDocumentInForm(request, subAwardForm);
             forward = subAwardActions(mapping, subAwardForm, request, response);
+        } else if (Constants.MAPPING_FINANCIAL_PAGE.equals(command)) {
+            loadDocumentInForm(request, subAwardForm);
+            forward = mapping.findForward(Constants.MAPPING_FINANCIAL_PAGE);
         } else {
             forward = super.docHandler(mapping, form, request, response);
         }
@@ -666,5 +702,9 @@ public ActionForward blanketApprove(ActionMapping mapping,
  private PermissionService getPermissionService() {
      return KimApiServiceLocator.getPermissionService();
  }
+
+	protected SharedDocumentService getSharedDocumentService() {
+	      return KcServiceLocator.getService(SharedDocumentService.class);
+	}
  
 }

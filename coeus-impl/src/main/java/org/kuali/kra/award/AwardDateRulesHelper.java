@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award;
 
@@ -26,13 +23,13 @@ import java.sql.Date;
 
 /**
  * 
- * This class will be used by both Time & Money and Awards to help validate various date fields and to ensure both apply the same logic. 
+ * This class will be used by both Time &amp; Money and Awards to help validate various date fields and to ensure both apply the same logic.
  */
 public class AwardDateRulesHelper {
     
     public static final String OBLIGATION_START_DATE = "Obligation Start Date";
     public static final String OBLIGATION_END_DATE = "Obligation End Date";
-    public static final String PROJECT_START_DATE = "Project Start Date";
+    public static final String PROJECT_START_DATE = "Award Effective Date";
     public static final String PROJECT_END_DATE = "Project End Date";
     
     public static boolean validateObligationStartBeforeObligationEnd(MessageMap errorMap, Date obligationStartDate, Date obligationEndDate, String fieldName, String awardID) {
@@ -66,7 +63,6 @@ public class AwardDateRulesHelper {
         boolean success = true;
         if (isDateOneAfterDateTwo(projectStartDate, obligationStartDate)) {
             success = false;
-            errorMap.putError(fieldName, KeyConstants.ERROR_START_DATE_ON_OR_BEFORE, new String[] {PROJECT_START_DATE, OBLIGATION_START_DATE, awardID});
         }
         return success;
     }

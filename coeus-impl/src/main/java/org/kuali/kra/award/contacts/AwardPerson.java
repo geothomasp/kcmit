@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.contacts;
 
@@ -31,12 +28,18 @@ import org.kuali.kra.bo.AbstractProjectPerson;
 import org.kuali.coeus.common.framework.rolodex.PersonRolodex;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
+import edu.mit.kc.award.contacts.AwardPersonConfirm;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Date;
 /**
  * This class implements an Award Person 
  */
@@ -74,8 +77,102 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
     
     private transient PropAwardPersonRoleService propAwardPersonRoleService;
 
+    private String updateConfirmTimestamp;
+    private String confirmed =  "false";
+    
+    private transient boolean trainingRequired = false;
+    
+    private transient boolean disclosuerNotRequired = false;
+    
+	
+
+	public String getConfirmed() {    
+    	List awardPersonList = new ArrayList<AwardPersonConfirm>();
+    	AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
+    	Map<String,String> awardPerson = new HashMap<String,String>();
+    	awardPerson.put("personId", this.personId);
+    	awardPerson.put("awardNumber", this.getAwardNumber());
+    	 if(this.getAward().getAwardId()!=null){
+    		 awardPerson.put("awardId", this.getAward().getAwardId().toString());
+    	 }
+		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPerson);
+			if(!awardPersonList.isEmpty()){
+			awardPersonConfirm = (AwardPersonConfirm) awardPersonList.get(0);			
+			if(awardPersonConfirm.isConfirmFlag()){
+				return "true";
+			
+			}
+			}
+			return "false";
+    }
+
+	public void setConfirmed(String confirmed) {
+		this.confirmed = confirmed;
+	}
+
+	public String getUpdateConfirmTimestamp() { 
+    	List awardPersonList = new ArrayList<AwardPersonConfirm>();
+    	AwardPersonConfirm awardPersonConfirm =  new AwardPersonConfirm();
+    	
+    	
+    	 String user="";
+    	 String dateString="";
+    	 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");    	 
+    	 
+    	 Map<String,String> awardPersonDetails = new HashMap<String,String>();
+    	 awardPersonDetails.put("personId", this.personId);
+    	 awardPersonDetails.put("awardNumber", this.getAwardNumber());
+    	 if(this.getAward().getAwardId()!=null){
+    		 awardPersonDetails.put("awardId", this.getAward().getAwardId().toString());
+    	 }
+		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPersonDetails);
+		 
+			if(!awardPersonList.isEmpty()){
+			awardPersonConfirm = (AwardPersonConfirm) awardPersonList.get(0);
+			user=awardPersonConfirm.getUpdateUser();
+			dateString=sdf.format(awardPersonConfirm.getUpdateTimestamp());
+			if(awardPersonConfirm.isConfirmFlag()){
+				setConfirmed("true");
+			}
+			
+	    	}
+    	
+    	
+		return user+" "+dateString;
+	}
+
+	public void setUpdateConfirmTimestamp(String updateConfirmTimestamp) {
+		this.updateConfirmTimestamp = updateConfirmTimestamp;
+	}
+    
+   
+
+	private AwardPersonConfirm awardPersonConfirm;
+ 
+
+
+    public AwardPersonConfirm getAwardPersonConfirm() {
+    	List awardPersonList = new ArrayList<AwardPersonConfirm>();
+    	if(this.personId != null){
+    		 Map<String,String> awardPersonId = new HashMap<String,String>();
+    		 awardPersonId.put("personId", this.personId);
+    		 awardPersonList= (List) KcServiceLocator.getService(BusinessObjectService.class).findMatching(AwardPersonConfirm.class, awardPersonId);
+    	if(!awardPersonList.isEmpty()){
+    		return (AwardPersonConfirm) awardPersonList.get(0);
+    	}
+    	}
+		return awardPersonConfirm;
+		
+		
+    	
+    }
+
+    public void setAwardPersonConfirm(AwardPersonConfirm awardPersonConfirm) {
+        this.awardPersonConfirm = awardPersonConfirm;
+    }
     public AwardPerson() {
         super();
+        setAwardPersonConfirm(awardPersonConfirm);
         init();
     }
 
@@ -84,6 +181,7 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
         init();
     }
 
+    
     public AwardPerson(KcPerson person, ContactRole role) {
         super(person, role);
         init();
@@ -422,5 +520,19 @@ public class AwardPerson extends AwardContact implements PersonRolodex, Comparab
 	public boolean isInvestigator() {
 		return isPrincipalInvestigator() || isMultiplePi() || isCoInvestigator() || (isKeyPerson() && isOptInUnitStatus());
 	}
+	
+	public boolean isTrainingRequired() {
+		return trainingRequired;
+	}
 
+	public void setTrainingRequired(boolean trainingRequired) {
+		this.trainingRequired = trainingRequired;
+	}
+	public boolean isDisclosuerNotRequired() {
+		return disclosuerNotRequired;
+	}
+
+	public void setDisclosuerNotRequired(boolean disclosuerNotRequired) {
+		this.disclosuerNotRequired = disclosuerNotRequired;
+	}
 }

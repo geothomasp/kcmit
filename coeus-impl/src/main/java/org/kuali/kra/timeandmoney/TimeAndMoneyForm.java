@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.timeandmoney;
 
@@ -44,7 +41,6 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.springframework.util.AutoPopulatingList;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.text.ParseException;
 import java.util.*;
 
@@ -60,6 +56,7 @@ public class TimeAndMoneyForm extends KcTransactionalDocumentFormBase {
     private AwardDirectFandADistributionBean awardDirectFandADistributionBean;
     private String goToAwardNumber;
     private List<String> order;
+    private List<Integer> columnSpan;
     private List<String> obligationStartDates;
     private List<String> obligationExpirationDates;
     private List<String> finalExpirationDates;
@@ -113,7 +110,8 @@ public class TimeAndMoneyForm extends KcTransactionalDocumentFormBase {
         transactionBean = new TransactionBean(this);
         awardDirectFandADistributionBean = new AwardDirectFandADistributionBean(this);
         order = new ArrayList<String>();
-        obligationStartDates = new AutoPopulatingList<String>(String.class);
+        columnSpan = new ArrayList<Integer>();
+        obligationStartDates = new AutoPopulatingList<String>(String.class);        
         obligationExpirationDates = new AutoPopulatingList<String>(String.class);
         finalExpirationDates = new AutoPopulatingList<String>(String.class);
         awardHierarchyNodeItems = new AutoPopulatingList<AwardHierarchyNode>(AwardHierarchyNode.class);
@@ -147,7 +145,7 @@ public class TimeAndMoneyForm extends KcTransactionalDocumentFormBase {
     /**
      * @see org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase#populate(javax.servlet.http.HttpServletRequest)
      * Overriding populate method so that we can register editable properties in form base.  htmlControlAttribute registers
-     * these fields and the form base does validation on them.  We are using jQuery for Award Hierarchy view in Award and T&M, and
+     * these fields and the form base does validation on them.  We are using jQuery for Award Hierarchy view in Award and T&amp;M, and
      * we need to register these properties explicitly before we call populate.
      */
     @Override
@@ -245,6 +243,24 @@ public class TimeAndMoneyForm extends KcTransactionalDocumentFormBase {
     public void setOrder(List<String> order) {
         this.order = order;
     }
+
+    /**
+     * Gets the columnSpan attribute. 
+     * @return Returns the columnSpan.
+     */
+    public List<Integer> getColumnSpan() {
+        return columnSpan;
+    }
+
+    /**
+     * Sets the columnSpan attribute value.
+     * @param columnSpan The columnSpan to set.
+     */
+    public void setColumnSpan(List<Integer> columnSpan) {
+        this.columnSpan = columnSpan;
+    }    
+    
+    
 
     private AwardHierarchyUIService getAwardHierarchyUIService() {
         return KcServiceLocator.getService(AwardHierarchyUIService.class);
@@ -553,14 +569,9 @@ public class TimeAndMoneyForm extends KcTransactionalDocumentFormBase {
     @Override
     @SuppressWarnings("unchecked")
     public void populateHeaderFields(WorkflowDocument workflowDocument) {
-        // super.populateHeaderFields(workflowDocument);
 
         TimeAndMoneyDocument timeAndMoneyDocument = getTimeAndMoneyDocument();
         if(timeAndMoneyDocument.getAward() == null) {
-//            Map<String, String> map = new HashMap<String,String>();
-//            map.put("awardNumber", timeAndMoneyDocument.getRootAwardNumber());
-//            List<Award> awardList = (List<Award>) getBusinessObjectService().findMatching(Award.class, map);
-//            timeAndMoneyDocument.setAward(awardList.get(0)); 
                Award award = getAwardVersionService().getWorkingAwardVersion(timeAndMoneyDocument.getRootAwardNumber());
                timeAndMoneyDocument.setAward(award);
         }
@@ -598,7 +609,7 @@ public class TimeAndMoneyForm extends KcTransactionalDocumentFormBase {
         String createDateStr = null;
         String updateUser = null;
         if (awardDocument.getUpdateTimestamp() != null) {
-            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(awardDocument.getUpdateTimestamp(), "MM/dd/yy");
+            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(awardDocument.getUpdateTimestamp(), "MM/dd/yy hh:mm a");
             updateUser = awardDocument.getUpdateUser().length() > NUMBER_30 ? awardDocument.getUpdateUser().substring(0, NUMBER_30)
                     : awardDocument.getUpdateUser();
             getDocInfo().add(

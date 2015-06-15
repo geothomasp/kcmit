@@ -43,16 +43,16 @@ public class ToggleAwardBudgetStatusAuthorizer extends BudgetAuthorizer {
         AwardBudgetDocument budgetDocument = budgetTask.getAwardBudgetDocument();
         AwardDocument doc = (AwardDocument) budgetDocument.getBudget().getBudgetParent().getDocument();
         WorkflowDocument workflowDoc = getWorkflowDocument(budgetDocument);
-        return workflowDoc.isFinal() && isToggleAwardBudgetStatusValid(budgetDocument) &&
+        return workflowDoc.isFinal() && isRePostAwardBudgetStatusValid(budgetDocument) &&
             hasUnitPermission(userId, doc.getLeadUnitNumber(), Constants.MODULE_NAMESPACE_AWARD_BUDGET, 
                 AwardPermissionConstants.MAINTAIN_AWARD_BUDGET_ROUTING.getAwardPermission());
     }
 
-    private boolean isToggleAwardBudgetStatusValid(AwardBudgetDocument budgetDocument) {
-        String toBePostedStatusCode = getParameterService().getParameterValueAsString(AwardBudgetDocument.class, KeyConstants.AWARD_BUDGET_STATUS_TO_BE_POSTED);
-        String doNotPostStatusCode = getParameterService().getParameterValueAsString(AwardBudgetDocument.class, KeyConstants.AWARD_BUDGET_STATUS_DO_NOT_POST);
+    private boolean isRePostAwardBudgetStatusValid(AwardBudgetDocument budgetDocument) {
+        
+        String postedStatusCode = getParameterService().getParameterValueAsString(AwardBudgetDocument.class, KeyConstants.AWARD_BUDGET_STATUS_POSTED);
         String budgetStatusCode = budgetDocument.getAwardBudget().getAwardBudgetStatusCode();
-        return budgetStatusCode.equals(toBePostedStatusCode) || budgetStatusCode.equals(doNotPostStatusCode);
+        return budgetStatusCode.equals(postedStatusCode);
     }
 
     /**

@@ -1,20 +1,17 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award;
 
@@ -66,10 +63,10 @@ import org.kuali.kra.award.printing.AwardPrintNotice;
 import org.kuali.kra.award.printing.AwardTransactionSelectorBean;
 import org.kuali.kra.award.specialreview.SpecialReviewHelper;
 import org.kuali.kra.award.web.struts.action.SponsorTermFormHelper;
-import org.kuali.kra.external.award.web.AccountCreationPresentationHelper;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.coeus.common.framework.medusa.MedusaBean;
 import org.kuali.kra.award.service.AwardHierarchyUIService;
+import org.kuali.kra.external.award.web.AccountCreationPresentationHelper;
 import org.kuali.coeus.common.budget.framework.core.BudgetVersionFormBase;
 import org.kuali.coeus.common.framework.auth.task.TaskAuthorizationService;
 import org.kuali.coeus.common.framework.custom.CustomDataDocumentForm;
@@ -87,6 +84,8 @@ import org.kuali.rice.kns.web.ui.ExtraButton;
 import org.kuali.rice.kns.web.ui.HeaderField;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
+
+import edu.mit.kc.award.contacts.AwardPersonRemove;
 
 import java.text.ParseException;
 import java.util.*;
@@ -164,7 +163,8 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     private String addRA;    
     private String deletedRas;
     private String rootAwardNumber;
-    
+    private boolean validPrompt;
+    private boolean statusHold;
 
     private AwardHierarchyBean awardHierarchyBean;
     private AwardPrintNotice awardPrintNotice;
@@ -200,11 +200,39 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     private transient ReportTrackingService reportTrackingService;
     
     private List<ReportTrackingBean> reportTrackingBeans;
-    
+    public  Collection<AwardPersonRemove> awardPersonRemovalHistory = new ArrayList<AwardPersonRemove>();
     private AccountCreationPresentationHelper accountCreationHelper;
-    
+    private boolean kpMaintenanceRole = false;
+    private boolean alertMessage = false;
     private boolean displayKeywordPanel=false;
+    
+    
+    public boolean isAlertMessage() {
+		return alertMessage;
+	}
 
+	public void setAlertMessage(boolean alertMessage) {
+	  this.alertMessage = alertMessage;
+	}
+
+	public boolean isKpMaintenanceRole() {
+		return kpMaintenanceRole;
+	}
+
+	public void setKpMaintenanceRole(boolean kpMaintenanceRole) {
+		this.kpMaintenanceRole = kpMaintenanceRole;
+	}
+
+	public  Collection<AwardPersonRemove> getAwardPersonRemovalHistory() {
+		return awardPersonRemovalHistory;
+	}
+
+	public  void setAwardPersonRemovalHistory(Collection<AwardPersonRemove> awardPersonRemovalHistory) {
+		this.awardPersonRemovalHistory = awardPersonRemovalHistory;
+	}
+
+    
+    
     /**
      * Constructs a AwardForm with an existing AwardDocument. Used primarily by tests outside of Struts
      * @param document
@@ -224,9 +252,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
      * This method initialize all form variables
      */
     public void initialize() {
-        //newAwardCostShare = new AwardCostShare();
-        newAwardFandaRate = new AwardFandaRate(); 
-        //setNewSponsorTerms(new ArrayList<SponsorTerm>());
+        newAwardFandaRate = new AwardFandaRate();
         awardCommentHistoryByType = new ArrayList<AwardComment>();
         costShareFormHelper = new CostShareFormHelper(this);
         centralAdminContactsBean = new AwardCentralAdminContactsBean(this);
@@ -242,11 +268,9 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         awardReportsBean = new AwardReportsBean(this);
         awardNotepadBean = new AwardNotepadBean(this);
         awardAttachmentFormBean = new AwardAttachmentFormBean(this);
-        //awardDirectFandADistributionBean = new AwardDirectFandADistributionBean(this);
         setPermissionsHelper(new PermissionsHelper(this));
         setSpecialReviewHelper(new SpecialReviewHelper(this));
         setNotificationHelper(new NotificationHelper());
-        //sponsorTermTypes = new ArrayList<KeyValue>();
         awardCreditSplitBean = new AwardCreditSplitBean(this);
         awardCommentBean = new AwardCommentBean(this);
         awardCloseoutBean = new AwardCloseoutBean(this);
@@ -331,15 +355,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     }
 
 
-    public boolean isDisplayKeywordPanel() {
-		return displayKeywordPanel;
-	}
-
-	public void setDisplayKeywordPanel(boolean displayKeywordPanel) {
-		this.displayKeywordPanel = displayKeywordPanel;
-	}
-
-	public AwardFandaRate getNewAwardFandaRate() {
+    public AwardFandaRate getNewAwardFandaRate() {
         return newAwardFandaRate;
     }
 
@@ -429,6 +445,8 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
     }
 
     public AwardUnitContactsBean getUnitContactsBean() {
+    	if(unitContactsBean.getNewAwardContact().getContact() != null)    	
+        	unitContactsBean.getUnitContact().setFullName(unitContactsBean.getNewAwardContact().getContact().getFullName());
         return unitContactsBean;
     }
     
@@ -1205,7 +1223,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         String createDateStr = null;
         String updateUser = null;
         if (awardDocument.getUpdateTimestamp() != null) {
-            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(awardDocument.getUpdateTimestamp(), "MM/dd/yy");
+            createDateStr = CoreApiServiceLocator.getDateTimeService().toString(awardDocument.getUpdateTimestamp(), "MM/dd/yy hh:mm a");
             updateUser = awardDocument.getUpdateUser().length() > NUMBER_30 ? awardDocument.getUpdateUser().substring(0, NUMBER_30)
                     : awardDocument.getUpdateUser();
             getDocInfo().add(
@@ -1378,9 +1396,9 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         ConfigurationService configurationService = CoreApiServiceLocator.getKualiConfigurationService();
         TaskAuthorizationService task = KcServiceLocator.getService(TaskAuthorizationService.class);
 
-        
         String sendNotificationImage = configurationService.getPropertyValueAsString(externalImageURL) + "buttonsmall_send_notification.gif";
         addExtraButton("methodToCall.sendNotification", sendNotificationImage, "Send Notification");
+        
         
         if( task.isAuthorized(GlobalVariables.getUserSession().getPrincipalId(), new AwardTask("rejectAward", this.getAwardDocument().getAward()))) {
             addExtraButton("methodToCall.reject", configurationService.getPropertyValueAsString(externalImageURL) + "buttonsmall_reject.gif", "Reject");
@@ -1389,7 +1407,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         return extraButtons;
     }
 
-    public Long getPlaceHolderAwardId() {
+   public Long getPlaceHolderAwardId() {
         return placeHolderAwardId;
     }
 
@@ -1458,9 +1476,7 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         this.reportTrackingBeans = reportTrackingBeans;
     }
     
-    
-
-	public String determineRootAwardNumber(AwardForm awardForm) {
+    public String determineRootAwardNumber(AwardForm awardForm) {
         String prevRootAwardNumber = getPrevRootAwardNumber();
         return prevRootAwardNumber != null ? prevRootAwardNumber : getAwardDocument().getAward().getAwardNumber();
     }
@@ -1483,4 +1499,27 @@ public class AwardForm extends BudgetVersionFormBase implements MultiLookupForm,
         Collections.reverse(results);
         return results;
     }
+	public boolean isValidPrompt() {
+		return validPrompt;
+	}
+
+	public void setValidPrompt(boolean validPrompt) {
+		this.validPrompt = validPrompt;
+	}
+
+	public boolean isStatusHold() {
+		return statusHold;
+	}
+
+	public void setStatusHold(boolean statusHold) {
+		this.statusHold = statusHold;
+	}
+
+	public boolean isDisplayKeywordPanel() {
+		return displayKeywordPanel;
+	}
+
+	public void setDisplayKeywordPanel(boolean displayKeywordPanel) {
+		this.displayKeywordPanel = displayKeywordPanel;
+	}
 }

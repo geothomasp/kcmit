@@ -1143,10 +1143,11 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
     public List<ProposalSite> getOtherOrganizations() {
 		List<ProposalSite> otherOrganizations = getProposalSitesForType(ProposalSite.PROPOSAL_SITE_OTHER_ORGANIZATION);
 		for (ProposalSite proposalSite : otherOrganizations) {
-			if(proposalSite.getOrganization().getCongressionalDistrict() != null)
-			proposalSite.initializeDefaultCongressionalDistrict();
+			if(proposalSite.getOrganization().getCongressionalDistrict() != null){
+				proposalSite.initializeDefaultCongressionalDistrict();
+			}
 			List<OrganizationYnq> organizationYnqs=getOrganisationRiskPriority(proposalSite);
-			if(organizationYnqs != null || !organizationYnqs.isEmpty()) {
+			if(organizationYnqs != null && !organizationYnqs.isEmpty()) {
 	            for(OrganizationYnq organizationYnq:organizationYnqs) {
 	        		if(organizationYnq.getAnswer().equals(Constants.TRUE_FLAG)) {
 	        			proposalSite.setOrganizationRisk(Constants.LOW_RISK);
@@ -2128,7 +2129,8 @@ public class DevelopmentProposal extends KcPersistableBusinessObjectBase impleme
 
     public Integer getParentInvestigatorFlag(String personId, Integer flag) {
         for (ProposalPerson pPerson : this.getProposalPersons()) {
-            if (pPerson.getPersonId() != null && pPerson.getPersonId().equals(personId) || pPerson.getRolodexId() != null && pPerson.getRolodexId().equals(Integer.valueOf(personId))) {
+            if (pPerson.getPersonId() != null && pPerson.getPersonId().equals(personId) ||
+                pPerson.getRolodexId() != null && String.valueOf(pPerson.getRolodexId()).equalsIgnoreCase(personId)) {
                 flag = 2;
                 if (pPerson.getProposalPersonRoleId().equals("PI")) {
                     flag = 1;
@@ -2422,7 +2424,7 @@ public void setPrevGrantsGovTrackingID(String prevGrantsGovTrackingID) {
     public ProposalDevelopmentBudgetExt getFinalBudget() {
     	return finalBudget;
     }
-    
+
 
 	public void setFinalBudget(ProposalDevelopmentBudgetExt finalBudget) {
 		this.finalBudget = finalBudget;

@@ -30,21 +30,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
+import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
+import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.framework.person.KcPerson;
 import org.kuali.coeus.common.framework.person.KcPersonService;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
-import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
-import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.controller.KcTransactionalDocumentActionBase;
 import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
 import org.kuali.kra.institutionalproposal.document.InstitutionalProposalDocument;
 import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.institutionalproposal.service.InstitutionalProposalLockService;
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
-import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
-import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -55,12 +56,12 @@ import org.kuali.rice.kns.authorization.AuthorizationConstants;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.document.authorization.DocumentPresentationController;
 import org.kuali.rice.kns.service.KNSServiceLocator;
-import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.rules.rule.event.DocumentEvent;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.service.PessimisticLockService;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
 
@@ -375,18 +376,21 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
     			instProposalAttachmentform.setMaintainInstituteProposal(true);
     		}
         }
-       
-        if(hasPermission("KC-IP","VIEW_INST_PROPOSAL_DOC") || 
-        		hasPermission("KC-IP","VIEW_SHARED_INST_PROPOSAL_DOC") ||
-        		   hasPermission("KC-IP","Create Institutional Proposal") ||
-        		      hasPermission("KC-IP","Edit Institutional Proposal") ||        		         
-        		            hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC"))
-        		                {
-        	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
-    		if(instProposalAttachmentform != null) {
-    			instProposalAttachmentform.setCanViewAttachment(true);
-    		}
-        }
+
+        InstitutionalProposalForm institutionalProposalForm = (InstitutionalProposalForm)form;
+		getSharedDocumentService().processInstituteProposalAttachments(institutionalProposalForm.getInstitutionalProposalDocument().getInstitutionalProposal());
+
+//        if(hasPermission("KC-IP","VIEW_INST_PROPOSAL_DOC") || 
+//        		hasPermission("KC-IP","VIEW_SHARED_INST_PROPOSAL_DOC") ||
+//        		   hasPermission("KC-IP","Create Institutional Proposal") ||
+//        		      hasPermission("KC-IP","Edit Institutional Proposal") ||        		         
+//        		            hasPermission("KC-IP","MAINTAIN_INST_PROPOSAL_DOC"))
+//        		                {
+//        	InstitutionalProposalAttachmentFormBean instProposalAttachmentform = ((InstitutionalProposalForm) form).getInstitutionalProposalAttachmentBean();
+//    		if(instProposalAttachmentform != null) {
+//    			instProposalAttachmentform.setCanViewAttachment(true);
+//    		}
+//        }
         
         String attachmentRemovalParameterValue= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE, 
                 ParameterConstants.DOCUMENT_COMPONENT, "disableAttachmentRemoval");
@@ -481,4 +485,8 @@ public class InstitutionalProposalAction extends KcTransactionalDocumentActionBa
         return KimApiServiceLocator.getPermissionService();
     } 
 
+	protected SharedDocumentService getSharedDocumentService() {
+	      return KcServiceLocator.getService(SharedDocumentService.class);
+	}
+    
 }

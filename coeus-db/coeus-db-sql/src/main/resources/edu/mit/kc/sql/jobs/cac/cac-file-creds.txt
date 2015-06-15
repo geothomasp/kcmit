@@ -1,0 +1,3 @@
+password=pHUmA67s
+username=osp-award.service
+domain=WIN.MIT.EDU

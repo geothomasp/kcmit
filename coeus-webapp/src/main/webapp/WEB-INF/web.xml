@@ -94,7 +94,15 @@
         <filter-name>DummyLoginFilter</filter-name>
         <filter-class>org.kuali.rice.krad.web.filter.DummyLoginFilter</filter-class>
     </filter>
-
+    
+    <filter>
+    <filter-name>MitKcFilter</filter-name>
+    <filter-class>edu.mit.kc.web.filter.MitKcFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>MitKcFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>HttpRequestLogger</filter-name>
         <url-pattern>/*</url-pattern>
@@ -174,6 +182,16 @@
         <servlet-name>krad</servlet-name>
     </filter-mapping>
     <!-- Rice content End -->
+
+    <filter-mapping>
+        <filter-name>UserLoginFilter</filter-name>
+        <url-pattern>/schemaspy/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>UserLoginFilter</filter-name>
+        <url-pattern>/monitoring/*</url-pattern>
+    </filter-mapping>
 
     <filter>
         <filter-name>SessionExpiredFilter</filter-name>
@@ -260,7 +278,7 @@
         <servlet-class>org.kuali.rice.kns.web.struts.action.KualiActionServlet</servlet-class>
         <init-param>
             <param-name>config</param-name>
-            <param-value>/WEB-INF/struts-config.xml</param-value>
+            <param-value>/WEB-INF/struts-config.xml,/WEB-INF/Mit-struts-config.xml</param-value>
         </init-param>
         <init-param>
             <param-name>debug</param-name>
@@ -457,7 +475,7 @@
     </servlet-mapping>
 
     <session-config>
-        <session-timeout>60</session-timeout>
+        <session-timeout>120</session-timeout>
     </session-config>
 
     <welcome-file-list>

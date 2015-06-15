@@ -18,6 +18,22 @@
  */
 package org.kuali.kra.award.web.struts.action;
 
+import static org.apache.commons.lang3.StringUtils.replace;
+import static org.kuali.rice.krad.util.KRADConstants.CONFIRMATION_QUESTION;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.mail.internet.HeaderTokenizer;
+import javax.mail.internet.MimeUtility;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,19 +42,32 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
+import org.kuali.coeus.common.budget.framework.core.BudgetParentActionBase;
+import org.kuali.coeus.common.framework.attachment.AttachmentFile;
 import org.kuali.coeus.common.framework.auth.SystemAuthorizationService;
+import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
+import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
+import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
 import org.kuali.coeus.common.framework.version.VersionStatus;
 import org.kuali.coeus.common.framework.version.history.VersionHistory;
 import org.kuali.coeus.common.framework.version.history.VersionHistoryService;
+import org.kuali.coeus.common.impl.SharedDocumentService;
 import org.kuali.coeus.common.notification.impl.service.KcNotificationService;
-import org.kuali.coeus.common.framework.auth.UnitAuthorizationService;
-import org.kuali.coeus.common.framework.auth.perm.KcAuthorizationService;
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedDetails;
+import org.kuali.coeus.propdev.impl.sapfeed.SapFeedService;
+import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
+import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.kuali.coeus.sys.framework.validation.AuditHelper;
 import org.kuali.coeus.sys.framework.validation.AuditHelper.ValidationState;
 import org.kuali.coeus.sys.framework.workflow.KcDocumentRejectionService;
-import org.kuali.coeus.sys.framework.controller.StrutsConfirmation;
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
-import org.kuali.kra.award.*;
+import org.kuali.kra.award.AwardAmountInfoService;
+import org.kuali.kra.award.AwardForm;
+import org.kuali.kra.award.AwardLockService;
+import org.kuali.kra.award.AwardNumberService;
+import org.kuali.kra.award.AwardTemplateSyncScope;
+import org.kuali.kra.award.AwardTemplateSyncService;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchy;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchyBean;
 import org.kuali.kra.award.awardhierarchy.AwardHierarchyService;
@@ -56,7 +85,12 @@ import org.kuali.kra.award.home.Award;
 import org.kuali.kra.award.home.AwardAmountInfo;
 import org.kuali.kra.award.home.AwardComment;
 import org.kuali.kra.award.home.AwardService;
+import org.kuali.kra.award.home.AwardSponsorTerm;
+import org.kuali.kra.award.home.AwardStatus;
 import org.kuali.kra.award.home.approvedsubawards.AwardApprovedSubaward;
+import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
+import org.kuali.kra.award.infrastructure.AwardRoleConstants;
+import org.kuali.kra.award.notesandattachments.attachments.AwardAttachment;
 import org.kuali.kra.award.notesandattachments.attachments.AwardAttachmentFormBean;
 import org.kuali.kra.award.paymentreports.ReportClass;
 import org.kuali.kra.award.paymentreports.awardreports.AwardReportTerm;
@@ -67,15 +101,12 @@ import org.kuali.kra.award.service.AwardDirectFandADistributionService;
 import org.kuali.kra.award.service.AwardReportsService;
 import org.kuali.kra.award.service.AwardSponsorTermService;
 import org.kuali.kra.award.version.service.AwardVersionService;
-import org.kuali.coeus.common.budget.framework.core.BudgetParentActionBase;
-import org.kuali.kra.award.infrastructure.AwardPermissionConstants;
-import org.kuali.kra.award.infrastructure.AwardRoleConstants;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
-import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentFormBean;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachments;
+import org.kuali.kra.institutionalproposal.attachments.InstitutionalProposalAttachmentsData;
+import org.kuali.kra.institutionalproposal.home.InstitutionalProposal;
 import org.kuali.kra.institutionalproposal.web.struts.form.InstitutionalProposalForm;
-import org.kuali.coeus.common.framework.krms.KrmsRulesExecutionService;
-import org.kuali.coeus.common.api.sponsor.hierarchy.SponsorHierarchyService;
 import org.kuali.kra.subaward.service.SubAwardService;
 import org.kuali.kra.timeandmoney.AwardHierarchyNode;
 import org.kuali.kra.timeandmoney.document.TimeAndMoneyDocument;
@@ -88,7 +119,6 @@ import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -97,21 +127,22 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
-import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.kns.util.WebUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.web.struts.form.KualiForm;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.rules.rule.event.DocumentEvent;
-import org.kuali.rice.krad.service.*;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
+import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.service.PessimisticLockService;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import static org.apache.commons.lang3.StringUtils.replace;
-import static org.kuali.rice.krad.util.KRADConstants.CONFIRMATION_QUESTION;
+import edu.mit.kc.award.SharedDocForm;
+import edu.mit.kc.infrastructure.KcMitConstants;
 
 /**
  * 
@@ -124,8 +155,12 @@ public class AwardAction extends BudgetParentActionBase {
     private static final String PAYMENT_INVOICES_PROPERTY_NAME = "Payments and Invoices";
     private static final String COMFIRMATION_PARAM_STRING = "After Award {0} information is synchronized, make sure that the Award Sponsor Contacts information is also synchronized with the same sponsor template. Failing to do so will result in data inconsistency. Are you sure you want to replace current {0} information with selected {1} template information?";
     private static final String SUPER_USER_ACTION_REQUESTS = "superUserActionRequests";
+    private static final Integer AWARD_STATUS_HOLD =6;    
 	private static final String DOCUMENT_REJECT_QUESTION="DocReject";
 
+    private KcAuthorizationService kraAuthorizationService;
+    
+   
     private enum SuperUserAction {
         SUPER_USER_APPROVE, TAKE_SUPER_USER_ACTIONS
     }
@@ -136,6 +171,7 @@ public class AwardAction extends BudgetParentActionBase {
     private transient ReportTrackingService reportTrackingService;
     private transient KcNotificationService notificationService;
     private transient SubAwardService subAwardService;
+    private SapFeedService sapFeedService;
     TimeAndMoneyAwardDateSaveRuleImpl timeAndMoneyAwardDateSaveRuleImpl;
     
     private static final Log LOG = LogFactory.getLog( AwardAction.class );
@@ -165,6 +201,7 @@ public class AwardAction extends BudgetParentActionBase {
 
     private static final int NINE = 9;
     private static final String DOCUMENT_ROUTE_QUESTION="DocRoute";
+    private static final ActionForward RESPONSE_ALREADY_HANDLED = null;
     
     private static final String ADD_SYNC_CHANGE_QUESTION = "document.question.awardhierarchy.sync";
     private static final String DEL_SYNC_CHANGE_QUESTION = "document.question.awardhierarchy.sync";    
@@ -178,8 +215,10 @@ public class AwardAction extends BudgetParentActionBase {
         forward = handleDocument(mapping, form, request, response, awardForm);
         
         AwardDocument awardDocument = (AwardDocument) awardForm.getDocument();
+    
+        awardForm.setKpMaintenanceRole(KimApiServiceLocator.getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(), "KC-AWARD", KcMitConstants.AWARD_KEYPERSON_MAINTENANCE_ROLE));  //Move to Constants
         //check to see if this document might be a part of an active award sync(if it is lock it)
-        if(awardForm.getMethodToCall().equals("docHandler")){
+        if (awardForm.getMethodToCall().equals("docHandler")){
             AwardDocument parentSyncAward = 
                     getAwardSyncService().getAwardLockingHierarchyForSync(awardDocument, GlobalVariables.getUserSession().getPrincipalId()); 
             if (parentSyncAward != null) {
@@ -192,13 +231,14 @@ public class AwardAction extends BudgetParentActionBase {
             setSubAwardDetails(awardDocument.getAward());
             handlePlaceHolderDocument(awardForm, awardDocument);
         }
+        awardForm.setAwardPersonRemovalHistory(new AwardContactsAction().getProjectPersonRemovalHistory(form));
         
         handleAttachmentsDocument(form);
+    	
     	String displayKeywordPanel= getParameterService().getParameterValueAsString(Constants.KC_GENERIC_PARAMETER_NAMESPACE,ParameterConstants.ALL_COMPONENT,Constants.KEYWORD_PANEL_DISPLAY_IP_AWARD);
     	if(displayKeywordPanel != null && displayKeywordPanel.equalsIgnoreCase("TRUE")) {
     		((AwardForm) form).setDisplayKeywordPanel(true);
     	}
-       
         return forward;
     }
 
@@ -223,19 +263,46 @@ public class AwardAction extends BudgetParentActionBase {
         }
     }
     
+
+    private void handlePlaceHolderDocumentDoc(SharedDocForm form, AwardDocument awardDocument) {
+        if(awardDocument.isPlaceHolderDocument()) {
+            Long awardId = form.getPlaceHolderAwardId();
+            //If it is a placeholder document, we want to initialize it with the award that the user is viewing
+            int currentAwardIndex = -1;
+            Award currentAward = null;
+            for(Award award : awardDocument.getAwardList()) {
+                currentAwardIndex++;
+                if(ObjectUtils.equals(award.getAwardId(), awardId)) {
+                	currentAward = award;
+                    break;
+                }
+            }
+            if(currentAward != null) {
+                awardDocument.getAwardList().remove(currentAwardIndex);
+                awardDocument.getAwardList().add(0, currentAward);
+                form.setViewOnly(true);                
+            }
+        }
+    }
+    
     protected void handleAttachmentsDocument(ActionForm form) {
     	String currentUser = GlobalVariables.getUserSession().getPrincipalId();
-        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
-        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
-        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
-        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
-          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
-          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
-        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
-    		if(awardAttachmentform != null) {
-    			awardAttachmentform.setCanViewAttachment(true);
-    		}
-        }
+        AwardForm awardForm = (AwardForm) form;
+        AwardDocument awardDocument = awardForm.getAwardDocument();
+    	
+		getSharedDocumentService().processAwardAttachments(awardDocument.getAward());
+    	
+//        if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_SHARED_AWARD_DOC") || 
+//        		getPermissionService().hasPermission(currentUser, "KC-AWARD", "VIEW_AWARD_DOCUMENTS") ||
+//        		  getPermissionService().hasPermission(currentUser, "KC-AWARD", "View Award Attachments") ||
+//        		     getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
+//          		        getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
+//          		           getPermissionService().hasPermission(currentUser, "KC-AWARD", "Maintain Award Attachments")) {
+//        	AwardAttachmentFormBean awardAttachmentform = ((AwardForm) form).getAwardAttachmentFormBean();
+//    		if(awardAttachmentform != null) {
+//    			awardAttachmentform.setCanViewAttachment(true);
+//    		}
+//        }
         
         if(getPermissionService().hasPermission(currentUser, "KC-AWARD", "Modify Award") ||
         		getPermissionService().hasPermission(currentUser, "KC-AWARD", "Create Award") ||
@@ -260,21 +327,36 @@ public class AwardAction extends BudgetParentActionBase {
         GlobalVariables.getUserSession().removeObject(GlobalVariables.getUserSession().getKualiSessionId() + Constants.TIME_AND_MONEY_DOCUMENT_STRING_FOR_SESSION);
     }
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AwardForm awardForm = (AwardForm)form;
-        
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {       
+    	SharedDocForm sharedDocForm = new SharedDocForm();
+    	if(form.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
+    	    sharedDocForm = (SharedDocForm)form;  
+
         ActionForward actionForward = super.execute(mapping, form, request, response);
-        
-        if (awardForm.isAuditActivated()){
+        return actionForward;
+        }    else{
+        	form.getClass();
+        	AwardForm awardForm = (AwardForm)form;        	 
+         //   boolean awardNewStatus=awardForm.isStatusHold();  
+            ActionForward actionForward = super.execute(mapping, form, request, response);
+            if (awardForm.isAuditActivated()){
             awardForm.setUnitRulesMessages(getUnitRulesMessages(awardForm.getAwardDocument()));
         }
         if (GlobalVariables.getAuditErrorMap().isEmpty()) {
             KcServiceLocator.getService(AuditHelper.class).auditConditionally((AwardForm) form);
         }
-        
-        return actionForward;
-    }
-    
+        if (awardForm.isAlertMessage()) {
+             KNSGlobalVariables.getMessageList().add("error.award.awardhdata.save.pending");
+             awardForm.setViewOnly(true);
+        }
+     /*  if(awardNewStatus){
+        	awardForm.getAwardDocument().getAward().getAwardStatus().setStatusCode(AWARD_STATUS_HOLD);
+        }*/
+       return actionForward;
+        }     
+
+       
+    }   
     protected List<String> getUnitRulesMessages(AwardDocument awardDoc) {
         KrmsRulesExecutionService rulesService = KcServiceLocator.getService(KrmsRulesExecutionService.class);
         return rulesService.processUnitValidations(awardDoc.getLeadUnitNumber(), awardDoc);
@@ -343,6 +425,8 @@ public class AwardAction extends BudgetParentActionBase {
     protected ActionForward submitAward(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         AwardForm awardForm = (AwardForm) form;
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
+       
+        getSapFeedService().updateSapFeedDetails(awardForm.getAwardDocument().getAward().getAwardNumber(),awardForm.getAwardDocument().getAward().getSequenceNumber());
         
         if(getTimeAndMoneyExistenceService().validateTimeAndMoneyRule(awardForm.getAwardDocument().getAward(), awardForm.getAwardHierarchyBean().getRootNode().getAwardNumber())){
             forward = super.route(mapping, form, request, response);
@@ -364,22 +448,59 @@ public class AwardAction extends BudgetParentActionBase {
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
         AwardForm awardForm = (AwardForm) form;
         awardForm.setAuditActivated(true);
-
+    Award award=awardForm.getAwardDocument().getAward();
+    award.refreshReferenceObject("statusCode");
+        Integer awardStatus= awardForm.getAwardDocument().getAward().getStatusCode();
         Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
         Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
         String methodToCall = ((KualiForm) form).getMethodToCall();
         ValidationState status = KcServiceLocator.getService(AuditHelper.class).isValidSubmission(awardForm, true);
-        
+        ValidationState validHoldPrompt = KcServiceLocator.getService(AuditHelper.class).isValidHoldPrompt(awardForm, true);
+        if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus!=6){
+        	/*request.getSession().setAttribute("isWarning", true);*/
+        	awardForm.setValidPrompt(true);
+        }else if(validHoldPrompt==ValidationState.HOLDPROMPT && awardStatus==6){
+        	/*request.getSession().setAttribute("isWarning", false);*/
+        /*	awardForm.setStatusHold(true);*/
+        	awardForm.setValidPrompt(false);
+        }else if(awardStatus==6){
+        	/*awardForm.setStatusHold(true);*/
+        	awardForm.setValidPrompt(false);
+        }
+       
         if (status == ValidationState.WARNING) {
             if(question == null){
                 return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Validation Warning Exists. Are you sure want to submit to workflow routing.", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
             } else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {
-                return submitAward(mapping, form, request, response);
+            	if(validHoldPrompt == ValidationState.HOLDPROMPT){
+            		if(question == null){
+            			return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Hold prompt warnings are existing .Do you want to change status to Hold?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+            		} else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
+            			return holdAwardStatus(mapping, form, request, response);
+            		}else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)){
+            			return submitAward(mapping, form, request, response);
+            		}else {
+            			return forward;
+            		}
+            	}
+            	else{
+            		return submitAward(mapping, form, request, response);
+            	}
             } else {
-                return forward;
-            }    
+            		return forward;
+            	}    
+            }
+        if((status == ValidationState.OK || status == ValidationState.HOLDPROMPT) && validHoldPrompt == ValidationState.HOLDPROMPT){
+        	if(question == null){
+        		return this.performQuestionWithoutInput(mapping, form, request, response, DOCUMENT_ROUTE_QUESTION, "Hold prompt warnings are existing .Do you want to change status to Hold?", KRADConstants.CONFIRMATION_QUESTION, methodToCall, "");
+        	} else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {              
+        		return holdAwardStatus(mapping, form, request, response);
+        	}else if(DOCUMENT_ROUTE_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)){
+        		return submitAward(mapping, form, request, response);
+        	}else {
+        		return forward;
+        	}
         }
-        
         if(status == ValidationState.OK){
            return submitAward(mapping, form, request, response);
         } else {
@@ -387,7 +508,10 @@ public class AwardAction extends BudgetParentActionBase {
             GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
             return forward;
          }
-    }
+        
+       
+  
+         }
     
     @Override
     public ActionForward blanketApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -425,6 +549,8 @@ public class AwardAction extends BudgetParentActionBase {
         ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
         AwardForm awardForm = (AwardForm) form;
 
+       
+       
         Award award = awardForm.getAwardDocument().getAward();
         checkAwardNumber(award);
         String userId = GlobalVariables.getUserSession().getPrincipalName();
@@ -444,13 +570,14 @@ public class AwardAction extends BudgetParentActionBase {
         } else {
             award.setScienceCodeIndicator(Constants.YES_FLAG);
         }
-       
+
         forward = super.save(mapping, form, request, response);
+        
+      
         if (awardForm.getMethodToCall().equals("save") && awardForm.isAuditActivated()) {
             forward = mapping.findForward(Constants.MAPPING_AWARD_ACTIONS_PAGE);
         }
 
-        
         AwardHierarchyBean bean = awardForm.getAwardHierarchyBean();
         if (bean.saveHierarchyChanges()) {
             List<String> order = new ArrayList<String>();
@@ -465,7 +592,7 @@ public class AwardAction extends BudgetParentActionBase {
         // now we need to save the hierarchy changes
         getBusinessObjectService().save(award.getSyncChanges());
         awardForm.getAwardSyncBean().getConfirmedPendingChanges().clear();
-        
+        awardForm.setAlertMessage(false);
         /**
          * deal with the award report tracking generation business.
          */
@@ -496,25 +623,17 @@ public class AwardAction extends BudgetParentActionBase {
 
     /**
      * This method returns the award associated with the AwardDocument on the AwardForm
-     * @return
      */
     protected Award getAward(ActionForm form) {
         return getAwardDocument(form).getAward(); 
     }
-    
-    /**
-     * This method returns the AwardDocument
-     * 
-     * @param form
-     * @return
-     */
+
     protected AwardDocument getAwardDocument(ActionForm form) {
         return ((AwardForm) form).getAwardDocument();
     }
     
     /**
      * This method sets an award number on an award if the award number hasn't been initialized yet.
-     * @param award
      */
     protected void checkAwardNumber(Award award) {
         if (Award.DEFAULT_AWARD_NUMBER.equals(award.getAwardNumber())) {
@@ -541,16 +660,12 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      * 
      * This method is a helper method to retrieve AwardNumberService.
-     * @return
      */
     protected AwardNumberService getAwardNumberService() {
         return KcServiceLocator.getService(AwardNumberService.class);
     }
     
     /**
-     * @see org.kuali.coeus.sys.framework.controller.KcTransactionalDocumentActionBase#initialDocumentSave(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
-     *
-     * TODO JF: Handle initial save
      * 
      * One of these conditions exist when this method is called:
        1) This is a new award, created from the "Create Award" portal action. A new root node needs to be created
@@ -596,7 +711,6 @@ public class AwardAction extends BudgetParentActionBase {
      *
      * This method populates the initial static AwardCloseout reports upon the creation of an Award.
      *
-     * @param form
      */
     protected void populateStaticCloseoutReports(AwardForm form){
         CloseoutReportTypeValuesFinder closeoutReportTypeValuesFinder = new CloseoutReportTypeValuesFinder();
@@ -607,7 +721,22 @@ public class AwardAction extends BudgetParentActionBase {
     protected AwardHierarchyService getAwardHierarchyService(){
         return KcServiceLocator.getService(AwardHierarchyService.class);
     }
-
+    protected ActionForward holdAwardStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
+    	AwardForm awardForm=(AwardForm)form;
+    	awardForm.getAwardDocument().getAward().getAwardStatus().setDescription("Hold");
+    	awardForm.getAwardDocument().getAward().setStatusCode(AWARD_STATUS_HOLD);
+    	 return submitAward(mapping, form, request, response);
+    }
+    protected ActionForward holdAwardStatusWithError(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	ActionForward forward = mapping.findForward(Constants.MAPPING_BASIC);
+    	AwardForm awardForm=(AwardForm)form;
+    	awardForm.getAwardDocument().getAward().getAwardStatus().setDescription("Hold");
+    	awardForm.getAwardDocument().getAward().setStatusCode(AWARD_STATUS_HOLD);
+    	  GlobalVariables.getMessageMap().clearErrorMessages(); 
+          GlobalVariables.getMessageMap().putError("datavalidation",KeyConstants.ERROR_WORKFLOW_SUBMISSION,  new String[] {});
+          return forward;
+    }
     /**
      * Can the Award be saved?  This method is normally overridden by
      * a subclass in order to invoke business rules to verify that the
@@ -621,8 +750,7 @@ public class AwardAction extends BudgetParentActionBase {
         if (StringUtils.isNotEmpty(leadUnitNumber) && checkNoMoreThanOnePI(awardDocument.getAward())) {
             String userId = GlobalVariables.getUserSession().getPrincipalId();
             UnitAuthorizationService authService = KcServiceLocator.getService(UnitAuthorizationService.class);
-            //List<Unit> userUnits = authService.getUnits(userId, Constants.MODULE_NAMESPACE_AWARD, AwardPermissionConstants.CREATE_AWARD.getAwardPermission());
-            return authService.hasMatchingQualifiedUnits(userId, Constants.MODULE_NAMESPACE_AWARD, 
+            return authService.hasMatchingQualifiedUnits(userId, Constants.MODULE_NAMESPACE_AWARD,
                     AwardPermissionConstants.MODIFY_AWARD.getAwardPermission(), leadUnitNumber);
         }
         return false; 
@@ -641,8 +769,6 @@ public class AwardAction extends BudgetParentActionBase {
         }
         boolean valid = piCount <= 1;
         if (!valid) {
-            //projectPersonnelBean.contactRoleCode
-            //projectPersonnelBean.projectPersonnel[0].contactRoleCode
             for (String field  : fields) {
                 GlobalVariables.getMessageMap().putError(field, AwardProjectPersonsSaveRule.ERROR_AWARD_PROJECT_PERSON_MULTIPLE_PI_EXISTS);
             }
@@ -663,9 +789,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method builds the string for the ActionForward
-     * @param forwardPath
-     * @param docIdRequestParameter
-     * @return
      */
     public String buildForwardStringForActionListCommand(String forwardPath, String docIdRequestParameter){
         StringBuilder sb = new StringBuilder();
@@ -681,18 +804,14 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Awards tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward home(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
         AwardForm awardForm = (AwardForm) form;
         AwardDocument awardDocument = (AwardDocument) awardForm.getDocument();
-        setBooleanAwardInMultipleNodeHierarchyOnForm (awardDocument.getAward());
+        setBooleanAwardInMultipleNodeHierarchyOnForm(awardDocument.getAward());
         setBooleanAwardHasTandMOrIsVersioned(awardDocument.getAward());
+        setSubAwardDetails(awardDocument.getAward());
         AwardAmountInfoService awardAmountInfoService = KcServiceLocator.getService(AwardAmountInfoService.class);
         int index = awardAmountInfoService.fetchIndexOfAwardAmountInfoWithHighestTransactionId(awardDocument.getAward().getAwardAmountInfos());
         
@@ -748,11 +867,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Contacts tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward contacts(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         Award award = getAward(form);
@@ -765,11 +879,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Commitments tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward commitments(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -897,14 +1006,7 @@ public class AwardAction extends BudgetParentActionBase {
     /*
      * 
      * This method creates a transactionDetail object and adds it to the list for persistence later.
-     * 
-     * @param sourceAwardNumber
-     * @param destinationAwardNumber
-     * @param sequenceNumber
-     * @param pendingTransaction
-     * @param currentAwardNumber
-     * @param documentNumber
-     * @param transactionDetailItems
+     *
      */
     protected TransactionDetail addTransactionDetails(String sourceAwardNumber, String destinationAwardNumber, Integer sequenceNumber, String documentNumber, 
             String commentsString, Award rootAward){
@@ -1015,6 +1117,15 @@ public class AwardAction extends BudgetParentActionBase {
         return awards;
     }
     
+//    public Award getWorkingAwardVersion(String goToAwardNumber) {
+//        Award award = null;
+//        award = getPendingAwardVersion(goToAwardNumber);
+//        if (award == null) {
+//            award = getActiveAwardVersion(goToAwardNumber);
+//        }
+//        return award;
+//    }
+    
     public AwardVersionService getAwardVersionService() {
         return KcServiceLocator.getService(AwardVersionService.class);
     }
@@ -1044,8 +1155,6 @@ public class AwardAction extends BudgetParentActionBase {
 
     /**
      * This method tests if the award is new by checking the size of AwardDirectFandADistributions on the Award.
-     * @param awardForm
-     * @return
      */
     public boolean isNewAward(AwardForm awardForm) {
         return awardForm.getAwardDocument().getAward().getAwardDirectFandADistributions().size() == 0;
@@ -1054,7 +1163,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method is a helper method to retrieve AwardSponsorTermService.
-     * @return
      */
     protected AwardDirectFandADistributionService getAwardDirectFandADistributionService() {
         return KcServiceLocator.getService(AwardDirectFandADistributionService.class);
@@ -1063,11 +1171,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Payment, Reports and Terms tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     @SuppressWarnings("all")
     public ActionForward paymentReportsAndTerms(ActionMapping mapping, ActionForm form
@@ -1098,13 +1201,14 @@ public class AwardAction extends BudgetParentActionBase {
         awardForm.setReportClassForPaymentsAndInvoices((ReportClass) initializedObjects.get(
                                                         Constants.REPORT_CLASS_FOR_PAYMENTS_AND_INVOICES_PANEL));
         awardForm.buildReportTrackingBeans();
+        
+        getAwardReportTermsOrderedList(awardForm);
 
     }
 
     /**
      *
      * This method is a helper method to retrieve AwardSponsorTermService.
-     * @return
      */
     protected AwardSponsorTermService getAwardSponsorTermService() {
         return KcServiceLocator.getService(AwardSponsorTermService.class);
@@ -1113,11 +1217,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Special Review tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward specialReview(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -1128,11 +1227,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Special Review tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward customData(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -1144,11 +1238,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Custom Data tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward questions(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -1158,11 +1247,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Questions tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward permissions(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -1173,11 +1257,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Permissions tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward notesAndAttachments(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -1190,11 +1269,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
     *
     * This method gets called upon navigation to Medusa tab.
-    * @param mapping
-    * @param form
-    * @param request
-    * @param response
-    * @return
     */
    public ActionForward medusa(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
        AwardForm awardForm = (AwardForm) form;
@@ -1210,14 +1284,11 @@ public class AwardAction extends BudgetParentActionBase {
        return mapping.findForward(Constants.MAPPING_AWARD_MEDUSA_PAGE);
    }
 
+
+   
     /**
      *
      * This method gets called upon navigation to Award Actions tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */ 
     public ActionForward awardActions(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1240,11 +1311,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method gets called upon navigation to Awards tab.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward budgets(ActionMapping mapping, ActionForm form
             , HttpServletRequest request, HttpServletResponse response) {
@@ -1252,36 +1318,26 @@ public class AwardAction extends BudgetParentActionBase {
         getAwardBudgetService().populateBudgetLimitSummary(awardForm.getBudgetLimitSummary(), awardForm.getAwardDocument().getAward());
         return mapping.findForward(Constants.MAPPING_AWARD_BUDGET_VERSIONS_PAGE);
     }
-    
-    /**
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @param awardForm
-     * @return
-     * @throws Exception
-     */
+
     ActionForward handleDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                   HttpServletResponse response, AwardForm awardForm) throws Exception {
 
-        ActionForward forward = null;
-        
+        ActionForward forward;
+
         String command = awardForm.getCommand();
         if (KewApiConstants.ACTIONLIST_INLINE_COMMAND.equals(command)) {
             loadDocumentInForm(request, awardForm);
-            String docIdRequestParameter = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
             ActionForward baseForward = mapping.findForward(Constants.MAPPING_COPY_PROPOSAL_PAGE);
             forward = new ActionForward(buildForwardStringForActionListCommand(
                     baseForward.getPath(),awardForm.getDocument().getDocumentNumber()));
         } else if (Constants.MAPPING_AWARD_ACTIONS_PAGE.equals(command)) {
             loadDocument(awardForm);
+            forward = awardActions(mapping, awardForm, request, response);
+        } else if (Constants.MAPPING_AWARD_BUDGET_VERSIONS_PAGE.equals(command)) {
+            loadDocument(awardForm);
+            forward = budgets(mapping,awardForm,request,response);
         } else {
             forward = super.docHandler(mapping, form, request, response);
-        }
-
-        if (Constants.MAPPING_AWARD_ACTIONS_PAGE.equals(command)) {
-            forward = awardActions(mapping, awardForm, request, response);
         }
         
         return forward;
@@ -1308,6 +1364,14 @@ public class AwardAction extends BudgetParentActionBase {
         handlePlaceHolderDocument(awardForm, retrievedDocument);        
     }
     
+    protected void loadDocumentInFormDoc(HttpServletRequest request, SharedDocForm sharedForm)
+    	    throws WorkflowException {
+    	        String docIdRequestParameter = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
+    	        AwardDocument retrievedDocument = (AwardDocument) KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(docIdRequestParameter);
+    	        sharedForm.setDocument(retrievedDocument);
+    	        request.setAttribute(KRADConstants.PARAMETER_DOC_ID, docIdRequestParameter);
+    	        handlePlaceHolderDocumentDoc(sharedForm, retrievedDocument);        
+    	    }
 
     @Override
     protected DocumentService getDocumentService() {
@@ -1317,7 +1381,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      *
      * This method is a helper method to retrieve KualiRuleService.
-     * @return
      */
     protected KualiRuleService getKualiRuleService() {
         return KcServiceLocator.getService(KualiRuleService.class);
@@ -1340,13 +1403,7 @@ public class AwardAction extends BudgetParentActionBase {
      * and the map to indicate if confirmation is necessary from the user before
      * a particular scope is synchronized and then forwards to the method the handles
      * the request loop.
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
+     *
      */
     public ActionForward syncAwardTemplate(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -1428,13 +1485,7 @@ public class AwardAction extends BudgetParentActionBase {
     
     /**
      * This method sets up a full template sync.  This is called on return from a Sponsor Template Lookup.
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
+     *
      */
     public ActionForward fullSyncToAwardTemplate(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1609,7 +1660,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      * Parses the method to call attribute to pick off the scopes to sync.
      *
-     * @param request
      * @return returns the colon delimited list of scopes.  
      */
     protected String getSyncScopesString(HttpServletRequest request) {
@@ -1660,16 +1710,6 @@ public class AwardAction extends BudgetParentActionBase {
      * This should be called when an add or delete action is called that might be added to the sync queue.
      * It checks to ensure that syncMode is already enabled and will return an ActionForward for
      * the question or for the returnForward specified by the caller.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @param syncType
-     * @param object
-     * @param attrName
-     * @param returnForward
-     * @return
-     * @throws Exception
      */
     protected ActionForward confirmSyncAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response,
             AwardSyncType syncType, PersistableBusinessObject object, String awardAttrName, String attrName, ActionForward returnForward) 
@@ -1688,14 +1728,6 @@ public class AwardAction extends BudgetParentActionBase {
      * This should be called when a group add or delete action is called that might be added to the sync queue.
      * It checks to ensure that syncMode is already enabled and will return an ActionForward for
      * the question or for the returnForward specified by the caller.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @param pendingChanges
-     * @param returnForward
-     * @return
-     * @throws Exception
      */
     protected ActionForward confirmSyncAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response,
             List<AwardSyncPendingChangeBean> pendingChanges, ActionForward returnForward) 
@@ -1713,12 +1745,6 @@ public class AwardAction extends BudgetParentActionBase {
     /**
      * When synchronizing a new addition or deletion call this method. It will confirm the change
      * and then add the change.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     public ActionForward syncActionCaller(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
         throws Exception {
@@ -1742,11 +1768,6 @@ public class AwardAction extends BudgetParentActionBase {
     
     /**
      * If the user answers yes to a confirm sync action question call this method.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward confirmSyncAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         AwardForm awardForm = (AwardForm) form;
@@ -1756,11 +1777,6 @@ public class AwardAction extends BudgetParentActionBase {
     
     /**
      * If the user answers no to a confirm sync action question call this method.
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
      */
     public ActionForward refuseSyncAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         AwardForm awardForm = (AwardForm) form;
@@ -1785,15 +1801,20 @@ public class AwardAction extends BudgetParentActionBase {
     
     /**
      * @see org.kuali.coeus.sys.framework.controller.KcTransactionalDocumentActionBase#populateAuthorizationFields(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
-     * If Award Infos or dates have been edited in a T&M document, then we want to suppress the cancel action.
+     * If Award Infos or dates have been edited in a T&amp;M document, then we want to suppress the cancel action.
      */
     @SuppressWarnings("unchecked")
     @Override
     protected void populateAuthorizationFields(KualiDocumentFormBase formBase) {
-        
-        AwardForm awardForm = (AwardForm) formBase;
-        super.populateAuthorizationFields(formBase);
-        AwardDocument awardDocument = awardForm.getAwardDocument();
+    	AwardDocument awardDocument =null;
+    	if(formBase.getClass().getName().equals("edu.mit.kc.award.SharedDocForm")){ 
+    		 SharedDocForm awardForm = (SharedDocForm) formBase; 
+    		 awardDocument = awardForm.getAwardDocument();
+    	 }else{
+    		 AwardForm awardForm = (AwardForm) formBase;
+    		 awardDocument = awardForm.getAwardDocument();
+    	 }       
+        super.populateAuthorizationFields(formBase);       
         Award award = awardDocument.getAward();
         Map documentActions = formBase.getDocumentActions();
         //if Award version has been edited in T&M doc then we suppress cancel action.
@@ -1825,13 +1846,26 @@ public class AwardAction extends BudgetParentActionBase {
     }
     /**
      * This method will populate the subawards  if award is added as a funding source to perticular subaward
-     * @param award
      */
     protected void setSubAwardDetails(Award award){
         award.setSubAwardList(getSubAwardService().getLinkedSubAwards(award));
     }
+    
+    
 
-    protected KcNotificationService getNotificationService() {
+    public SapFeedService getSapFeedService() {
+    	
+    	 if (sapFeedService == null) {
+    		 sapFeedService = KcServiceLocator.getService(SapFeedService.class);
+         }
+		return sapFeedService;
+	}
+
+	public void setSapFeedService(SapFeedService sapFeedService) {
+		this.sapFeedService = sapFeedService;
+	}
+
+	protected KcNotificationService getNotificationService() {
         if (notificationService == null) {
             notificationService = KcServiceLocator.getService(KcNotificationService.class);
         }
@@ -1910,6 +1944,91 @@ public class AwardAction extends BudgetParentActionBase {
         return forward;
     } 
     
+    public ActionForward keyPerson(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SharedDocForm sharedDocForm=(SharedDocForm)form;
+          if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+               loadDocumentInFormDoc(request, sharedDocForm);
+           }
+        return mapping.findForward("keyPerson");
+    }
+    
+   
+    /**
+    *
+    * This method gets called upon navigation to EDS tab.
+    * @param mapping
+    * @param form
+    * @param request
+    * @param response
+    * @return
+    */
+   public ActionForward sharedDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	   InstitutionalProposal instProp=null;	   
+	 SharedDocForm sharedDocForm=(SharedDocForm)form;
+	//   AwardForm awardForm = (AwardForm) form;
+      
+       
+      if (sharedDocForm.getDocument().getDocumentNumber() == null) {
+           //if we are entering this from the search results
+           loadDocumentInFormDoc(request, sharedDocForm);
+       }
+   
+	 sharedDocForm.getMedusaBean().setMedusaViewRadio("1");
+	 sharedDocForm.getMedusaBean().setModuleName("award");
+	 sharedDocForm.getMedusaBean().setModuleIdentifier(sharedDocForm.getAwardDocument().getAward().getAwardId());
+	 sharedDocForm.getMedusaBean().generateParentNodes();
+     return mapping.findForward("awardSharedDoc");
+   }
+    @Override
+    public ActionForward superUserApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+        return superUserActionHelper(SuperUserAction.SUPER_USER_APPROVE, mapping, form, request, response);
+    }
+    
+    @Override
+    public ActionForward takeSuperUserActions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+        return superUserActionHelper(SuperUserAction.TAKE_SUPER_USER_ACTIONS, mapping, form, request, response);
+    }
+    
+    protected void getAwardReportTermsOrderedList(AwardForm awardForm){
+    	
+    	Award award = awardForm.getAwardDocument().getAward();
+    	
+         List<AwardSponsorTerm> awardSponsorTerms = award.getAwardSponsorTerms();
+         List<AwardSponsorTerm> awardSponsorTermsSortedList = new ArrayList<AwardSponsorTerm>();
+         List<String> awardSponsorTermTypes = new ArrayList<String>();
+       
+         for(AwardSponsorTerm awardSponsorTerm : awardSponsorTerms){
+        	 if(!awardSponsorTermTypes.contains(awardSponsorTerm.getSponsorTermTypeCode())){
+        		 awardSponsorTermTypes.add(awardSponsorTerm.getSponsorTermTypeCode());
+        	 }
+         }
+         for(String awardSponsorTermType : awardSponsorTermTypes){
+             List<AwardSponsorTerm> awardSponsorTermsList = new ArrayList<AwardSponsorTerm>();
+             List<Integer> sponsorTermCodes = new ArrayList<Integer> ();
+        	 for(AwardSponsorTerm awardSponsorTerm : awardSponsorTerms){
+        		 if(awardSponsorTermType.equals(awardSponsorTerm.getSponsorTermTypeCode())){
+        			 awardSponsorTermsList.add(awardSponsorTerm);
+        			 sponsorTermCodes.add(Integer.parseInt(awardSponsorTerm.getSponsorTermCode()));
+        		 }
+        	 }
+        	 
+             Collections.sort(sponsorTermCodes);
+             for(Integer sponsorTermCode:sponsorTermCodes){
+                 for(AwardSponsorTerm awardSponsorTerm:awardSponsorTermsList){
+                     if(sponsorTermCode.equals(Integer.parseInt(awardSponsorTerm.getSponsorTermCode()))){
+                    	 awardSponsorTermsSortedList.add(awardSponsorTerm);
+                     }
+                 }
+           }
+        	 
+        	 
+        	 
+         }
+         
+         awardForm.getAwardDocument().getAward().setAwardSponsorTerms(awardSponsorTermsSortedList);
+       
+    }
+    
     public ActionForward reject(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         
@@ -1937,7 +2056,7 @@ public class AwardAction extends BudgetParentActionBase {
             } else {
                 //reject the document using the service.
                 AwardDocument document = ((AwardForm)form).getAwardDocument();
-                document.documentHasBeenRejected(reason);
+              // document.documentHasBeenRejected(reason);
                 KcServiceLocator.getService(KcDocumentRejectionService.class).reject(document.getDocumentHeader().getWorkflowDocument(), reason,
                         GlobalVariables.getUserSession().getPrincipalId(), null);
                 //tell the document it is being rejected and returned to the initial node.
@@ -1947,17 +2066,13 @@ public class AwardAction extends BudgetParentActionBase {
         }
         return forward;
     }
-    @Override
-    public ActionForward superUserApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        return superUserActionHelper(SuperUserAction.SUPER_USER_APPROVE, mapping, form, request, response);
-    }
-    
-    @Override
-    public ActionForward takeSuperUserActions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        return superUserActionHelper(SuperUserAction.TAKE_SUPER_USER_ACTIONS, mapping, form, request, response);
-    }
-    
-    private PermissionService getPermissionService() {
+	
+	private PermissionService getPermissionService() {
         return KimApiServiceLocator.getPermissionService();
-    }
+	}
+    
+	protected SharedDocumentService getSharedDocumentService() {
+	      return KcServiceLocator.getService(SharedDocumentService.class);
+	}
+  
 }

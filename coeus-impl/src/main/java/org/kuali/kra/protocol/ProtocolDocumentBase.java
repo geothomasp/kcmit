@@ -85,17 +85,6 @@ public abstract class ProtocolDocumentBase extends KcTransactionalDocumentBase i
     protected abstract ProtocolBase createNewProtocolInstanceHook();
 
          
-    @Override
-    public void initialize() {
-        super.initialize();
-        Map<String, String> primaryKeys = new HashMap<String, String>();
-        primaryKeys.put("RESEARCH_AREA_CODE", "000001");
-        ResearchAreaBase ra = (ResearchAreaBase) this.getBusinessObjectService().findByPrimaryKey(getResearchAreaBoClassHook(), primaryKeys);
-        Collection<ResearchAreaBase> selectedBOs = new ArrayList<ResearchAreaBase>();
-        selectedBOs.add(ra);
-        KcServiceLocator.getService(getProtocolResearchAreaServiceClassHook()).addProtocolResearchArea(this.getProtocol(), selectedBOs);
-    }
-
     protected abstract Class<? extends ProtocolResearchAreaService> getProtocolResearchAreaServiceClassHook();
     protected abstract Class<? extends ResearchAreaBase> getResearchAreaBoClassHook();
 
@@ -125,7 +114,7 @@ public abstract class ProtocolDocumentBase extends KcTransactionalDocumentBase i
      * 
      * This method is used by OJB to get around with anonymous keys issue.
      * Warning : Developers should never use this method.
-     * @return List<ProtocolBase>
+     * @return List&lt;ProtocolBase&gt;
      */
     public List<ProtocolBase> getProtocolList() {
         return protocolList;

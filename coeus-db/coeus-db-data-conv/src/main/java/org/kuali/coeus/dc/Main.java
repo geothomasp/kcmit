@@ -38,7 +38,9 @@ import java.util.logging.Logger;
  *
  * Example arguments:
  *
+ * {@code
  * -debug -dbcoeuscon jdbc:mysql://localhost/kcbnd?user=kcbnd&password=bndpass -dbricecon jdbc:mysql://localhost/kcbnd?user=kcbnd&password=bndpass proposal
+ * }
  */
 public final class Main {
 
@@ -117,6 +119,10 @@ public final class Main {
 
             if (options.containsIacuc()) {
                 System.out.println("IACUC Conversion not supported");
+            }
+
+            if (options.containsQuestSeq()) {
+                factory.getQuestSeqDao().convertQuestSeqKrmsValues();
             }
 
             if (options.containsDryRun()) {

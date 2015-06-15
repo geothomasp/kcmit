@@ -163,7 +163,7 @@ jQuery(document).ready(function() {
 });
 </script>
 
-<kul:tab tabTitle="Special Review" defaultOpen="true" alwaysOpen="true" transparentBackground="true" tabErrorKey="specialReviewHelper.newSpecialReview*,${collectionProperty}*">
+<kul:tab tabTitle="Special Review" defaultOpen="true" alwaysOpen="true" transparentBackground="true" auditCluster="specialReviewAuditWarnings,specialReviewAuditErrors" tabErrorKey="specialReviewHelper.newSpecialReview*,${collectionProperty}*">
     <div class="tab-container" align="center">
     	<h3>
     		<span class="subhead-left">Special Review</span>

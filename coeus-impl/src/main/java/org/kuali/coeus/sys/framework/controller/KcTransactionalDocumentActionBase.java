@@ -103,7 +103,7 @@ import static org.kuali.rice.krad.util.KRADConstants.*;
 
 
 public class KcTransactionalDocumentActionBase extends KualiTransactionalDocumentActionBase {
-    
+
     private static final Log LOG = LogFactory.getLog(KcTransactionalDocumentActionBase.class);
     
     private static final String DEFAULT_TAB = "Versions";
@@ -111,6 +111,7 @@ public class KcTransactionalDocumentActionBase extends KualiTransactionalDocumen
 
     private static final String ONE_ADHOC_REQUIRED_ERROR_KEY = "error.adhoc.oneAdHocRequired";
     private static final String DOCUMENT_RELOAD_QUESTION="DocReload";
+    public static final String KRAD_PORTAL_URL = "/kc-krad/landingPage?viewId=Kc-LandingPage-RedirectView";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
@@ -183,7 +184,7 @@ public class KcTransactionalDocumentActionBase extends KualiTransactionalDocumen
 
     /**
      * Initiates a Confirmation. Part of the Question Framework for handling confirmations where a "yes" or "no" answer is required.
-     * <br/> <br/> A <code>yesMethodName</code> is provided as well as a <code>noMethodName</code>. These are callback methods
+     * A <code>yesMethodName</code> is provided as well as a <code>noMethodName</code>. These are callback methods
      * for handling "yes" or "no" responses.
      * 
      * @param question a bean containing question information for the delegated
@@ -218,8 +219,8 @@ public class KcTransactionalDocumentActionBase extends KualiTransactionalDocumen
     }
 
     /**
-     * Generically creates a <code>{@link StrutsConfirmation}</code> instance while deriving the question from a resource bundle.<br/>
-     * <br/> In this case, the question in the resource bundle is expected to be parameterized. This method takes this into account,
+     * Generically creates a <code>{@link StrutsConfirmation}</code> instance while deriving the question from a resource bundle.
+     * In this case, the question in the resource bundle is expected to be parameterized. This method takes this into account,
      * and passes parameters and replaces tokens in the question with the parameters.
      * 
      * @param mapping The mapping associated with this action.
@@ -640,12 +641,6 @@ public class KcTransactionalDocumentActionBase extends KualiTransactionalDocumen
      * only after asking the user if they want to save the document first.
      * Only users who have the "canSave()" permission are given this option.
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return ActionForward
-     * @throws Exception
      */
     @Override
     public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1043,6 +1038,9 @@ public class KcTransactionalDocumentActionBase extends KualiTransactionalDocumen
 
     @Override
     protected ActionForward returnToSender(HttpServletRequest request, ActionMapping mapping, KualiDocumentFormBase form) {
+        if (StringUtils.isEmpty(form.getBackLocation())) {
+            form.setBackLocation(KRAD_PORTAL_URL);
+        }
         //call this first so it will call setupDocumentExit before we try to return
         ActionForward superForward = super.returnToSender(request, mapping, form);
         if (form instanceof KcTransactionalDocumentFormBase) {

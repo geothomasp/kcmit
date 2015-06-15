@@ -1,39 +1,40 @@
 /*
- * Kuali Coeus, a comprehensive research administration system for higher education.
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * Copyright 2005-2015 Kuali, Inc.
+ * Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * http://www.opensource.org/licenses/ecl1.php
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kuali.kra.award.commitments;
 
-import org.kuali.coeus.sys.framework.service.KcServiceLocator;
 import org.apache.commons.lang.StringUtils;
-
 import org.kuali.kra.bo.CostShareType;
+import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.common.framework.costshare.CostShareRuleResearchDocumentBase;
 import org.kuali.coeus.common.framework.unit.UnitService;
-import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.sys.api.model.ScaleTwoDecimal;
+import org.kuali.coeus.sys.framework.service.KcServiceLocator;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
 
+import edu.mit.kc.infrastructure.KcMitConstants;
+
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * This class...
+ */
 public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase implements AwardCostShareRule {
 
     
@@ -60,7 +61,14 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         this.awardCostShare = awardCostShareRuleEvent.getCostShareForValidation();
         this.fieldStarter = "costShareFormHelper.newAwardCostShare";
         boolean isValid = processCommonValidations(awardCostShare);
-        
+     // test if source is valid
+        isValid &= validateSource(awardCostShare);
+     // test if destination is valid
+        isValid &= validateDestination(awardCostShare);
+     // test if source limit is valid
+        isValid &= validateSourceLimit(awardCostShare);
+     // test if destination limit is valid
+        isValid &= validateDestinationLimit(awardCostShare);
         // test if percentage is valid
         isValid &= validatePercentage(awardCostShare.getCostSharePercentage());
         
@@ -73,6 +81,8 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
         // test if cost share met is valid
         isValid &= validateCostShareMet(awardCostShare.getCostShareMet());
         
+       
+        
         return isValid;
     }
     
@@ -81,11 +91,10 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
      * @param event
      * @return
      */
-    public boolean processCommonValidations(AwardCostShare awardCostShare) {
+    public boolean processCommonValidations(AwardCostShare awardCostShare) {        
         boolean validSourceAndDestination = validateCostShareSourceAndDestinationForEquality(awardCostShare);
-        boolean validFiscalYearRange = validateCostShareFiscalYearRange(awardCostShare);
-        
-        return validSourceAndDestination && validFiscalYearRange;
+        boolean validFiscalYearRange = validateCostShareFiscalYearRange(awardCostShare);  
+          return validSourceAndDestination && validFiscalYearRange;
     }
     
     /**
@@ -96,13 +105,66 @@ public class AwardCostShareRuleImpl extends CostShareRuleResearchDocumentBase im
     */
     public boolean validateCostShareSourceAndDestinationForEquality(AwardCostShare awardCostShare){
         boolean valid = true;
-        if (awardCostShare.getSource() != null && awardCostShare.getDestination() != null) {
+          if (awardCostShare.getSource() != null && awardCostShare.getDestination() != null) {
             if (awardCostShare.getSource().equals(awardCostShare.getDestination())) {
                 valid = false;
                 reportError(fieldStarter + ".source", KeyConstants.ERROR_SOURCE_DESTINATION);
             }
         }
-        return valid;
+       return valid;
+    }
+    
+    private boolean validateSource(AwardCostShare awardCostShare) {
+        boolean isValid = true;
+        String sourceField = fieldStarter + ".source";
+        if (awardCostShare.getSource() == null) {
+            isValid = false;
+            this.reportError(sourceField, KcMitConstants.ERROR_COST_SHARE_SOURCE);
+        } 
+       
+        return isValid;
+    }
+    
+    private boolean validateDestination(AwardCostShare awardCostShare) {
+        boolean isValid = true;
+        String destinationField = fieldStarter + ".destination";
+        if (awardCostShare.getDestination() == null) {
+            isValid = false;
+            this.reportError(destinationField, KcMitConstants.ERROR_COST_SHARE_DESTINATION);
+        } 
+       
+        return isValid;
+    }
+    /**
+     * This method checks while adding or saving,whether the source account crossed the limit
+     * @param awardCostShare
+     * @return
+     */
+    private boolean validateSourceLimit(AwardCostShare awardCostShare) {
+        boolean isValid = true;
+        String sourceField = fieldStarter + ".source";
+        if (awardCostShare.getSource() != null && awardCostShare.getSource().toString().length()>7) {
+            isValid = false;
+            this.reportError(sourceField, KcMitConstants.ERROR_COST_SHARE_SOURCE_LIMIT);
+        } 
+       
+        return isValid;
+    }
+    
+    /**
+     * This method checks while adding or saving,whether the destination account crossed the limit
+     * @param awardCostShare
+     * @return
+     */
+    private boolean validateDestinationLimit(AwardCostShare awardCostShare) {
+        boolean isValid = true;
+        String destinationField = fieldStarter + ".destination";
+        if (awardCostShare.getDestination() != null && awardCostShare.getDestination().toString().length()>7) {
+            isValid = false;
+            this.reportError(destinationField, KcMitConstants.ERROR_COST_SHARE_DESTINATION_LIMIT);
+        } 
+       
+        return isValid;
     }
     
    /**

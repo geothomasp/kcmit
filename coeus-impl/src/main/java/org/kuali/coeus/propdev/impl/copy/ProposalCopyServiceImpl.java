@@ -21,6 +21,7 @@ package org.kuali.coeus.propdev.impl.copy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.coeus.common.budget.framework.core.Budget;
+import org.kuali.coeus.common.budget.framework.period.BudgetPeriod;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocValue;
 import org.kuali.coeus.common.framework.custom.attr.CustomAttributeDocument;
 import org.kuali.coeus.common.framework.org.Organization;
@@ -544,10 +545,24 @@ public class ProposalCopyServiceImpl implements ProposalCopyService {
 
         }
 
+        if (criteria.getIncludeBudget()) {
+            modifyBudgetModular(newDoc);
+        }
+
         copyOpportunity(newDoc, srcDoc);
 
         fixS2sUserAttachedForms(newDoc);
 
+    }
+
+    private void modifyBudgetModular(ProposalDevelopmentDocument newDoc) {
+        for(Budget budget : newDoc.getDevelopmentProposal().getBudgets()) {
+            for (BudgetPeriod budgetPeriod : budget.getBudgetPeriods()) {
+                if (budgetPeriod.getBudgetModular() != null) {
+                    budgetPeriod.getBudgetModular().setBudgetId(budget.getBudgetId());
+                }
+            }
+        }
     }
 
     /*
@@ -694,12 +709,15 @@ public class ProposalCopyServiceImpl implements ProposalCopyService {
             String unitOrganizationId = ownedByUnit.getOrganizationId();
             for (ProposalSite proposalSite: developmentProposal.getProposalSites()) {
                 // set location name to default from Organization
-                proposalSite.setOrganizationId(unitOrganizationId);
-                proposalSite.refreshReferenceObject("organization");
-                proposalSite.setLocationName(proposalSite.getOrganization().getOrganizationName());
-                proposalSite.setRolodexId(proposalSite.getOrganization().getContactAddressId());
-                proposalSite.refreshReferenceObject("rolodex");
-                initializeCongressionalDistrict(proposalSite.getOrganizationId(), proposalSite);
+                if (proposalSite.getLocationTypeCode().equals(ProposalSite.PROPOSAL_SITE_APPLICANT_ORGANIZATION) ||
+                        proposalSite.getLocationTypeCode().equals(ProposalSite.PROPOSAL_SITE_PERFORMING_ORGANIZATION)) {
+                    proposalSite.setOrganizationId(unitOrganizationId);
+                    proposalSite.refreshReferenceObject("organization");
+                    proposalSite.setLocationName(proposalSite.getOrganization().getOrganizationName());
+                    proposalSite.setRolodexId(proposalSite.getOrganization().getContactAddressId());
+                    proposalSite.refreshReferenceObject("rolodex");
+                    initializeCongressionalDistrict(proposalSite.getOrganizationId(), proposalSite);
+                }
             }
         }
     }

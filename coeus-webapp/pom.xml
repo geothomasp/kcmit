@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.kuali.coeus</groupId>
         <artifactId>coeus</artifactId>
-        <version>1504.10</version>
+        <version>1505.70</version>
     </parent>
     <artifactId>coeus-webapp</artifactId>
     <packaging>war</packaging>
@@ -46,7 +46,7 @@
         <kc.context.path>/kc-${build.environment}</kc.context.path>
         <kc.port>8080</kc.port>
         <jetty.context.file>${basedir}/src/main/webapp/WEB-INF/jetty-web.xml</jetty.context.file>
-	<jetty.memOpts>-Xmx1536m -XX:MaxPermSize=512m</jetty.memOpts>
+		<jetty.memOpts>-Xmx1536m -XX:MaxPermSize=512m</jetty.memOpts>
         <jetty.argLine>${jetty.memOpts} ${javaagent.arg}</jetty.argLine>
 
         <generated.web.sources>${project.build.directory}/generated-web-sources</generated.web.sources>
@@ -77,6 +77,8 @@
         <rice.output.dir>${project.build.directory}/rice-server</rice.output.dir>
         <rice.war.file>${rice.output.dir}/rice-standalone.war</rice.war.file>
         <rice.war.dir>${rice.output.dir}/rice-standalone</rice.war.dir>
+		<timestamp>${maven.build.timestamp}</timestamp>
+  		<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
     </properties>
 
     <dependencies>

@@ -1,20 +1,17 @@
 <%--
-   - Kuali Coeus, a comprehensive research administration system for higher education.
-   - 
-   - Copyright 2005-2015 Kuali, Inc.
-   - 
-   - This program is free software: you can redistribute it and/or modify
-   - it under the terms of the GNU Affero General Public License as
-   - published by the Free Software Foundation, either version 3 of the
-   - License, or (at your option) any later version.
-   - 
-   - This program is distributed in the hope that it will be useful,
-   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   - GNU Affero General Public License for more details.
-   - 
-   - You should have received a copy of the GNU Affero General Public License
-   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ Copyright 2005-2014 The Kuali Foundation
+
+ Licensed under the GNU Affero General Public License, Version 3 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.osedu.org/licenses/ECL-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 --%>
 <%@ include file="/WEB-INF/jsp/kraTldHeader.jsp"%>
 
@@ -31,7 +28,6 @@
   	
 <c:set var="displayKeywordPanel" value="${KualiForm.displayKeywordPanel}"/>
 <c:set var="readOnly" value="${not KualiForm.editingMode['fullEntry']}" scope="request" />
-
 <div align="right"><kul:help documentTypeName="AwardDocument" pageName="Award" /></div>
 <kul:documentOverview editingMode="${KualiForm.editingMode}" />
 <kra-a:awardFundingProposals />
@@ -46,8 +42,7 @@
 <kul:panelFooter />
 
 <SCRIPT type="text/javascript">
-var kualiForm = document.forms['KualiForm'];
-var kualiElements = kualiForm.elements;
+ var kualiElements = kualiForm.elements;
 </SCRIPT>
 <script language="javascript" src="scripts/kuali_application.js"></script>
 <script>
@@ -60,10 +55,14 @@ var kualiElements = kualiForm.elements;
 	<c:set var="extraButtonProperty" value="methodToCall.editOrVersion"/>
 	<c:set var="extraButtonAlt" value="Edit or Version"/>
 </c:if>
+
 <kul:documentControls transactionalDocument="true" suppressRoutingControls="true" 
 						extraButtonSource="${extraButtonSource}" 
 						extraButtonProperty="${extraButtonProperty}"
 						extraButtonAlt="${extraButtonAlt}" 
 					    suppressCancelButton="true"/>
+					    
 
 </kul:documentPage>
+
+<%-- <% request.getSession().setAttribute("isWarning",false); %>  --%>

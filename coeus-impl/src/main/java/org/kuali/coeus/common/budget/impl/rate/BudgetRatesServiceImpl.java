@@ -239,17 +239,13 @@ public abstract class BudgetRatesServiceImpl<T extends BudgetParent> implements 
         }
     }
 
-    /**
-     * Sets the businessObjectService attribute value.
-     * @param businessObjectService The businessObjectService to set.
-     */
+
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
  
     /**
      * Build rates for each period.
-     * @return .
      */
     protected void updateRatesForEachPeriod(Budget budget) {
         List<BudgetRate> budgetRates = budget.getBudgetRates();
@@ -296,8 +292,6 @@ public abstract class BudgetRatesServiceImpl<T extends BudgetParent> implements 
     
     /**
      * This method load institute rates to hashmap
-     * @param rates
-     * @return
      */
     @SuppressWarnings("unchecked")
     protected Map<String, AbstractInstituteRate> mapRatesToKeys(Collection rates) {
@@ -826,7 +820,7 @@ public abstract class BudgetRatesServiceImpl<T extends BudgetParent> implements 
      * to grab appropriate {@link RateClass} instances since {@link RateClass} is a {@link BusinessObject}
      *
      * @param rateClassType to use for retrieving {@link RateClass} instances
-     * @returns a List of {@link RateClass} instances
+     * @return a List of {@link RateClass} instances
      */
     @SuppressWarnings("unchecked")
     @Override

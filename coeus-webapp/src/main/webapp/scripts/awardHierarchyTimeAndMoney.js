@@ -172,7 +172,10 @@ function openPreviousAwards(requestTracker) {
         	var txtImage = "<img src=\"static/images/award_inactive.gif\" alt=\"Closed\" title=\"Closed\" />";
         }else if(text11 == 6){
         	var txtImage = "<img src=\"static/images/award_holding.gif\" alt=\"Hold\" title=\"Hold\" />";
+        }else if(text11 == 7){
+        	var txtImage = "<img src=\"static/images/award_inactive.gif\" alt=\"Restricted\" title=\"Restricted\" />";
         }
+        
         
         var index = awardNumber.indexOf("-");
         var awardNumber2 = parseInt(awardNumber.substring(index+1), 10);

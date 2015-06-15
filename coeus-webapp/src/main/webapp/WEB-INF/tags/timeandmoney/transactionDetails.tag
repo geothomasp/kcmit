@@ -21,7 +21,7 @@
 
 <c:set var="transactionDetailAttributes" value="${DataDictionary.TransactionDetail.attributes}" />
 <c:set var="tabTitleAttribute" value="Transaction ID:" />
-<c:set var="idValue" value="${awardAmountInfoHistory.primaryDetail.transactionId}" />
+<c:set var="idValue" value="${awardAmountInfoHistory.primaryDetail.transactionDetailId}" />
 
 <kul:innerTab parentTab="History" defaultOpen="false" tabTitle="Transaction Details/${tabTitleAttribute} ${idValue}" tabErrorKey="" >
 	<table border="0" cellpadding="0" cellspacing="0" summary="">
