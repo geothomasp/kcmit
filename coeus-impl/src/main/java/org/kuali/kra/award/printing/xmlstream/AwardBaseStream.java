@@ -857,7 +857,7 @@ public abstract class AwardBaseStream implements XmlStream {
 	protected AwardBudgetDocument getBudgetDocument() {
 		AwardBudgetDocument awardBudgetDocument = null;
 		try {
-			if (!awardDocument.getBudgetDocumentVersions().isEmpty()) {
+			if (!awardDocument.getBudgetDocumentVersions().isEmpty() && awardDocument.getBudgetDocumentVersion(0).getDocumentNumber()!=null) {
 				awardBudgetDocument = (AwardBudgetDocument) documentService
 						.getByDocumentHeaderId(awardDocument
 								.getBudgetDocumentVersion(0)
