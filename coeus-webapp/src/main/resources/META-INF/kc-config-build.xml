@@ -18,6 +18,6 @@
 This config file only contains properties that are set by the maven build process using property replacement.
 -->
 <config>
-	<param name="version">kc6021-s18-${timestamp}</param>
+	<param name="version">kc1505.70-${timestamp}</param>
 	
 </config>

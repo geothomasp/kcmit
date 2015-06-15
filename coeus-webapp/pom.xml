@@ -77,6 +77,8 @@
         <rice.output.dir>${project.build.directory}/rice-server</rice.output.dir>
         <rice.war.file>${rice.output.dir}/rice-standalone.war</rice.war.file>
         <rice.war.dir>${rice.output.dir}/rice-standalone</rice.war.dir>
+		<timestamp>${maven.build.timestamp}</timestamp>
+  		<maven.build.timestamp.format>yyyy-MM-dd HH:mm a</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
