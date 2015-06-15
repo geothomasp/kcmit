@@ -73,5 +73,4 @@ ORA-01400: cannot insert NULL into ("KCSO"."KRIM_ROLE_PERM_T"."ROLE_ID")
 
 Commit complete.
 
-SQL> 
 SQL> @1505_oracle_kc_upgrade.sql
