@@ -366,7 +366,6 @@ public class ProposalDevelopmentSubmitController extends
 	    form.setShowSubmissionDetails(true);
         form.setDirtyForm(false);
 
-        if (!requiresResubmissionPrompt(form)) {
     		if (validToSubmitToSponsor(form) ) {
     			setProposalTypeCodeChangedAndCorrected(form);
     			//Generate IP in case auto generate IP and no IP hasn't been generated yet (in other words no submit to sponsor button clicked)
@@ -376,11 +375,8 @@ public class ProposalDevelopmentSubmitController extends
                 handleSubmissionToS2S(form);
                 return getModelAndViewService().getModelAndView(form,"PropDev-OpportunityPage");
             } else {
-    			return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
+    			return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-        } else {
-        	return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
-        }
     }
 
     protected void handleSubmissionToS2S(ProposalDevelopmentDocumentForm form) throws Exception {
@@ -400,7 +396,6 @@ public class ProposalDevelopmentSubmitController extends
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=submitToSponsor")
     public  ModelAndView submitToSponsor(@ModelAttribute("KualiForm") ProposalDevelopmentDocumentForm form) throws Exception {
 
-    	if (!requiresResubmissionPrompt(form)) {
     		if(validToSubmitToSponsor(form) ) {
     			setProposalTypeCodeChangedAndCorrected(form);
                 submitApplication(form);
@@ -408,12 +403,8 @@ public class ProposalDevelopmentSubmitController extends
                 form.setDeferredMessages(getGlobalVariableService().getMessageMap());
                 return sendSubmitToSponsorNotification(form);
     		} else {
-                form.setDataValidationItems(((ProposalDevelopmentViewHelperServiceImpl)form.getViewHelperService()).populateDataValidation());
-                return getModelAndViewService().showDialog(ProposalDevelopmentConstants.KradConstants.DATA_VALIDATION_DIALOG_ID, true, form);
+                return getModelAndViewService().showDialog("PropDev-DataValidationSection", true, form);
     		}
-    	} else {
-            return getModelAndViewService().showDialog("PropDev-Resumbit-OptionsSection", true, form);
-    	}
     }
     @Transactional @RequestMapping(value = "/proposalDevelopment", params="methodToCall=deleteLineNotificationRecipient")
     public ModelAndView deleteLine(@ModelAttribute("KualiForm") DocumentFormBase form, @RequestParam("actionParameters[" + UifParameters.SELECTED_COLLECTION_PATH + "]") String selectedCollectionPath) {
