@@ -48,6 +48,7 @@
   	<li><portal:portalLink displayTitle="true" title="Custom Report Type" url="${ConfigProperties.application.url}/kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.coeus.common.impl.rpt.cust.CustReportType&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
   	<li><portal:portalLink displayTitle="true" title="Custom Report Document" url="${ConfigProperties.application.url}/kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.coeus.common.impl.rpt.cust.CustRptTypeDocument&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
   	<li><portal:portalLink displayTitle="true" title="Custom Report Default Parms" url="${ConfigProperties.application.url}/kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.coeus.common.impl.rpt.cust.CustRptDefaultParms&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+  	<li><a class="portal_link" href="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&amp;viewId=RoleCentralMap-LookupViewId">Role Central Map</a></li>
   </ul>
 </div>
 <channel:portalChannelBottom />
