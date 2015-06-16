@@ -55,8 +55,11 @@ Table created.
 
 Table altered.
 
+REFERENCES QUESTION (QUESTION_REF_ID)
+                     *
+ERROR at line 4:
+ORA-02270: no matching unique or primary key for this column-list 
 
-Table altered.
 
 
 Sequence created.
@@ -74,13 +77,13 @@ ORA-01451: column to be modified to NULL cannot be modified to NULL
 Table altered.
 
 
-81921 rows updated.
+82367 rows updated.
 
 
-81921 rows updated.
+82367 rows updated.
 
 
-81921 rows updated.
+82367 rows updated.
 
 
 Table altered.
