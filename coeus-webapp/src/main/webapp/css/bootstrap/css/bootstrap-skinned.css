@@ -3709,7 +3709,7 @@ input[type="submit"].btn.btn-mini {
   overflow: visible;
 }
 .navbar .brand {
-  background-image: url('../img/logo.png');
+  background-image: url('../img/kuali-logo.png');
   position: absolute;
   display: block;
   height: 69px;
@@ -5224,8 +5224,8 @@ a:link,
 a:visited,
 a:hover,
 a:active {
-  color: #3344dd;
-  text-decoration: none;
+  color: #0B0B0B;
+  text-decoration: underline;
 }
 li,
 td,
@@ -7592,7 +7592,7 @@ div.blockPage {
   background-size: 40px 40px;
   background-repeat: no-repeat;
   font-size: 11px;
-  text-align: left;
+  text-align: center;
   line-height: 14px;
   padding-top: 12px;
   padding-bottom: 12px;
