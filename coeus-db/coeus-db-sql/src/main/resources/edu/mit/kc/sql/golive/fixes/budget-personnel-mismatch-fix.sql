@@ -6,18 +6,18 @@ cursor c_budget is
   where proposal_number in ('22751');
 
 cursor c_budget_detail(v_budget_id IN NUMBER) is
-SELECT cost_element, budget_category_code
+SELECT budget_details_id, cost_element, budget_category_code
   FROM budget_details
  WHERE budget_id = v_budget_id;
 
 li_count NUMBER(10);
 li_BUDGET_CATEGORY_CODE   VARCHAR2 (3);
-li_cat_type_code VARCHAR2(3);
+li_per_b_cat_type_code VARCHAR2(3);
 li_ce_category_type VARCHAR2(3);
  
 begin
 
-SELECT VAL INTO li_cat_type_code FROM KRCR_PARM_T k
+SELECT VAL INTO li_per_b_cat_type_code FROM KRCR_PARM_T k
 WHERE k.NMSPC_CD = 'KC-B' AND K.CMPNT_CD = 'Document' AND k.PARM_NM = 'budgetCategoryType.personnel';
 
 FOR budget_rec in c_budget
@@ -35,7 +35,7 @@ LOOP
 		into li_count
 		FROM BUDGET_PERSONNEL_DETAILS b where b.BUDGET_DETAILS_ID = budget_det_rec.BUDGET_DETAILS_ID;
 
-		if li_ce_category_type <> li_cat_type_code and li_count > 0 then
+		if li_ce_category_type <> li_per_b_cat_type_code and li_count > 0 then
 			DELETE from BUDGET_PER_DET_RATE_AND_BASE p 
 			where p.BUDGET_PERSONNEL_DETAILS_ID in (SELECT BUDGET_PERSONNEL_DETAILS_ID
 			from BUDGET_PERSONNEL_DETAILS where BUDGET_DETAILS_ID = budget_det_rec.BUDGET_DETAILS_ID);
@@ -47,6 +47,10 @@ LOOP
 			DELETE from BUDGET_PERSONNEL_DETAILS p 
 			where p.BUDGET_DETAILS_ID = budget_det_rec.BUDGET_DETAILS_ID;
 		end if;	
+		
+		UPDATE budget_details
+		SET budget_category_code = li_BUDGET_CATEGORY_CODE
+		where budget_details_id = budget_det_rec.budget_details_id;
 		
 	END LOOP;
 
