@@ -243,9 +243,18 @@ public class ProposalBudgetServiceImpl extends AbstractBudgetService<Development
         newBudget.setBudgetVersionNumber(newBudget.getBudgetParent().getNextBudgetVersionNumber());
 
         copyLineItemToPersonnelDetails(newBudget);
+        
+        markBudgetStatusIncomplete(newBudget);
 
         return newBudget;
     } 
+    
+    protected void markBudgetStatusIncomplete(ProposalDevelopmentBudgetExt newBudget) {
+        String budgetStatus = getParameterService().getParameterValueAsString(
+                Budget.class, Constants.BUDGET_STATUS_INCOMPLETE_CODE);
+        newBudget.setBudgetStatus(budgetStatus);
+        getDataObjectService().wrap(newBudget).fetchRelationship("budgetStatusDo");
+    }
     
     protected ProposalDevelopmentBudgetExt copyBudgetVersionInternal(ProposalDevelopmentBudgetExt budget, DevelopmentProposal developmentProposal) {
         for (BudgetSubAwards subAwards : budget.getBudgetSubAwards()) {

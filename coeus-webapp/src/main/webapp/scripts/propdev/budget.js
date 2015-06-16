@@ -30,7 +30,7 @@ Kc.PropDev.Budget = Kc.PropDev.Budget || {};
         return namespace.calculateTotalFromValues(values, $('#PropBudget-CostSharingPage-CollectionGroup').data('total_costsharing'));
     };
     namespace.calculateTotalFromValues = function (values, total) {
-        var calcTotal = total * 100;
+        var calcTotal = total.replace(/[$,]/g, '') * 100;
         for (var i = 0; i < values.length; i++) {
             calcTotal -= (values[i] * 100);
         }
