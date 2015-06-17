@@ -34,14 +34,20 @@ begin
         li_rc := kc_sub_notifications_pkg.fn_gen_sub_award_notifications(ls_AwardNumber, ls_SubName, ll_Amt, 1);
     else
         begin
-            select AMOUNT
-            into ll_OldAmt
-            from AWARD_APPROVED_SUBAWARDS 
-            where AWARD_NUMBER = ls_AwardNumber
-            and ORGANIZATION_NAME  = ls_SubName
-            and  SEQUENCE_NUMBER = (select max(s2.sequence_number) from AWARD_APPROVED_SUBAWARDS s2
-                        where AWARD_APPROVED_SUBAWARDS.AWARD_NUMBER = S2.AWARD_NUMBER
-                        and S2.SEQUENCE_NUMBER <= ls_Sequence);
+		
+			SELECT AMOUNT
+            into ll_OldAmt           
+			from AWARD_APPROVED_SUBAWARDS 
+			WHERE AWARD_APPROVED_SUBAWARD_ID IN (
+						   SELECT MAX(t1.award_approved_subaward_id)
+						   from AWARD_APPROVED_SUBAWARDS t1
+									  where t1.AWARD_NUMBER = ls_AwardNumber
+									  and  t1.ORGANIZATION_NAME  = ls_SubName
+									  and  t1.SEQUENCE_NUMBER = ( select max(s2.sequence_number) from AWARD_APPROVED_SUBAWARDS s2
+																 where t1.AWARD_NUMBER = S2.AWARD_NUMBER
+															    and S2.SEQUENCE_NUMBER <= ls_Sequence
+															  )
+												);
         exception
             when others then
                 ll_OldAmt := 0;
