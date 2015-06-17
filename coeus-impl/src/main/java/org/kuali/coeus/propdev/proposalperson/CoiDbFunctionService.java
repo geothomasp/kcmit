@@ -12,5 +12,6 @@ public interface CoiDbFunctionService {
 	 fn_check_prop_event_sub_to_coi (PROPOSAL_NUMBER, PERSON-ID)
  */	
 	public String getKeyPersonnelCoiDisclosureStatus(String developmentProposalNumber,String keyPersonId,boolean isQuestionnairesCompleted) throws SQLException;
+	public boolean isCoiDisclosureSubmitted(String developmentProposalNumber);
 
 }

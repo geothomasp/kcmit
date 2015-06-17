@@ -117,4 +117,46 @@ public class CoiDbFunctionServiceImpl implements CoiDbFunctionService{
 	
 	}
 	
+	
+	/**
+	 * @description:		 For checking coi disclosure is submitted
+	 * @function FN_check_disc_done_rule
+	 * @param   	PROPOSAL_NUMBER
+	 * @referenced PL/SQL function FN_check_disc_done_rule
+	 */
+	public boolean isCoiDisclosureSubmitted(String developmentProposalNumber){
+		
+		List<Object> paramValues = new ArrayList<Object>();
+		String result = "";	
+    	Integer newResult=0;
+		paramValues.add(0, developmentProposalNumber);
+		try {
+			result =  getDbFunctionExecuteService().executeFunction("FN_check_disc_done_rule"+this.getDBLink(),paramValues);
+		} catch (Exception ex) {
+			LOGGER.log(Level.INFO, "Got exception:" + ex.getMessage());
+			LOGGER.log(Level.ALL, ex.getMessage(), ex);
+			LOG.error("FN_check_disc_done_rule throws exception", ex);
+		} finally {
+			try {
+				if (!result.isEmpty()) {
+					LOGGER.log(Level.INFO, "Function Successfully Invoked");
+			
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.ALL, e.getMessage(), e);
+			}
+		}
+		if(result.equals("")){
+    		return false;
+    	}
+    	if(result!=null){
+    		newResult=Integer.parseInt(result);}
+    	if (newResult ==-1 ) {
+    		return false;
+    	}else
+    	{
+    		return true;
+    	}
+	}
+	
 }

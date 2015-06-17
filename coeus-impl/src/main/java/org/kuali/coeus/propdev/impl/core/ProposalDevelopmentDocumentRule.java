@@ -83,6 +83,7 @@ import org.kuali.coeus.common.budget.framework.core.Budget;
 import org.kuali.kra.infrastructure.Constants;
 import org.kuali.kra.infrastructure.KeyConstants;
 import org.kuali.coeus.propdev.impl.hierarchy.ProposalHierarchyException;
+import org.kuali.coeus.propdev.proposalperson.CoiDbFunctionService;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.service.DataDictionaryService;
@@ -123,8 +124,17 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
     private SubmissionInfoService submissionInfoService;
     private ParameterService parameterService;
     private KcBusinessRulesEngine kcBusinessRulesEngine;
+    private CoiDbFunctionService coiDbFunctionService;
 
-    protected DataDictionaryService getDataDictionaryService (){
+    public CoiDbFunctionService getCoiDbFunctionService() {
+    	if(coiDbFunctionService == null)
+    		coiDbFunctionService = KcServiceLocator.getService(CoiDbFunctionService.class);
+		return coiDbFunctionService;
+	}
+	public void setCoiDbFunctionService(CoiDbFunctionService coiDbFunctionService) {
+		this.coiDbFunctionService = coiDbFunctionService;
+	}
+	protected DataDictionaryService getDataDictionaryService (){
         if (dataDictionaryService == null)
             dataDictionaryService = KNSServiceLocator.getDataDictionaryService();
         return dataDictionaryService;
@@ -497,9 +507,10 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         // audit check for budgetversion with final status
         retval &= processRunAuditBudgetVersionRule(proposalDevelopmentDocument.getDevelopmentProposal());
         retval &= new ProposalDevelopmentKRMSAuditRule().processRunAuditBusinessRules(proposalDevelopmentDocument);
-       
+        retval &= processIsCoiDisclosureSubmittedRule(proposalDevelopmentDocument);
         return retval;
     }
+    
     
     public boolean processRunAuditBudgetVersionRule(DevelopmentProposal proposal) {
         // audit check for budgetversion with final status
@@ -683,6 +694,16 @@ public class ProposalDevelopmentDocumentRule extends KcTransactionalDocumentRule
         }
     }
     
+    private boolean processIsCoiDisclosureSubmittedRule(ProposalDevelopmentDocument document) {
+    	boolean valid = true;
+    	List<AuditError> auditErrors = new ArrayList<AuditError>();
+    	valid = getCoiDbFunctionService().isCoiDisclosureSubmitted( document.getDevelopmentProposal().getProposalNumber());
+    	if(!valid){
+        	auditErrors.add(new AuditError(ProposalDevelopmentDataValidationConstants.PERSONNEL_PAGE_ID, KeyConstants.COI_DISCLOSURE_NOT_SUBMITTED, ProposalDevelopmentDataValidationConstants.PERSONNEL_PAGE_ID));
+            GlobalVariables.getAuditErrorMap().put("coiDisclosureNotSubmitted", new AuditCluster(ProposalDevelopmentDataValidationConstants.PERSONNEL_PAGE_NAME, auditErrors, ProposalDevelopmentDataValidationConstants.AUDIT_ERRORS));
+    	}
+        return valid;
+    }
     
     public boolean processResubmissionPromptBusinessRules(ResubmissionRuleEvent resubmissionRuleEvent) {
         return new ProposalDevelopmentResubmissionPromptRule().processResubmissionPromptBusinessRules(resubmissionRuleEvent);

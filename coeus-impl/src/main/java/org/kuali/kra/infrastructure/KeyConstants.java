@@ -1130,6 +1130,8 @@ public final class KeyConstants {
 
     public static final String AUDIT_WARNING_PROPOSAL_WITHNO_BUDGET = "warning.proposal.withno.budget";
     
+    public static final String COI_DISCLOSURE_NOT_SUBMITTED = "error.coi.disclosure.not.submitted";
+    
     /**
      * private utility class ctor.
      * @throws UnsupportedOperationException if called.
