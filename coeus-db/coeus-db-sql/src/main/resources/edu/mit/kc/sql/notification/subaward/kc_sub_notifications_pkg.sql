@@ -57,72 +57,69 @@ li_notification_is_active PLS_INTEGER;
 
 BEGIN
     
-
-
 BEGIN
-select kee.email_addr,keet.email_addr,au.unit_number,u.unit_name,ap.full_name,(ken.last_nm||','||ken.first_nm) as AO_full_name,(kent.LAST_NM||','||kent.first_nm) as other_full_name
-into
-ls_admin_email ,
-ls_other_email  ,
-ls_unit_num   ,
-ls_unit_name ,
-ls_PI_name,
-ls_admin_name ,
-ls_other_name
-from award_person_units au inner join
-award_persons ap
-on au.award_person_id= ap.award_person_id
-left outer join unit u
-on au.unit_number=u.unit_number
-inner join unit_administrator ua
-on u.unit_number=ua.unit_number
-inner join unit_administrator uaa
-on u.unit_number=uaa.unit_number
-left outer  join  krim_prncpl_t kp
-on kp.prncpl_id= ua.person_id
-inner join krim_entity_nm_t ken
-on kp.entity_id= ken.entity_id
-inner join krim_entity_email_t kee
-on kp.entity_id= kee.entity_id
-left outer  join  krim_prncpl_t kpt
-on kpt.prncpl_id= uaa.person_id
-inner join krim_entity_nm_t kent
-on kpt.entity_id= kent.entity_id
-inner join krim_entity_email_t keet
-on kpt.entity_id= keet.entity_id
-inner join award a on
-a.award_id=ap.award_id
-inner join award_type at on
-a.award_type_code=at.award_type_code
-where ap.award_number=as_AwardNUmber
-and ap.sequence_number=(select max(sequence_number)
-from award_persons where award_number=as_AwardNUmber)
-and a.award_number=as_AwardNUmber
-and a.sequence_number=(select max(sequence_number)
-from award where award_number=as_AwardNUmber)
-and ap.CONTACT_ROLE_CODE='PI'
-and au.lead_unit_flag='Y'
-and ua.unit_administrator_type_code=1
-and uaa.unit_administrator_type_code=5;
+		select ua.email_addr,uaa.email_addr,au.unit_number,u.unit_name,ap.full_name,ua.AO_full_name,uaa.other_full_name		
+		into
+		ls_admin_email ,
+		ls_other_email  ,
+		ls_unit_num   ,
+		ls_unit_name ,
+		ls_PI_name,
+		ls_admin_name ,
+		ls_other_name
+		from award_person_units au 
+		inner join award_persons ap on au.award_person_id= ap.award_person_id
+		left outer join unit u on au.unit_number=u.unit_number
+		left outer join (
+				select b.unit_number,b.person_id,kee.email_addr,(ken.last_nm||','||ken.first_nm) as AO_full_name
+				from unit_administrator b 
+				inner join  krim_prncpl_t kp
+				on kp.prncpl_id= b.person_id
+				inner join krim_entity_nm_t ken
+				on kp.entity_id= ken.entity_id
+				inner join krim_entity_email_t kee
+				on kp.entity_id= kee.entity_id
+				where b.unit_administrator_type_code = 1
+		)ua on u.unit_number=ua.unit_number
+		left outer join (
+			  select c.unit_number,c.person_id,keet.email_addr,(kent.LAST_NM||','||kent.first_nm) as other_full_name 
+			  from unit_administrator c 
+			  inner  join  krim_prncpl_t kpt
+			  on kpt.prncpl_id= c.person_id
+			  inner join krim_entity_nm_t kent
+			  on kpt.entity_id= kent.entity_id
+			  inner join krim_entity_email_t keet
+			  on kpt.entity_id= keet.entity_id
+			  where c.unit_administrator_type_code = 5
+		)uaa on u.unit_number=uaa.unit_number
+		inner join award a on a.award_id = ap.award_id
+		inner join award_type at on a.award_type_code = at.award_type_code
+		where ap.award_number = as_AwardNUmber
+		and ap.sequence_number=(select max(sequence_number) from award_persons where award_number = as_AwardNUmber)
+		and a.award_number = as_AwardNUmber
+		and a.sequence_number = (select max(sequence_number)from award where award_number = as_AwardNUmber)
+		and ap.CONTACT_ROLE_CODE = 'PI'
+		and au.lead_unit_flag = 'Y';
+
 EXCEPTION
 WHEN OTHERS THEN
-ls_recipients := 'coeus-mit@mit.edu';
-ls_cc := 'osp-research-subawards@mit.edu';
-select au.unit_number,u.unit_name,ap.full_name 
-into 
-ls_unit_num , 
-ls_unit_name ,
-ls_PI_name
-from award_person_units au 
-inner join award_persons ap
-on au.award_person_id= ap.award_person_id
-left outer join unit u
-on au.unit_number=u.unit_number
-where ap.award_number=as_AwardNUmber
-and ap.sequence_number=(select max(sequence_number)
-from award_persons where award_number=as_AwardNUmber)
-and ap.CONTACT_ROLE_CODE='PI'
-and au.lead_unit_flag='Y';
+	ls_recipients := 'kc-notifications@mit.edu';
+	ls_cc := 'osp-research-subawards@mit.edu';
+	select au.unit_number,u.unit_name,ap.full_name 
+	into 
+	ls_unit_num , 
+	ls_unit_name ,
+	ls_PI_name
+	from award_person_units au 
+	inner join award_persons ap
+	on au.award_person_id= ap.award_person_id
+	left outer join unit u
+	on au.unit_number=u.unit_number
+	where ap.award_number=as_AwardNUmber
+	and ap.sequence_number=(select max(sequence_number)
+	from award_persons where award_number=as_AwardNUmber)
+	and ap.CONTACT_ROLE_CODE='PI'
+	and au.lead_unit_flag='Y';
 END;
 
 BEGIN
@@ -138,7 +135,7 @@ END;
    -- set recipients
    if (ls_other_email is NULL) or (length(trim(ls_other_email)) = 0 ) then
         if (ls_admin_email is NULL) or (length(trim(ls_admin_email)) = 0 ) then
-           ls_recipients := 'coeus-mit@mit.edu';
+           ls_recipients := 'kc-notifications@mit.edu';
         else
             ls_recipients :=  ls_admin_email;
         end if;
@@ -330,7 +327,7 @@ BEGIN
             fetch cur_end_prior into ls_sub_code, ls_end_date, ls_po,ls_REQUISITIONER_email,ls_subawardee,ls_requisitioner_id;
             exit when cur_end_prior%NOTFOUND;
             if ls_REQUISITIONER_email is null then
-                ls_REQUISITIONER_email := 'coeus-mit@mit.edu';
+                ls_REQUISITIONER_email := 'kc-notifications@mit.edu';
                 li_requisitioner := 0;
             end if;
 			
@@ -349,7 +346,7 @@ BEGIN
                      -- set recipient      
                     if (ls_other_email is NULL) or (length(trim(ls_other_email)) = 0 ) then
                         if (ls_admin_email is NULL) or (length(trim(ls_admin_email)) = 0 ) then
-                           ls_recipient := 'coeus-mit@mit.edu';
+                           ls_recipient := 'kc-notifications@mit.edu';
                            li_recipient :=0 ;
                         else
                             ls_recipient := ls_admin_email;
@@ -462,7 +459,7 @@ BEGIN
                  
             --no funding source info
                 dbms_output.put_line('subcontract end in 30 days with no founding source.');  
-                ls_recipient := 'coeus-mit@mit.edu';
+                ls_recipient := 'kc-notifications@mit.edu';
 				ls_REQUISITIONER_email:=ls_REQUISITIONER_email||',' || ls_recipient;
 				select notification_type_id into li_notification_typ_id from notification_type where module_code=4 and action_code=504;
 				             li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'504');
@@ -748,7 +745,7 @@ BEGIN
                                and au.lead_unit_flag='Y'
                                and ua.unit_administrator_type_code=1;
                 dbms_output.put_line('no Contact Type : Subaward Ending Email Contact');
-				ls_recipient:='coeus-mit@mit.edu'; 
+				ls_recipient:='kc-notifications@mit.edu'; 
 				ls_cc_email:=ls_cc_email|| ',' || ls_ao_email;
 				               li_notification_is_active := KC_MAIL_GENERIC_PKG.FN_NOTIFICATION_IS_ACTIVE(null,4,'506');
 	                        if li_notification_is_active = 1 then
