@@ -75,10 +75,12 @@ public class TimeAndMoneyAwardAmountTransactionRuleImpl extends KcTransactionalD
                     AwardAmountInfo aai = getAwardAmountInfoService().fetchAwardAmountInfoWithHighestTransactionId(award.getAwardAmountInfos());
                     Date obligatedStartDate = aai.getCurrentFundEffectiveDate();
                     Date obligatedEndDate = aai.getObligationExpirationDate();
-                    ScaleTwoDecimal obligatedTotal = aai.getAmountObligatedToDate();
-                    ScaleTwoDecimal anticipatedTotal = aai.getAnticipatedTotalAmount();
+                    
+                    ScaleTwoDecimal obligatedTotal = aai.getAmountObligatedToDate().subtract(aai.getObliDistributableAmount());
+                    ScaleTwoDecimal anticipatedTotal = aai.getAnticipatedTotalAmount().subtract(aai.getAntDistributableAmount());
+                    
                     for (PendingTransaction pendingTransaction: timeAndMoneyDocument.getPendingTransactions()) {
-                        if (!pendingTransaction.getProcessedFlag().booleanValue()) {
+                    	if (!pendingTransaction.getProcessedFlag().booleanValue()) {
                             if (StringUtils.equals(pendingTransaction.getSourceAwardNumber(), award.getAwardNumber())) {
                                 anticipatedTotal = anticipatedTotal.subtract(pendingTransaction.getAnticipatedAmount());
                                 obligatedTotal = obligatedTotal.subtract(pendingTransaction.getObligatedAmount());
@@ -91,6 +93,11 @@ public class TimeAndMoneyAwardAmountTransactionRuleImpl extends KcTransactionalD
                     }
                     MessageMap errorMap = GlobalVariables.getMessageMap();
                     errorMap.clearErrorPath();
+                    
+                    if (obligatedTotal.isGreaterThan(anticipatedTotal)) {
+                        valid = false;
+                        reportError(AMOUNTS_INVALID_FROM_TRANSACTIONS, KeyConstants.ERROR_ANTICIPATED_AMOUNT_FROM_TRANSACTIONS, award.getAwardNumber());
+                    }
                     if (anticipatedTotal.isNegative()) {
                         valid = false;
                         reportError(AMOUNTS_INVALID_FROM_TRANSACTIONS, KeyConstants.ERROR_AWARD_ANTICIPATED_NEGATIVE_FROM_TRANSACTIONS, award.getAwardNumber());
