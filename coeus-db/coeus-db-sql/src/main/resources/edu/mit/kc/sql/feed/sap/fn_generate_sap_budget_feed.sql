@@ -186,9 +186,9 @@ begin
 										exit when c_award_budget%notfound;
 										
 											if r_award_budget.amount >= 0 then
-													ls_amount := '+'||LPAD( ( to_number(r_award_budget.amount) * 100 ), 9, '0');
+													ls_amount := '+'||LPAD( ( to_number(r_award_budget.amount) * 100 ), 14, '0');
 											else
-													ls_amount := '-'||LPAD(ABS( ( to_number(r_award_budget.amount) * 100 )), 9, '0');
+													ls_amount := '-'||LPAD(ABS( ( to_number(r_award_budget.amount) * 100 )), 14, '0');
 											end if;
 											
 											
@@ -255,9 +255,9 @@ begin
 					ls_mit_account_number	:= r_cs_award.mit_sap_account;
 				
 					if to_number(ls_auth_total) >= 0 then
-							ls_amount := '+'||LPAD( ( to_number(ls_auth_total) ), 9, '0');
+							ls_amount := '+'||LPAD( ( to_number(ls_auth_total) ), 14, '0');
 					else
-							ls_amount := '-'||LPAD(ABS( ( to_number(ls_auth_total) )), 9, '0');
+							ls_amount := '-'||LPAD(ABS( ( to_number(ls_auth_total) )), 14, '0');
 					end if;
 					
 					li_sap_budget_feed_details_id := seq_sap_budget_feed_details_id.nextval;					
