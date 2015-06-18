@@ -60,7 +60,7 @@ import java.util.*;
 
 @Controller
 public class ProposalDevelopmentPersonnelController extends ProposalDevelopmentControllerBase {
-
+	public static final String PROPOSAL_PERSONS_PATH = "document.developmentProposal.proposalPersons";
 	private static final String SPONSOR_HEIRARCHY= "COIHierarchyName";
 	private static final String COI_SPONSOR_HEIRARCHY_LEVEL1= "COIHierarchyLevel1";
 	
