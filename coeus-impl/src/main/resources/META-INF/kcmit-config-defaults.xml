@@ -35,6 +35,10 @@
 	<param name="SAP.TEST.PATH">TEST</param>
 	<!--   <param name="kns.css.files">kr/css/kuali.css,kr/scripts/jscalendar-1.0/calendar-win2k-1.css,scripts/fancybox2.1.5/jquery.fancybox.css,css/kuali_application.css</param> -->
 	<!-- <param name="kc.kc.core.additionalSpringFiles">classpath:edu/mit/kc/MitKcSpringBeans.xml,classpath:edu/mit/kc/MitKcSchedulerSpringBeans.xml</param> -->
+	<param name="log4j.settings.reloadInterval">5</param>
+    <param name="log4j.settings.path">classpath:log4j.properties</param>
+    <param name="kc.log.home">/opt/kc/kc${environment}/logs</param>
+	
 </config>
 
 
