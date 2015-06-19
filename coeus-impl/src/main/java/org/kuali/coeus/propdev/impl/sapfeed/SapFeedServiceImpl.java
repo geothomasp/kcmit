@@ -240,48 +240,20 @@ public class SapFeedServiceImpl implements SapFeedService
 	}
 
 	public void setAllWorkInProgressSapFeedDetailsToPending(Map<String, AwardHierarchyNode> awardHierarchyNodes) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try{
-			conn = getDataSource().getConnection();
-//    		final ReportQueryByCriteria query = QueryFactory.newReportQuery(Questionnaire.class, columns, criteria, false);
-//    		final Iterator iter = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(query);
-    	    stmt = conn.prepareStatement("UPDATE SAP_FEED_DETAILS SET FEED_STATUS = '" + SAPFEED_FEEDSTATUS_PENDING + 
-    	    		"' WHERE AWARD_NUMBER = ? AND SEQUENCE_NUMBER = ? AND FEED_STATUS = '" + SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS + "'");
-	        for(Entry<String, AwardHierarchyNode> awardHierarchyNode : awardHierarchyNodes.entrySet()){
-	            Award award = getAwardVersionService().getWorkingAwardVersion(awardHierarchyNode.getValue().getAwardNumber());
-        	    stmt.setString(1, award.getAwardNumber());
-        	    stmt.setInt(2, award.getSequenceNumber());
-        		stmt.executeUpdate();
-        	}
-    		conn.commit();
-        } catch (SQLException e) {
-            try {
-            	if(conn!=null){
-            		conn.rollback();
-            	}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-            e.printStackTrace();
-        }finally{
-        	if(stmt!=null){
-        		try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-        	}
-        	if(conn!=null){
-        		try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-        	}
-        }
+        for(Entry<String, AwardHierarchyNode> awardHierarchyNode : awardHierarchyNodes.entrySet()){
+            Award award = getAwardVersionService().getWorkingAwardVersion(awardHierarchyNode.getValue().getAwardNumber());
+            List<SapFeedDetails> workInProgressFeeds = getAllWorkInProgressFeeds(award.getAwardNumber(), award.getSequenceNumber());
+            setWorkInProgressAsPending(workInProgressFeeds);
+            getDataObjectService().save(workInProgressFeeds);
+    	}
 	}
 
+	protected void setWorkInProgressAsPending(List<SapFeedDetails> workInProgressFeeds) {
+        for(SapFeedDetails sapFeedDetail : workInProgressFeeds){
+        	sapFeedDetail.setFeedStatus(SAPFEED_FEEDSTATUS_PENDING);
+        }
+	}
+	
 	public void setSapDetailsToWorkInProgress(String awardNumber,Integer sequenceNumber) {
 		String feedStatus = SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS;
 		String feedType = getSapFeedType(awardNumber, sequenceNumber);
@@ -301,6 +273,17 @@ public class SapFeedServiceImpl implements SapFeedService
 		}
 	}
 
+	protected List<SapFeedDetails> getAllWorkInProgressFeeds(String awardNumber, Integer sequenceNumber) {
+    	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(PredicateFactory.equal("awardNumber", awardNumber));
+        predicates.add(PredicateFactory.equal("sequenceNumber", sequenceNumber));
+        predicates.add(PredicateFactory.equal("feedStatus", SAPFEED_FEEDSTATUS_WORK_IN_PROGRESS));
+    	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+        List<SapFeedDetails> sapFeedDetails = getDataObjectService().findMatching(SapFeedDetails.class, builder.build()).getResults();
+		return sapFeedDetails;
+	}
+	
 	protected SapFeedDetails getLatestSapFeedDetail(String awardNumber) {
     	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
         List<Predicate> predicates = new ArrayList<Predicate>();
@@ -334,17 +317,36 @@ public class SapFeedServiceImpl implements SapFeedService
 		return sapFeedSuccess;
 	}
 	
+	
+	/**
+	 * This method is to check if any of prior feed was processed (New And Fed)
+	 * or if any is pending at this point (New and Pending)
+	 * This will figure out whether we need to set the next feed as changed or new
+	 * @param awardNumber
+	 * @return
+	 */
+	protected  boolean isSapFeedNewExists(String awardNumber) {
+    	QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(PredicateFactory.equal("awardNumber", awardNumber));
+    	builder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[] {})));
+        List<SapFeedDetails> sapFeedDetails = getDataObjectService().findMatching(SapFeedDetails.class, builder.build()).getResults();
+        for(SapFeedDetails sapFeedDetail : sapFeedDetails){
+        	if(sapFeedDetail.getFeedType().equalsIgnoreCase(SAPFEED_FEEDTYPE_NEW) && (sapFeedDetail.getFeedStatus().equalsIgnoreCase(SAPFEED_FEEDSTATUS_FED) ||
+        			sapFeedDetail.getFeedStatus().equalsIgnoreCase(SAPFEED_FEEDSTATUS_PENDING))) {
+        		return true;
+        	}
+        }
+		return false;
+	}
+	
 	protected String getSapFeedType(String awardNumber, Integer sequenceNumber) {
-		String feedType = null;
+		String feedType = SAPFEED_FEEDTYPE_NEW;
 		SapFeedDetails latestFeedDetails = getLatestSapFeedDetail(awardNumber);
 		if (latestFeedDetails != null) {
-			if (isAnySapFeedSuccess(awardNumber)) {
+			if (isSapFeedNewExists(awardNumber)) {
 				feedType = SAPFEED_FEEDTYPE_CHANGED;
-			}else{
-				feedType = SAPFEED_FEEDTYPE_NEW;
 			}
-		} else {
-			feedType = SAPFEED_FEEDTYPE_NEW;
 		}
 		return feedType;
 	}
