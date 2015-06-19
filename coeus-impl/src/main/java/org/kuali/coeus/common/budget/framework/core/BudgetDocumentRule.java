@@ -93,7 +93,7 @@ public class BudgetDocumentRule extends CostShareRuleResearchDocumentBase implem
                 valid = false;
             }
             //check for duplicate fiscal year and source accounts on all unchecked cost shares
-            if (i < budget.getBudgetCostShareCount()) {
+           /* if (i < budget.getBudgetCostShareCount()) {
                 for (int j = i+1; j < budget.getBudgetCostShareCount(); j++) {
                     BudgetCostShare tmpCostShare = budget.getBudgetCostShare(j);
                     int thisFiscalYear = budgetCostShare.getProjectPeriod() == null ? Integer.MIN_VALUE : budgetCostShare.getProjectPeriod();
@@ -107,7 +107,7 @@ public class BudgetDocumentRule extends CostShareRuleResearchDocumentBase implem
                         valid = false;
                     }
                 }
-            } 
+            } */
           //check if the unit is valid
             
             String unitNumber = budgetCostShare.getSourceUnit();
